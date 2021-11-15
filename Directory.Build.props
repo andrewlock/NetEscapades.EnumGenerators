@@ -1,0 +1,29 @@
+<Project>
+
+  <Import Project="version.props" />
+
+
+  <PropertyGroup>
+    <Authors>Andrew Lock</Authors>
+    <Copyright>Copyright © AndrewLock</Copyright>
+    <NeutralLanguage>en-GB</NeutralLanguage>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/andrewlock/NetEscapades.EnumGenerators</PackageProjectUrl>
+    <PackageTags>enums attribute generator generation codegen codegenerator codegeneration netescapades</PackageTags>
+    <RepositoryUrl>https://github.com/andrewlock/NetEscapades.EnumGenerators</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DebugType>embedded</DebugType>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <LangVersion>latest</LangVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)\artifacts</PackageOutputPath>
+  </PropertyGroup>
+
+  <Import Project="releasenotes.props" />
+
+</Project>
