@@ -248,3 +248,4 @@ tools/*
 
 
 *.received.txt
+BenchmarkDotNet.Artifacts
