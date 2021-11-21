@@ -80,6 +80,7 @@ class Build : NukeBuild
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
+                .When(true, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
                 .EnableNoRestore());
         });
 
@@ -105,7 +106,8 @@ class Build : NukeBuild
                 .SetOutputDirectory(ArtifactsDirectory)
                 .EnableNoBuild()
                 .EnableNoRestore()
-                .SetProject(Solution.src.NetEscapades_EnumGenerators));
+                .When(true, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
+                .SetProject(Solution));
         });
 
     Target TestPackage => _ => _
