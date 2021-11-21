@@ -7,6 +7,7 @@
     <ImplicitUsings>true</ImplicitUsings>
     <PackageId>NetEscapades.EnumGenerators</PackageId>
     <Description>A source generator for creating helper extension methods on enums using a [EnumExtensions] attribute</Description>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
