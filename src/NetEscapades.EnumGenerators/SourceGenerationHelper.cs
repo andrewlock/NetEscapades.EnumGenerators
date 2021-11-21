@@ -22,11 +22,11 @@ public static class SourceGenerationHelper
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
-namespace ").Append(enumToGenerate.Namespace);
+namespace ").Append(enumToGenerate.Namespace).Append(@"
+{");
         }
 
         sb.Append(@"
-{
     ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
     {
         public static bool IsDefined(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
@@ -123,8 +123,12 @@ namespace ").Append(enumToGenerate.Namespace);
         sb.Append(@"
             };
         }
-    }
+    }");
+        if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
+        {
+            sb.Append(@"
 }");
+        }
 
         return sb.ToString();
     }
