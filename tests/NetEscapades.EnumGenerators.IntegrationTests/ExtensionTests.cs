@@ -1,4 +1,6 @@
+using System;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -6,77 +8,96 @@ namespace NetEscapades.EnumGenerators.IntegrationTests;
 public class ExtensionTests
 {
     [Theory]
-    [InlineData(EnumInNamespace.First, nameof(EnumInNamespace.First))]
-    [InlineData(EnumInNamespace.Second, nameof(EnumInNamespace.Second))]
-    [InlineData((EnumInNamespace)3, "3")]
-    public void GeneratesToStringFast(EnumInNamespace value, string name)
+    [InlineData(EnumInNamespace.First)]
+    [InlineData(EnumInNamespace.Second)]
+    [InlineData((EnumInNamespace)3)]
+    public void GeneratesToStringFast(EnumInNamespace value)
     {
         var serialized = value.ToStringFast();
 
-        serialized.Should().Be(name);
+        serialized.Should().Be(value.ToString());
     }
 
     [Theory]
-    [InlineData(EnumInNamespace.First, true)]
-    [InlineData(EnumInNamespace.Second, true)]
-    [InlineData((EnumInNamespace)3, false)]
-    public void GeneratesIsDefined(EnumInNamespace value, bool defined)
+    [InlineData(EnumInNamespace.First)]
+    [InlineData(EnumInNamespace.Second)]
+    [InlineData((EnumInNamespace)3)]
+    public void GeneratesIsDefined(EnumInNamespace value)
     {
         var isDefined = value.IsDefined();
 
-        isDefined.Should().Be(defined);
+        isDefined.Should().Be(Enum.IsDefined(typeof(EnumInNamespace), value));
     }
 
     [Theory]
-    [InlineData(EnumInNamespace.First, true, "First" )]
-    [InlineData(EnumInNamespace.Second, true, "Second" )]
-    [InlineData(EnumInNamespace.First, false, "first" )]
-    [InlineData(EnumInNamespace.Second, false, "SECOND" )]
-    [InlineData((EnumInNamespace)3, false, "3" )]
-    public void GeneratesTryParse(EnumInNamespace value, bool isValid, string name)
+    [InlineData("First" )]
+    [InlineData("Second" )]
+    [InlineData("first" )]
+    [InlineData("SECOND" )]
+    [InlineData("3")]
+    [InlineData("267")]
+    [InlineData("-267")]
+    [InlineData("2147483647")]
+    [InlineData("3000000000")]
+    public void GeneratesTryParse(string name)
     {
-        EnumInNamespaceExtensions.TryParse(name, out var parsed).Should().Be(isValid);
-        if (isValid)
-        {
-            parsed.Should().Be(value);
-        }
+        var isValid = Enum.TryParse(name, out EnumInNamespace expected);
+        var result = EnumInNamespaceExtensions.TryParse(name, out var parsed);
+        using var _ = new AssertionScope();
+        result.Should().Be(isValid);
+        parsed.Should().Be(expected);
     }
 
     [Theory]
-    [InlineData(EnumInNamespace.First, true, "First" )]
-    [InlineData(EnumInNamespace.Second, true, "Second" )]
-    [InlineData(EnumInNamespace.First, true, "first" )]
-    [InlineData(EnumInNamespace.Second, true, "SECOND" )]
-    [InlineData((EnumInNamespace)3, false, "3" )]
-    [InlineData((EnumInNamespace)0, false, "Fourth" )]
-    public void GeneratesTryParseIgnoreCase(EnumInNamespace value, bool isValid, string name)
+    [InlineData("First" )]
+    [InlineData("Second" )]
+    [InlineData("first" )]
+    [InlineData("SECOND" )]
+    [InlineData("3")]
+    [InlineData("267")]
+    [InlineData("-267")]
+    [InlineData("2147483647")]
+    [InlineData("3000000000")]
+    [InlineData("Fourth")]
+    public void GeneratesTryParseIgnoreCase(string name)
     {
-        EnumInNamespaceExtensions.TryParse(name, ignoreCase: true, out var parsed).Should().Be(isValid);
-        if (isValid)
-        {
-            parsed.Should().Be(value);
-        }
+        var isValid = Enum.TryParse(name, ignoreCase: true, out EnumInNamespace expected);
+        var result = EnumInNamespaceExtensions.TryParse(name, ignoreCase: true, out var parsed);
+        using var _ = new AssertionScope();
+        result.Should().Be(isValid);
+        parsed.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData("First" )]
+    [InlineData("Second" )]
+    [InlineData("first" )]
+    [InlineData("SECOND" )]
+    [InlineData("3")]
+    [InlineData("267")]
+    [InlineData("-267")]
+    [InlineData("2147483647")]
+    [InlineData("3000000000")]
+    public void GeneratesLongTryParse(string name)
+    {
+        var isValid = Enum.TryParse(name, out LongEnum expected);
+        var result = LongEnumExtensions.TryParse(name, out var parsed);
+        using var _ = new AssertionScope();
+        result.Should().Be(isValid);
+        parsed.Should().Be(expected);
     }
 
     [Fact]
     public void GeneratesGetValues()
     {
-        EnumInNamespaceExtensions.GetValues().Should().Equal(new[]
-        {
-            EnumInNamespace.First,
-            EnumInNamespace.Second,
-            EnumInNamespace.Third,
-        });
+        var expected = (EnumInNamespace[])Enum.GetValues(typeof(EnumInNamespace));
+        EnumInNamespaceExtensions.GetValues().Should().Equal(expected);
     }
 
     [Fact]
     public void GeneratesGetNames()
     {
-        EnumInNamespaceExtensions.GetNames().Should().Equal(new[]
-        {
-            "First",
-            "Second",
-            "Third",
-        });
+        var expected = Enum.GetNames(typeof(EnumInNamespace));
+        EnumInNamespaceExtensions.GetNames().Should().Equal(expected);
     }
 }
