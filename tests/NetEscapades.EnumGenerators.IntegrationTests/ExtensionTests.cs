@@ -1,103 +1,56 @@
 using System;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
 
-public class ExtensionTests
+public abstract class ExtensionTests<T> where T : struct
 {
-    [Theory]
-    [InlineData(EnumInNamespace.First)]
-    [InlineData(EnumInNamespace.Second)]
-    [InlineData((EnumInNamespace)3)]
-    public void GeneratesToStringFast(EnumInNamespace value)
+    protected abstract string ToStringFast(T value);
+    protected abstract bool IsDefined(T value);
+    protected abstract bool TryParse(string name, bool ignoreCase, out T parsed);
+
+    protected void GeneratesToStringFastTest(T value)
     {
-        var serialized = value.ToStringFast();
+        var serialized = ToStringFast(value);
 
         serialized.Should().Be(value.ToString());
     }
 
-    [Theory]
-    [InlineData(EnumInNamespace.First)]
-    [InlineData(EnumInNamespace.Second)]
-    [InlineData((EnumInNamespace)3)]
-    public void GeneratesIsDefined(EnumInNamespace value)
+    protected void GeneratesIsDefinedTest(T value)
     {
-        var isDefined = value.IsDefined();
+        var isDefined = IsDefined(value);
 
-        isDefined.Should().Be(Enum.IsDefined(typeof(EnumInNamespace), value));
+        isDefined.Should().Be(Enum.IsDefined(typeof(T), value));
     }
 
-    [Theory]
-    [InlineData("First" )]
-    [InlineData("Second" )]
-    [InlineData("first" )]
-    [InlineData("SECOND" )]
-    [InlineData("3")]
-    [InlineData("267")]
-    [InlineData("-267")]
-    [InlineData("2147483647")]
-    [InlineData("3000000000")]
-    public void GeneratesTryParse(string name)
+    protected void GeneratesTryParseTest(string name)
     {
-        var isValid = Enum.TryParse(name, out EnumInNamespace expected);
-        var result = EnumInNamespaceExtensions.TryParse(name, out var parsed);
+        var isValid = Enum.TryParse(name, out T expected);
+        var result = TryParse(name, ignoreCase: false, out var parsed);
         using var _ = new AssertionScope();
         result.Should().Be(isValid);
         parsed.Should().Be(expected);
     }
 
-    [Theory]
-    [InlineData("First" )]
-    [InlineData("Second" )]
-    [InlineData("first" )]
-    [InlineData("SECOND" )]
-    [InlineData("3")]
-    [InlineData("267")]
-    [InlineData("-267")]
-    [InlineData("2147483647")]
-    [InlineData("3000000000")]
-    [InlineData("Fourth")]
-    public void GeneratesTryParseIgnoreCase(string name)
+    protected void GeneratesTryParseIgnoreCaseTest(string name)
     {
-        var isValid = Enum.TryParse(name, ignoreCase: true, out EnumInNamespace expected);
-        var result = EnumInNamespaceExtensions.TryParse(name, ignoreCase: true, out var parsed);
+        var isValid = Enum.TryParse(name, ignoreCase: true, out T expected);
+        var result = TryParse(name, ignoreCase: true, out var parsed);
         using var _ = new AssertionScope();
         result.Should().Be(isValid);
         parsed.Should().Be(expected);
     }
 
-    [Theory]
-    [InlineData("First" )]
-    [InlineData("Second" )]
-    [InlineData("first" )]
-    [InlineData("SECOND" )]
-    [InlineData("3")]
-    [InlineData("267")]
-    [InlineData("-267")]
-    [InlineData("2147483647")]
-    [InlineData("3000000000")]
-    public void GeneratesLongTryParse(string name)
+    protected void GeneratesGetValuesTest(T[] values)
     {
-        var isValid = Enum.TryParse(name, out LongEnum expected);
-        var result = LongEnumExtensions.TryParse(name, out var parsed);
-        using var _ = new AssertionScope();
-        result.Should().Be(isValid);
-        parsed.Should().Be(expected);
+        var expected = (T[])Enum.GetValues(typeof(T));
+        values.Should().Equal(expected);
     }
 
-    [Fact]
-    public void GeneratesGetValues()
+    protected void GeneratesGetNamesTest(string[] names)
     {
-        var expected = (EnumInNamespace[])Enum.GetValues(typeof(EnumInNamespace));
-        EnumInNamespaceExtensions.GetValues().Should().Equal(expected);
-    }
-
-    [Fact]
-    public void GeneratesGetNames()
-    {
-        var expected = Enum.GetNames(typeof(EnumInNamespace));
-        EnumInNamespaceExtensions.GetNames().Should().Equal(expected);
+        var expected = Enum.GetNames(typeof(T));
+        names.Should().Equal(expected);
     }
 }
