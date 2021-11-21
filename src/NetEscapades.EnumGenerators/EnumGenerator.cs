@@ -136,7 +136,7 @@ public class EnumGenerator : IIncrementalGenerator
             }
 
             string fullyQualifiedName = enumSymbol.ToString();
-            string underlyingType = enumSymbol.EnumUnderlyingType?.Name ?? "int";
+            string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";
 
             var enumMembers = enumSymbol.GetMembers();
             var members = new List<KeyValuePair<string, object>>(enumMembers.Length);

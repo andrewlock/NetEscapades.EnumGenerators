@@ -57,10 +57,21 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 _ => value.ToString(),
             };
 
-        public static bool TryParse(string name, bool ignoreCase, out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            bool ignoreCase, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
 
-        private static bool TryParseIgnoreCase(string name, out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        private static bool TryParseIgnoreCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
         {
             switch (name)
             {");
@@ -73,13 +84,21 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         }
 
         sb.Append(@"
+                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
+                    return true;
                 default:
                     value = default;
                     return false;
             }
         }
 
-        public static bool TryParse(string name, out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
         {
             switch (name)
             {");
@@ -92,6 +111,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         }
 
         sb.Append(@"
+                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
+                    return true;
                 default:
                     value = default;
                     return false;
