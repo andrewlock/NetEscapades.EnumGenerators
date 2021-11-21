@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
-{
     public static partial class MyEnumExtensions
     {
         public static bool IsDefined(this MyEnum value)
@@ -80,4 +79,3 @@
             };
         }
     }
-}
