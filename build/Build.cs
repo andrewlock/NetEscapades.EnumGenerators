@@ -19,10 +19,11 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
     GitHubActionsImage.WindowsLatest,
     GitHubActionsImage.MacOsLatest,
     ImportGitHubTokenAs = nameof(GithubToken),
+    CacheExcludePatterns = new[] { "~/.nuget/packages/netescapades.enumgenerators" },
     OnPushTags = new [] {"*"},
     OnPushBranches = new[] {"master", "main"},
     OnPullRequestBranches = new[] {"*"},
-    AutoGenerate = false,
+    AutoGenerate = true,
     ImportSecrets = new[] {nameof(NuGetToken)},
     InvokedTargets = new[] {nameof(Clean), nameof(Test), nameof(TestPackage), nameof(PushToNuGet)}
 )]
