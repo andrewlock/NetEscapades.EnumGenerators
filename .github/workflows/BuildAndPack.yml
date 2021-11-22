@@ -88,6 +88,7 @@ jobs:
           path: |
             .nuke/temp
             ~/.nuget/packages
+            !~/.nuget/packages/netescapades.enumgenerators
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
       - name: Run './build.cmd Clean Test TestPackage PushToNuGet'
         run: ./build.cmd Clean Test TestPackage PushToNuGet
@@ -123,6 +124,7 @@ jobs:
           path: |
             .nuke/temp
             ~/.nuget/packages
+            !~/.nuget/packages/netescapades.enumgenerators
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
       - name: Run './build.cmd Clean Test TestPackage PushToNuGet'
         run: ./build.cmd Clean Test TestPackage PushToNuGet
