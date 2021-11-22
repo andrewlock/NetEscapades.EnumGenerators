@@ -42,14 +42,14 @@ public class IsDefinedBenchmark
 
     [Benchmark(Baseline = true)]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool EnumIsDefined()
+    public bool EnumIsDefinedName()
     {
         return Enum.IsDefined(typeof(TestEnum), _enum);
     }
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool ExtensionsIsDefined()
+    public bool ExtensionsIsDefinedName()
     {
         return TestEnumExtensions.IsDefined(_enum);
     }
