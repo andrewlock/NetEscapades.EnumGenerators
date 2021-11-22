@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta01"/>
+    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta02"/>
   </ItemGroup>
 
   <ItemGroup>

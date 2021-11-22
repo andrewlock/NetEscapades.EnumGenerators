@@ -13,7 +13,7 @@ Add the package to your application using
 dotnet add package NetEscapades.EnumGenerators
 ```
 
-This will bring in two packages, _NetEscapades.EnumGenerators_ which contains the source generator, and _NetEscapades.EnumGenerators.Attributes_ which contains the marker attribute `[EnumExtensions]`. 
+This will bring in the _NetEscapades.EnumGenerators_ package. This contains the source generator, which automatically adds a marker attribute, `[EnumExtensions]`, to your project. 
 
 To use the generator, add the `[EnumExtensions]` attribute to an enum. For example:
 
