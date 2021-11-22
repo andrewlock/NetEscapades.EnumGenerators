@@ -137,10 +137,10 @@ class Build : NukeBuild
         });
 
     Target PushToNuGet => _ => _
-        .DependsOn(Compile)
+        .DependsOn(Pack)
         .OnlyWhenStatic(() => IsTag && IsServerBuild && IsWin)
         .Requires(() => NuGetToken)
-        .After(Pack)
+        .After(TestPackage)
         .Executes(() =>
         {
             var packages = ArtifactsDirectory.GlobFiles("*.nupkg");
