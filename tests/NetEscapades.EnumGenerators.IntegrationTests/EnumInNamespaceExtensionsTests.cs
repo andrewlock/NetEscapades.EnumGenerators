@@ -23,10 +23,12 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
         "2147483647",
         "3000000000",
         "Fourth",
+        "Fifth",
     };
 
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
-    protected override bool IsDefined(EnumInNamespace value) => value.IsDefined();
+    protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
+    protected override bool IsDefined(string name) => EnumInNamespaceExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed)
         => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
 
@@ -37,6 +39,10 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesIsDefined(EnumInNamespace value) => GeneratesIsDefinedTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]

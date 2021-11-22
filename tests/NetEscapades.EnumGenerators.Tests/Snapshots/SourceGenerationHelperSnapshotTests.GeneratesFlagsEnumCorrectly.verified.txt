@@ -8,31 +8,38 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
-namespace MyTestNameSpace
+namespace Something.Blah
 {
-    public static partial class MyEnumExtensions
+    public static partial class ShortName
     {
-        public static string ToStringFast(this MyTestNameSpace.MyEnum value)
+        public static string ToStringFast(this Something.Blah.ShortName value)
             => value switch
             {
-                MyTestNameSpace.MyEnum.First => nameof(MyTestNameSpace.MyEnum.First),
-                MyTestNameSpace.MyEnum.Second => nameof(MyTestNameSpace.MyEnum.Second),
+                Something.Blah.ShortName.First => nameof(Something.Blah.ShortName.First),
+                Something.Blah.ShortName.Second => nameof(Something.Blah.ShortName.Second),
                 _ => value.ToString(),
             };
 
-       public static bool IsDefined(MyTestNameSpace.MyEnum value)
+        public static bool HasFlag(this Something.Blah.ShortName value, Something.Blah.ShortName flag)
             => value switch
             {
-                MyTestNameSpace.MyEnum.First => true,
-                MyTestNameSpace.MyEnum.Second => true,
+                0  => flag.Equals(0),
+                _ => (value & flag) != 0,
+            };
+
+       public static bool IsDefined(Something.Blah.ShortName value)
+            => value switch
+            {
+                Something.Blah.ShortName.First => true,
+                Something.Blah.ShortName.Second => true,
                 _ => false,
             };
 
         public static bool IsDefined(string name)
             => name switch
             {
-                nameof(MyTestNameSpace.MyEnum.First) => true,
-                nameof(MyTestNameSpace.MyEnum.Second) => true,
+                nameof(Something.Blah.ShortName.First) => true,
+                nameof(Something.Blah.ShortName.Second) => true,
                 _ => false,
             };
 
@@ -42,7 +49,7 @@ namespace MyTestNameSpace
 #endif
             string? name, 
             bool ignoreCase, 
-            out MyTestNameSpace.MyEnum value)
+            out Something.Blah.ShortName value)
             => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
 
         private static bool TryParseIgnoreCase(
@@ -50,18 +57,18 @@ namespace MyTestNameSpace
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out MyTestNameSpace.MyEnum value)
+            out Something.Blah.ShortName value)
         {
             switch (name)
             {
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
-                    value = MyTestNameSpace.MyEnum.First;
+                case { } s when s.Equals(nameof(Something.Blah.ShortName.First), System.StringComparison.OrdinalIgnoreCase):
+                    value = Something.Blah.ShortName.First;
                     return true;
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
-                    value = MyTestNameSpace.MyEnum.Second;
+                case { } s when s.Equals(nameof(Something.Blah.ShortName.Second), System.StringComparison.OrdinalIgnoreCase):
+                    value = Something.Blah.ShortName.Second;
                     return true;
                 case { } s when int.TryParse(name, out var val):
-                    value = (MyTestNameSpace.MyEnum)val;
+                    value = (Something.Blah.ShortName)val;
                     return true;
                 default:
                     value = default;
@@ -74,18 +81,18 @@ namespace MyTestNameSpace
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out MyTestNameSpace.MyEnum value)
+            out Something.Blah.ShortName value)
         {
             switch (name)
             {
-                case nameof(MyTestNameSpace.MyEnum.First):
-                    value = MyTestNameSpace.MyEnum.First;
+                case nameof(Something.Blah.ShortName.First):
+                    value = Something.Blah.ShortName.First;
                     return true;
-                case nameof(MyTestNameSpace.MyEnum.Second):
-                    value = MyTestNameSpace.MyEnum.Second;
+                case nameof(Something.Blah.ShortName.Second):
+                    value = Something.Blah.ShortName.Second;
                     return true;
                 case { } s when int.TryParse(name, out var val):
-                    value = (MyTestNameSpace.MyEnum)val;
+                    value = (Something.Blah.ShortName)val;
                     return true;
                 default:
                     value = default;
@@ -93,12 +100,12 @@ namespace MyTestNameSpace
             }
         }
 
-        public static MyTestNameSpace.MyEnum[] GetValues()
+        public static Something.Blah.ShortName[] GetValues()
         {
             return new[]
             {
-                MyTestNameSpace.MyEnum.First,
-                MyTestNameSpace.MyEnum.Second,
+                Something.Blah.ShortName.First,
+                Something.Blah.ShortName.Second,
             };
         }
 
@@ -106,8 +113,8 @@ namespace MyTestNameSpace
         {
             return new[]
             {
-                nameof(MyTestNameSpace.MyEnum.First),
-                nameof(MyTestNameSpace.MyEnum.Second),
+                nameof(Something.Blah.ShortName.First),
+                nameof(Something.Blah.ShortName.Second),
             };
         }
     }

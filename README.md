@@ -23,37 +23,47 @@ public MyEnum
 {
     First,
     Second,
-    Third,
 }
 ```
 
 This will generate a class called `MyEnumExtensions` (by default), which contains a number of helper methods. For example:
 
 ```csharp
-public static partial class EnumInNamespaceExtensions
+public static partial class MyEnumExtensions
 {
-    public static bool IsDefined(this MyEnum value)
-        => value switch
-        {
-            MyEnum.First => true,
-            MyEnum.Second => true,
-            MyEnum.Third => true,
-            _ => false,
-        };
-
     public static string ToStringFast(this MyEnum value)
         => value switch
         {
             MyEnum.First => nameof(MyEnum.First),
             MyEnum.Second => nameof(MyEnum.Second),
-            MyEnum.Third => nameof(MyEnum.Third),
             _ => value.ToString(),
         };
 
-    public static bool TryParse(string name, bool ignoreCase, out MyEnum value)
+   public static bool IsDefined(MyEnum value)
+        => value switch
+        {
+            MyEnum.First => true,
+            MyEnum.Second => true,
+            _ => false,
+        };
+
+    public static bool IsDefined(string name)
+        => name switch
+        {
+            nameof(MyEnum.First) => true,
+            nameof(MyEnum.Second) => true,
+            _ => false,
+        };
+
+    public static bool TryParse(
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name, 
+        bool ignoreCase, 
+        out MyEnum value)
         => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
 
-    private static bool TryParseIgnoreCase(string name, out MyEnum value)
+    private static bool TryParseIgnoreCase(
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name, 
+        out MyEnum value)
     {
         switch (name)
         {
@@ -63,8 +73,8 @@ public static partial class EnumInNamespaceExtensions
             case { } s when s.Equals(nameof(MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
                 value = MyEnum.Second;
                 return true;
-            case { } s when s.Equals(nameof(MyEnum.Third), System.StringComparison.OrdinalIgnoreCase):
-                value = MyEnum.Third;
+            case { } s when int.TryParse(name, out var val):
+                value = (MyEnum)val;
                 return true;
             default:
                 value = default;
@@ -72,7 +82,9 @@ public static partial class EnumInNamespaceExtensions
         }
     }
 
-    public static bool TryParse(string name, out MyEnum value)
+    public static bool TryParse(
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name, 
+        out MyEnum value)
     {
         switch (name)
         {
@@ -82,8 +94,8 @@ public static partial class EnumInNamespaceExtensions
             case nameof(MyEnum.Second):
                 value = MyEnum.Second;
                 return true;
-            case nameof(MyEnum.Third):
-                value = MyEnum.Third;
+            case { } s when int.TryParse(name, out var val):
+                value = (MyEnum)val;
                 return true;
             default:
                 value = default;
@@ -97,7 +109,6 @@ public static partial class EnumInNamespaceExtensions
         {
             MyEnum.First,
             MyEnum.Second,
-            MyEnum.Third,
         };
     }
 
@@ -107,7 +118,6 @@ public static partial class EnumInNamespaceExtensions
         {
             nameof(MyEnum.First),
             nameof(MyEnum.Second),
-            nameof(MyEnum.Third),
         };
     }
 }

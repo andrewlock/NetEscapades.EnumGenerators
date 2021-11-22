@@ -22,9 +22,9 @@ namespace NetEscapades.EnumGenerators.IntegrationTests
     [Flags]
     public enum FlagsEnum
     {
-        First = 1,
-        Second = 1<<2,
-        Third = 1 << 3,
-        Fourth = 1 << 4,
+        First = 1 << 0,
+        Second = 1 << 1,
+        Third = 1 << 2,
+        Fourth = 1 << 3,
     }
 }

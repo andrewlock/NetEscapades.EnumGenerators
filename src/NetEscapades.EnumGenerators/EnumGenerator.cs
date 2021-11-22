@@ -10,6 +10,7 @@ namespace NetEscapades.EnumGenerators;
 public class EnumGenerator : IIncrementalGenerator
 {
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
+    private const string HasFlagsAttribute = "System.HasFlagsAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -97,6 +98,7 @@ public class EnumGenerator : IIncrementalGenerator
             return enumsToGenerate;
         }
 
+        INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
         foreach (var enumDeclarationSyntax in enums)
         {
             // stop if we're asked to
@@ -111,9 +113,16 @@ public class EnumGenerator : IIncrementalGenerator
 
             string name = enumSymbol.Name + "Extensions";
             string nameSpace = enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
+            var hasFlags = false;
 
             foreach (AttributeData attributeData in enumSymbol.GetAttributes())
             {
+                if (hasFlagsAttribute is not null && hasFlagsAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
+                {
+                    hasFlags = true;
+                    continue;
+                }
+
                 if (!enumAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
                 {
                     continue;
@@ -134,8 +143,6 @@ public class EnumGenerator : IIncrementalGenerator
                         name = n;
                     }
                 }
-
-                break;
             }
 
             string fullyQualifiedName = enumSymbol.ToString();
@@ -161,6 +168,7 @@ public class EnumGenerator : IIncrementalGenerator
                 ns: nameSpace,
                 underlyingType: underlyingType,
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
+                hasFlags: hasFlags,
                 values: members));
         }
 

@@ -20,7 +20,27 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList());
+            new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
+            hasFlags: false);
+
+        var sb = new StringBuilder();
+        var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
+
+        return Verifier.Verify(result)
+            .UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task GeneratesFlagsEnumCorrectly()
+    {
+        var value = new EnumToGenerate(
+            "ShortName",
+            "Something.Blah",
+            "Something.Blah.ShortName",
+            "int",
+            isPublic: true,
+            new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
+            hasFlags: true);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);

@@ -51,7 +51,27 @@ public class IsDefinedBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefined()
     {
-        return _enum.IsDefined();
+        return TestEnumExtensions.IsDefined(_enum);
+    }
+}
+
+[MemoryDiagnoser]
+public class IsDefinedNameBenchmark
+{
+    private static readonly string _enum = nameof(TestEnum.Second);
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool EnumIsDefined()
+    {
+        return Enum.IsDefined(typeof(TestEnum), _enum);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefined()
+    {
+        return TestEnumExtensions.IsDefined(_enum);
     }
 }
 
