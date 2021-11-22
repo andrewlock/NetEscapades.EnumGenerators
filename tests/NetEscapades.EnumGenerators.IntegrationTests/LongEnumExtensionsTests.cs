@@ -23,10 +23,12 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
         "2147483647",
         "3000000000",
         "Fourth",
+        "Fifth",
     };
 
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
-    protected override bool IsDefined(LongEnum value) => value.IsDefined();
+    protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
+    protected override bool IsDefined(string name) => LongEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out LongEnum parsed)
         => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
@@ -37,6 +39,10 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesIsDefined(LongEnum value) => GeneratesIsDefinedTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]

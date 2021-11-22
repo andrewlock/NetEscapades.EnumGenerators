@@ -55,19 +55,6 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
     ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
     {
-        public static bool IsDefined(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => value switch
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => true,");
-        }
-        sb.Append(@"
-                _ => false,
-            };
-
         public static string ToStringFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
             {");
@@ -81,6 +68,46 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
                 _ => value.ToString(),
+            };");
+
+        if (enumToGenerate.HasFlags)
+        {
+            sb.Append(@"
+
+        public static bool HasFlag(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, ").Append(enumToGenerate.FullyQualifiedName).Append(@" flag)
+            => value switch
+            {
+                0  => flag.Equals(0),
+                _ => (value & flag) != 0,
+            };");
+        }
+
+        sb.Append(@"
+
+       public static bool IsDefined(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            => value switch
+            {");
+        foreach (var member in enumToGenerate.Values)
+        {
+            sb.Append(@"
+                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                .Append(" => true,");
+        }
+        sb.Append(@"
+                _ => false,
+            };
+
+        public static bool IsDefined(string name)
+            => name switch
+            {");
+        foreach (var member in enumToGenerate.Values)
+        {
+            sb.Append(@"
+                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
+        }
+
+        sb.Append(@"
+                _ => false,
             };
 
         public static bool TryParse(

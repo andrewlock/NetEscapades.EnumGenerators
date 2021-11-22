@@ -8,6 +8,7 @@ public abstract class ExtensionTests<T> where T : struct
 {
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
+    protected abstract bool IsDefined(string name);
     protected abstract bool TryParse(string name, bool ignoreCase, out T parsed);
 
     protected void GeneratesToStringFastTest(T value)
@@ -22,6 +23,13 @@ public abstract class ExtensionTests<T> where T : struct
         var isDefined = IsDefined(value);
 
         isDefined.Should().Be(Enum.IsDefined(typeof(T), value));
+    }
+
+    protected void GeneratesIsDefinedTest(string name)
+    {
+        var isDefined = IsDefined(name);
+
+        isDefined.Should().Be(Enum.IsDefined(typeof(T), name));
     }
 
     protected void GeneratesTryParseTest(string name)

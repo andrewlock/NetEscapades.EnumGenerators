@@ -1,3 +1,5 @@
+using System;
+using FluentAssertions;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -23,10 +25,12 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
         "2147483647",
         "3000000000",
         "Fourth",
+        "Fifth",
     };
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
-    protected override bool IsDefined(FlagsEnum value) => value.IsDefined();
+    protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
+    protected override bool IsDefined(string name) => FlagsEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed)
         => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
@@ -37,6 +41,24 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesIsDefined(FlagsEnum value) => GeneratesIsDefinedTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
+
+    [Theory]
+    [InlineData(FlagsEnum.First)]
+    [InlineData(FlagsEnum.Second)]
+    [InlineData(FlagsEnum.First | FlagsEnum.Second)]
+    [InlineData(FlagsEnum.Third)]
+    [InlineData((FlagsEnum)65)]
+    public void HasFlags(FlagsEnum value)
+    {
+        var flag = FlagsEnum.Second;
+        var isDefined = value.HasFlag(flag);
+
+        isDefined.Should().Be(value.HasFlag(flag));
+    }
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
