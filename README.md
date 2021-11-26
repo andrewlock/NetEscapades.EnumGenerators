@@ -124,3 +124,36 @@ public static partial class MyEnumExtensions
 ```
 
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
+
+## CS0436 and [InternalsVisibleTo]
+
+The source generator automatically adds the `[EnumExtensions]` attributes to your compilation as an `internal` attribute. If you add the source generator package to multiple projects, and use the `[InternalsVisibleTo]` attribute, you may experience errors when you build:
+
+```bash
+warning CS0436: The type 'EnumExtensionsAttribute' in 'NetEscapades.EnumGenerators\EnumExtensionsAttribute.cs' conflicts with the imported type 'EnumExtensionsAttribute' in 'MyProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'.
+```
+
+Removing the `[InternalsVisibleTo]` attribute will resolve the problem, but if this is not possible you can disable the auto-generation of the `[EnumExtensions]` marker attributes, and rely on the helper [`NetEscapades.EnumExtensions.Attributes` package instead](https://www.nuget.org/packages/NetEscapades.EnumExtensions.Attributes). This package contains the same attributes, but as they are in an external package, you can avoid the CS0436 error.
+
+Add the package to your solution, ensuring you set `"PrivateAssets="All"` in the `<PackageReference>`. To disable the auto-generation of the marker attributes, define the constant `NETESCAPADES_ENUMGENERATORS_EXCLUDE_ATTRIBUTES` in your project file. Your project file should look something like the following:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <DefineConstants>NETESCAPADES_ENUMGENERATORS_EXCLUDE_ATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+  
+  <!-- Core package -->
+  <PackageReference Include="NetEscapades.EnumExtensions" Version="1.0.0-beta03" />
+  <PackageReference Include="NetEscapades.EnumExtensions.Attributes" Version="1.0.0-beta03">
+    <PrivateAssets>All</PrivateAssets>
+  </PackageReference>
+  <!-- -->
+
+</Project>
+```
+
+The attribute library is only required at compile time, so it won't appear in your build output. 

@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_build", "build\_build.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Benchmarks", "tests\NetEscapades.EnumGenerators.Benchmarks\NetEscapades.EnumGenerators.Benchmarks.csproj", "{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Attributes", "src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj", "{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests.csproj", "{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +52,12 @@ Global
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FC6F4934-4512-45DB-ABDA-5FAD96742B73} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
@@ -55,5 +65,7 @@ Global
 		{F03831B0-630E-4B0E-BD25-AFE975B35E69} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{328EFEB4-1D15-453E-9929-6FD0FACF3512} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
+		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
+		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 	EndGlobalSection
 EndGlobal
