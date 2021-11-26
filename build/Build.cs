@@ -23,7 +23,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
     OnPushTags = new [] {"*"},
     OnPushBranches = new[] {"master", "main"},
     OnPullRequestBranches = new[] {"*"},
-    AutoGenerate = true,
+    AutoGenerate = false,
     ImportSecrets = new[] {nameof(NuGetToken)},
     InvokedTargets = new[] {nameof(Clean), nameof(Test), nameof(TestPackage), nameof(PushToNuGet)}
 )]
@@ -48,7 +48,7 @@ class Build : NukeBuild
 
     [Parameter] readonly string GithubToken;
     [Parameter] readonly string NuGetToken;
-    [Parameter] readonly AbsolutePath PackagesDirectory;
+    [Parameter] readonly AbsolutePath PackagesDirectory = RootDirectory / "packages";
 
     const string NugetOrgUrl = "https://api.nuget.org/v3/index.json";
     bool IsTag => GitHubActions.Instance?.GitHubRef?.StartsWith("refs/tags/") ?? false;
@@ -81,7 +81,7 @@ class Build : NukeBuild
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
-                .When(true, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
+                .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
                 .EnableNoRestore());
         });
 
@@ -107,7 +107,7 @@ class Build : NukeBuild
                 .SetOutputDirectory(ArtifactsDirectory)
                 .EnableNoBuild()
                 .EnableNoRestore()
-                .When(true, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
+                .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
                 .SetProject(Solution));
         });
 
@@ -117,24 +117,34 @@ class Build : NukeBuild
         .Produces(ArtifactsDirectory)
         .Executes(() =>
         {
-            var projectFile = Solution.tests.NetEscapades_EnumGenerators_Nuget_IntegrationTests.Path;
+            var projectFiles = new[]
+            {
+                Solution.tests.NetEscapades_EnumGenerators_Nuget_IntegrationTests.Path,
+                Solution.tests.NetEscapades_EnumGenerators_Nuget_Attributes_IntegrationTests.Path,
+            };
+
+            if (!string.IsNullOrEmpty(PackagesDirectory))
+            {
+                DeleteDirectory(PackagesDirectory / "netescapades.enumgenerators");
+                DeleteDirectory(PackagesDirectory / "netescapades.enumgenerators.attributes");
+            }
 
             DotNetRestore(s => s
-                .SetProjectFile(projectFile)
                 .When(!string.IsNullOrEmpty(PackagesDirectory), x => x.SetPackageDirectory(PackagesDirectory))
-                .SetConfigFile(RootDirectory / "NuGet.integration-tests.config"));
+                .SetConfigFile(RootDirectory / "NuGet.integration-tests.config")
+                .CombineWith(projectFiles, (s, p) => s.SetProjectFile(p)));
 
             DotNetBuild(s => s
-                .SetProjectFile(projectFile)
                 .When(!string.IsNullOrEmpty(PackagesDirectory), x=>x.SetPackageDirectory(PackagesDirectory))
                 .EnableNoRestore()
-                .SetConfiguration(Configuration));
+                .SetConfiguration(Configuration)
+                .CombineWith(projectFiles, (s, p) => s.SetProjectFile(p)));
 
             DotNetTest(s => s
-                .SetProjectFile(projectFile)
                 .SetConfiguration(Configuration)
                 .EnableNoBuild()
-                .EnableNoRestore());
+                .EnableNoRestore()
+                .CombineWith(projectFiles, (s, p) => s.SetProjectFile(p)));
         });
 
     Target PushToNuGet => _ => _

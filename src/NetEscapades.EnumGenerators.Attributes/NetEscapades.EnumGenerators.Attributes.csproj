@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard2.0;netcoreapp2.1</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <RootNamespace>NetEscapades.EnumGenerators</RootNamespace>
+    <Description>Helper library for NetEscapades.EnumGenerators generator containg the [EnumExtensions] attribute only. See README for when to use this package </Description>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+</Project>
