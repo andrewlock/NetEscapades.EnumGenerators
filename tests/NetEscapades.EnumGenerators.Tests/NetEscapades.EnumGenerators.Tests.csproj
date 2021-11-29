@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj" />
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" />
   </ItemGroup>
 
 </Project>
