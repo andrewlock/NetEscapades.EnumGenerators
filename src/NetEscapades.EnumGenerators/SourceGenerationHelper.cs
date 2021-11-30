@@ -17,7 +17,7 @@ public static class SourceGenerationHelper
 
     public const string Attribute = Header + @"
 
-#if !NETESCAPADES_ENUMGENERATORS_EXCLUDE_ATTRIBUTES
+#if NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES
 namespace NetEscapades.EnumGenerators
 {
     /// <summary>

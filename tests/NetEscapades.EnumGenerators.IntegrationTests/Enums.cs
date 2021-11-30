@@ -26,5 +26,6 @@ namespace NetEscapades.EnumGenerators.IntegrationTests
         Second = 1 << 1,
         Third = 1 << 2,
         Fourth = 1 << 3,
+        ThirdAndFourth = Third | Fourth,
     }
 }

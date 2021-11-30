@@ -10,6 +10,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     {
         FlagsEnum.First,
         FlagsEnum.Second,
+        FlagsEnum.ThirdAndFourth,
         (FlagsEnum)3,
     };
 
