@@ -26,8 +26,8 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
-  <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta03" 
+  <!-- Add the package -->~~~~
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta04" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
@@ -166,7 +166,7 @@ Your project file should look something like this:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta03" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta04" 
                     PrivateAssets="all"
                     ExcludeAssets="compile;runtime" />
 <!--                               ☝ Add compile to the list of excluded assets. -->
