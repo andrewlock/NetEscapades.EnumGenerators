@@ -52,7 +52,7 @@ public class EnumGenerator : IIncrementalGenerator
                 INamedTypeSymbol attributeContainingTypeSymbol = attributeSymbol.ContainingType;
                 string fullName = attributeContainingTypeSymbol.ToDisplayString();
 
-                // Is the attribute the [LoggerMessage] attribute?
+                // Is the attribute the [EnumExtensions] attribute?
                 if (fullName == EnumExtensionsAttribute)
                 {
                     // return the enum
