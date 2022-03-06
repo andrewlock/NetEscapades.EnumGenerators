@@ -30,10 +30,10 @@ public class EnumGenerator : IIncrementalGenerator
             static (spc, source) => Execute(source.Item1, source.Item2, spc));
     }
 
-    static bool IsSyntaxTargetForGeneration(SyntaxNode node)
+    static bool IsSyntaxTargetForGeneration(in SyntaxNode node)
         => node is EnumDeclarationSyntax m && m.AttributeLists.Count > 0;
 
-    static EnumDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    static EnumDeclarationSyntax? GetSemanticTargetForGeneration(in GeneratorSyntaxContext context)
     {
         // we know the node is a EnumDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         var enumDeclarationSyntax = (EnumDeclarationSyntax)context.Node;
@@ -65,7 +65,7 @@ public class EnumGenerator : IIncrementalGenerator
         return null;
     }
 
-    static void Execute(Compilation compilation, ImmutableArray<EnumDeclarationSyntax> enums, SourceProductionContext context)
+    static void Execute(in Compilation compilation, in ImmutableArray<EnumDeclarationSyntax> enums, in SourceProductionContext context)
     {
         if (enums.IsDefaultOrEmpty)
         {
@@ -88,7 +88,7 @@ public class EnumGenerator : IIncrementalGenerator
         }
     }
 
-    static List<EnumToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<EnumDeclarationSyntax> enums, CancellationToken ct)
+    static List<EnumToGenerate> GetTypesToGenerate(in Compilation compilation, in IEnumerable<EnumDeclarationSyntax> enums, in CancellationToken ct)
     {
         var enumsToGenerate = new List<EnumToGenerate>();
         INamedTypeSymbol? enumAttribute = compilation.GetTypeByMetadataName(EnumExtensionsAttribute);
@@ -175,7 +175,7 @@ public class EnumGenerator : IIncrementalGenerator
         return enumsToGenerate;
     }
 
-    static string GetNamespace(EnumDeclarationSyntax enumDeclarationSyntax)
+    static string GetNamespace(in EnumDeclarationSyntax enumDeclarationSyntax)
     {
         // determine the namespace the class is declared in, if any
         string nameSpace = string.Empty;
