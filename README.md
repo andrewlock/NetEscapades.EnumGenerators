@@ -40,7 +40,7 @@ To use the generator, add the `[EnumExtensions]` attribute to an enum. For examp
 
 ```csharp
 [EnumExtensions]
-public MyEnum
+public enum MyEnum
 {
     First,
     Second,
