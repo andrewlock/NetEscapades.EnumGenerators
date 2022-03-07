@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
+using Microsoft.CodeAnalysis.Emit;
 using NetEscapades.EnumGenerators;
 
 BenchmarkSwitcher
@@ -171,4 +172,20 @@ public class TryParseIgnoreCaseBenchmark
             ? result
             : default;
     }
+}
+
+[MemoryDiagnoser]
+public class EnumLengthBenchmark
+{
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public int EnumLength() => Enum.GetNames(typeof(TestEnum)).Length;
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public int EnumLengthExtensions() => TestEnumExtensions.GetNames().Length;
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public int EnumLengthProperty() => TestEnumExtensions.Length;
 }
