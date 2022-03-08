@@ -28,7 +28,7 @@ namespace Something.Blah
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
+        public static bool IsDefined(in string name)
             => name switch
             {
                 nameof(Something.Blah.ShortName.First) => true,
@@ -40,7 +40,7 @@ namespace Something.Blah
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             bool ignoreCase, 
             out Something.Blah.ShortName value)
             => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
@@ -49,7 +49,7 @@ namespace Something.Blah
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             out Something.Blah.ShortName value)
         {
             switch (name)
@@ -73,7 +73,7 @@ namespace Something.Blah
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             out Something.Blah.ShortName value)
         {
             switch (name)

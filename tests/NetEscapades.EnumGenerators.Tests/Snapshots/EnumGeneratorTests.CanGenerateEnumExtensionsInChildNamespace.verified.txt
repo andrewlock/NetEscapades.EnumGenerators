@@ -28,7 +28,7 @@ namespace MyTestNameSpace
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
+        public static bool IsDefined(in string name)
             => name switch
             {
                 nameof(MyTestNameSpace.MyEnum.First) => true,
@@ -40,7 +40,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             bool ignoreCase, 
             out MyTestNameSpace.MyEnum value)
             => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
@@ -49,7 +49,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             out MyTestNameSpace.MyEnum value)
         {
             switch (name)
@@ -73,7 +73,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             out MyTestNameSpace.MyEnum value)
         {
             switch (name)

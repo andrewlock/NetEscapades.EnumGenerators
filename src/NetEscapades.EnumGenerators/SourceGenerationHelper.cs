@@ -100,7 +100,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
+        public static bool IsDefined(in string name)
             => name switch
             {");
         foreach (var member in enumToGenerate.Values)
@@ -117,7 +117,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             bool ignoreCase, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
@@ -126,7 +126,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
         {
             switch (name)
@@ -153,7 +153,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in string? name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
         {
             switch (name)
