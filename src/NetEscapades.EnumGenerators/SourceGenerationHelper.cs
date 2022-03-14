@@ -49,12 +49,14 @@ namespace NetEscapades.EnumGenerators
     {
         sb.Append(Header)
             .AppendNamespaceOpening(enumToGenerate.Namespace)
-            .AppendClassOpening(enumToGenerate.IsPublic ? "public" : "internal", true, enumToGenerate.Name)
+            .AppendClassOpening(enumToGenerate)
             .AppendToStringFastMethod(enumToGenerate)
             .AppendHasFlagsMethod(enumToGenerate)
-            .AppendIsDefinedMethod(enumToGenerate)
-            .AppendTryParseMethod(enumToGenerate)
-            .AppendGetNamesMethod(enumToGenerate)
+            .AppendLine().AppendIsDefinedMethod(enumToGenerate)
+            .AppendLine().AppendTryParseMethod(enumToGenerate)
+            .AppendLine().AppendGetValuesMethod(enumToGenerate)
+            .AppendLine().AppendGetNamesMethod(enumToGenerate)
+            .AppendClassEnding()
             .AppendNamespaceEnding(enumToGenerate.Namespace);
 
         return sb.ToString();

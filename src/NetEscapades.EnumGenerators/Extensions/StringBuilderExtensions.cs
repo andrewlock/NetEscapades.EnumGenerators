@@ -27,34 +27,33 @@ namespace {nameSpace}
         return stringBuilder;
     }
 
-    internal static StringBuilder AppendClassOpening(this StringBuilder stringBuilder, in string accesibility, bool isStatic, in string name)
+    internal static StringBuilder AppendClassOpening(this StringBuilder stringBuilder, in EnumToGenerate enumToGenerate)
     {
-        string staticKeyword = isStatic ? "static " : string.Empty;
-
-        stringBuilder.Append($@"
-    {accesibility} {staticKeyword}partial class {name}
-    {{");
+        stringBuilder.Append(@"
+    ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
+    {");
 
         return stringBuilder;
     }
 
     internal static StringBuilder AppendClassEnding(this StringBuilder stringBuilder)
     {
-        return stringBuilder.Append($@"
-    }}");
+        return stringBuilder.Append(@"
+    }");
     }
 
     internal static StringBuilder AppendToStringFastMethod(this StringBuilder stringBuilder, in EnumToGenerate enumToGenerate)
     {
-        stringBuilder.Append($@"
-    {{
-        public static string ToStringFast(this {enumToGenerate.FullyQualifiedName} value)
+        stringBuilder.Append(@"
+        public static string ToStringFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
-            {{");
+            {");
         foreach (var member in enumToGenerate.Values)
         {
-            stringBuilder.Append($@"
-                {enumToGenerate.FullyQualifiedName}.{member.Key} => nameof({enumToGenerate.FullyQualifiedName}.{member.Key}),");
+            stringBuilder.Append(@"
+                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                .Append(" => nameof(")
+                .Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
         }
 
         stringBuilder.Append(@"
@@ -68,14 +67,15 @@ namespace {nameSpace}
     {
         if (enumToGenerate.HasFlags)
         {
-            stringBuilder.Append($@"
-
-        public static bool HasFlag(this {enumToGenerate.FullyQualifiedName} value, {enumToGenerate.FullyQualifiedName} flag)
+            stringBuilder
+                .AppendLine()
+                .Append(@"
+        public static bool HasFlag(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, ").Append(enumToGenerate.FullyQualifiedName).Append(@" flag)
             => value switch
-            {{
+            {
                 0  => flag.Equals(0),
                 _ => (value & flag) != 0,
-            }};");
+            };");
         }
 
         return stringBuilder;
@@ -83,27 +83,27 @@ namespace {nameSpace}
 
     internal static StringBuilder AppendIsDefinedMethod(this StringBuilder stringBuilder, in EnumToGenerate enumToGenerate)
     {
-        stringBuilder.Append($@"
-
-       public static bool IsDefined({enumToGenerate.FullyQualifiedName} value)
+        stringBuilder.Append(@"
+       public static bool IsDefined(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
-            {{");
+            {");
         foreach (var member in enumToGenerate.Values)
         {
-            stringBuilder.Append($@"
-                {enumToGenerate.FullyQualifiedName}.{member.Key} => true,");
+            stringBuilder.Append(@"
+                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                .Append(" => true,");
         }
-        stringBuilder.Append($@"
+        stringBuilder.Append(@"
                 _ => false,
-            }};
+            };
 
         public static bool IsDefined(string name)
             => name switch
-            {{");
+            {");
         foreach (var member in enumToGenerate.Values)
         {
-            stringBuilder.Append($@"
-                nameof({enumToGenerate.FullyQualifiedName}.{member.Key}) => true,");
+            stringBuilder.Append(@"
+                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
         }
 
         stringBuilder.Append(@"
@@ -115,15 +115,14 @@ namespace {nameSpace}
 
     internal static StringBuilder AppendTryParseMethod(this StringBuilder stringBuilder, in EnumToGenerate enumToGenerate)
     {
-        stringBuilder.Append($@"
-
+        stringBuilder.Append(@"
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             bool ignoreCase, 
-            out {enumToGenerate.FullyQualifiedName} value)
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
 
         private static bool TryParseIgnoreCase(
@@ -131,64 +130,69 @@ namespace {nameSpace}
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out {enumToGenerate.FullyQualifiedName} value)
-        {{
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        {
             switch (name)
-            {{");
-
+            {");
         foreach (var member in enumToGenerate.Values)
         {
-            stringBuilder.Append($@"
-                case {{ }} s when s.Equals(nameof({enumToGenerate.FullyQualifiedName}.{member.Key}), System.StringComparison.OrdinalIgnoreCase):
-                    value = {enumToGenerate.FullyQualifiedName}.{member.Key}
+            stringBuilder.Append(@"
+                case { } s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), System.StringComparison.OrdinalIgnoreCase):
+                    value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
         }
 
-        stringBuilder.Append($@"
-                case {{ }} s when {enumToGenerate.UnderlyingType}.TryParse(name, out var val):
-                    value = ({enumToGenerate.FullyQualifiedName})val;
+        stringBuilder.Append(@"
+                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
                     return true;
                 default:
                     value = default;
                     return false;
-            }}
-        }}
+            }
+        }
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out {enumToGenerate.FullyQualifiedName} value)
-        {{
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        {
             switch (name)
-            {{");
+            {");
         foreach (var member in enumToGenerate.Values)
         {
-            stringBuilder.Append($@"
-                case nameof({enumToGenerate.FullyQualifiedName}).{member.Key}
-                    value = {enumToGenerate.FullyQualifiedName}.{ member.Key}
+            stringBuilder.Append(@"
+                case nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"):
+                    value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
         }
 
-        stringBuilder.Append($@"
-                case {{ }} s when {enumToGenerate.UnderlyingType}.TryParse(name, out var val):
-                    value = ({enumToGenerate.FullyQualifiedName})val;
+        stringBuilder.Append(@"
+                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
                     return true;
                 default:
                     value = default;
                     return false;
-            }}
-        }}
+            }
+        }");
 
-        public static {enumToGenerate.FullyQualifiedName}[] GetValues()
-        {{
+        return stringBuilder;
+    }
+
+    internal static StringBuilder AppendGetValuesMethod(this StringBuilder stringBuilder, in EnumToGenerate enumToGenerate)
+    {
+        stringBuilder.Append(@"
+        public static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[] GetValues()
+        {
             return new[]
-            {{");
+            {");
         foreach (var member in enumToGenerate.Values)
         {
-            stringBuilder.Append($@"
-                {enumToGenerate.FullyQualifiedName}.{member.Key},");
+            stringBuilder.Append(@"
+                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(',');
         }
         stringBuilder.Append(@"
             };
@@ -197,37 +201,21 @@ namespace {nameSpace}
         return stringBuilder;
     }
 
-
     internal static StringBuilder AppendGetNamesMethod(this StringBuilder stringBuilder, in EnumToGenerate enumToGenerate)
     {
-        stringBuilder.Append($@"
-
-        public static {enumToGenerate.FullyQualifiedName}[] GetValues()
-        {{
-            return new[]
-            {{");
-        foreach (var member in enumToGenerate.Values)
-        {
-            stringBuilder.Append($@"
-                {enumToGenerate.FullyQualifiedName}.{member.Key},");
-        }
         stringBuilder.Append(@"
-            };
-        }
-
         public static string[] GetNames()
         {
             return new[]
             {");
         foreach (var member in enumToGenerate.Values)
         {
-            stringBuilder.Append($@"
-                nameof({enumToGenerate.FullyQualifiedName}.{member.Key}),");
+            stringBuilder.Append(@"
+                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
         }
         stringBuilder.Append(@"
             };
-        }
-    }");
+        }");
 
         return stringBuilder;
     }
