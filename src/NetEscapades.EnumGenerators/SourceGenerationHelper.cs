@@ -1,3 +1,4 @@
+using NetEscapades.EnumGenerators.Extensions;
 using System.Text;
 
 namespace NetEscapades.EnumGenerators;
@@ -46,167 +47,15 @@ namespace NetEscapades.EnumGenerators
 ";
     public static string GenerateExtensionClass(StringBuilder sb, EnumToGenerate enumToGenerate)
     {
-        sb.Append(Header);
-
-        if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
-        {
-            sb.Append(@"
-namespace ").Append(enumToGenerate.Namespace).Append(@"
-{");
-        }
-
-        sb.Append(@"
-    ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
-    {
-        public static string ToStringFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => value switch
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => nameof(")
-                .Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
-        }
-
-        sb.Append(@"
-                _ => value.ToString(),
-            };");
-
-        if (enumToGenerate.HasFlags)
-        {
-            sb.Append(@"
-
-        public static bool HasFlag(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, ").Append(enumToGenerate.FullyQualifiedName).Append(@" flag)
-            => value switch
-            {
-                0  => flag.Equals(0),
-                _ => (value & flag) != 0,
-            };");
-        }
-
-        sb.Append(@"
-
-       public static bool IsDefined(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => value switch
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => true,");
-        }
-        sb.Append(@"
-                _ => false,
-            };
-
-        public static bool IsDefined(string name)
-            => name switch
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
-        }
-
-        sb.Append(@"
-                _ => false,
-            };
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            bool ignoreCase, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
-
-        private static bool TryParseIgnoreCase(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-        {
-            switch (name)
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                case { } s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), System.StringComparison.OrdinalIgnoreCase):
-                    value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                    return true;");
-        }
-
-        sb.Append(@"
-                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
-        }
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-        {
-            switch (name)
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                case nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"):
-                    value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                    return true;");
-        }
-
-        sb.Append(@"
-                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
-        }
-
-        public static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[] GetValues()
-        {
-            return new[]
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(',');
-        }
-        sb.Append(@"
-            };
-        }
-
-        public static string[] GetNames()
-        {
-            return new[]
-            {");
-        foreach (var member in enumToGenerate.Values)
-        {
-            sb.Append(@"
-                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
-        }
-        sb.Append(@"
-            };
-        }
-    }");
-        if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
-        {
-            sb.Append(@"
-}");
-        }
+        sb.Append(Header)
+            .AppendNamespaceOpening(enumToGenerate.Namespace)
+            .AppendClassOpening(enumToGenerate.IsPublic ? "public" : "internal", true, enumToGenerate.Name)
+            .AppendToStringFastMethod(enumToGenerate)
+            .AppendHasFlagsMethod(enumToGenerate)
+            .AppendIsDefinedMethod(enumToGenerate)
+            .AppendTryParseMethod(enumToGenerate)
+            .AppendGetNamesMethod(enumToGenerate)
+            .AppendNamespaceEnding(enumToGenerate.Namespace);
 
         return sb.ToString();
     }
