@@ -65,8 +65,16 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => nameof(")
-                .Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                .Append(" => ");
+
+            if (member.Value is null)
+            {
+                sb.Append("nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
+            }
+            else
+            {
+                sb.Append('"').Append(member.Value).Append(@""",");
+            }
         }
 
         sb.Append(@"

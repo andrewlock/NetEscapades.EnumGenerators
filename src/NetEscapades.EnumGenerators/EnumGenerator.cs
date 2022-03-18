@@ -149,7 +149,7 @@ public class EnumGenerator : IIncrementalGenerator
             string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";
 
             var enumMembers = enumSymbol.GetMembers();
-            var members = new List<KeyValuePair<string, object>>(enumMembers.Length);
+            var members = new List<KeyValuePair<string, string?>>(enumMembers.Length);
 
             foreach (var member in enumMembers)
             {
@@ -159,7 +159,25 @@ public class EnumGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                members.Add(new KeyValuePair<string, object>(member.Name, field.ConstantValue));
+                string? displayName = null;
+                foreach (var attribute in member.GetAttributes())
+                {
+                    if (attribute.AttributeClass is null || attribute.AttributeClass.Name != "DisplayAttribute")
+                    {
+                        continue;
+                    }
+
+                    foreach (var namedArgument in attribute.NamedArguments)
+                    {
+                        if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
+                        {
+                            displayName = dn;
+                            break;
+                        }
+                    }
+                }
+                
+                members.Add(new KeyValuePair<string, string?>(member.Name, displayName));
             }
 
             enumsToGenerate.Add(new EnumToGenerate(

@@ -20,7 +20,7 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
+            new Dictionary<string, string?> { { "First", null }, { "Second", null } }.ToList(),
             hasFlags: false);
 
         var sb = new StringBuilder();
@@ -39,7 +39,7 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
+            new Dictionary<string, string?> { { "First", null }, { "Second", null } }.ToList(),
             hasFlags: true);
 
         var sb = new StringBuilder();

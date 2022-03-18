@@ -134,4 +134,29 @@ namespace MyTestNameSpace
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
+
+#if NETCOREAPP3_1_OR_GREATER
+    [Fact]
+    public Task CanGenerateEnumExtensionsWithDisplayName()
+    {
+        const string input = @"using NetEscapades.EnumGenerators;
+using System.ComponentModel.DataAnnotations;
+
+namespace MyTestNameSpace
+{
+    [EnumExtensions]
+    public enum MyEnum
+    {
+        First = 0,
+
+        [Display(Name = ""2nd"")]
+        Second = 1
+    }
+}";
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+#endif
 }

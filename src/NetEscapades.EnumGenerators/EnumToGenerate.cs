@@ -8,7 +8,7 @@ public readonly struct EnumToGenerate
     public readonly bool IsPublic;
     public readonly bool HasFlags;
     public readonly string UnderlyingType;
-    public readonly List<KeyValuePair<string, object>> Values;
+    public readonly List<KeyValuePair<string, string?>> Values;
 
     public EnumToGenerate(
     string name,
@@ -16,7 +16,7 @@ public readonly struct EnumToGenerate
     string fullyQualifiedName,
     string underlyingType,
     bool isPublic,
-    List<KeyValuePair<string, object>> values,
+    List<KeyValuePair<string, string?>> values,
     bool hasFlags)
     {
         Name = name;
