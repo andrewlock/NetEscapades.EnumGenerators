@@ -8,6 +8,10 @@ public readonly struct EnumToGenerate
     public readonly bool IsPublic;
     public readonly bool HasFlags;
     public readonly string UnderlyingType;
+
+    /// <summary>
+    /// Key is the enum name. Value is the custom name setted by the <c>[Display(Name)]</c> attribute.
+    /// </summary>
     public readonly List<KeyValuePair<string, string?>> Values;
 
     public EnumToGenerate(
