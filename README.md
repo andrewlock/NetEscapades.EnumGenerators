@@ -43,8 +43,8 @@ To use the generator, add the `[EnumExtensions]` attribute to an enum. For examp
 public MyEnum
 {
     First,
-	
-	[Display(Name = "2nd")]
+
+    [Display(Name = "2nd")]
     Second,
 }
 ```
