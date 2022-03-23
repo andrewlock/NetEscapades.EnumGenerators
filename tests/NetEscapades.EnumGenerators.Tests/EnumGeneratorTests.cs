@@ -150,7 +150,11 @@ namespace MyTestNameSpace
         First = 0,
 
         [Display(Name = ""2nd"")]
-        Second = 1
+        Second = 1,
+        Third = 2,
+
+        [Display(Name = ""4th"")]
+        Fourth = 3
     }
 }";
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
