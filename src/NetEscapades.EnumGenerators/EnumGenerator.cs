@@ -187,7 +187,7 @@ public class EnumGenerator : IIncrementalGenerator
                 underlyingType: underlyingType,
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
                 hasFlags: hasFlags,
-                values: members));
+                names: members));
         }
 
         return enumsToGenerate;

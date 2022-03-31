@@ -61,7 +61,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         public static string ToStringFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
             {");
-        foreach (var member in enumToGenerate.Values)
+        foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
@@ -98,7 +98,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
        public static bool IsDefined(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
             {");
-        foreach (var member in enumToGenerate.Values)
+        foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
@@ -111,7 +111,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         public static bool IsDefined(string name)
             => name switch
             {");
-        foreach (var member in enumToGenerate.Values)
+        foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
@@ -139,7 +139,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             switch (name)
             {");
-        foreach (var member in enumToGenerate.Values)
+        foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
                 case { } s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), System.StringComparison.OrdinalIgnoreCase):
@@ -166,7 +166,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             switch (name)
             {");
-        foreach (var member in enumToGenerate.Values)
+        foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
                 case nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"):
@@ -188,7 +188,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             return new[]
             {");
-        foreach (var member in enumToGenerate.Values)
+        foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(',');
@@ -201,7 +201,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             return new[]
             {");
-        foreach (var member in enumToGenerate.Values)
+        foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");

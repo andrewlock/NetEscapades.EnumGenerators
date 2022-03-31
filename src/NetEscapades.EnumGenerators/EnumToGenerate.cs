@@ -12,7 +12,7 @@ public readonly struct EnumToGenerate
     /// <summary>
     /// Key is the enum name. Value is the custom name setted by the <c>[Display(Name)]</c> attribute.
     /// </summary>
-    public readonly List<KeyValuePair<string, string?>> Values;
+    public readonly List<KeyValuePair<string, string?>> Names;
 
     public EnumToGenerate(
     string name,
@@ -20,13 +20,13 @@ public readonly struct EnumToGenerate
     string fullyQualifiedName,
     string underlyingType,
     bool isPublic,
-    List<KeyValuePair<string, string?>> values,
+    List<KeyValuePair<string, string?>> names,
     bool hasFlags)
     {
         Name = name;
         Namespace = ns;
         UnderlyingType = underlyingType;
-        Values = values;
+        Names = names;
         HasFlags = hasFlags;
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
