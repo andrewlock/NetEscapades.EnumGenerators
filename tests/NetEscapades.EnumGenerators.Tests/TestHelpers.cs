@@ -18,7 +18,8 @@ internal class TestHelpers
             .Concat(new[]
             {
                 MetadataReference.CreateFromFile(typeof(T).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location)
+                MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location)
             });
 
         var compilation = CSharpCompilation.Create(

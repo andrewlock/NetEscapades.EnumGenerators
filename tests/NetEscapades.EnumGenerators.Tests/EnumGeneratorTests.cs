@@ -135,7 +135,6 @@ namespace MyTestNameSpace
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
 
-#if NETCOREAPP3_1_OR_GREATER
     [Fact]
     public Task CanGenerateEnumExtensionsWithDisplayName()
     {
@@ -162,5 +161,4 @@ namespace MyTestNameSpace
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
-#endif
 }
