@@ -18,7 +18,7 @@
                 _ => value.ToString(),
             };
 
-       public static bool IsDefined(MyEnum value)
+        public static bool IsDefined(MyEnum value)
             => value switch
             {
                 MyEnum.First => true,
@@ -31,6 +31,14 @@
             {
                 nameof(MyEnum.First) => true,
                 nameof(MyEnum.Second) => true,
+                _ => false,
+            };
+
+        public static bool IsDefined(in ReadOnlySpan<char> name)
+            => name switch
+            {
+                ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.First).AsSpan(), System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 
@@ -90,6 +98,45 @@
                     return false;
             }
         }
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            bool ignoreCase,
+            out MyEnum result)
+            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out result) : TryParse(name, System.StringComparison.Ordinal, out result);
+
+        private static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            System.StringComparison stringComparisonOption,
+            out MyEnum result)
+        {
+            switch (name)
+            {
+                case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.First).AsSpan(), stringComparisonOption):
+                    result = MyEnum.First;
+                    return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), stringComparisonOption):
+                    result = MyEnum.Second;
+                    return true;
+                default:
+                    result = default;
+                    return false;
+            }
+        }
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            out MyEnum result)
+            => TryParse(name, System.StringComparison.Ordinal, out result);
 
         public static MyEnum[] GetValues()
         {

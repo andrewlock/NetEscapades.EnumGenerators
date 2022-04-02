@@ -9,7 +9,9 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name);
+    protected abstract bool IsDefined(in ReadOnlySpan<char> name);
     protected abstract bool TryParse(string name, bool ignoreCase, out T parsed);
+    protected abstract bool TryParse(in ReadOnlySpan<char> name, bool ignoreCase, out T parsed);
 
     protected void GeneratesToStringFastTest(T value)
     {
@@ -32,6 +34,13 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(Enum.IsDefined(typeof(T), name));
     }
 
+    protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name)
+    {
+        var isDefined = IsDefined(name);
+
+        isDefined.Should().Be(Enum.IsDefined(typeof(T), name.ToString()));
+    }
+
     protected void GeneratesTryParseTest(string name)
     {
         var isValid = Enum.TryParse(name, out T expected);
@@ -41,9 +50,27 @@ public abstract class ExtensionTests<T> where T : struct
         parsed.Should().Be(expected);
     }
 
+    protected void GeneratesTryParseTest(in ReadOnlySpan<char> name)
+    {
+        var isValid = Enum.TryParse(name.ToString(), out T expected);
+        var result = TryParse(name, ignoreCase: false, out var parsed);
+        using var _ = new AssertionScope();
+        result.Should().Be(isValid);
+        parsed.Should().Be(expected);
+    }
+
     protected void GeneratesTryParseIgnoreCaseTest(string name)
     {
         var isValid = Enum.TryParse(name, ignoreCase: true, out T expected);
+        var result = TryParse(name, ignoreCase: true, out var parsed);
+        using var _ = new AssertionScope();
+        result.Should().Be(isValid);
+        parsed.Should().Be(expected);
+    }
+
+    protected void GeneratesTryParseIgnoreCaseTest(in ReadOnlySpan<char> name)
+    {
+        var isValid = Enum.TryParse(name.ToString(), ignoreCase: true, out T expected);
         var result = TryParse(name, ignoreCase: true, out var parsed);
         using var _ = new AssertionScope();
         result.Should().Be(isValid);

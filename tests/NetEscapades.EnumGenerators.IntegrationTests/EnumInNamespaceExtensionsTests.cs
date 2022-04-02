@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -29,7 +30,10 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name) => EnumInNamespaceExtensions.IsDefined(name);
-    protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed)
+    protected override bool IsDefined(in ReadOnlySpan<char> name) => EnumInNamespaceExtensions.IsDefined(name);
+    protected override bool TryParse(string name, bool ignoreCase, out EnumInNamespace parsed)
+        => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
+    protected override bool TryParse(in ReadOnlySpan<char> name, bool ignoreCase, out EnumInNamespace parsed)
         => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
 
     [Theory]
@@ -46,11 +50,23 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan());
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParse(string name) => GeneratesTryParseTest(name);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseUsingSpan(string name) => GeneratesTryParseTest(name.AsSpan());
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseIgnoreCaseTest(name);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseUsingSpan(string name) => GeneratesTryParseIgnoreCaseTest(name.AsSpan());
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumInNamespaceExtensions.GetValues());

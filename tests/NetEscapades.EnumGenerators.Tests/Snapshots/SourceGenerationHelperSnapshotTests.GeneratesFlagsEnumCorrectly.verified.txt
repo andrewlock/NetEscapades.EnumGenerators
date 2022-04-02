@@ -27,7 +27,7 @@ namespace Something.Blah
                 _ => (value & flag) != 0,
             };
 
-       public static bool IsDefined(Something.Blah.ShortName value)
+        public static bool IsDefined(Something.Blah.ShortName value)
             => value switch
             {
                 Something.Blah.ShortName.First => true,
@@ -40,6 +40,14 @@ namespace Something.Blah
             {
                 nameof(Something.Blah.ShortName.First) => true,
                 nameof(Something.Blah.ShortName.Second) => true,
+                _ => false,
+            };
+
+        public static bool IsDefined(in ReadOnlySpan<char> name)
+            => name switch
+            {
+                ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 
@@ -99,6 +107,45 @@ namespace Something.Blah
                     return false;
             }
         }
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            bool ignoreCase,
+            out Something.Blah.ShortName result)
+            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out result) : TryParse(name, System.StringComparison.Ordinal, out result);
+
+        private static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            System.StringComparison stringComparisonOption,
+            out Something.Blah.ShortName result)
+        {
+            switch (name)
+            {
+                case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), stringComparisonOption):
+                    result = Something.Blah.ShortName.First;
+                    return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), stringComparisonOption):
+                    result = Something.Blah.ShortName.Second;
+                    return true;
+                default:
+                    result = default;
+                    return false;
+            }
+        }
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            out Something.Blah.ShortName result)
+            => TryParse(name, System.StringComparison.Ordinal, out result);
 
         public static Something.Blah.ShortName[] GetValues()
         {
