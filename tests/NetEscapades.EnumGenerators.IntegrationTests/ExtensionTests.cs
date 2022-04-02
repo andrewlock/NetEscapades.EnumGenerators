@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -28,7 +27,7 @@ public abstract class ExtensionTests<T> where T : struct
                 var memberInfo = value.GetType().GetMember(valueAsString);
                 if (memberInfo.Length > 0)
                 {
-                    displayName = memberInfo.First().GetCustomAttribute<DisplayAttribute>()?.GetName();
+                    displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>()?.GetName();
                 }
             }
         }
