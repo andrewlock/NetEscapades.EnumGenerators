@@ -22,10 +22,14 @@ public abstract class ExtensionTests<T> where T : struct
 
         if (typeof(T).IsEnum)
         {
-            var memberInfo = value.GetType().GetMember(value.ToString());
-            if (memberInfo.Length > 0)
-            {
-                displayName = memberInfo.First().GetCustomAttribute<DisplayAttribute>()?.GetName();
+            var valueAsString = value.ToString();
+            if (valueAsString is not null)
+            {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
+                var memberInfo = value.GetType().GetMember(valueAsString);
+                if (memberInfo.Length > 0)
+                {
+                    displayName = memberInfo.First().GetCustomAttribute<DisplayAttribute>()?.GetName();
+                }
             }
         }
 
