@@ -24,7 +24,7 @@ public abstract class ExtensionTests<T> where T : struct
         {
             if (valueAsString is not null)
             {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
-                var memberInfo = typeof(value).GetMember(valueAsString);
+                var memberInfo = typeof(T).GetMember(valueAsString);
                 if (memberInfo.Length > 0)
                 {
                     displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>()?.GetName();
