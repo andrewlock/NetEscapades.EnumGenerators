@@ -87,7 +87,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
-       public static bool IsDefined(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        public static bool IsDefined(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
             {");
         foreach (var member in enumToGenerate.Values)
@@ -107,6 +107,19 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
+        }
+
+        sb.Append(@"
+                _ => false,
+            };
+
+        public static bool IsDefined(ReadOnlySpan<char> name)
+            => name switch
+            {");
+        foreach (var member in enumToGenerate.Values)
+        {
+            sb.Append(@"
+                ReadOnlySpan<char> current when MemoryExtensions.Equals(current, nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), StringComparison.Ordinal) => true,");
         }
 
         sb.Append(@"
