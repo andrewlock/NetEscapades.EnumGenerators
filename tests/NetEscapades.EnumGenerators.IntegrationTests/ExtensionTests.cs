@@ -18,11 +18,11 @@ public abstract class ExtensionTests<T> where T : struct
     protected void GeneratesToStringFastTest(T value)
     {
         var serialized = ToStringFast(value);
+        var valueAsString = value.ToString();
         string? displayName = null;
 
         if (typeof(T).IsEnum)
         {
-            var valueAsString = value.ToString();
             if (valueAsString is not null)
             {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
                 var memberInfo = value.GetType().GetMember(valueAsString);
@@ -33,7 +33,7 @@ public abstract class ExtensionTests<T> where T : struct
             }
         }
 
-        string expectedValue = displayName is null ? value.ToString() : displayName;
+        var expectedValue = displayName is null ? valueAsString : displayName;
         serialized.Should().Be(expectedValue);
     }
 
