@@ -1,9 +1,13 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Execution;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
 
+#nullable enable
 public abstract class ExtensionTests<T> where T : struct
 {
     protected abstract string ToStringFast(T value);
@@ -14,8 +18,19 @@ public abstract class ExtensionTests<T> where T : struct
     protected void GeneratesToStringFastTest(T value)
     {
         var serialized = ToStringFast(value);
+        string? displayName = null;
 
-        serialized.Should().Be(value.ToString());
+        if (typeof(T).IsEnum)
+        {
+            var memberInfo = value.GetType().GetMember(value.ToString());
+            if (memberInfo.Length > 0)
+            {
+                displayName = memberInfo.First().GetCustomAttribute<DisplayAttribute>()?.GetName();
+            }
+        }
+
+        string expectedValue = displayName is null ? value.ToString() : displayName;
+        serialized.Should().Be(expectedValue);
     }
 
     protected void GeneratesIsDefinedTest(T value)
