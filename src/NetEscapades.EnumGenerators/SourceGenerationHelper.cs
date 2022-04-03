@@ -339,7 +339,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         }
 
         sb.Append(@"
-#if NETCOREAPP3_0_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER
                 case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
 #else
                 case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name.ToString(), out var numericResult):
