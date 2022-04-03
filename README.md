@@ -43,6 +43,8 @@ To use the generator, add the `[EnumExtensions]` attribute to an enum. For examp
 public enum MyEnum
 {
     First,
+
+    [Display(Name = "2nd")]
     Second,
 }
 ```
@@ -56,7 +58,7 @@ public static partial class MyEnumExtensions
         => value switch
         {
             MyEnum.First => nameof(MyEnum.First),
-            MyEnum.Second => nameof(MyEnum.Second),
+            MyEnum.Second => "2nd",
             _ => value.ToString(),
         };
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,8 +19,13 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
-            hasFlags: false);
+            new Dictionary<string, EnumValueOption>
+            {
+                { "First", new EnumValueOption(null, false) }, 
+                { "Second", new EnumValueOption(null, false) }
+            }.ToList(),
+            hasFlags: false,
+            isDisplaAttributeUsed: false);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
@@ -39,8 +43,13 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
-            hasFlags: true);
+            new Dictionary<string, EnumValueOption>
+            {
+                { "First", new EnumValueOption(null, false) },
+                { "Second", new EnumValueOption(null, false) }
+            }.ToList(),
+            hasFlags: true,
+            isDisplaAttributeUsed: false);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);

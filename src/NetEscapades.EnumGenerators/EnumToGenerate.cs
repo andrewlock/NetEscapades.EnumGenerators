@@ -8,7 +8,13 @@ public readonly struct EnumToGenerate
     public readonly bool IsPublic;
     public readonly bool HasFlags;
     public readonly string UnderlyingType;
-    public readonly List<KeyValuePair<string, object>> Values;
+
+    /// <summary>
+    /// Key is the enum name.
+    /// </summary>
+    public readonly List<KeyValuePair<string, EnumValueOption>> Names;
+
+    public readonly bool IsDisplaAttributeUsed;
 
     public EnumToGenerate(
     string name,
@@ -16,15 +22,17 @@ public readonly struct EnumToGenerate
     string fullyQualifiedName,
     string underlyingType,
     bool isPublic,
-    List<KeyValuePair<string, object>> values,
-    bool hasFlags)
+    List<KeyValuePair<string, EnumValueOption>> names,
+    bool hasFlags,
+    bool isDisplaAttributeUsed)
     {
         Name = name;
         Namespace = ns;
         UnderlyingType = underlyingType;
-        Values = values;
+        Names = names;
         HasFlags = hasFlags;
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
+        IsDisplaAttributeUsed = isDisplaAttributeUsed;
     }
 }
