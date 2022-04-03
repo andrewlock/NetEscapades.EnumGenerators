@@ -1,7 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using NetEscapades.EnumGenerators;
+using NetEscapades.EnumGenerators.Benchmarks;
 
 BenchmarkSwitcher
     .FromAssembly(typeof(Program).Assembly)
@@ -11,6 +13,8 @@ BenchmarkSwitcher
 public enum TestEnum
 {
     First = 0,
+
+    [Display(Name = "2nd")]
     Second = 1,
     Third = 2,
 }
@@ -25,6 +29,13 @@ public class ToStringBenchmark
     public string EnumToString()
     {
         return _enum.ToString();
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public string EnumToStringDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.GetDisplayName(_enum);
     }
 
     [Benchmark]
@@ -65,6 +76,13 @@ public class IsDefinedNameBenchmark
     public bool EnumIsDefined()
     {
         return Enum.IsDefined(typeof(TestEnum), _enum);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool EnumIsDefinedNameDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out _);
     }
 
     [Benchmark]
@@ -139,6 +157,13 @@ public class TryParseBenchmark
         return Enum.TryParse("Second", ignoreCase: false, out TestEnum result)
             ? result
             : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out TestEnum result) ? result : default;
     }
 
     [Benchmark]
