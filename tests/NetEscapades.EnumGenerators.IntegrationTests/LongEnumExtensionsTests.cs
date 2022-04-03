@@ -31,10 +31,10 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
-    protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name, bool ignoreCase, out LongEnum parsed, bool allowMatchingDisplayAttribute)
         => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
-    protected override bool TryParse(in ReadOnlySpan<char> name, bool ignoreCase, out LongEnum parsed, bool allowMatchingDisplayAttribute)
+    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out LongEnum parsed, bool allowMatchingDisplayAttribute)
         => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
     [Theory]

@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -30,7 +31,10 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     protected override string ToStringFast(EnumWithDisplayNameInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumWithDisplayNameInNamespace value) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingDisplayAttribute);
+    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingDisplayAttribute);
     protected override bool TryParse(string name,bool ignoreCase, out EnumWithDisplayNameInNamespace parsed, bool allowMatchingDisplayAttribute)
+        => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, ignoreCase, out parsed, allowMatchingDisplayAttribute);
+    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out EnumWithDisplayNameInNamespace parsed, bool allowMatchingDisplayAttribute = false)
         => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, ignoreCase, out parsed, allowMatchingDisplayAttribute);
 
     [Theory]

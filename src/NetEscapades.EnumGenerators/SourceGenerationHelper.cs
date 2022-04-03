@@ -169,7 +169,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-					ReadOnlySpan<char> current when current.Equals(nameof(""").Append(member.Value.DisplayName).Append(@""").AsSpan(), System.StringComparison.Ordinal) => true,");
+					ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.Ordinal) => true,");
                 }
             }
 
@@ -301,7 +301,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
             bool allowMatchingDisplayAttribute = false)
             => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);");
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
             sb.Append(@"
 
         public static bool TryParse(
@@ -372,11 +372,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            in ReadOnlySpan<char> name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
             bool allowMatchingDisplayAttribute = false)
             => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);");
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
         else
         {

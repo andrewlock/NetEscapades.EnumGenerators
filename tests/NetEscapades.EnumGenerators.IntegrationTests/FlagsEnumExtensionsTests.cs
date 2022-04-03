@@ -1,4 +1,5 @@
 using FluentAssertions;
+using System;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -32,10 +33,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
-    protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
         => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
-    protected override bool TryParse(in ReadOnlySpan<char> name, bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
+    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
         => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
     [Theory]

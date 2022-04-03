@@ -31,10 +31,10 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => EnumInNamespaceExtensions.IsDefined(name);
-    protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => EnumInNamespaceExtensions.IsDefined(name);
+    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => EnumInNamespaceExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingDisplayAttribute)
         => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
-    protected override bool TryParse(in ReadOnlySpan<char> name, bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingDisplayAttribute)
+    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingDisplayAttribute)
         => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
 
 
