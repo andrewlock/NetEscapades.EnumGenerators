@@ -150,6 +150,7 @@ public class EnumGenerator : IIncrementalGenerator
 
             var enumMembers = enumSymbol.GetMembers();
             var members = new List<KeyValuePair<string, string?>>(enumMembers.Length);
+            var isDisplaAttributeUsed = false;
 
             foreach (var member in enumMembers)
             {
@@ -172,6 +173,7 @@ public class EnumGenerator : IIncrementalGenerator
                         if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
                         {
                             displayName = dn;
+                            isDisplaAttributeUsed = true;
                             break;
                         }
                     }
@@ -187,7 +189,8 @@ public class EnumGenerator : IIncrementalGenerator
                 underlyingType: underlyingType,
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
                 hasFlags: hasFlags,
-                names: members));
+                names: members,
+                isDisplaAttributeUsed: isDisplaAttributeUsed));
         }
 
         return enumsToGenerate;

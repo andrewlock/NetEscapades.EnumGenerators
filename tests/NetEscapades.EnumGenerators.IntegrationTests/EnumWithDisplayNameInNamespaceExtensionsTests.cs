@@ -15,6 +15,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     {
         "First",
         "Second",
+        "2nd",
         "first",
         "SECOND",
         "3",
@@ -28,7 +29,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
 
     protected override string ToStringFast(EnumWithDisplayNameInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumWithDisplayNameInNamespace value) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(value);
-    protected override bool IsDefined(string name) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name);
+    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingDisplayAttribute);
     protected override bool TryParse(string name,bool ignoreCase, out EnumWithDisplayNameInNamespace parsed)
         => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
 
@@ -43,6 +44,10 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAllowMatchingDisplayAttribute(string name) => GeneratesIsDefinedTest(name, allowMatchingDisplayAttribute: true);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]

@@ -15,6 +15,7 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     {
         "First",
         "Second",
+        "2nd",
         "first",
         "SECOND",
         "3",
@@ -28,7 +29,7 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
 
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
-    protected override bool IsDefined(string name) => EnumInNamespaceExtensions.IsDefined(name);
+    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => EnumInNamespaceExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed)
         => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
 

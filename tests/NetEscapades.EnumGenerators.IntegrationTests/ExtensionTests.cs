@@ -11,29 +11,35 @@ public abstract class ExtensionTests<T> where T : struct
 {
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
-    protected abstract bool IsDefined(string name);
+    protected abstract bool IsDefined(string name, bool allowMatchingDisplayAttribute = false);
     protected abstract bool TryParse(string name, bool ignoreCase, out T parsed);
 
     protected void GeneratesToStringFastTest(T value)
     {
         var serialized = ToStringFast(value);
         var valueAsString = value.ToString();
-        string? displayName = null;
 
+        var displayName = GetDisplayName(valueAsString);
+        var expectedValue = displayName is null ? valueAsString : displayName;
+        
+        serialized.Should().Be(expectedValue);
+    }
+
+    private string? GetDisplayName(string? value)
+    {
         if (typeof(T).IsEnum)
         {
-            if (valueAsString is not null)
+            if (value is not null)
             {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
-                var memberInfo = typeof(T).GetMember(valueAsString);
+                var memberInfo = typeof(T).GetMember(value);
                 if (memberInfo.Length > 0)
                 {
-                    displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>()?.GetName();
+                    return memberInfo[0].GetCustomAttribute<DisplayAttribute>()?.GetName();
                 }
             }
         }
 
-        var expectedValue = displayName is null ? valueAsString : displayName;
-        serialized.Should().Be(expectedValue);
+        return null;
     }
 
     protected void GeneratesIsDefinedTest(T value)
@@ -43,11 +49,38 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(Enum.IsDefined(typeof(T), value));
     }
 
-    protected void GeneratesIsDefinedTest(string name)
+    protected void GeneratesIsDefinedTest(string name, bool allowMatchingDisplayAttribute = false)
     {
-        var isDefined = IsDefined(name);
+        bool isDefined;
+        bool expectedResult = false;
 
-        isDefined.Should().Be(Enum.IsDefined(typeof(T), name));
+        if (allowMatchingDisplayAttribute)
+        {
+            isDefined = IsDefined(name, allowMatchingDisplayAttribute);
+
+            var values = (T[])Enum.GetValues(typeof(T));
+            foreach (var value in values)
+            {
+                var displayName = GetDisplayName(value.ToString());
+                if (displayName is not null && displayName.Equals(name, StringComparison.Ordinal))
+                {
+                    expectedResult = true;
+                    break;
+                }
+            }
+
+            if (!expectedResult)
+            {
+                expectedResult = Enum.IsDefined(typeof(T), name);
+            }
+        }
+        else
+        {
+            isDefined = IsDefined(name, allowMatchingDisplayAttribute);
+            expectedResult = Enum.IsDefined(typeof(T), name);
+        }        
+
+        isDefined.Should().Be(expectedResult);
     }
 
     protected void GeneratesTryParseTest(string name)

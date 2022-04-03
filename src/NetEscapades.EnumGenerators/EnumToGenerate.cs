@@ -14,6 +14,8 @@ public readonly struct EnumToGenerate
     /// </summary>
     public readonly List<KeyValuePair<string, string?>> Names;
 
+    public readonly bool IsDisplaAttributeUsed;
+
     public EnumToGenerate(
     string name,
     string ns,
@@ -21,7 +23,8 @@ public readonly struct EnumToGenerate
     string underlyingType,
     bool isPublic,
     List<KeyValuePair<string, string?>> names,
-    bool hasFlags)
+    bool hasFlags,
+    bool isDisplaAttributeUsed)
     {
         Name = name;
         Namespace = ns;
@@ -30,5 +33,6 @@ public readonly struct EnumToGenerate
         HasFlags = hasFlags;
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
+        IsDisplaAttributeUsed = isDisplaAttributeUsed;
     }
 }

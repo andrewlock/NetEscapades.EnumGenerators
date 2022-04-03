@@ -1,4 +1,3 @@
-using System;
 using FluentAssertions;
 using Xunit;
 
@@ -18,6 +17,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     {
         "First",
         "Second",
+        "2nd",
         "first",
         "SECOND",
         "3",
@@ -31,7 +31,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
-    protected override bool IsDefined(string name) => FlagsEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed)
         => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
 

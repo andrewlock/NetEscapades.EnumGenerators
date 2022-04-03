@@ -15,6 +15,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     {
         "First",
         "Second",
+        "2nd",
         "first",
         "SECOND",
         "3",
@@ -28,7 +29,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
 
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
-    protected override bool IsDefined(string name) => LongEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out LongEnum parsed)
         => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
