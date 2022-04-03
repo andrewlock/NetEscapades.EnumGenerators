@@ -30,7 +30,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
-    protected override bool TryParse(string name,bool ignoreCase, out LongEnum parsed)
+    protected override bool TryParse(string name,bool ignoreCase, out LongEnum parsed, bool allowMatchingDisplayAttribute)
         => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
     [Theory]
@@ -51,7 +51,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseIgnoreCaseTest(name);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(LongEnumExtensions.GetValues());

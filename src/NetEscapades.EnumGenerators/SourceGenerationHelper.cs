@@ -169,7 +169,82 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             };");
         }
 
-        sb.Append(@"
+        if (enumToGenerate.IsDisplaAttributeUsed)
+        {
+            sb.Append(@"
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            bool ignoreCase, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
+            bool allowMatchingDisplayAttribute = false)
+            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value, allowMatchingDisplayAttribute) : TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
+
+        private static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            System.StringComparison stringComparisonOption, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
+            bool allowMatchingDisplayAttribute)
+        {
+            if (allowMatchingDisplayAttribute)
+            {
+                switch (name)
+                {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                if (member.Value is not null)
+                {
+                    sb.Append(@"
+                    case { } s when s.Equals(""").Append(member.Value).Append(@""", stringComparisonOption):
+                        value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        return true;");
+                }
+            }
+
+            sb.Append(@"
+                    default:
+                        break;
+                };
+            }
+
+            switch (name)
+            {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                sb.Append(@"
+                case { } s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), stringComparisonOption):
+                    value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                    return true;");
+            }
+
+            sb.Append(@"
+                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
+                    return true;
+                default:
+                    value = default;
+                    return false;
+            }
+        }
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
+            bool allowMatchingDisplayAttribute = false)
+            => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);");
+        }
+        else
+        {
+            sb.Append(@"
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -178,7 +253,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             string? name, 
             bool ignoreCase, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => ignoreCase ? TryParse(name, StringComparison.OrdinalIgnoreCase, out value) : TryParse(name, StringComparison.Ordinal, out value);
+            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value) : TryParse(name, System.StringComparison.Ordinal, out value);
 
         private static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -190,15 +265,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             switch (name)
             {");
-        foreach (var member in enumToGenerate.Names)
-        {
-            sb.Append(@"
+            foreach (var member in enumToGenerate.Names)
+            {
+                sb.Append(@"
                 case { } s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), stringComparisonOption):
                     value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
-        }
+            }
 
-        sb.Append(@"
+            sb.Append(@"
                 case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
                     value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
                     return true;
@@ -214,7 +289,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #endif
             string? name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => TryParse(name, StringComparison.Ordinal, out value);
+            => TryParse(name, System.StringComparison.Ordinal, out value);");
+        }
+
+        sb.Append(@"
 
         public static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[] GetValues()
         {
@@ -225,9 +303,12 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             sb.Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(',');
         }
+
         sb.Append(@"
             };
-        }
+        }");
+
+        sb.Append(@"
 
         public static string[] GetNames()
         {

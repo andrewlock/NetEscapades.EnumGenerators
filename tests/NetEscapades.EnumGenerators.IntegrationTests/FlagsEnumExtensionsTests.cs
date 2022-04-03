@@ -32,7 +32,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
-    protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed)
+    protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
         => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
     [Theory]
@@ -67,7 +67,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseIgnoreCaseTest(name);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(FlagsEnumExtensions.GetValues());

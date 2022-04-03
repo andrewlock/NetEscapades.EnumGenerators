@@ -30,8 +30,8 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     protected override string ToStringFast(EnumWithDisplayNameInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumWithDisplayNameInNamespace value) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingDisplayAttribute);
-    protected override bool TryParse(string name,bool ignoreCase, out EnumWithDisplayNameInNamespace parsed)
-        => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
+    protected override bool TryParse(string name,bool ignoreCase, out EnumWithDisplayNameInNamespace parsed, bool allowMatchingDisplayAttribute)
+        => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, ignoreCase, out parsed, allowMatchingDisplayAttribute);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
@@ -55,7 +55,15 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseIgnoreCaseTest(name);
+    public void GeneratesTryParseAllowMatchingDisplayAttribute(string name) => GeneratesTryParseTest(name, allowMatchingDisplayAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAllowMatchingDisplayAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingDisplayAttribute: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumWithDisplayNameInNamespaceExtensions.GetValues());
