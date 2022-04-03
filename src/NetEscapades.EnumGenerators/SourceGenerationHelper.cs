@@ -67,13 +67,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
                 .Append(" => ");
 
-            if (member.Value is null)
+            if (member.Value.DisplayName is null)
             {
                 sb.Append("nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
             }
             else
             {
-                sb.Append('"').Append(member.Value).Append(@""",");
+                sb.Append('"').Append(member.Value.DisplayName).Append(@""",");
             }
         }
 
@@ -121,10 +121,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value is not null)
+                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                    """).Append(member.Value).Append(@""" => true,");
+                    """).Append(member.Value.DisplayName).Append(@""" => true,");
                 }
             }
 
@@ -198,10 +198,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value is not null)
+                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                    case { } s when s.Equals(""").Append(member.Value).Append(@""", stringComparisonOption):
+                    case { } s when s.Equals(""").Append(member.Value.DisplayName).Append(@""", stringComparisonOption):
                         value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +19,11 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, string?> { { "First", null }, { "Second", null } }.ToList(),
+            new Dictionary<string, EnumValueOption>
+            {
+                { "First", new EnumValueOption(null, false) }, 
+                { "Second", new EnumValueOption(null, false) }
+            }.ToList(),
             hasFlags: false,
             isDisplaAttributeUsed: false);
 
@@ -40,7 +43,11 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, string?> { { "First", null }, { "Second", null } }.ToList(),
+            new Dictionary<string, EnumValueOption>
+            {
+                { "First", new EnumValueOption(null, false) },
+                { "Second", new EnumValueOption(null, false) }
+            }.ToList(),
             hasFlags: true,
             isDisplaAttributeUsed: false);
 

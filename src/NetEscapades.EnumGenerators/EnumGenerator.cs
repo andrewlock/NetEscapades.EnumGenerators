@@ -149,8 +149,9 @@ public class EnumGenerator : IIncrementalGenerator
             string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";
 
             var enumMembers = enumSymbol.GetMembers();
-            var members = new List<KeyValuePair<string, string?>>(enumMembers.Length);
-            var isDisplaAttributeUsed = false;
+            var members = new List<KeyValuePair<string, EnumValueOption>>(enumMembers.Length);
+            var displayNames = new HashSet<string>();
+            var isDisplayNameTheFirstPresence = false;
 
             foreach (var member in enumMembers)
             {
@@ -173,13 +174,13 @@ public class EnumGenerator : IIncrementalGenerator
                         if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
                         {
                             displayName = dn;
-                            isDisplaAttributeUsed = true;
+                            isDisplayNameTheFirstPresence = displayNames.Add(displayName);
                             break;
                         }
                     }
                 }
                 
-                members.Add(new KeyValuePair<string, string?>(member.Name, displayName));
+                members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
             }
 
             enumsToGenerate.Add(new EnumToGenerate(
@@ -190,7 +191,7 @@ public class EnumGenerator : IIncrementalGenerator
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
                 hasFlags: hasFlags,
                 names: members,
-                isDisplaAttributeUsed: isDisplaAttributeUsed));
+                isDisplaAttributeUsed: displayNames.Count > 0));
         }
 
         return enumsToGenerate;

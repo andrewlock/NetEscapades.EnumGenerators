@@ -23,6 +23,18 @@ namespace NetEscapades.EnumGenerators.IntegrationTests
     }
 
     [EnumExtensions]
+    public enum EnumWithSameDisplayName
+    {
+        First = 0,
+
+        [Display(Name = "2nd")]
+        Second = 1,
+
+        [Display(Name = "2nd")]
+        Third = 2,
+    }
+
+    [EnumExtensions]
     public enum LongEnum: long
     {
         First = 0,

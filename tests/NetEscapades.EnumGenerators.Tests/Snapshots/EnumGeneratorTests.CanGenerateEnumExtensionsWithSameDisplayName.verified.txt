@@ -8,15 +8,17 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
-namespace A.B
+namespace MyTestNameSpace
 {
-    internal static partial class C
+    public static partial class MyEnumExtensions
     {
         public static string ToStringFast(this MyTestNameSpace.MyEnum value)
             => value switch
             {
                 MyTestNameSpace.MyEnum.First => nameof(MyTestNameSpace.MyEnum.First),
-                MyTestNameSpace.MyEnum.Second => nameof(MyTestNameSpace.MyEnum.Second),
+                MyTestNameSpace.MyEnum.Second => "2nd",
+                MyTestNameSpace.MyEnum.Third => nameof(MyTestNameSpace.MyEnum.Third),
+                MyTestNameSpace.MyEnum.Fourth => "2nd",
                 _ => value.ToString(),
             };
 
@@ -25,16 +27,37 @@ namespace A.B
             {
                 MyTestNameSpace.MyEnum.First => true,
                 MyTestNameSpace.MyEnum.Second => true,
+                MyTestNameSpace.MyEnum.Third => true,
+                MyTestNameSpace.MyEnum.Fourth => true,
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
-            => name switch
+        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute = false)
+        {
+            var isDefinedInDisplayAttribute = false;
+            if (allowMatchingDisplayAttribute)
+            {
+                isDefinedInDisplayAttribute = name switch
+                {
+                    "2nd" => true,
+                    _ => false,
+                };
+            }
+
+            if (isDefinedInDisplayAttribute)
+            {
+                return true;
+            }
+
+            return name switch
             {
                 nameof(MyTestNameSpace.MyEnum.First) => true,
                 nameof(MyTestNameSpace.MyEnum.Second) => true,
+                nameof(MyTestNameSpace.MyEnum.Third) => true,
+                nameof(MyTestNameSpace.MyEnum.Fourth) => true,
                 _ => false,
             };
+        }
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -42,8 +65,9 @@ namespace A.B
 #endif
             string? name, 
             bool ignoreCase, 
-            out MyTestNameSpace.MyEnum value)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value) : TryParse(name, System.StringComparison.Ordinal, out value);
+            out MyTestNameSpace.MyEnum value, 
+            bool allowMatchingDisplayAttribute = false)
+            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value, allowMatchingDisplayAttribute) : TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
 
         private static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -51,8 +75,21 @@ namespace A.B
 #endif
             string? name, 
             System.StringComparison stringComparisonOption, 
-            out MyTestNameSpace.MyEnum value)
+            out MyTestNameSpace.MyEnum value, 
+            bool allowMatchingDisplayAttribute)
         {
+            if (allowMatchingDisplayAttribute)
+            {
+                switch (name)
+                {
+                    case { } s when s.Equals("2nd", stringComparisonOption):
+                        value = MyTestNameSpace.MyEnum.Second;
+                        return true;
+                    default:
+                        break;
+                };
+            }
+
             switch (name)
             {
                 case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), stringComparisonOption):
@@ -60,6 +97,12 @@ namespace A.B
                     return true;
                 case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), stringComparisonOption):
                     value = MyTestNameSpace.MyEnum.Second;
+                    return true;
+                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), stringComparisonOption):
+                    value = MyTestNameSpace.MyEnum.Third;
+                    return true;
+                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), stringComparisonOption):
+                    value = MyTestNameSpace.MyEnum.Fourth;
                     return true;
                 case { } s when int.TryParse(name, out var val):
                     value = (MyTestNameSpace.MyEnum)val;
@@ -75,8 +118,9 @@ namespace A.B
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out MyTestNameSpace.MyEnum value)
-            => TryParse(name, System.StringComparison.Ordinal, out value);
+            out MyTestNameSpace.MyEnum value, 
+            bool allowMatchingDisplayAttribute = false)
+            => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
 
         public static MyTestNameSpace.MyEnum[] GetValues()
         {
@@ -84,6 +128,8 @@ namespace A.B
             {
                 MyTestNameSpace.MyEnum.First,
                 MyTestNameSpace.MyEnum.Second,
+                MyTestNameSpace.MyEnum.Third,
+                MyTestNameSpace.MyEnum.Fourth,
             };
         }
 
@@ -93,6 +139,8 @@ namespace A.B
             {
                 nameof(MyTestNameSpace.MyEnum.First),
                 nameof(MyTestNameSpace.MyEnum.Second),
+                nameof(MyTestNameSpace.MyEnum.Third),
+                nameof(MyTestNameSpace.MyEnum.Fourth),
             };
         }
     }

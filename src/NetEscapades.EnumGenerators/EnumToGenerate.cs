@@ -10,9 +10,9 @@ public readonly struct EnumToGenerate
     public readonly string UnderlyingType;
 
     /// <summary>
-    /// Key is the enum name. Value is the custom name setted by the <c>[Display(Name)]</c> attribute.
+    /// Key is the enum name.
     /// </summary>
-    public readonly List<KeyValuePair<string, string?>> Names;
+    public readonly List<KeyValuePair<string, EnumValueOption>> Names;
 
     public readonly bool IsDisplaAttributeUsed;
 
@@ -22,7 +22,7 @@ public readonly struct EnumToGenerate
     string fullyQualifiedName,
     string underlyingType,
     bool isPublic,
-    List<KeyValuePair<string, string?>> names,
+    List<KeyValuePair<string, EnumValueOption>> names,
     bool hasFlags,
     bool isDisplaAttributeUsed)
     {
