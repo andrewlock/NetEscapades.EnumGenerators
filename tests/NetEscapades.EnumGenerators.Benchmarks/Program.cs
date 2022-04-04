@@ -70,6 +70,7 @@ public class IsDefinedBenchmark
 public class IsDefinedNameBenchmark
 {
     private static readonly string _enum = nameof(TestEnum.Second);
+    private static readonly string _enumDisplaName = "2nd";
 
     [Benchmark(Baseline = true)]
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -80,16 +81,23 @@ public class IsDefinedNameBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool EnumIsDefinedNameDisplayNameWithReflection()
+    public bool ExtensionsIsDefined()
     {
-        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out _);
+        return TestEnumExtensions.IsDefined(_enum);
     }
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool ExtensionsIsDefined()
+    public bool EnumIsDefinedNameDisplayNameWithReflection()
     {
-        return TestEnumExtensions.IsDefined(_enum);
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumDisplaName, out _);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedNameDisplayName()
+    {
+        return TestEnumExtensions.IsDefined(_enumDisplaName, allowMatchingDisplayAttribute: true);
     }
 }
 
