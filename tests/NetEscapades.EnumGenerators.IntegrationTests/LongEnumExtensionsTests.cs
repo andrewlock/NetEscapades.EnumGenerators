@@ -51,11 +51,23 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan());
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParse(string name) => GeneratesTryParseTest(name);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan());
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAsAspan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(LongEnumExtensions.GetValues());

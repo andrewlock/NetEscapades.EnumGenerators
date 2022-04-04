@@ -51,7 +51,15 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan());
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingNameAllowMatchingDisplayAttribute(string name) => GeneratesIsDefinedTest(name, allowMatchingDisplayAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAllowMatchingDisplayAttributeAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingDisplayAttribute: true);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -59,7 +67,15 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan());
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseAllowMatchingDisplayAttribute(string name) => GeneratesTryParseTest(name, allowMatchingDisplayAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseAllowMatchingDisplayAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), allowMatchingDisplayAttribute: true);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -67,7 +83,15 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCaseAllowMatchingDisplayAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingDisplayAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAllowMatchingDisplayAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingDisplayAttribute: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumWithDisplayNameInNamespaceExtensions.GetValues());

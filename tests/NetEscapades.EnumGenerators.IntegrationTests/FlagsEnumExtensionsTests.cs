@@ -52,6 +52,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
 
     [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan());
+
+    [Theory]
     [InlineData(FlagsEnum.First)]
     [InlineData(FlagsEnum.Second)]
     [InlineData(FlagsEnum.First | FlagsEnum.Second)]
@@ -71,7 +75,15 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan());
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
+
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(FlagsEnumExtensions.GetValues());
