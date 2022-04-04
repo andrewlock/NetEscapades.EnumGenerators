@@ -94,6 +94,54 @@ public class IsDefinedNameBenchmark
 }
 
 [MemoryDiagnoser]
+public class IsDefinedNameFromSpanBenchmark
+{
+    private static readonly char[] _enum = new char[] { 'S', 'e', 'c', 'o', 'n', 'd' };
+    private static readonly char[] _enumDisplayName = new char[] { '2', 'n', 'd' };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool EnumIsDefined()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return Enum.IsDefined(typeof(TestEnum), _enumAsSpan.ToString());
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool EnumIsDefinedNameDisplayNameWithReflection()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumAsSpan.ToString(), out _);
+    }
+
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefined()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.IsDefined(_enumAsSpan.ToString());
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedSpan()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.IsDefined(_enumAsSpan);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedDisplayNameSpan()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
+        return TestEnumExtensions.IsDefined(_enumAsSpan, allowMatchingDisplayAttribute: true);
+    }
+}
+
+[MemoryDiagnoser]
 public class GetValuesBenchmark
 {
 #if NETFRAMEWORK
