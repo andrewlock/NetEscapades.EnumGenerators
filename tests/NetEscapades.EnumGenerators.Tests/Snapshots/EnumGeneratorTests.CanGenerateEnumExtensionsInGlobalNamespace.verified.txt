@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
+using System;
     public static partial class MyEnumExtensions
     {
         public static string ToStringFast(this MyEnum value)
@@ -18,7 +19,7 @@
                 _ => value.ToString(),
             };
 
-        public static bool IsDefined(MyEnum value)
+       public static bool IsDefined(MyEnum value)
             => value switch
             {
                 MyEnum.First => true,
@@ -88,8 +89,8 @@
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
-            bool ignoreCase,
+            in ReadOnlySpan<char> name, 
+            bool ignoreCase, 
             out MyEnum result)
             => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out result) : TryParse(name, System.StringComparison.Ordinal, out result);
 
@@ -97,8 +98,8 @@
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
-            System.StringComparison stringComparisonOption,
+            in ReadOnlySpan<char> name, 
+            System.StringComparison stringComparisonOption, 
             out MyEnum result)
         {
             switch (name)
@@ -108,6 +109,13 @@
                     return true;
                 case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), stringComparisonOption):
                     result = MyEnum.Second;
+                    return true;
+#if NETCOREAPP2_1_OR_GREATER
+                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+#else
+                case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
+#endif
+                    result = (MyEnum)numericResult;
                     return true;
                 default:
                     result = default;
@@ -119,7 +127,7 @@
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in ReadOnlySpan<char> name, 
             out MyEnum result)
             => TryParse(name, System.StringComparison.Ordinal, out result);
 
