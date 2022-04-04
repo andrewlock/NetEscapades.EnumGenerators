@@ -169,6 +169,15 @@ public class TryParseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParse()
+    {
+        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum EnumTryParseDisplayNameWithReflection()
     {
         return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out TestEnum result) ? result : default;
@@ -176,9 +185,9 @@ public class TryParseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public TestEnum ExtensionsTryParse()
+    public TestEnum ExtensionsTryParseDisplayName()
     {
-        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+        return TestEnumExtensions.TryParse("2nd", ignoreCase: false, out TestEnum result, allowMatchingDisplayAttribute: true)
             ? result
             : default;
     }
