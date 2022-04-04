@@ -68,7 +68,7 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseUsingSpan(string name) => GeneratesTryParseIgnoreCaseTest(name.AsSpan());
+    public void GeneratesTryParseIgnoreCaseUsingSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumInNamespaceExtensions.GetValues());

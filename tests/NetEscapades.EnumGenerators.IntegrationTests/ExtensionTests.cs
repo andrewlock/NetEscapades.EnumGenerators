@@ -55,11 +55,26 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(expectedResult);
     }
 
-    protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name)
+    protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false)
     {
-        var isDefined = IsDefined(name);
+        bool expectedResult;
+        var isDefined = IsDefined(name, allowMatchingDisplayAttribute);
 
-        isDefined.Should().Be(Enum.IsDefined(typeof(T), name.ToString()));
+        var nameAsString = name.ToString();
+        if (allowMatchingDisplayAttribute)
+        {
+            expectedResult = TryGetEnumByDisplayName(nameAsString, out _);
+            if (!expectedResult)
+            {
+                expectedResult = Enum.IsDefined(typeof(T), nameAsString);
+            }
+        }
+        else
+        {
+            expectedResult = Enum.IsDefined(typeof(T), nameAsString);
+        }
+
+        isDefined.Should().Be(expectedResult);
     }
 
     protected void GeneratesTryParseTest(string name, bool ignoreCase = false, bool allowMatchingDisplayAttribute = false)
@@ -73,34 +88,40 @@ public abstract class ExtensionTests<T> where T : struct
             expectedValidity = TryGetEnumByDisplayName(name, out expectedResult);
             if (!expectedValidity)
             {
-                expectedValidity = Enum.TryParse(name, out expectedResult);
+                expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
             }
         }
         else
         {
-            expectedValidity = Enum.TryParse(name, out expectedResult);
+            expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
         }
         _ = new AssertionScope();
         isValid.Should().Be(expectedValidity);
         result.Should().Be(expectedResult);
     }
 
-    protected void GeneratesTryParseTest(in ReadOnlySpan<char> name)
+    protected void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase = false, bool allowMatchingDisplayAttribute = false)
     {
-        var isValid = Enum.TryParse(name.ToString(), out T expected);
-        var result = TryParse(name, ignoreCase: false, out var parsed);
-        using var _ = new AssertionScope();
-        result.Should().Be(isValid);
-        parsed.Should().Be(expected);
-    }
+        bool expectedValidity;
+        T expectedResult;
+        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingDisplayAttribute);
 
-    protected void GeneratesTryParseIgnoreCaseTest(in ReadOnlySpan<char> name)
-    {
-        var isValid = Enum.TryParse(name.ToString(), ignoreCase: true, out T expected);
-        var result = TryParse(name, ignoreCase: true, out var parsed);
-        using var _ = new AssertionScope();
-        result.Should().Be(isValid);
-        parsed.Should().Be(expected);
+        var nameAsString = name.ToString();
+        if (allowMatchingDisplayAttribute)
+        {
+            expectedValidity = TryGetEnumByDisplayName(nameAsString, out expectedResult);
+            if (!expectedValidity)
+            {
+                expectedValidity = Enum.TryParse(nameAsString, ignoreCase, out expectedResult);
+            }
+        }
+        else
+        {
+            expectedValidity = Enum.TryParse(nameAsString, ignoreCase, out expectedResult);
+        }
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
     }
 
     protected void GeneratesGetValuesTest(T[] values)
