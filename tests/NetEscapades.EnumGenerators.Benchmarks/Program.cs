@@ -70,6 +70,7 @@ public class IsDefinedBenchmark
 public class IsDefinedNameBenchmark
 {
     private static readonly string _enum = nameof(TestEnum.Second);
+    private static readonly string _enumDisplaName = "2nd";
 
     [Benchmark(Baseline = true)]
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -80,16 +81,23 @@ public class IsDefinedNameBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool EnumIsDefinedNameDisplayNameWithReflection()
+    public bool ExtensionsIsDefined()
     {
-        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out _);
+        return TestEnumExtensions.IsDefined(_enum);
     }
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool ExtensionsIsDefined()
+    public bool EnumIsDefinedNameDisplayNameWithReflection()
     {
-        return TestEnumExtensions.IsDefined(_enum);
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumDisplaName, out _);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedNameDisplayName()
+    {
+        return TestEnumExtensions.IsDefined(_enumDisplaName, allowMatchingDisplayAttribute: true);
     }
 }
 
@@ -209,6 +217,15 @@ public class TryParseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParse()
+    {
+        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum EnumTryParseDisplayNameWithReflection()
     {
         return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out TestEnum result) ? result : default;
@@ -216,9 +233,9 @@ public class TryParseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public TestEnum ExtensionsTryParse()
+    public TestEnum ExtensionsTryParseDisplayName()
     {
-        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+        return TestEnumExtensions.TryParse("2nd", ignoreCase: false, out TestEnum result, allowMatchingDisplayAttribute: true)
             ? result
             : default;
     }
