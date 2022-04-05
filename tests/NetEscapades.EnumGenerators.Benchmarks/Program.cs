@@ -115,7 +115,6 @@ public class IsDefinedNameFromSpanBenchmark
         return EnumHelper<TestEnum>.TryParseByDisplayName(_enumAsSpan.ToString(), out _);
     }
 
-
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefined()
