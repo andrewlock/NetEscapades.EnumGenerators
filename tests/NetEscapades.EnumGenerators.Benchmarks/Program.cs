@@ -323,3 +323,40 @@ public class TryParseIgnoreCaseBenchmark
             : default;
     }
 }
+
+
+[MemoryDiagnoser]
+public class TryParseIgnoreCaseFromSpanBenchmark
+{
+    private static readonly char[] _enum = new char[] { 's', 'e', 'c', 'o', 'n', 'd' };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseIgnoreCase()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return Enum.TryParse(_enumAsSpan.ToString(), ignoreCase: true, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCase()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.TryParse(_enumAsSpan.ToString(), ignoreCase: true, out TestEnum result)
+            ? result
+            : default;
+    }
+
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCaseSpan()
+    {
+        return TestEnumExtensions.TryParse(_enum.AsSpan(), ignoreCase: true, out TestEnum result)
+            ? result
+            : default;
+    }
+}
