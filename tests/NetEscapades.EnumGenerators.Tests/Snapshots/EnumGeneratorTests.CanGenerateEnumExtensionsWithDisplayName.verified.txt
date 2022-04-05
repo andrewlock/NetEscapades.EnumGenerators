@@ -61,6 +61,13 @@ namespace MyTestNameSpace
             };
         }
 
+        /// <summary>
+        /// Slower then the <see cref="IsDefined(string, bool)",
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="allowMatchingDisplayAttribute"></param>
+        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
         public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false)
         {
             var isDefinedInDisplayAttribute = false;
@@ -155,6 +162,15 @@ namespace MyTestNameSpace
             bool allowMatchingDisplayAttribute = false)
             => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
 
+        /// <summary>
+        /// Slower then the <see cref="TryParse(string, bool, out MyTestNameSpace.MyEnum, bool)"/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="ignoreCase"></param>
+        /// <param name="result"></param>
+        /// <param name="allowMatchingDisplayAttribute"></param>
+        /// <returns></returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -216,6 +232,14 @@ namespace MyTestNameSpace
             }
         }
 
+        /// <summary>
+        /// Slower then the <see cref="TryParse(string, out MyTestNameSpace.MyEnum, bool)"/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="allowMatchingDisplayAttribute"></param>
+        /// <returns></returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
