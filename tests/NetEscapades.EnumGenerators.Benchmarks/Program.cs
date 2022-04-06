@@ -70,6 +70,7 @@ public class IsDefinedBenchmark
 public class IsDefinedNameBenchmark
 {
     private static readonly string _enum = nameof(TestEnum.Second);
+    private static readonly string _enumDisplaName = "2nd";
 
     [Benchmark(Baseline = true)]
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -80,16 +81,23 @@ public class IsDefinedNameBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool EnumIsDefinedNameDisplayNameWithReflection()
+    public bool ExtensionsIsDefined()
     {
-        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out _);
+        return TestEnumExtensions.IsDefined(_enum);
     }
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public bool ExtensionsIsDefined()
+    public bool EnumIsDefinedNameDisplayNameWithReflection()
     {
-        return TestEnumExtensions.IsDefined(_enum);
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumDisplaName, out _);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedNameDisplayName()
+    {
+        return TestEnumExtensions.IsDefined(_enumDisplaName, allowMatchingDisplayAttribute: true);
     }
 }
 
@@ -127,16 +135,14 @@ public class IsDefinedNameFromSpanBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefinedSpan()
     {
-        ReadOnlySpan<char> _enumAsSpan = _enum;
-        return TestEnumExtensions.IsDefined(_enumAsSpan);
+        return TestEnumExtensions.IsDefined(_enum.AsSpan());
     }
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefinedDisplayNameSpan()
     {
-        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
-        return TestEnumExtensions.IsDefined(_enumAsSpan, allowMatchingDisplayAttribute: true);
+        return TestEnumExtensions.IsDefined(_enumDisplayName.AsSpan(), allowMatchingDisplayAttribute: true);
     }
 }
 
@@ -208,6 +214,15 @@ public class TryParseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParse()
+    {
+        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum EnumTryParseDisplayNameWithReflection()
     {
         return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out TestEnum result) ? result : default;
@@ -215,9 +230,72 @@ public class TryParseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseDisplayName()
+    {
+        return TestEnumExtensions.TryParse("2nd", ignoreCase: false, out TestEnum result, allowMatchingDisplayAttribute: true)
+            ? result
+            : default;
+    }
+}
+
+[MemoryDiagnoser]
+public class TryParseFromSpanBenchmark
+{
+    private static readonly char[] _enum = new char[] { 'S', 'e', 'c', 'o', 'n', 'd' };
+    private static readonly char[] _enumDisplayName = new char[] { '2', 'n', 'd' };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParse()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return Enum.TryParse(_enumAsSpan.ToString(), ignoreCase: false, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParse()
     {
-        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.TryParse(_enumAsSpan.ToString(), ignoreCase: false, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseSpan()
+    {
+        return TestEnumExtensions.TryParse(_enum.AsSpan(), ignoreCase: false, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseDisplayNameWithReflection()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumAsSpan.ToString(), out TestEnum result) ? result : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseDisplayName()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
+        return TestEnumExtensions.TryParse(_enumAsSpan.ToString(), ignoreCase: false, out TestEnum result, allowMatchingDisplayAttribute: true)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseDisplayNameSpan()
+    {
+        return TestEnumExtensions.TryParse(_enumDisplayName.AsSpan(), ignoreCase: false, out TestEnum result, allowMatchingDisplayAttribute: true)
             ? result
             : default;
     }
@@ -240,6 +318,43 @@ public class TryParseIgnoreCaseBenchmark
     public TestEnum ExtensionsTryParseIgnoreCase()
     {
         return TestEnumExtensions.TryParse("second", ignoreCase: true, out TestEnum result)
+            ? result
+            : default;
+    }
+}
+
+
+[MemoryDiagnoser]
+public class TryParseIgnoreCaseFromSpanBenchmark
+{
+    private static readonly char[] _enum = new char[] { 's', 'e', 'c', 'o', 'n', 'd' };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseIgnoreCase()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return Enum.TryParse(_enumAsSpan.ToString(), ignoreCase: true, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCase()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.TryParse(_enumAsSpan.ToString(), ignoreCase: true, out TestEnum result)
+            ? result
+            : default;
+    }
+
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCaseSpan()
+    {
+        return TestEnumExtensions.TryParse(_enum.AsSpan(), ignoreCase: true, out TestEnum result)
             ? result
             : default;
     }

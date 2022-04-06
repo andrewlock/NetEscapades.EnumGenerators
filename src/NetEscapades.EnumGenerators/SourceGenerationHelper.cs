@@ -157,6 +157,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
             sb.Append(@"
 
+        /// <summary>
+        /// Slower then the <see cref=""IsDefined(string, bool)"",
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <param name=""allowMatchingDisplayAttribute""></param>
+        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
         public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false)
         {
             var isDefinedInDisplayAttribute = false;
@@ -215,6 +222,12 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
             sb.Append(@"
 
+        /// <summary>
+        /// Slower then the <see cref=""IsDefined(string)"",
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
         public static bool IsDefined(in ReadOnlySpan<char> name)
             => name switch
             {");
@@ -304,6 +317,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             
             sb.Append(@"
 
+        /// <summary>
+        /// Slower then the <see cref=""TryParse(string, bool, out ").Append(enumToGenerate.FullyQualifiedName).Append(@", bool)""/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <param name=""ignoreCase""></param>
+        /// <param name=""result""></param>
+        /// <param name=""allowMatchingDisplayAttribute""></param>
+        /// <returns></returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -368,6 +390,14 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
         }
 
+        /// <summary>
+        /// Slower then the <see cref=""TryParse(string, out ").Append(enumToGenerate.FullyQualifiedName).Append(@", bool)""/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <param name=""value""></param>
+        /// <param name=""allowMatchingDisplayAttribute""></param>
+        /// <returns></returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -428,6 +458,14 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
             sb.Append(@"
 
+        /// <summary>
+        /// Slower then the <see cref=""TryParse(string, bool, out ").Append(enumToGenerate.FullyQualifiedName).Append(@")""/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <param name=""ignoreCase""></param>
+        /// <param name=""result""></param>
+        /// <returns></returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -469,6 +507,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
         }
 
+        /// <summary>
+        /// Slower then the <see cref=""TryParse(string, out ").Append(enumToGenerate.FullyQualifiedName).Append(@")""/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <param name=""result""></param>
+        /// <returns></returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
