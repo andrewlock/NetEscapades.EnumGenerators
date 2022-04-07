@@ -90,7 +90,7 @@ public class IsDefinedNameBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool EnumIsDefinedNameDisplayNameWithReflection()
     {
-        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumDisplaName, out _);
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumDisplaName, ignoreCase: false, out _);
     }
 
     [Benchmark]
@@ -180,7 +180,7 @@ public class TryParseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum EnumTryParseDisplayNameWithReflection()
     {
-        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", out TestEnum result) ? result : default;
+        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", ignoreCase: false, out TestEnum result) ? result : default;
     }
 
     [Benchmark]
@@ -210,6 +210,22 @@ public class TryParseIgnoreCaseBenchmark
     public TestEnum ExtensionsTryParseIgnoreCase()
     {
         return TestEnumExtensions.TryParse("second", out TestEnum result, ignoreCase: true)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseIgnoreCaseDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.TryParseByDisplayName("2ND", ignoreCase: true, out TestEnum result) ? result : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCaseDisplayName()
+    {
+        return TestEnumExtensions.TryParse("2ND", out TestEnum result, ignoreCase: true, allowMatchingDisplayAttribute: true)
             ? result
             : default;
     }

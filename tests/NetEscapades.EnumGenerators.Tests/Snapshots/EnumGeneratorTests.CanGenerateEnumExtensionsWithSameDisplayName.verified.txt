@@ -75,7 +75,7 @@ namespace MyTestNameSpace
 #endif
             string? name, 
             out MyTestNameSpace.MyEnum value)
-            => TryParse(name, out value, System.StringComparison.Ordinal, false);
+            => TryParse(name, out value, false, false);
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -84,7 +84,7 @@ namespace MyTestNameSpace
             string? name, 
             out MyTestNameSpace.MyEnum value,
             bool ignoreCase) 
-            => ignoreCase ? TryParse(name, out value, System.StringComparison.OrdinalIgnoreCase, false) : TryParse(name, out value, System.StringComparison.Ordinal, false);
+            => TryParse(name, out value, ignoreCase, false);
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -94,48 +94,80 @@ namespace MyTestNameSpace
             out MyTestNameSpace.MyEnum value, 
             bool ignoreCase, 
             bool allowMatchingDisplayAttribute)
-            => ignoreCase ? TryParse(name, out value, System.StringComparison.OrdinalIgnoreCase, allowMatchingDisplayAttribute) : TryParse(name, out value, System.StringComparison.Ordinal, allowMatchingDisplayAttribute);
-
-        private static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out MyTestNameSpace.MyEnum value, 
-            System.StringComparison stringComparisonOption, 
-            bool allowMatchingDisplayAttribute)
         {
             if (allowMatchingDisplayAttribute)
             {
+                if (ignoreCase)
+                {
+                    switch (name)
+                    {
+                        case string s when s.Equals("2nd", System.StringComparison.OrdinalIgnoreCase):
+                            value = MyTestNameSpace.MyEnum.Second;
+                            return true;
+                        default:
+                            break;
+                    };
+                }
+                else
+                {
+                    switch (name)
+                    {
+                        case "2nd":
+                            value = MyTestNameSpace.MyEnum.Second;
+                            return true;
+                        default:
+                            break;
+                    };
+                }
+            }
+
+            if (ignoreCase)
+            {
                 switch (name)
                 {
-                    case { } s when s.Equals("2nd", stringComparisonOption):
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.First;
+                        return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.Second;
                         return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.Third;
+                        return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.Fourth;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyTestNameSpace.MyEnum)val;
+                        return true;
                     default:
-                        break;
-                };
+                        value = default;
+                        return false;
+                }
             }
-            switch (name)
+            else
             {
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.First;
-                    return true;
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.Second;
-                    return true;
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.Third;
-                    return true;
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.Fourth;
-                    return true;
-                case { } s when int.TryParse(name, out var val):
-                    value = (MyTestNameSpace.MyEnum)val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
+                switch (name)
+                {
+                    case nameof(MyTestNameSpace.MyEnum.First):
+                        value = MyTestNameSpace.MyEnum.First;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Second):
+                        value = MyTestNameSpace.MyEnum.Second;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Third):
+                        value = MyTestNameSpace.MyEnum.Third;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Fourth):
+                        value = MyTestNameSpace.MyEnum.Fourth;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyTestNameSpace.MyEnum)val;
+                        return true;
+                    default:
+                        value = default;
+                        return false;
+                }
             }
         }
 

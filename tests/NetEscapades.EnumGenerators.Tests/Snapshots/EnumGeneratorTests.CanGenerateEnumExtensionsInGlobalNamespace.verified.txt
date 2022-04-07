@@ -40,7 +40,7 @@
 #endif
             string? name, 
             out MyEnum value)
-            => TryParse(name, out value, System.StringComparison.Ordinal, false);
+            => TryParse(name, out value, false, false);
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -49,31 +49,53 @@
             string? name, 
             out MyEnum value,
             bool ignoreCase) 
-            => ignoreCase ? TryParse(name, out value, System.StringComparison.OrdinalIgnoreCase, false) : TryParse(name, out value, System.StringComparison.Ordinal, false);
+            => TryParse(name, out value, ignoreCase, false);
 
-        private static bool TryParse(
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out MyEnum value, 
-            System.StringComparison stringComparisonOption, 
+            bool ignoreCase, 
             bool allowMatchingDisplayAttribute)
         {
-            switch (name)
+
+            if (ignoreCase)
             {
-                case { } s when s.Equals(nameof(MyEnum.First), stringComparisonOption):
-                    value = MyEnum.First;
-                    return true;
-                case { } s when s.Equals(nameof(MyEnum.Second), stringComparisonOption):
-                    value = MyEnum.Second;
-                    return true;
-                case { } s when int.TryParse(name, out var val):
-                    value = (MyEnum)val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
+                switch (name)
+                {
+                    case string s when s.Equals(nameof(MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyEnum.First;
+                        return true;
+                    case string s when s.Equals(nameof(MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyEnum.Second;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyEnum)val;
+                        return true;
+                    default:
+                        value = default;
+                        return false;
+                }
+            }
+            else
+            {
+                switch (name)
+                {
+                    case nameof(MyEnum.First):
+                        value = MyEnum.First;
+                        return true;
+                    case nameof(MyEnum.Second):
+                        value = MyEnum.Second;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyEnum)val;
+                        return true;
+                    default:
+                        value = default;
+                        return false;
+                }
             }
         }
 
