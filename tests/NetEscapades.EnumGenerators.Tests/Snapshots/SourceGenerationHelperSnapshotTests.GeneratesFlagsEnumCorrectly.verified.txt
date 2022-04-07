@@ -48,17 +48,26 @@ namespace Something.Blah
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            bool ignoreCase, 
             out Something.Blah.ShortName value)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value) : TryParse(name, System.StringComparison.Ordinal, out value);
+            => TryParse(name, out value, System.StringComparison.Ordinal, false);
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out Something.Blah.ShortName value,
+            bool ignoreCase) 
+            => ignoreCase ? TryParse(name, out value, System.StringComparison.OrdinalIgnoreCase, false) : TryParse(name, out value, System.StringComparison.Ordinal, false);
 
         private static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
+            out Something.Blah.ShortName value, 
             System.StringComparison stringComparisonOption, 
-            out Something.Blah.ShortName value)
+            bool allowMatchingDisplayAttribute)
         {
             switch (name)
             {
@@ -76,14 +85,6 @@ namespace Something.Blah
                     return false;
             }
         }
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out Something.Blah.ShortName value)
-            => TryParse(name, System.StringComparison.Ordinal, out value);
 
         public static Something.Blah.ShortName[] GetValues()
         {

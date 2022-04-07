@@ -31,7 +31,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out LongEnum parsed, bool allowMatchingDisplayAttribute)
-        => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
+        => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

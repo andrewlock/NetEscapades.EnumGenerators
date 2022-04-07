@@ -31,7 +31,7 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => EnumInNamespaceExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingDisplayAttribute)
-        => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
+        => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

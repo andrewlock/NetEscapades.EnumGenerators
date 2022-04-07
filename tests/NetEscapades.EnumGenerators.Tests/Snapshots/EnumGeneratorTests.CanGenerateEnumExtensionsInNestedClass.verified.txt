@@ -41,17 +41,26 @@ namespace MyTestNameSpace
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            bool ignoreCase, 
             out MyTestNameSpace.InnerClass.MyEnum value)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value) : TryParse(name, System.StringComparison.Ordinal, out value);
+            => TryParse(name, out value, System.StringComparison.Ordinal, false);
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out MyTestNameSpace.InnerClass.MyEnum value,
+            bool ignoreCase) 
+            => ignoreCase ? TryParse(name, out value, System.StringComparison.OrdinalIgnoreCase, false) : TryParse(name, out value, System.StringComparison.Ordinal, false);
 
         private static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
+            out MyTestNameSpace.InnerClass.MyEnum value, 
             System.StringComparison stringComparisonOption, 
-            out MyTestNameSpace.InnerClass.MyEnum value)
+            bool allowMatchingDisplayAttribute)
         {
             switch (name)
             {
@@ -69,14 +78,6 @@ namespace MyTestNameSpace
                     return false;
             }
         }
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out MyTestNameSpace.InnerClass.MyEnum value)
-            => TryParse(name, System.StringComparison.Ordinal, out value);
 
         public static MyTestNameSpace.InnerClass.MyEnum[] GetValues()
         {

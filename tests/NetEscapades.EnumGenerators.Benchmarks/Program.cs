@@ -171,7 +171,7 @@ public class TryParseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParse()
     {
-        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+        return TestEnumExtensions.TryParse("Second", out TestEnum result, ignoreCase: false)
             ? result
             : default;
     }
@@ -187,7 +187,7 @@ public class TryParseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParseDisplayName()
     {
-        return TestEnumExtensions.TryParse("2nd", ignoreCase: false, out TestEnum result, allowMatchingDisplayAttribute: true)
+        return TestEnumExtensions.TryParse("2nd", out TestEnum result, ignoreCase: false, allowMatchingDisplayAttribute: true)
             ? result
             : default;
     }
@@ -209,7 +209,7 @@ public class TryParseIgnoreCaseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParseIgnoreCase()
     {
-        return TestEnumExtensions.TryParse("second", ignoreCase: true, out TestEnum result)
+        return TestEnumExtensions.TryParse("second", out TestEnum result, ignoreCase: true)
             ? result
             : default;
     }

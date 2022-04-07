@@ -32,7 +32,17 @@ namespace MyTestNameSpace
                 _ => false,
             };
 
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute = false)
+        public static bool IsDefined(string name)
+            => name switch
+            {
+                nameof(MyTestNameSpace.MyEnum.First) => true,
+                nameof(MyTestNameSpace.MyEnum.Second) => true,
+                nameof(MyTestNameSpace.MyEnum.Third) => true,
+                nameof(MyTestNameSpace.MyEnum.Fourth) => true,
+                _ => false,
+            };
+
+        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
         {
             var isDefinedInDisplayAttribute = false;
             if (allowMatchingDisplayAttribute)
@@ -65,18 +75,35 @@ namespace MyTestNameSpace
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            bool ignoreCase, 
+            out MyTestNameSpace.MyEnum value)
+            => TryParse(name, out value, System.StringComparison.Ordinal, false);
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out MyTestNameSpace.MyEnum value,
+            bool ignoreCase) 
+            => ignoreCase ? TryParse(name, out value, System.StringComparison.OrdinalIgnoreCase, false) : TryParse(name, out value, System.StringComparison.Ordinal, false);
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
             out MyTestNameSpace.MyEnum value, 
-            bool allowMatchingDisplayAttribute = false)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value, allowMatchingDisplayAttribute) : TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
+            bool ignoreCase, 
+            bool allowMatchingDisplayAttribute)
+            => ignoreCase ? TryParse(name, out value, System.StringComparison.OrdinalIgnoreCase, allowMatchingDisplayAttribute) : TryParse(name, out value, System.StringComparison.Ordinal, allowMatchingDisplayAttribute);
 
         private static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            System.StringComparison stringComparisonOption, 
             out MyTestNameSpace.MyEnum value, 
+            System.StringComparison stringComparisonOption, 
             bool allowMatchingDisplayAttribute)
         {
             if (allowMatchingDisplayAttribute)
@@ -93,7 +120,6 @@ namespace MyTestNameSpace
                         break;
                 };
             }
-
             switch (name)
             {
                 case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), stringComparisonOption):
@@ -116,15 +142,6 @@ namespace MyTestNameSpace
                     return false;
             }
         }
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out MyTestNameSpace.MyEnum value, 
-            bool allowMatchingDisplayAttribute = false)
-            => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
 
         public static MyTestNameSpace.MyEnum[] GetValues()
         {

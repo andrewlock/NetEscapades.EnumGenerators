@@ -33,7 +33,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
     protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
-        => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
+        => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
