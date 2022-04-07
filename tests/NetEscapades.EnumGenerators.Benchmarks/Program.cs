@@ -83,7 +83,7 @@ public class IsDefinedNameBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefined()
     {
-        return TestEnumExtensions.IsDefined(_enum);
+        return TestEnumExtensions.IsDefined(_enum, allowMatchingDisplayAttribute: false);
     }
 
     [Benchmark]

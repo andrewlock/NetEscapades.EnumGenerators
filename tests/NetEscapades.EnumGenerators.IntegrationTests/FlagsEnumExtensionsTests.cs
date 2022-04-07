@@ -32,7 +32,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
-    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingDisplayAttribute: false);
     protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 

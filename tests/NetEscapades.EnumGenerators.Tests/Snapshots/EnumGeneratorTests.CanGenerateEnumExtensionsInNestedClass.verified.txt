@@ -28,13 +28,15 @@ namespace MyTestNameSpace
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
-            => name switch
+        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        {
+            return name switch
             {
                 nameof(MyTestNameSpace.InnerClass.MyEnum.First) => true,
                 nameof(MyTestNameSpace.InnerClass.MyEnum.Second) => true,
                 _ => false,
             };
+        }
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER

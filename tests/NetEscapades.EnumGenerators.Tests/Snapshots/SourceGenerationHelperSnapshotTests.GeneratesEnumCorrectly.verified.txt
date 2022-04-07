@@ -28,13 +28,15 @@ namespace Something.Blah
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
-            => name switch
+        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        {
+            return name switch
             {
                 nameof(Something.Blah.ShortName.First) => true,
                 nameof(Something.Blah.ShortName.Second) => true,
                 _ => false,
             };
+        }
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER

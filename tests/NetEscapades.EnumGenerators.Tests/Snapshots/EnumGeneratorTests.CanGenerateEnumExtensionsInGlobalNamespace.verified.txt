@@ -26,13 +26,15 @@
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
-            => name switch
+        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        {
+            return name switch
             {
                 nameof(MyEnum.First) => true,
                 nameof(MyEnum.Second) => true,
                 _ => false,
             };
+        }
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER

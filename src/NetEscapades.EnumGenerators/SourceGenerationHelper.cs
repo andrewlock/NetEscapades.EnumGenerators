@@ -110,25 +110,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
-        public static bool IsDefined(string name)
-            => name switch
-            {");
-        foreach (var member in enumToGenerate.Names)
-        {
-            sb.Append(@"
-                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
-        }
-
-        sb.Append(@"
-                _ => false,
-            };");
-
+        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        {");
         if (enumToGenerate.IsDisplaAttributeUsed)
         {
             sb.Append(@"
-
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
-        {
             var isDefinedInDisplayAttribute = false;
             if (allowMatchingDisplayAttribute)
             {
@@ -137,7 +123,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
-                {
+                    {
                     sb.Append(@"
                     """).Append(member.Value.DisplayName).Append(@""" => true,");
                 }
@@ -153,19 +139,21 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 return true;
             }
 
+            ");
+        }
+        sb.Append(@"
             return name switch
             {");
-            foreach (var member in enumToGenerate.Names)
+        foreach (var member in enumToGenerate.Names)
             {
-                sb.Append(@"
+             sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
-            }
+        }
 
-            sb.Append(@"
+        sb.Append(@"
                 _ => false,
             };
         }");
-        }
 
         sb.Append(@"
 

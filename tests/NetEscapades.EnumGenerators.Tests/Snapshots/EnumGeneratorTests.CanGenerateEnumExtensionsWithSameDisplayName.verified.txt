@@ -32,16 +32,6 @@ namespace MyTestNameSpace
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
-            => name switch
-            {
-                nameof(MyTestNameSpace.MyEnum.First) => true,
-                nameof(MyTestNameSpace.MyEnum.Second) => true,
-                nameof(MyTestNameSpace.MyEnum.Third) => true,
-                nameof(MyTestNameSpace.MyEnum.Fourth) => true,
-                _ => false,
-            };
-
         public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
         {
             var isDefinedInDisplayAttribute = false;
@@ -59,6 +49,7 @@ namespace MyTestNameSpace
                 return true;
             }
 
+            
             return name switch
             {
                 nameof(MyTestNameSpace.MyEnum.First) => true,
