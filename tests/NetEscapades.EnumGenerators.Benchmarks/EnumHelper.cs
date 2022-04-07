@@ -34,8 +34,9 @@ internal static class EnumHelper<T> where T : struct
 
         if (typeof(T).IsEnum)
         {
+            // Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
             if (value is not null)
-            {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
+            {
                 var memberInfo = typeof(T).GetMember(value);
                 if (memberInfo.Length > 0)
                 {

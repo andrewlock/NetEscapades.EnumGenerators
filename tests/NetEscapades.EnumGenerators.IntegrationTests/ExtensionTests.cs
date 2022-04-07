@@ -39,7 +39,7 @@ public abstract class ExtensionTests<T> where T : struct
 
         if (allowMatchingDisplayAttribute)
         {
-            expectedResult = TryGetEnumByDisplayName(name, out _);
+            expectedResult = TryGetEnumByDisplayName(name, ignoreCase: false, out _);
             if (!expectedResult)
             {
                 expectedResult = Enum.IsDefined(typeof(T), name);
@@ -61,7 +61,7 @@ public abstract class ExtensionTests<T> where T : struct
 
         if (allowMatchingDisplayAttribute)
         {
-            expectedValidity = TryGetEnumByDisplayName(name, out expectedResult);
+            expectedValidity = TryGetEnumByDisplayName(name, ignoreCase, out expectedResult);
             if (!expectedValidity)
             {
                 expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
@@ -88,14 +88,15 @@ public abstract class ExtensionTests<T> where T : struct
         names.Should().Equal(expected);
     }
 
-    private bool TryGetEnumByDisplayName(string name, out T enumValue)
+    private bool TryGetEnumByDisplayName(string name, bool ignoreCase, out T enumValue)
     {
         enumValue = default;
 
+        var stringComparisonOptions = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {
-            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, StringComparison.Ordinal))
+            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, stringComparisonOptions))
             {
                 enumValue = value;
                 return true;
@@ -117,8 +118,9 @@ public abstract class ExtensionTests<T> where T : struct
 
         if (typeof(T).IsEnum)
         {
+            // Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
             if (value is not null)
-            {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
+            {
                 var memberInfo = typeof(T).GetMember(value);
                 if (memberInfo.Length > 0)
                 {
