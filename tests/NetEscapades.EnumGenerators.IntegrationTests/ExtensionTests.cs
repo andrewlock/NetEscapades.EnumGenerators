@@ -32,7 +32,7 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(Enum.IsDefined(typeof(T), value));
     }
 
-    protected void GeneratesIsDefinedTest(string name, bool allowMatchingDisplayAttribute = false)
+    protected void GeneratesIsDefinedTest(string name, bool allowMatchingDisplayAttribute)
     {
         bool expectedResult;
         var isDefined = IsDefined(name, allowMatchingDisplayAttribute);
@@ -53,7 +53,7 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(expectedResult);
     }
 
-    protected void GeneratesTryParseTest(string name, bool ignoreCase = false, bool allowMatchingDisplayAttribute = false)
+    protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingDisplayAttribute)
     {
         bool expectedValidity;
         T expectedResult;
@@ -64,12 +64,12 @@ public abstract class ExtensionTests<T> where T : struct
             expectedValidity = TryGetEnumByDisplayName(name, out expectedResult);
             if (!expectedValidity)
             {
-                expectedValidity = Enum.TryParse(name, out expectedResult);
+                expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
             }
         }
         else
         {
-            expectedValidity = Enum.TryParse(name, out expectedResult);
+            expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
         }
         _ = new AssertionScope();
         isValid.Should().Be(expectedValidity);

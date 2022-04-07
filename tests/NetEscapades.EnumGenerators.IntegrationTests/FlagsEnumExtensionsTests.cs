@@ -18,6 +18,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
         "First",
         "Second",
         "2nd",
+        "2ND",
         "first",
         "SECOND",
         "3",
@@ -45,7 +46,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingDisplayAttribute: false);
 
     [Theory]
     [InlineData(FlagsEnum.First)]
@@ -63,11 +64,11 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name);
+    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingDisplayAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingDisplayAttribute: false);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(FlagsEnumExtensions.GetValues());
