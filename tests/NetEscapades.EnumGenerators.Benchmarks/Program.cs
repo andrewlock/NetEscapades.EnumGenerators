@@ -83,7 +83,7 @@ public class IsDefinedNameBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefined()
     {
-        return TestEnumExtensions.IsDefined(_enum, allowMatchingDisplayAttribute: false);
+        return TestEnumExtensions.IsDefined(_enum, allowMatchingMetadataAttribute: false);
     }
 
     [Benchmark]
@@ -97,7 +97,7 @@ public class IsDefinedNameBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefinedNameDisplayName()
     {
-        return TestEnumExtensions.IsDefined(_enumDisplaName, allowMatchingDisplayAttribute: true);
+        return TestEnumExtensions.IsDefined(_enumDisplaName, allowMatchingMetadataAttribute: true);
     }
 }
 
@@ -187,7 +187,7 @@ public class TryParseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParseDisplayName()
     {
-        return TestEnumExtensions.TryParse("2nd", out TestEnum result, ignoreCase: false, allowMatchingDisplayAttribute: true)
+        return TestEnumExtensions.TryParse("2nd", out TestEnum result, ignoreCase: false, allowMatchingMetadataAttribute: true)
             ? result
             : default;
     }
@@ -225,7 +225,7 @@ public class TryParseIgnoreCaseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParseIgnoreCaseDisplayName()
     {
-        return TestEnumExtensions.TryParse("2ND", out TestEnum result, ignoreCase: true, allowMatchingDisplayAttribute: true)
+        return TestEnumExtensions.TryParse("2ND", out TestEnum result, ignoreCase: true, allowMatchingMetadataAttribute: true)
             ? result
             : default;
     }

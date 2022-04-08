@@ -110,13 +110,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {");
         if (enumToGenerate.IsDisplaAttributeUsed)
         {
             sb.Append(@"
             var isDefinedInDisplayAttribute = false;
-            if (allowMatchingDisplayAttribute)
+            if (allowMatchingMetadataAttribute)
             {
                 isDefinedInDisplayAttribute = name switch
                 {");
@@ -183,13 +183,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             string? name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
             bool ignoreCase, 
-            bool allowMatchingDisplayAttribute)
+            bool allowMatchingMetadataAttribute)
         {");
 
         if (enumToGenerate.IsDisplaAttributeUsed)
         {
             sb.Append(@"
-            if (allowMatchingDisplayAttribute)
+            if (allowMatchingMetadataAttribute)
             {
                 if (ignoreCase)
                 {

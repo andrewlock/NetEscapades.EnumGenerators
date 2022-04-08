@@ -35,7 +35,7 @@ namespace Something.Blah
                 _ => false,
             };
 
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {
             return name switch
             {
@@ -69,7 +69,7 @@ namespace Something.Blah
             string? name, 
             out Something.Blah.ShortName value, 
             bool ignoreCase, 
-            bool allowMatchingDisplayAttribute)
+            bool allowMatchingMetadataAttribute)
         {
 
             if (ignoreCase)

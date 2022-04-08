@@ -11,8 +11,8 @@ public abstract class ExtensionTests<T> where T : struct
 {
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
-    protected abstract bool IsDefined(string name, bool allowMatchingDisplayAttribute = false);
-    protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingDisplayAttribute = false);
+    protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
+    protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
 
     protected void GeneratesToStringFastTest(T value)
     {
@@ -32,12 +32,12 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(Enum.IsDefined(typeof(T), value));
     }
 
-    protected void GeneratesIsDefinedTest(string name, bool allowMatchingDisplayAttribute)
+    protected void GeneratesIsDefinedTest(string name, bool allowMatchingMetadataAttribute)
     {
         bool expectedResult;
-        var isDefined = IsDefined(name, allowMatchingDisplayAttribute);
+        var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
 
-        if (allowMatchingDisplayAttribute)
+        if (allowMatchingMetadataAttribute)
         {
             expectedResult = TryGetEnumByDisplayName(name, ignoreCase: false, out _);
             if (!expectedResult)
@@ -53,13 +53,13 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(expectedResult);
     }
 
-    protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingDisplayAttribute)
+    protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         bool expectedValidity;
         T expectedResult;
-        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingDisplayAttribute);
+        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingMetadataAttribute);
 
-        if (allowMatchingDisplayAttribute)
+        if (allowMatchingMetadataAttribute)
         {
             expectedValidity = TryGetEnumByDisplayName(name, ignoreCase, out expectedResult);
             if (!expectedValidity)

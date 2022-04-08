@@ -28,7 +28,7 @@ namespace MyTestNameSpace
                 _ => false,
             };
 
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {
             return name switch
             {
@@ -62,7 +62,7 @@ namespace MyTestNameSpace
             string? name, 
             out MyTestNameSpace.InnerClass.MyEnum value, 
             bool ignoreCase, 
-            bool allowMatchingDisplayAttribute)
+            bool allowMatchingMetadataAttribute)
         {
 
             if (ignoreCase)

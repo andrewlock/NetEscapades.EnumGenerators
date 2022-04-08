@@ -26,7 +26,7 @@
                 _ => false,
             };
 
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute)
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {
             return name switch
             {
@@ -60,7 +60,7 @@
             string? name, 
             out MyEnum value, 
             bool ignoreCase, 
-            bool allowMatchingDisplayAttribute)
+            bool allowMatchingMetadataAttribute)
         {
 
             if (ignoreCase)

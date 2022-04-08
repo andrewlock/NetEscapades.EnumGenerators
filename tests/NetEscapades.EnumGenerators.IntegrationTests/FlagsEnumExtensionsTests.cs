@@ -32,8 +32,8 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
-    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingDisplayAttribute: false);
-    protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
+    protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
+    protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]
@@ -46,7 +46,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingDisplayAttribute: false);
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [InlineData(FlagsEnum.First)]
@@ -64,11 +64,11 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingDisplayAttribute: false);
+    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingDisplayAttribute: false);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(FlagsEnumExtensions.GetValues());
