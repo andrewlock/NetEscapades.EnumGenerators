@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
-using System;
 namespace MyTestNameSpace
 {
     public static partial class MyEnumExtensions
@@ -33,10 +32,10 @@ namespace MyTestNameSpace
                 _ => false,
             };
 
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute = false)
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {
             var isDefinedInDisplayAttribute = false;
-            if (allowMatchingDisplayAttribute)
+            if (allowMatchingMetadataAttribute)
             {
                 isDefinedInDisplayAttribute = name switch
                 {
@@ -50,6 +49,7 @@ namespace MyTestNameSpace
                 return true;
             }
 
+            
             return name switch
             {
                 nameof(MyTestNameSpace.MyEnum.First) => true,
@@ -60,186 +60,107 @@ namespace MyTestNameSpace
             };
         }
 
-        /// <summary>
-        /// Slower then the <see cref="IsDefined(string, bool)",
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="allowMatchingDisplayAttribute"></param>
-        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false)
-        {
-            var isDefinedInDisplayAttribute = false;
-            if (allowMatchingDisplayAttribute)
-            {
-                isDefinedInDisplayAttribute = name switch
-                {
-					ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), System.StringComparison.Ordinal) => true,
-                    _ => false,
-                };
-            }
-
-            if (isDefinedInDisplayAttribute)
-            {
-                return true;
-            }
-
-            return name switch
-            {
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.Ordinal) => true,
-                _ => false,
-            };
-        }
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out MyTestNameSpace.MyEnum value)
+            => TryParse(name, out value, false, false);
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            bool ignoreCase, 
-            out MyTestNameSpace.MyEnum value, 
-            bool allowMatchingDisplayAttribute = false)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value, allowMatchingDisplayAttribute) : TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
+            out MyTestNameSpace.MyEnum value,
+            bool ignoreCase) 
+            => TryParse(name, out value, ignoreCase, false);
 
-        private static bool TryParse(
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            System.StringComparison stringComparisonOption, 
             out MyTestNameSpace.MyEnum value, 
-            bool allowMatchingDisplayAttribute)
+            bool ignoreCase, 
+            bool allowMatchingMetadataAttribute)
         {
-            if (allowMatchingDisplayAttribute)
+            if (allowMatchingMetadataAttribute)
+            {
+                if (ignoreCase)
+                {
+                    switch (name)
+                    {
+                        case string s when s.Equals("2nd", System.StringComparison.OrdinalIgnoreCase):
+                            value = MyTestNameSpace.MyEnum.Second;
+                            return true;
+                        default:
+                            break;
+                    };
+                }
+                else
+                {
+                    switch (name)
+                    {
+                        case "2nd":
+                            value = MyTestNameSpace.MyEnum.Second;
+                            return true;
+                        default:
+                            break;
+                    };
+                }
+            }
+
+            if (ignoreCase)
             {
                 switch (name)
                 {
-                    case { } s when s.Equals("2nd", stringComparisonOption):
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.First;
+                        return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.Second;
                         return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.Third;
+                        return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.Fourth;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyTestNameSpace.MyEnum)val;
+                        return true;
                     default:
-                        break;
-                };
+                        value = default;
+                        return false;
+                }
             }
-
-            switch (name)
-            {
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.First;
-                    return true;
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.Second;
-                    return true;
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.Third;
-                    return true;
-                case { } s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), stringComparisonOption):
-                    value = MyTestNameSpace.MyEnum.Fourth;
-                    return true;
-                case { } s when int.TryParse(name, out var val):
-                    value = (MyTestNameSpace.MyEnum)val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
-        }
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out MyTestNameSpace.MyEnum value, 
-            bool allowMatchingDisplayAttribute = false)
-            => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
-
-        /// <summary>
-        /// Slower then the <see cref="TryParse(string, bool, out MyTestNameSpace.MyEnum, bool)"/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="ignoreCase"></param>
-        /// <param name="result"></param>
-        /// <param name="allowMatchingDisplayAttribute"></param>
-        /// <returns></returns>
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            bool ignoreCase, 
-            out MyTestNameSpace.MyEnum result, 
-            bool allowMatchingDisplayAttribute = false)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out result, allowMatchingDisplayAttribute) : TryParse(name, System.StringComparison.Ordinal, out result, allowMatchingDisplayAttribute);
-
-        private static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            System.StringComparison stringComparisonOption, 
-            out MyTestNameSpace.MyEnum result, 
-            bool allowMatchingDisplayAttribute)
-        {
-            if (allowMatchingDisplayAttribute)
+            else
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), stringComparisonOption):
-                        result = MyTestNameSpace.MyEnum.Second;
+                    case nameof(MyTestNameSpace.MyEnum.First):
+                        value = MyTestNameSpace.MyEnum.First;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Second):
+                        value = MyTestNameSpace.MyEnum.Second;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Third):
+                        value = MyTestNameSpace.MyEnum.Third;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Fourth):
+                        value = MyTestNameSpace.MyEnum.Fourth;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyTestNameSpace.MyEnum)val;
                         return true;
                     default:
-                        break;
-                };
-            }
-
-            switch (name)
-            {
-                case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), stringComparisonOption):
-                    result = MyTestNameSpace.MyEnum.First;
-                    return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), stringComparisonOption):
-                    result = MyTestNameSpace.MyEnum.Second;
-                    return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), stringComparisonOption):
-                    result = MyTestNameSpace.MyEnum.Third;
-                    return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), stringComparisonOption):
-                    result = MyTestNameSpace.MyEnum.Fourth;
-                    return true;
-#if NETCOREAPP2_1_OR_GREATER
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-#else
-                case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
-#endif
-                    result = (MyTestNameSpace.MyEnum)numericResult;
-                    return true;
-                default:
-                    result = default;
-                    return false;
+                        value = default;
+                        return false;
+                }
             }
         }
-
-        /// <summary>
-        /// Slower then the <see cref="TryParse(string, out MyTestNameSpace.MyEnum, bool)"/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="allowMatchingDisplayAttribute"></param>
-        /// <returns></returns>
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            out MyTestNameSpace.MyEnum value, 
-            bool allowMatchingDisplayAttribute = false)
-            => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
 
         public static MyTestNameSpace.MyEnum[] GetValues()
         {

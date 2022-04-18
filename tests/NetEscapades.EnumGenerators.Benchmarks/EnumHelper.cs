@@ -5,14 +5,15 @@ namespace NetEscapades.EnumGenerators.Benchmarks;
 
 internal static class EnumHelper<T> where T : struct
 {
-    internal static bool TryParseByDisplayName(string name, out T enumValue)
+    internal static bool TryParseByDisplayName(string name, bool ignoreCase, out T enumValue)
     {
         enumValue = default;
 
+        var stringComparisonOption = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {
-            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, StringComparison.Ordinal))
+            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, stringComparisonOption))
             {
                 enumValue = value;
                 return true;
@@ -34,8 +35,9 @@ internal static class EnumHelper<T> where T : struct
 
         if (typeof(T).IsEnum)
         {
+            // Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
             if (value is not null)
-            {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
+            {
                 var memberInfo = typeof(T).GetMember(value);
                 if (memberInfo.Length > 0)
                 {

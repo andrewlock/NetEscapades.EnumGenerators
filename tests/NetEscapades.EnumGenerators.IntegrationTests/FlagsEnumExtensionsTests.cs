@@ -19,6 +19,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
         "First",
         "Second",
         "2nd",
+        "2ND",
         "first",
         "SECOND",
         "3",
@@ -32,10 +33,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
-    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
     protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
-    protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
-        => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
+    protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingMetadataAttribute)
+        => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
     protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
         => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
@@ -49,7 +50,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -71,7 +72,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name);
+    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -79,7 +80,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]

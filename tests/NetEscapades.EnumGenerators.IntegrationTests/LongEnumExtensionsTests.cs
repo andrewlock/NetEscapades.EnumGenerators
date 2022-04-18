@@ -17,6 +17,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
         "First",
         "Second",
         "2nd",
+        "2ND",
         "first",
         "SECOND",
         "3",
@@ -30,10 +31,10 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
 
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
-    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => LongEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
     protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => LongEnumExtensions.IsDefined(name);
-    protected override bool TryParse(string name, bool ignoreCase, out LongEnum parsed, bool allowMatchingDisplayAttribute)
-        => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
+    protected override bool TryParse(string name,bool ignoreCase, out LongEnum parsed, bool allowMatchingMetadataAttribute)
+        => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
     protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out LongEnum parsed, bool allowMatchingDisplayAttribute)
         => LongEnumExtensions.TryParse(name, ignoreCase, out parsed);
 
@@ -47,7 +48,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -55,7 +56,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name);
+    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase:false, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -63,7 +64,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]

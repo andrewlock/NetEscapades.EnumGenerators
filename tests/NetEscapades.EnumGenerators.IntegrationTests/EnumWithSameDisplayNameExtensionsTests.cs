@@ -17,6 +17,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
         "First",
         "Second",
         "2nd",
+        "2ND",
         "first",
         "SECOND",
         "3",
@@ -30,10 +31,10 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     protected override string ToStringFast(EnumWithSameDisplayName value) => value.ToStringFast();
     protected override bool IsDefined(EnumWithSameDisplayName value) => EnumWithSameDisplayNameExtensions.IsDefined(value);
-    protected override bool IsDefined(string name, bool allowMatchingDisplayAttribute) => EnumWithSameDisplayNameExtensions.IsDefined(name, allowMatchingDisplayAttribute);
+    protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithSameDisplayNameExtensions.IsDefined(name, allowMatchingMetadataAttribute);
     protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false) => EnumWithSameDisplayNameExtensions.IsDefined(name, allowMatchingDisplayAttribute);
-    protected override bool TryParse(string name,bool ignoreCase, out EnumWithSameDisplayName parsed, bool allowMatchingDisplayAttribute)
-        => EnumWithSameDisplayNameExtensions.TryParse(name, ignoreCase, out parsed, allowMatchingDisplayAttribute);
+    protected override bool TryParse(string name,bool ignoreCase, out EnumWithSameDisplayName parsed, bool allowMatchingMetadataAttribute)
+        => EnumWithSameDisplayNameExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
     protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out EnumWithSameDisplayName parsed, bool allowMatchingDisplayAttribute = false)
         => EnumWithSameDisplayNameExtensions.TryParse(name, ignoreCase, out parsed, allowMatchingDisplayAttribute);
 
@@ -47,7 +48,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -55,7 +56,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingNameAllowMatchingDisplayAttribute(string name) => GeneratesIsDefinedTest(name, allowMatchingDisplayAttribute: true);
+    public void GeneratesIsDefinedUsingNameallowMatchingMetadataAttribute(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: true);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -63,7 +64,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name);
+    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -71,7 +72,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseAllowMatchingDisplayAttribute(string name) => GeneratesTryParseTest(name, allowMatchingDisplayAttribute: true);
+    public void GeneratesTryParseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: true);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -79,7 +80,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -87,7 +88,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseAllowMatchingDisplayAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingDisplayAttribute: true);
+    public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: true);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]

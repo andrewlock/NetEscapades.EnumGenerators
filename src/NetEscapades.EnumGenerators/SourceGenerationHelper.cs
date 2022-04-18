@@ -48,10 +48,6 @@ namespace NetEscapades.EnumGenerators
     {
         sb.Append(Header);
 
-        // .NET 4.8 requires the System namespace to be able to use Span<T>.
-        sb.Append(@"
-using System;");
-
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
@@ -112,21 +108,22 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 _ => false,
             };");
 
+        sb.Append(@"
+
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
+        {");
         if (enumToGenerate.IsDisplaAttributeUsed)
         {
             sb.Append(@"
-
-        public static bool IsDefined(string name, bool allowMatchingDisplayAttribute = false)
-        {
             var isDefinedInDisplayAttribute = false;
-            if (allowMatchingDisplayAttribute)
+            if (allowMatchingMetadataAttribute)
             {
                 isDefinedInDisplayAttribute = name switch
                 {");
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
-                {
+                    {
                     sb.Append(@"
                     """).Append(member.Value.DisplayName).Append(@""" => true,");
                 }
@@ -142,386 +139,146 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 return true;
             }
 
+            ");
+        }
+        sb.Append(@"
             return name switch
             {");
-            foreach (var member in enumToGenerate.Names)
+        foreach (var member in enumToGenerate.Names)
             {
-                sb.Append(@"
+             sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
-            }
+        }
 
-            sb.Append(@"
+        sb.Append(@"
                 _ => false,
             };
         }");
 
-            sb.Append(@"
+        sb.Append(@"
 
-        /// <summary>
-        /// Slower then the <see cref=""IsDefined(string, bool)"",
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name=""name""></param>
-        /// <param name=""allowMatchingDisplayAttribute""></param>
-        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false)
-        {
-            var isDefinedInDisplayAttribute = false;
-            if (allowMatchingDisplayAttribute)
-            {
-                isDefinedInDisplayAttribute = name switch
-                {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
-                {
-                    sb.Append(@"
-					ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.Ordinal) => true,");
-                }
-            }
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            => TryParse(name, out value, false, false);");
+        sb.Append(@"
 
-            sb.Append(@"
-                    _ => false,
-                };
-            }
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value,
+            bool ignoreCase) 
+            => TryParse(name, out value, ignoreCase, false);");
+        sb.Append(@"
 
-            if (isDefinedInDisplayAttribute)
-            {
-                return true;
-            }
-
-            return name switch
-            {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
-                ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.Ordinal) => true,");
-            }
-
-            sb.Append(@"
-                _ => false,
-            };
-        }");
-        }
-        else
-        {
-            sb.Append(@"
-
-        public static bool IsDefined(string name)
-            => name switch
-            {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
-                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
-            }
-
-            sb.Append(@"
-                _ => false,
-            };");
-
-            sb.Append(@"
-
-        /// <summary>
-        /// Slower then the <see cref=""IsDefined(string)"",
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name=""name""></param>
-        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name)
-            => name switch
-            {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
-                ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.Ordinal) => true,");
-            }
-
-            sb.Append(@"
-                _ => false,
-            };");
-        }
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
+            bool ignoreCase, 
+            bool allowMatchingMetadataAttribute)
+        {");
 
         if (enumToGenerate.IsDisplaAttributeUsed)
         {
             sb.Append(@"
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            bool ignoreCase, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
-            bool allowMatchingDisplayAttribute = false)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value, allowMatchingDisplayAttribute) : TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);
-
-        private static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            System.StringComparison stringComparisonOption, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
-            bool allowMatchingDisplayAttribute)
-        {
-            if (allowMatchingDisplayAttribute)
+            if (allowMatchingMetadataAttribute)
             {
-                switch (name)
-                {");
+                if (ignoreCase)
+                {
+                    switch (name)
+                    {");
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                    case { } s when s.Equals(""").Append(member.Value.DisplayName).Append(@""", stringComparisonOption):
+                        case string s when s.Equals(""").Append(member.Value.DisplayName).Append(@""", System.StringComparison.OrdinalIgnoreCase):
+                            value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            return true;");
+                }
+            }
+
+            sb.Append(@"
+                        default:
+                            break;
+                    };
+                }
+                else
+                {
+                    switch (name)
+                    {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                {
+                    sb.Append(@"
+                        case """).Append(member.Value.DisplayName).Append(@""":
+                            value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            return true;");
+                }
+            }
+
+            sb.Append(@"
+                        default:
+                            break;
+                    };
+                }
+            }");
+        }
+
+        sb.Append(@"
+
+            if (ignoreCase)
+            {
+                switch (name)
+                {");
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
+                    case string s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), System.StringComparison.OrdinalIgnoreCase):
                         value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
-                }
-            }
-
-            sb.Append(@"
-                    default:
-                        break;
-                };
-            }
-
-            switch (name)
-            {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
-                case { } s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), stringComparisonOption):
-                    value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                    return true;");
-            }
-
-            sb.Append(@"
-                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
         }
 
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
-            bool allowMatchingDisplayAttribute = false)
-            => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);");
-            
-            sb.Append(@"
-
-        /// <summary>
-        /// Slower then the <see cref=""TryParse(string, bool, out ").Append(enumToGenerate.FullyQualifiedName).Append(@", bool)""/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name=""name""></param>
-        /// <param name=""ignoreCase""></param>
-        /// <param name=""result""></param>
-        /// <param name=""allowMatchingDisplayAttribute""></param>
-        /// <returns></returns>
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            bool ignoreCase, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result, 
-            bool allowMatchingDisplayAttribute = false)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out result, allowMatchingDisplayAttribute) : TryParse(name, System.StringComparison.Ordinal, out result, allowMatchingDisplayAttribute);
-
-        private static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            System.StringComparison stringComparisonOption, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result, 
-            bool allowMatchingDisplayAttribute)
-        {
-            if (allowMatchingDisplayAttribute)
+        sb.Append(@"
+                    case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                        value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
+                        return true;
+                    default:
+                        value = default;
+                        return false;
+                }
+            }
+            else
             {
                 switch (name)
                 {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
-                {
-                    sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), stringComparisonOption):
-                        result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
+                    case nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"):
+                        value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
+        }
+
+        sb.Append(@"
+                    case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                        value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
+                        return true;
+                    default:
+                        value = default;
+                        return false;
                 }
             }
-
-            sb.Append(@"
-                    default:
-                        break;
-                };
-            }
-
-            switch (name)
-            {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
-                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), stringComparisonOption):
-                    result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                    return true;");
-            }
-
-            sb.Append(@"
-#if NETCOREAPP2_1_OR_GREATER
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-#else
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name.ToString(), out var numericResult):
-#endif
-                    result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
-                    return true;
-                default:
-                    result = default;
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Slower then the <see cref=""TryParse(string, out ").Append(enumToGenerate.FullyQualifiedName).Append(@", bool)""/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name=""name""></param>
-        /// <param name=""value""></param>
-        /// <param name=""allowMatchingDisplayAttribute""></param>
-        /// <returns></returns>
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
-            bool allowMatchingDisplayAttribute = false)
-            => TryParse(name, System.StringComparison.Ordinal, out value, allowMatchingDisplayAttribute);");
-        }
-        else
-        {
-            sb.Append(@"
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            bool ignoreCase, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value) : TryParse(name, System.StringComparison.Ordinal, out value);
-
-        private static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            System.StringComparison stringComparisonOption, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-        {
-            switch (name)
-            {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
-                case { } s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"), stringComparisonOption):
-                    value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                    return true;");
-            }
-
-            sb.Append(@"
-                case { } s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                    value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
-        }
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
-            => TryParse(name, System.StringComparison.Ordinal, out value);");
-
-            sb.Append(@"
-
-        /// <summary>
-        /// Slower then the <see cref=""TryParse(string, bool, out ").Append(enumToGenerate.FullyQualifiedName).Append(@")""/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name=""name""></param>
-        /// <param name=""ignoreCase""></param>
-        /// <param name=""result""></param>
-        /// <returns></returns>
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            bool ignoreCase, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out result) : TryParse(name, System.StringComparison.Ordinal, out result);
-
-        private static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            System.StringComparison stringComparisonOption, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result)
-        {
-            switch (name)
-            {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
-                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), stringComparisonOption):
-                    result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                    return true;");
-            }
-
-            sb.Append(@"
-#if NETCOREAPP2_1_OR_GREATER
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-#else
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name.ToString(), out var numericResult):
-#endif
-                    result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
-                    return true;
-                default:
-                    result = default;
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Slower then the <see cref=""TryParse(string, out ").Append(enumToGenerate.FullyQualifiedName).Append(@")""/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name=""name""></param>
-        /// <param name=""result""></param>
-        /// <returns></returns>
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result)
-            => TryParse(name, System.StringComparison.Ordinal, out result);");
-        }
+        }");
 
         sb.Append(@"
 

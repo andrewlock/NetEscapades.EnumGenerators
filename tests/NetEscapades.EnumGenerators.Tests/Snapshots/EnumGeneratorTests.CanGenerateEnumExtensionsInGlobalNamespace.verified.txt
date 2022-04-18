@@ -8,7 +8,6 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
-using System;
     public static partial class MyEnumExtensions
     {
         public static string ToStringFast(this MyEnum value)
@@ -27,60 +26,14 @@ using System;
                 _ => false,
             };
 
-        public static bool IsDefined(string name)
-            => name switch
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
+        {
+            return name switch
             {
                 nameof(MyEnum.First) => true,
                 nameof(MyEnum.Second) => true,
                 _ => false,
             };
-
-        /// <summary>
-        /// Slower then the <see cref="IsDefined(string)",
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name)
-            => name switch
-            {
-                ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.First).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), System.StringComparison.Ordinal) => true,
-                _ => false,
-            };
-
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            bool ignoreCase, 
-            out MyEnum value)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out value) : TryParse(name, System.StringComparison.Ordinal, out value);
-
-        private static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name, 
-            System.StringComparison stringComparisonOption, 
-            out MyEnum value)
-        {
-            switch (name)
-            {
-                case { } s when s.Equals(nameof(MyEnum.First), stringComparisonOption):
-                    value = MyEnum.First;
-                    return true;
-                case { } s when s.Equals(nameof(MyEnum.Second), stringComparisonOption):
-                    value = MyEnum.Second;
-                    return true;
-                case { } s when int.TryParse(name, out var val):
-                    value = (MyEnum)val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
         }
 
         public static bool TryParse(
@@ -89,68 +42,64 @@ using System;
 #endif
             string? name, 
             out MyEnum value)
-            => TryParse(name, System.StringComparison.Ordinal, out value);
+            => TryParse(name, out value, false, false);
 
-        /// <summary>
-        /// Slower then the <see cref="TryParse(string, bool, out MyEnum)"/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="ignoreCase"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
-            bool ignoreCase, 
-            out MyEnum result)
-            => ignoreCase ? TryParse(name, System.StringComparison.OrdinalIgnoreCase, out result) : TryParse(name, System.StringComparison.Ordinal, out result);
+            string? name, 
+            out MyEnum value,
+            bool ignoreCase) 
+            => TryParse(name, out value, ignoreCase, false);
 
-        private static bool TryParse(
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
-            System.StringComparison stringComparisonOption, 
-            out MyEnum result)
+            string? name, 
+            out MyEnum value, 
+            bool ignoreCase, 
+            bool allowMatchingMetadataAttribute)
         {
-            switch (name)
+
+            if (ignoreCase)
             {
-                case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.First).AsSpan(), stringComparisonOption):
-                    result = MyEnum.First;
-                    return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), stringComparisonOption):
-                    result = MyEnum.Second;
-                    return true;
-#if NETCOREAPP2_1_OR_GREATER
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-#else
-                case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
-#endif
-                    result = (MyEnum)numericResult;
-                    return true;
-                default:
-                    result = default;
-                    return false;
+                switch (name)
+                {
+                    case string s when s.Equals(nameof(MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyEnum.First;
+                        return true;
+                    case string s when s.Equals(nameof(MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyEnum.Second;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyEnum)val;
+                        return true;
+                    default:
+                        value = default;
+                        return false;
+                }
+            }
+            else
+            {
+                switch (name)
+                {
+                    case nameof(MyEnum.First):
+                        value = MyEnum.First;
+                        return true;
+                    case nameof(MyEnum.Second):
+                        value = MyEnum.Second;
+                        return true;
+                    case string s when int.TryParse(name, out var val):
+                        value = (MyEnum)val;
+                        return true;
+                    default:
+                        value = default;
+                        return false;
+                }
             }
         }
-
-        /// <summary>
-        /// Slower then the <see cref="TryParse(string, out MyEnum)"/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        public static bool TryParse(
-#if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in ReadOnlySpan<char> name, 
-            out MyEnum result)
-            => TryParse(name, System.StringComparison.Ordinal, out result);
 
         public static MyEnum[] GetValues()
         {

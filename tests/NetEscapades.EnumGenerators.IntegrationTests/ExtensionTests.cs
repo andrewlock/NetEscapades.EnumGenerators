@@ -11,10 +11,8 @@ public abstract class ExtensionTests<T> where T : struct
 {
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
-    protected abstract bool IsDefined(string name, bool allowMatchingDisplayAttribute = false);
-    protected abstract bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false);
-    protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingDisplayAttribute = false);
-    protected abstract bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out T parsed, bool allowMatchingDisplayAttribute = false);
+    protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
+    protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
 
     protected void GeneratesToStringFastTest(T value)
     {
@@ -34,14 +32,14 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(Enum.IsDefined(typeof(T), value));
     }
 
-    protected void GeneratesIsDefinedTest(string name, bool allowMatchingDisplayAttribute = false)
+    protected void GeneratesIsDefinedTest(string name, bool allowMatchingMetadataAttribute)
     {
         bool expectedResult;
-        var isDefined = IsDefined(name, allowMatchingDisplayAttribute);
+        var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
 
-        if (allowMatchingDisplayAttribute)
+        if (allowMatchingMetadataAttribute)
         {
-            expectedResult = TryGetEnumByDisplayName(name, out _);
+            expectedResult = TryGetEnumByDisplayName(name, ignoreCase: false, out _);
             if (!expectedResult)
             {
                 expectedResult = Enum.IsDefined(typeof(T), name);
@@ -55,37 +53,15 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(expectedResult);
     }
 
-    protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false)
-    {
-        bool expectedResult;
-        var isDefined = IsDefined(name, allowMatchingDisplayAttribute);
-
-        var nameAsString = name.ToString();
-        if (allowMatchingDisplayAttribute)
-        {
-            expectedResult = TryGetEnumByDisplayName(nameAsString, out _);
-            if (!expectedResult)
-            {
-                expectedResult = Enum.IsDefined(typeof(T), nameAsString);
-            }
-        }
-        else
-        {
-            expectedResult = Enum.IsDefined(typeof(T), nameAsString);
-        }
-
-        isDefined.Should().Be(expectedResult);
-    }
-
-    protected void GeneratesTryParseTest(string name, bool ignoreCase = false, bool allowMatchingDisplayAttribute = false)
+    protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         bool expectedValidity;
         T expectedResult;
-        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingDisplayAttribute);
+        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingMetadataAttribute);
 
-        if (allowMatchingDisplayAttribute)
+        if (allowMatchingMetadataAttribute)
         {
-            expectedValidity = TryGetEnumByDisplayName(name, out expectedResult);
+            expectedValidity = TryGetEnumByDisplayName(name, ignoreCase, out expectedResult);
             if (!expectedValidity)
             {
                 expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
@@ -94,30 +70,6 @@ public abstract class ExtensionTests<T> where T : struct
         else
         {
             expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
-        }
-        _ = new AssertionScope();
-        isValid.Should().Be(expectedValidity);
-        result.Should().Be(expectedResult);
-    }
-
-    protected void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase = false, bool allowMatchingDisplayAttribute = false)
-    {
-        bool expectedValidity;
-        T expectedResult;
-        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingDisplayAttribute);
-
-        var nameAsString = name.ToString();
-        if (allowMatchingDisplayAttribute)
-        {
-            expectedValidity = TryGetEnumByDisplayName(nameAsString, out expectedResult);
-            if (!expectedValidity)
-            {
-                expectedValidity = Enum.TryParse(nameAsString, ignoreCase, out expectedResult);
-            }
-        }
-        else
-        {
-            expectedValidity = Enum.TryParse(nameAsString, ignoreCase, out expectedResult);
         }
         _ = new AssertionScope();
         isValid.Should().Be(expectedValidity);
@@ -136,14 +88,15 @@ public abstract class ExtensionTests<T> where T : struct
         names.Should().Equal(expected);
     }
 
-    private bool TryGetEnumByDisplayName(string name, out T enumValue)
+    private bool TryGetEnumByDisplayName(string name, bool ignoreCase, out T enumValue)
     {
         enumValue = default;
 
+        var stringComparisonOptions = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {
-            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, StringComparison.Ordinal))
+            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, stringComparisonOptions))
             {
                 enumValue = value;
                 return true;
@@ -165,8 +118,9 @@ public abstract class ExtensionTests<T> where T : struct
 
         if (typeof(T).IsEnum)
         {
+            // Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
             if (value is not null)
-            {// Prevent: Warning CS8604  Possible null reference argument for parameter 'name' in 'MemberInfo[] Type.GetMember(string name)'
+            {
                 var memberInfo = typeof(T).GetMember(value);
                 if (memberInfo.Length > 0)
                 {
