@@ -48,6 +48,10 @@ namespace NetEscapades.EnumGenerators
     {
         sb.Append(Header);
 
+        // .NET 4.8 requires the System namespace to be able to use Span<T>.
+        sb.Append(@"
+using System;");
+
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
@@ -148,6 +152,54 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             {
              sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
+        }
+
+        sb.Append(@"
+                _ => false,
+            };
+        }");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Slower then the <see cref=""IsDefined(string, bool)"",
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <param name=""allowMatchingMetadataAttribute""></param>
+        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
+        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+        {
+            var isDefinedInDisplayAttribute = false;
+            if (allowMatchingMetadataAttribute)
+            {
+                isDefinedInDisplayAttribute = name switch
+                {");
+        foreach (var member in enumToGenerate.Names)
+        {
+            if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+            {
+                sb.Append(@"
+					ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.Ordinal) => true,");
+            }
+        }
+
+        sb.Append(@"
+                    _ => false,
+                };
+            }
+
+            if (isDefinedInDisplayAttribute)
+            {
+                return true;
+            }
+
+            return name switch
+            {");
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
+                ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.Ordinal) => true,");
         }
 
         sb.Append(@"
