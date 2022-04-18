@@ -12,7 +12,9 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
+    protected abstract bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false);
     protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
+    protected abstract bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out T parsed, bool allowMatchingDisplayAttribute = false);
 
     protected void GeneratesToStringFastTest(T value)
     {
