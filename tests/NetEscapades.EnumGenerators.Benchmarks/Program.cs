@@ -1,7 +1,9 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using NetEscapades.EnumGenerators;
+using NetEscapades.EnumGenerators.Benchmarks;
 
 BenchmarkSwitcher
     .FromAssembly(typeof(Program).Assembly)
@@ -11,6 +13,8 @@ BenchmarkSwitcher
 public enum TestEnum
 {
     First = 0,
+
+    [Display(Name = "2nd")]
     Second = 1,
     Third = 2,
 }
@@ -25,6 +29,13 @@ public class ToStringBenchmark
     public string EnumToString()
     {
         return _enum.ToString();
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public string EnumToStringDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.GetDisplayName(_enum);
     }
 
     [Benchmark]
@@ -59,6 +70,7 @@ public class IsDefinedBenchmark
 public class IsDefinedNameBenchmark
 {
     private static readonly string _enum = nameof(TestEnum.Second);
+    private static readonly string _enumDisplaName = "2nd";
 
     [Benchmark(Baseline = true)]
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -71,7 +83,21 @@ public class IsDefinedNameBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public bool ExtensionsIsDefined()
     {
-        return TestEnumExtensions.IsDefined(_enum);
+        return TestEnumExtensions.IsDefined(_enum, allowMatchingMetadataAttribute: false);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool EnumIsDefinedNameDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumDisplaName, ignoreCase: false, out _);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedNameDisplayName()
+    {
+        return TestEnumExtensions.IsDefined(_enumDisplaName, allowMatchingMetadataAttribute: true);
     }
 }
 
@@ -145,7 +171,23 @@ public class TryParseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParse()
     {
-        return TestEnumExtensions.TryParse("Second", ignoreCase: false, out TestEnum result)
+        return TestEnumExtensions.TryParse("Second", out TestEnum result, ignoreCase: false)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", ignoreCase: false, out TestEnum result) ? result : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseDisplayName()
+    {
+        return TestEnumExtensions.TryParse("2nd", out TestEnum result, ignoreCase: false, allowMatchingMetadataAttribute: true)
             ? result
             : default;
     }
@@ -167,7 +209,23 @@ public class TryParseIgnoreCaseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParseIgnoreCase()
     {
-        return TestEnumExtensions.TryParse("second", ignoreCase: true, out TestEnum result)
+        return TestEnumExtensions.TryParse("second", out TestEnum result, ignoreCase: true)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseIgnoreCaseDisplayNameWithReflection()
+    {
+        return EnumHelper<TestEnum>.TryParseByDisplayName("2ND", ignoreCase: true, out TestEnum result) ? result : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCaseDisplayName()
+    {
+        return TestEnumExtensions.TryParse("2ND", out TestEnum result, ignoreCase: true, allowMatchingMetadataAttribute: true)
             ? result
             : default;
     }

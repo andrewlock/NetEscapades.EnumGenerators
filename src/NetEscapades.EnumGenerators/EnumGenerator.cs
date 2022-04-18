@@ -149,7 +149,9 @@ public class EnumGenerator : IIncrementalGenerator
             string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";
 
             var enumMembers = enumSymbol.GetMembers();
-            var members = new List<KeyValuePair<string, object>>(enumMembers.Length);
+            var members = new List<KeyValuePair<string, EnumValueOption>>(enumMembers.Length);
+            var displayNames = new HashSet<string>();
+            var isDisplayNameTheFirstPresence = false;
 
             foreach (var member in enumMembers)
             {
@@ -159,7 +161,26 @@ public class EnumGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                members.Add(new KeyValuePair<string, object>(member.Name, field.ConstantValue));
+                string? displayName = null;
+                foreach (var attribute in member.GetAttributes())
+                {
+                    if (attribute.AttributeClass is null || attribute.AttributeClass.Name != "DisplayAttribute")
+                    {
+                        continue;
+                    }
+
+                    foreach (var namedArgument in attribute.NamedArguments)
+                    {
+                        if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
+                        {
+                            displayName = dn;
+                            isDisplayNameTheFirstPresence = displayNames.Add(displayName);
+                            break;
+                        }
+                    }
+                }
+                
+                members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
             }
 
             enumsToGenerate.Add(new EnumToGenerate(
@@ -169,7 +190,8 @@ public class EnumGenerator : IIncrementalGenerator
                 underlyingType: underlyingType,
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
                 hasFlags: hasFlags,
-                values: members));
+                names: members,
+                isDisplaAttributeUsed: displayNames.Count > 0));
         }
 
         return enumsToGenerate;

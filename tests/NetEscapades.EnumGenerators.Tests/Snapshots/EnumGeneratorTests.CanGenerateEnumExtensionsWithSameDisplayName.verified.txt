@@ -10,13 +10,15 @@
 #nullable enable
 namespace MyTestNameSpace
 {
-    internal static partial class A
+    public static partial class MyEnumExtensions
     {
         public static string ToStringFast(this MyTestNameSpace.MyEnum value)
             => value switch
             {
                 MyTestNameSpace.MyEnum.First => nameof(MyTestNameSpace.MyEnum.First),
-                MyTestNameSpace.MyEnum.Second => nameof(MyTestNameSpace.MyEnum.Second),
+                MyTestNameSpace.MyEnum.Second => "2nd",
+                MyTestNameSpace.MyEnum.Third => nameof(MyTestNameSpace.MyEnum.Third),
+                MyTestNameSpace.MyEnum.Fourth => "2nd",
                 _ => value.ToString(),
             };
 
@@ -25,15 +27,35 @@ namespace MyTestNameSpace
             {
                 MyTestNameSpace.MyEnum.First => true,
                 MyTestNameSpace.MyEnum.Second => true,
+                MyTestNameSpace.MyEnum.Third => true,
+                MyTestNameSpace.MyEnum.Fourth => true,
                 _ => false,
             };
 
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {
+            var isDefinedInDisplayAttribute = false;
+            if (allowMatchingMetadataAttribute)
+            {
+                isDefinedInDisplayAttribute = name switch
+                {
+                    "2nd" => true,
+                    _ => false,
+                };
+            }
+
+            if (isDefinedInDisplayAttribute)
+            {
+                return true;
+            }
+
+            
             return name switch
             {
                 nameof(MyTestNameSpace.MyEnum.First) => true,
                 nameof(MyTestNameSpace.MyEnum.Second) => true,
+                nameof(MyTestNameSpace.MyEnum.Third) => true,
+                nameof(MyTestNameSpace.MyEnum.Fourth) => true,
                 _ => false,
             };
         }
@@ -64,6 +86,31 @@ namespace MyTestNameSpace
             bool ignoreCase, 
             bool allowMatchingMetadataAttribute)
         {
+            if (allowMatchingMetadataAttribute)
+            {
+                if (ignoreCase)
+                {
+                    switch (name)
+                    {
+                        case string s when s.Equals("2nd", System.StringComparison.OrdinalIgnoreCase):
+                            value = MyTestNameSpace.MyEnum.Second;
+                            return true;
+                        default:
+                            break;
+                    };
+                }
+                else
+                {
+                    switch (name)
+                    {
+                        case "2nd":
+                            value = MyTestNameSpace.MyEnum.Second;
+                            return true;
+                        default:
+                            break;
+                    };
+                }
+            }
 
             if (ignoreCase)
             {
@@ -74,6 +121,12 @@ namespace MyTestNameSpace
                         return true;
                     case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.Second;
+                        return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.Third;
+                        return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case string s when int.TryParse(name, out var val):
                         value = (MyTestNameSpace.MyEnum)val;
@@ -93,6 +146,12 @@ namespace MyTestNameSpace
                     case nameof(MyTestNameSpace.MyEnum.Second):
                         value = MyTestNameSpace.MyEnum.Second;
                         return true;
+                    case nameof(MyTestNameSpace.MyEnum.Third):
+                        value = MyTestNameSpace.MyEnum.Third;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Fourth):
+                        value = MyTestNameSpace.MyEnum.Fourth;
+                        return true;
                     case string s when int.TryParse(name, out var val):
                         value = (MyTestNameSpace.MyEnum)val;
                         return true;
@@ -109,6 +168,8 @@ namespace MyTestNameSpace
             {
                 MyTestNameSpace.MyEnum.First,
                 MyTestNameSpace.MyEnum.Second,
+                MyTestNameSpace.MyEnum.Third,
+                MyTestNameSpace.MyEnum.Fourth,
             };
         }
 
@@ -118,6 +179,8 @@ namespace MyTestNameSpace
             {
                 nameof(MyTestNameSpace.MyEnum.First),
                 nameof(MyTestNameSpace.MyEnum.Second),
+                nameof(MyTestNameSpace.MyEnum.Third),
+                nameof(MyTestNameSpace.MyEnum.Fourth),
             };
         }
     }

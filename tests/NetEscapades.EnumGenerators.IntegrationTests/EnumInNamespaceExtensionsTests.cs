@@ -15,6 +15,8 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     {
         "First",
         "Second",
+        "2nd",
+        "2ND",
         "first",
         "SECOND",
         "3",
@@ -28,9 +30,9 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
 
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
-    protected override bool IsDefined(string name) => EnumInNamespaceExtensions.IsDefined(name);
-    protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed)
-        => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
+    protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
+    protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingMetadataAttribute)
+        => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
@@ -42,15 +44,15 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name);
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name);
+    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseIgnoreCaseTest(name);
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumInNamespaceExtensions.GetValues());
