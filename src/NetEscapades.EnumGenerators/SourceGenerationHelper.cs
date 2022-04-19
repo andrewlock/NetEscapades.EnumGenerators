@@ -334,6 +334,148 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            => TryParse(name, out value, false, false);");
+        sb.Append(@"
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value,
+            bool ignoreCase) 
+            => TryParse(name, out value, ignoreCase, false);");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Slower then the <see cref=""TryParse(string, out ").Append(enumToGenerate.FullyQualifiedName).Append(@", bool, bool)""/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name=""name""></param>
+        /// <param name=""result""></param>
+        /// <param name=""ignoreCase""></param>
+        /// <param name=""allowMatchingMetadataAttribute""></param>
+        /// <returns></returns>
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name, 
+            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result, 
+            bool ignoreCase,             
+            bool allowMatchingMetadataAttribute)
+        {");
+
+        if (enumToGenerate.IsDisplaAttributeUsed)
+        {
+            sb.Append(@"
+            if (allowMatchingMetadataAttribute)
+            {
+                if (ignoreCase)
+                {
+                    switch (name)
+                    {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                {
+                    sb.Append(@"
+                        case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                            result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            return true;");
+                }
+            }
+
+            sb.Append(@"
+                        default:
+                            break;
+                    };
+                }
+                else
+                {
+                    switch (name)
+                    {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                {
+                    sb.Append(@"
+                        case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.Ordinal):
+                            result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            return true;");
+                }
+            }
+
+            sb.Append(@"
+                        default:
+                            break;
+                    };
+                }
+            }");
+        }
+            sb.Append(@"
+
+            if (ignoreCase)
+            {
+                switch (name)
+                {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                sb.Append(@"
+                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                        result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        return true;");
+            }
+
+            sb.Append(@"
+#if NETCOREAPP2_1_OR_GREATER
+                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
+#else
+                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name.ToString(), out var numericResult):
+#endif
+                        result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
+                        return true;
+                    default:
+                        result = default;
+                        return false;
+                }
+            }
+            else
+            {
+                switch (name)
+                {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                sb.Append(@"
+                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.Ordinal):
+                        result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        return true;");
+            }
+
+            sb.Append(@"
+#if NETCOREAPP2_1_OR_GREATER
+                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
+#else
+                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name.ToString(), out var numericResult):
+#endif
+                        result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
+                        return true;
+                    default:
+                        result = default;
+                        return false;
+                }
+            }
+        }");
+
+            sb.Append(@"
+
         public static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[] GetValues()
         {
             return new[]

@@ -12,9 +12,9 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
-    protected abstract bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute = false);
+    protected abstract bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute = false);
     protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
-    protected abstract bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out T parsed, bool allowMatchingDisplayAttribute = false);
+    protected abstract bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
 
     protected void GeneratesToStringFastTest(T value)
     {
@@ -36,9 +36,21 @@ public abstract class ExtensionTests<T> where T : struct
 
     protected void GeneratesIsDefinedTest(string name, bool allowMatchingMetadataAttribute)
     {
-        bool expectedResult;
         var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
+        var expectedResult = ValidateIsDefined(name, allowMatchingMetadataAttribute);
+        isDefined.Should().Be(expectedResult);
+    }
 
+    protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+    {
+        var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
+        var expectedResult = ValidateIsDefined(name.ToString(), allowMatchingMetadataAttribute);
+        isDefined.Should().Be(expectedResult);
+    }
+
+    private bool ValidateIsDefined(string name, bool allowMatchingMetadataAttribute)
+    {
+        bool expectedResult;
         if (allowMatchingMetadataAttribute)
         {
             expectedResult = TryGetEnumByDisplayName(name, ignoreCase: false, out _);
@@ -50,17 +62,33 @@ public abstract class ExtensionTests<T> where T : struct
         else
         {
             expectedResult = Enum.IsDefined(typeof(T), name);
-        }        
+        }
 
-        isDefined.Should().Be(expectedResult);
+        return expectedResult;
     }
 
     protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
-        bool expectedValidity;
-        T expectedResult;
         var isValid = TryParse(name, ignoreCase, out var result, allowMatchingMetadataAttribute);
+        ValidateTryParse(name, ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
 
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+
+    protected void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    {
+        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingMetadataAttribute);
+        ValidateTryParse(name.ToString(), ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
+
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+
+    private void ValidateTryParse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult)
+    {
         if (allowMatchingMetadataAttribute)
         {
             expectedValidity = TryGetEnumByDisplayName(name, ignoreCase, out expectedResult);
@@ -73,9 +101,6 @@ public abstract class ExtensionTests<T> where T : struct
         {
             expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
         }
-        _ = new AssertionScope();
-        isValid.Should().Be(expectedValidity);
-        result.Should().Be(expectedResult);
     }
 
     protected void GeneratesGetValuesTest(T[] values)

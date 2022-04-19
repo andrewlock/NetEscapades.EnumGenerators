@@ -34,11 +34,11 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
-    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => FlagsEnumExtensions.IsDefined(name);
+    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
     protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
-    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out FlagsEnum parsed, bool allowMatchingDisplayAttribute)
-        => FlagsEnumExtensions.TryParse(name, ignoreCase, out parsed);
+    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out FlagsEnum parsed, bool allowMatchingMetadataAttribute)
+        => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
@@ -54,7 +54,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan());
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
 
     [Theory]
     [InlineData(FlagsEnum.First)]
@@ -76,7 +76,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan());
+    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -84,7 +84,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true);
+    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(FlagsEnumExtensions.GetValues());

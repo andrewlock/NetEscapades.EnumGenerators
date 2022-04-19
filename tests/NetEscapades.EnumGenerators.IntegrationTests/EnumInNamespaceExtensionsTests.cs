@@ -32,11 +32,12 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
-    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingDisplayAttribute) => EnumInNamespaceExtensions.IsDefined(name);
+    protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
     protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingMetadataAttribute)
         => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
-    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingDisplayAttribute)
-        => EnumInNamespaceExtensions.TryParse(name, ignoreCase, out parsed);
+    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingMetadataAttribute)
+        => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
+
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(EnumInNamespace value) => GeneratesToStringFastTest(value);
@@ -51,7 +52,7 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan());
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
@@ -59,15 +60,11 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     
     [Theory]
     [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseUsingSpan(string name) => GeneratesTryParseTest(name.AsSpan());
+    public void GeneratesTryParseUsingSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true);
 
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumInNamespaceExtensions.GetValues());
