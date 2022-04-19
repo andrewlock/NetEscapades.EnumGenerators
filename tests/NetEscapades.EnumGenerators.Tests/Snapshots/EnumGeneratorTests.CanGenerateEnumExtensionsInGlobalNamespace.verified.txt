@@ -8,6 +8,7 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
+using System;
     public static partial class MyEnumExtensions
     {
         public static string ToStringFast(this MyEnum value)
@@ -26,12 +27,47 @@
                 _ => false,
             };
 
+        public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {
             return name switch
             {
                 nameof(MyEnum.First) => true,
                 nameof(MyEnum.Second) => true,
+                _ => false,
+            };
+        }
+
+        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+
+        /// <summary>
+        /// Slower then the <see cref="IsDefined(string, bool)",
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="allowMatchingMetadataAttribute"></param>
+        /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
+        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+        {
+            var isDefinedInDisplayAttribute = false;
+            if (allowMatchingMetadataAttribute)
+            {
+                isDefinedInDisplayAttribute = name switch
+                {
+                    _ => false,
+                };
+            }
+
+            if (isDefinedInDisplayAttribute)
+            {
+                return true;
+            }
+
+            return name switch
+            {
+                ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.First).AsSpan(), System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -96,6 +132,88 @@
                         return true;
                     default:
                         value = default;
+                        return false;
+                }
+            }
+        }
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name, 
+            out MyEnum value)
+            => TryParse(name, out value, false, false);
+
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name, 
+            out MyEnum value,
+            bool ignoreCase) 
+            => TryParse(name, out value, ignoreCase, false);
+
+        /// <summary>
+        /// Slower then the <see cref="TryParse(string, out MyEnum, bool, bool)"/>,
+        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="result"></param>
+        /// <param name="ignoreCase"></param>
+        /// <param name="allowMatchingMetadataAttribute"></param>
+        /// <returns></returns>
+        public static bool TryParse(
+#if NETCOREAPP3_0_OR_GREATER
+            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name, 
+            out MyEnum result, 
+            bool ignoreCase,             
+            bool allowMatchingMetadataAttribute)
+        {
+
+            if (ignoreCase)
+            {
+                switch (name)
+                {
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.First).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                        result = MyEnum.First;
+                        return true;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                        result = MyEnum.Second;
+                        return true;
+#if NETCOREAPP2_1_OR_GREATER
+                    case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+#else
+                    case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
+#endif
+                        result = (MyEnum)numericResult;
+                        return true;
+                    default:
+                        result = default;
+                        return false;
+                }
+            }
+            else
+            {
+                switch (name)
+                {
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.First).AsSpan(), System.StringComparison.Ordinal):
+                        result = MyEnum.First;
+                        return true;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), System.StringComparison.Ordinal):
+                        result = MyEnum.Second;
+                        return true;
+#if NETCOREAPP2_1_OR_GREATER
+                    case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+#else
+                    case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
+#endif
+                        result = (MyEnum)numericResult;
+                        return true;
+                    default:
+                        result = default;
                         return false;
                 }
             }

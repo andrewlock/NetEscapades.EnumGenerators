@@ -114,6 +114,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
+        public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {");
         if (enumToGenerate.IsDisplaAttributeUsed)
@@ -160,6 +162,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         }");
 
         sb.Append(@"
+
+        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
         /// Slower then the <see cref=""IsDefined(string, bool)"",
