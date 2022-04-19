@@ -33,9 +33,9 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     protected override bool IsDefined(EnumWithDisplayNameInNamespace value) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
     protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute = false) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
-    protected override bool TryParse(string name,bool ignoreCase, out EnumWithDisplayNameInNamespace parsed, bool allowMatchingMetadataAttribute)
+    protected override bool TryParse(string name, out EnumWithDisplayNameInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
-    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out EnumWithDisplayNameInNamespace parsed, bool allowMatchingMetadataAttribute)
+    protected override bool TryParse(ReadOnlySpan<char> name, out EnumWithDisplayNameInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 
     [Theory]

@@ -33,9 +33,9 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => LongEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
     protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => LongEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
-    protected override bool TryParse(string name,bool ignoreCase, out LongEnum parsed, bool allowMatchingMetadataAttribute)
+    protected override bool TryParse(string name, out LongEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
-    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out LongEnum parsed, bool allowMatchingMetadataAttribute)
+    protected override bool TryParse(ReadOnlySpan<char> name, out LongEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]

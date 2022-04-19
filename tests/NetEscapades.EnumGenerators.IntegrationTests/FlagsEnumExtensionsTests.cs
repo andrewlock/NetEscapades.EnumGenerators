@@ -35,9 +35,9 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
     protected override bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
-    protected override bool TryParse(string name,bool ignoreCase, out FlagsEnum parsed, bool allowMatchingMetadataAttribute)
+    protected override bool TryParse(string name, out FlagsEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
-    protected override bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out FlagsEnum parsed, bool allowMatchingMetadataAttribute)
+    protected override bool TryParse(ReadOnlySpan<char> name, out FlagsEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 
     [Theory]

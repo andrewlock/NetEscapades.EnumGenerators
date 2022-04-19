@@ -13,8 +13,8 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
     protected abstract bool IsDefined(ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute = false);
-    protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
-    protected abstract bool TryParse(ReadOnlySpan<char> name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
+    protected abstract bool TryParse(string name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute = false);
+    protected abstract bool TryParse(ReadOnlySpan<char> name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute = false);
 
     protected void GeneratesToStringFastTest(T value)
     {
@@ -69,7 +69,7 @@ public abstract class ExtensionTests<T> where T : struct
 
     protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
-        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingMetadataAttribute);
+        var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);
         ValidateTryParse(name, ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
 
         _ = new AssertionScope();
@@ -79,7 +79,7 @@ public abstract class ExtensionTests<T> where T : struct
 
     protected void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
-        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingMetadataAttribute);
+        var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);
         ValidateTryParse(name.ToString(), ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
 
         _ = new AssertionScope();
