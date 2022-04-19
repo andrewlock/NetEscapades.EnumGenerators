@@ -107,7 +107,6 @@ namespace Something.Blah
             bool ignoreCase, 
             bool allowMatchingMetadataAttribute)
         {
-
             if (ignoreCase)
             {
                 switch (name)
@@ -181,7 +180,6 @@ namespace Something.Blah
             bool ignoreCase,             
             bool allowMatchingMetadataAttribute)
         {
-
             if (ignoreCase)
             {
                 switch (name)

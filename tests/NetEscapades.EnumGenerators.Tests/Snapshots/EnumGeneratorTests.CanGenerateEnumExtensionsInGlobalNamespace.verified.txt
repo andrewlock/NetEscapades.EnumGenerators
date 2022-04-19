@@ -98,7 +98,6 @@ using System;
             bool ignoreCase, 
             bool allowMatchingMetadataAttribute)
         {
-
             if (ignoreCase)
             {
                 switch (name)
@@ -172,7 +171,6 @@ using System;
             bool ignoreCase,             
             bool allowMatchingMetadataAttribute)
         {
-
             if (ignoreCase)
             {
                 switch (name)

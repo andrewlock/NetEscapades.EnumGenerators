@@ -287,11 +287,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                             break;
                     };
                 }
-            }");
+            }
+");
         }
 
         sb.Append(@"
-
             if (ignoreCase)
             {
                 switch (name)
@@ -422,10 +422,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                             break;
                     };
                 }
-            }");
+            }
+");
         }
             sb.Append(@"
-
             if (ignoreCase)
             {
                 switch (name)
