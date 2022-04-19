@@ -173,22 +173,26 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <param name=""allowMatchingMetadataAttribute""></param>
         /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
         public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+        {");
+
+        if (enumToGenerate.IsDisplaAttributeUsed)
         {
+            sb.Append(@"
             var isDefinedInDisplayAttribute = false;
             if (allowMatchingMetadataAttribute)
             {
                 isDefinedInDisplayAttribute = name switch
                 {");
-        foreach (var member in enumToGenerate.Names)
-        {
-            if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+            foreach (var member in enumToGenerate.Names)
             {
-                sb.Append(@"
+                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                {
+                    sb.Append(@"
 					ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.Ordinal) => true,");
+                }
             }
-        }
 
-        sb.Append(@"
+            sb.Append(@"
                     _ => false,
                 };
             }
@@ -197,7 +201,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             {
                 return true;
             }
+");
+        }
 
+        sb.Append(@"
             return name switch
             {");
         foreach (var member in enumToGenerate.Names)

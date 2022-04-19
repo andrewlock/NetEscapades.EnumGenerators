@@ -52,20 +52,6 @@ namespace Something.Blah
         /// <returns><c>true</c> if defined, otherwise <c>false</c></returns>
         public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
         {
-            var isDefinedInDisplayAttribute = false;
-            if (allowMatchingMetadataAttribute)
-            {
-                isDefinedInDisplayAttribute = name switch
-                {
-                    _ => false,
-                };
-            }
-
-            if (isDefinedInDisplayAttribute)
-            {
-                return true;
-            }
-
             return name switch
             {
                 ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), System.StringComparison.Ordinal) => true,
