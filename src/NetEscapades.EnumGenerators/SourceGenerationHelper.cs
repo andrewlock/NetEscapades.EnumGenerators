@@ -112,7 +112,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {");
-        if (enumToGenerate.IsDisplaAttributeUsed)
+        if (enumToGenerate.IsDisplayAttributeUsed)
         {
             sb.Append(@"
             var isDefinedInDisplayAttribute = false;
@@ -186,7 +186,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             bool allowMatchingMetadataAttribute)
         {");
 
-        if (enumToGenerate.IsDisplaAttributeUsed)
+        if (enumToGenerate.IsDisplayAttributeUsed)
         {
             sb.Append(@"
             if (allowMatchingMetadataAttribute)
