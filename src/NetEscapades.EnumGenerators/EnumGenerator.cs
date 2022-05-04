@@ -191,7 +191,7 @@ public class EnumGenerator : IIncrementalGenerator
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
                 hasFlags: hasFlags,
                 names: members,
-                isDisplaAttributeUsed: displayNames.Count > 0));
+                isDisplayAttributeUsed: displayNames.Count > 0));
         }
 
         return enumsToGenerate;
