@@ -14,7 +14,7 @@ public readonly struct EnumToGenerate
     /// </summary>
     public readonly List<KeyValuePair<string, EnumValueOption>> Names;
 
-    public readonly bool isDisplayAttributeUsed;
+    public readonly bool IsDisplayAttributeUsed;
 
     public EnumToGenerate(
     string name,
@@ -33,6 +33,6 @@ public readonly struct EnumToGenerate
         HasFlags = hasFlags;
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
-        isDisplayAttributeUsed = isDisplayAttributeUsed;
+        IsDisplayAttributeUsed = isDisplayAttributeUsed;
     }
 }
