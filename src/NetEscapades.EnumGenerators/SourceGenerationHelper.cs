@@ -118,7 +118,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {");
-        if (enumToGenerate.IsDisplaAttributeUsed)
+        if (enumToGenerate.isDisplayAttributeUsed)
         {
             sb.Append(@"
             var isDefinedInDisplayAttribute = false;
@@ -175,7 +175,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
         {");
 
-        if (enumToGenerate.IsDisplaAttributeUsed)
+        if (enumToGenerate.isDisplayAttributeUsed)
         {
             sb.Append(@"
             var isDefinedInDisplayAttribute = false;
@@ -249,7 +249,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             bool allowMatchingMetadataAttribute)
         {");
 
-        if (enumToGenerate.IsDisplaAttributeUsed)
+        if (enumToGenerate.isDisplayAttributeUsed)
         {
             sb.Append(@"
             if (allowMatchingMetadataAttribute)
@@ -384,7 +384,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             bool allowMatchingMetadataAttribute)
         {");
 
-        if (enumToGenerate.IsDisplaAttributeUsed)
+        if (enumToGenerate.isDisplayAttributeUsed)
         {
             sb.Append(@"
             if (allowMatchingMetadataAttribute)

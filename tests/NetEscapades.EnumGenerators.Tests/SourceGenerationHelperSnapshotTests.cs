@@ -25,7 +25,7 @@ public class SourceGenerationHelperSnapshotTests
                 { "Second", new EnumValueOption(null, false) }
             }.ToList(),
             hasFlags: false,
-            isDisplaAttributeUsed: false);
+            isDisplayAttributeUsed: false);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
@@ -49,7 +49,7 @@ public class SourceGenerationHelperSnapshotTests
                 { "Second", new EnumValueOption(null, false) }
             }.ToList(),
             hasFlags: true,
-            isDisplaAttributeUsed: false);
+            isDisplayAttributeUsed: false);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
