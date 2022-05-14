@@ -44,10 +44,10 @@ namespace NetEscapades.EnumGenerators
 }
 #endif
 ";
+
     public static string GenerateExtensionClass(StringBuilder sb, EnumToGenerate enumToGenerate)
     {
         sb.Append(Header);
-
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
@@ -58,6 +58,12 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
     ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
     {
+        /// <summary>
+        /// The number of members in the enum.
+        /// This is a non-distinct count of defined names.
+        /// </summary>
+        public const int Length = ").Append(enumToGenerate.Names.Count).Append(";").Append(@"
+
         public static string ToStringFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
             {");
@@ -104,6 +110,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
                 .Append(" => true,");
         }
+
         sb.Append(@"
                 _ => false,
             };");
@@ -307,6 +314,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
         }
+
         sb.Append(@"
             };
         }

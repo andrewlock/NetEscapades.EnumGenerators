@@ -12,6 +12,12 @@ namespace A.B
 {
     internal static partial class C
     {
+        /// <summary>
+        /// The number of members in the enum.
+        /// This is a non-distinct count of defined names.
+        /// </summary>
+        public const int Length = 2;
+
         public static string ToStringFast(this MyTestNameSpace.MyEnum value)
             => value switch
             {
