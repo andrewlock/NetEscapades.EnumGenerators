@@ -62,7 +62,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// The number of members in the enum.
         /// This is a non-distinct count of defined names.
         /// </summary>
-        public const int Length = ").Append(enumToGenerate.Values.Count).Append(";").Append(@"
+        public const int Length = ").Append(enumToGenerate.Names.Count).Append(";").Append(@"
 
         public static string ToStringFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch

@@ -12,6 +12,12 @@ namespace MyTestNameSpace
 {
     public static partial class MyEnumExtensions
     {
+        /// <summary>
+        /// The number of members in the enum.
+        /// This is a non-distinct count of defined names.
+        /// </summary>
+        public const int Length = 4;
+
         public static string ToStringFast(this MyTestNameSpace.MyEnum value)
             => value switch
             {
