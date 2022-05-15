@@ -381,7 +381,6 @@ public class TryParseIgnoreCaseFromSpanBenchmark
     }
 }
 #endif
-}
 
 [MemoryDiagnoser]
 public class EnumLengthBenchmark
