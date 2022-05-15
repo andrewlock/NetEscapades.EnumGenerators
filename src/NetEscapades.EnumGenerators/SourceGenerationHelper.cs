@@ -48,10 +48,6 @@ namespace NetEscapades.EnumGenerators
     {
         sb.Append(Header);
 
-        // .NET 4.8 requires the System namespace to be able to use Span<T>.
-        sb.Append(@"
-using System;");
-
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
@@ -163,6 +159,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
@@ -216,7 +213,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
                 _ => false,
             };
-        }");
+        }
+#endif");
 
         sb.Append(@"
 
@@ -345,6 +343,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -446,11 +445,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
 
             sb.Append(@"
-#if NETCOREAPP2_1_OR_GREATER
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-#else
-                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name.ToString(), out var numericResult):
-#endif
                         result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
                         return true;
                     default:
@@ -471,11 +466,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
 
             sb.Append(@"
-#if NETCOREAPP2_1_OR_GREATER
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-#else
-                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name.ToString(), out var numericResult):
-#endif
                         result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
                         return true;
                     default:
@@ -483,9 +474,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                         return false;
                 }
             }
-        }");
+        }
+#endif");
 
-            sb.Append(@"
+        sb.Append(@"
 
         public static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[] GetValues()
         {

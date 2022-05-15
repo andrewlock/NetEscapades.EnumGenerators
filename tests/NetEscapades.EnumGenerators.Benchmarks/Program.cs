@@ -101,6 +101,7 @@ public class IsDefinedNameBenchmark
     }
 }
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
 [MemoryDiagnoser]
 public class IsDefinedNameFromSpanBenchmark
 {
@@ -145,6 +146,7 @@ public class IsDefinedNameFromSpanBenchmark
         return TestEnumExtensions.IsDefined(_enumDisplayName.AsSpan(), allowMatchingMetadataAttribute: true);
     }
 }
+#endif
 
 [MemoryDiagnoser]
 public class GetValuesBenchmark
@@ -238,6 +240,7 @@ public class TryParseBenchmark
     }
 }
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
 [MemoryDiagnoser]
 public class TryParseFromSpanBenchmark
 {
@@ -300,6 +303,7 @@ public class TryParseFromSpanBenchmark
             : default;
     }
 }
+#endif
 
 [MemoryDiagnoser]
 public class TryParseIgnoreCaseBenchmark
@@ -339,7 +343,7 @@ public class TryParseIgnoreCaseBenchmark
     }
 }
 
-
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
 [MemoryDiagnoser]
 public class TryParseIgnoreCaseFromSpanBenchmark
 {
@@ -375,3 +379,4 @@ public class TryParseIgnoreCaseFromSpanBenchmark
             : default;
     }
 }
+#endif

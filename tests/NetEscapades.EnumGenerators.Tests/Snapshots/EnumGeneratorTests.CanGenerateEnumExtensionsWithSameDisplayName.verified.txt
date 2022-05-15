@@ -278,7 +278,7 @@ namespace MyTestNameSpace
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
                         result = MyTestNameSpace.MyEnum.Fourth;
                         return true;
-#if NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
 #else
                     case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
@@ -306,7 +306,7 @@ namespace MyTestNameSpace
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.Ordinal):
                         result = MyTestNameSpace.MyEnum.Fourth;
                         return true;
-#if NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
 #else
                     case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):

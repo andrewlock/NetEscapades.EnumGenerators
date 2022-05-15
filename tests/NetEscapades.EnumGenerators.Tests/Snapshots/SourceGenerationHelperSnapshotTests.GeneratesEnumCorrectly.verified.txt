@@ -169,7 +169,7 @@ namespace Something.Blah
                     case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
                         result = Something.Blah.ShortName.Second;
                         return true;
-#if NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
 #else
                     case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
@@ -191,7 +191,7 @@ namespace Something.Blah
                     case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), System.StringComparison.Ordinal):
                         result = Something.Blah.ShortName.Second;
                         return true;
-#if NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
 #else
                     case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):

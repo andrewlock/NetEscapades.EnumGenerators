@@ -167,7 +167,7 @@ using System;
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
                         result = MyEnum.Second;
                         return true;
-#if NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
 #else
                     case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
@@ -189,7 +189,7 @@ using System;
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyEnum.Second).AsSpan(), System.StringComparison.Ordinal):
                         result = MyEnum.Second;
                         return true;
-#if NETCOREAPP2_1_OR_GREATER
+#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
 #else
                     case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
