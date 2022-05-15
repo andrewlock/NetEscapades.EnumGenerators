@@ -54,6 +54,8 @@ This will generate a class called `MyEnumExtensions` (by default), which contain
 ```csharp
 public static partial class MyEnumExtensions
 {
+    public const int Length = 2;
+
     public static string ToStringFast(this MyEnum value)
         => value switch
         {
