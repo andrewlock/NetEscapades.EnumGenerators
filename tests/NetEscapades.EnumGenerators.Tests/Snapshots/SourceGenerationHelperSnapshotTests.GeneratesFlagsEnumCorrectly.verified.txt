@@ -116,18 +116,22 @@ namespace Something.Blah
             }
         }
 
+        private static Something.Blah.ShortName[]? _values;
+
         public static Something.Blah.ShortName[] GetValues()
         {
-            return new[]
+            return _values ??= new[]
             {
                 Something.Blah.ShortName.First,
                 Something.Blah.ShortName.Second,
             };
         }
 
+        private static string[]? _names;
+
         public static string[] GetNames()
         {
-            return new[]
+            return _names ??= new[]
             {
                 nameof(Something.Blah.ShortName.First),
                 nameof(Something.Blah.ShortName.Second),

@@ -107,18 +107,22 @@
             }
         }
 
+        private static MyEnum[]? _values;
+
         public static MyEnum[] GetValues()
         {
-            return new[]
+            return _values ??= new[]
             {
                 MyEnum.First,
                 MyEnum.Second,
             };
         }
 
+        private static string[]? _names;
+
         public static string[] GetNames()
         {
-            return new[]
+            return _names ??= new[]
             {
                 nameof(MyEnum.First),
                 nameof(MyEnum.Second),
