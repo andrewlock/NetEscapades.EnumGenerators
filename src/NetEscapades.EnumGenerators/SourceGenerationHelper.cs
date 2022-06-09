@@ -289,9 +289,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
+        private static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[]? _values;
+
         public static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[] GetValues()
         {
-            return new[]
+            return _values ??= new[]
             {");
         foreach (var member in enumToGenerate.Names)
         {
@@ -305,9 +307,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
 
+        private static string[]? _names;
+
         public static string[] GetNames()
         {
-            return new[]
+            return _names ??= new[]
             {");
         foreach (var member in enumToGenerate.Names)
         {

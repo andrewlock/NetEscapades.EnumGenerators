@@ -109,18 +109,22 @@ namespace MyTestNameSpace
             }
         }
 
+        private static MyTestNameSpace.InnerClass.MyEnum[]? _values;
+
         public static MyTestNameSpace.InnerClass.MyEnum[] GetValues()
         {
-            return new[]
+            return _values ??= new[]
             {
                 MyTestNameSpace.InnerClass.MyEnum.First,
                 MyTestNameSpace.InnerClass.MyEnum.Second,
             };
         }
 
+        private static string[]? _names;
+
         public static string[] GetNames()
         {
-            return new[]
+            return _names ??= new[]
             {
                 nameof(MyTestNameSpace.InnerClass.MyEnum.First),
                 nameof(MyTestNameSpace.InnerClass.MyEnum.Second),
