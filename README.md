@@ -14,7 +14,7 @@ dotnet add package NetEscapades.EnumGenerators
 ```
 
 
-This adds a `<PackageReference>` to your project. You can additionally mark the package as `PrivateAsets="all"` and `ExcludeAssets="runtime"`.
+This adds a `<PackageReference>` to your project. You can additionally mark the package as `PrivateAssets="all"` and `ExcludeAssets="runtime"`.
 
 > Setting `PrivateAssets="all"` means any projects referencing this one won't get a reference to the _NetEscapades.EnumGenerators_ package. Setting `ExcludeAssets="runtime"` ensures the _NetEscapades.EnumGenerators.Attributes.dll_ file is not copied to your build output (it is not required at runtime).
 
@@ -26,7 +26,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
-  <!-- Add the package -->~~~~
+  <!-- Add the package -->
   <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta04" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
