@@ -19,9 +19,7 @@ internal class TestHelpers
             {
                 MetadataReference.CreateFromFile(typeof(T).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
-                #if NET48
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
-                #endif
             });
 
         var compilation = CSharpCompilation.Create(
