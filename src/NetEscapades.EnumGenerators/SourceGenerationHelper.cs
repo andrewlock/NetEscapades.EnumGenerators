@@ -47,7 +47,13 @@ namespace NetEscapades.EnumGenerators
 
     public static string GenerateExtensionClass(StringBuilder sb, EnumToGenerate enumToGenerate)
     {
-        sb.Append(Header);
+        sb
+            .Append(Header)
+            .Append(@"
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+using System;
+#endif
+");
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
