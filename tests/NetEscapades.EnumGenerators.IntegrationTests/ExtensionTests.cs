@@ -131,7 +131,7 @@ public abstract class ExtensionTests<T> where T : struct
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {
-            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, stringComparisonOptions))
+            if (TryGetDisplayName(value.ToString(), out var displayName) && string.Equals(displayName,name, stringComparisonOptions))
             {
                 enumValue = value;
                 return true;
