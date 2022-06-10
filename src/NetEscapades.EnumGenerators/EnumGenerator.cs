@@ -9,6 +9,7 @@ namespace NetEscapades.EnumGenerators;
 [Generator]
 public class EnumGenerator : IIncrementalGenerator
 {
+    private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
     private const string HasFlagsAttribute = "System.HasFlagsAttribute";
 
@@ -98,6 +99,7 @@ public class EnumGenerator : IIncrementalGenerator
             return enumsToGenerate;
         }
 
+        INamedTypeSymbol? displayAttribute = compilation.GetTypeByMetadataName(DisplayAttribute);
         INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
         foreach (var enumDeclarationSyntax in enums)
         {
@@ -162,24 +164,27 @@ public class EnumGenerator : IIncrementalGenerator
                 }
 
                 string? displayName = null;
-                foreach (var attribute in member.GetAttributes())
+                if (displayAttribute is not null)
                 {
-                    if (attribute.AttributeClass is null || attribute.AttributeClass.Name != "DisplayAttribute")
+                    foreach (var attribute in member.GetAttributes())
                     {
-                        continue;
-                    }
-
-                    foreach (var namedArgument in attribute.NamedArguments)
-                    {
-                        if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
+                        if(!displayAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
                         {
-                            displayName = dn;
-                            isDisplayNameTheFirstPresence = displayNames.Add(displayName);
-                            break;
+                            continue;
+                        }
+
+                        foreach (var namedArgument in attribute.NamedArguments)
+                        {
+                            if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
+                            {
+                                displayName = dn;
+                                isDisplayNameTheFirstPresence = displayNames.Add(displayName);
+                                break;
+                            }
                         }
                     }
                 }
-                
+
                 members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
             }
 

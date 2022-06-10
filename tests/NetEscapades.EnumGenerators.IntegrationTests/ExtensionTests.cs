@@ -12,7 +12,13 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
-    protected abstract bool TryParse(string name, bool ignoreCase, out T parsed, bool allowMatchingMetadataAttribute = false);
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    protected abstract bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute);
+#endif
+    protected abstract bool TryParse(string name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute);
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    protected abstract bool TryParse(in ReadOnlySpan<char> name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute);
+#endif
 
     protected void GeneratesToStringFastTest(T value)
     {
@@ -34,9 +40,23 @@ public abstract class ExtensionTests<T> where T : struct
 
     protected void GeneratesIsDefinedTest(string name, bool allowMatchingMetadataAttribute)
     {
-        bool expectedResult;
         var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
+        var expectedResult = ValidateIsDefined(name, allowMatchingMetadataAttribute);
+        isDefined.Should().Be(expectedResult);
+    }
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+    {
+        var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
+        var expectedResult = ValidateIsDefined(name.ToString(), allowMatchingMetadataAttribute);
+        isDefined.Should().Be(expectedResult);
+    }
+#endif
+
+    private bool ValidateIsDefined(string name, bool allowMatchingMetadataAttribute)
+    {
+        bool expectedResult;
         if (allowMatchingMetadataAttribute)
         {
             expectedResult = TryGetEnumByDisplayName(name, ignoreCase: false, out _);
@@ -48,17 +68,35 @@ public abstract class ExtensionTests<T> where T : struct
         else
         {
             expectedResult = Enum.IsDefined(typeof(T), name);
-        }        
+        }
 
-        isDefined.Should().Be(expectedResult);
+        return expectedResult;
     }
 
     protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
-        bool expectedValidity;
-        T expectedResult;
-        var isValid = TryParse(name, ignoreCase, out var result, allowMatchingMetadataAttribute);
+        var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);
+        ValidateTryParse(name, ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
 
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    protected void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    {
+        var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);
+        ValidateTryParse(name.ToString(), ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
+
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+#endif
+
+    private void ValidateTryParse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult)
+    {
         if (allowMatchingMetadataAttribute)
         {
             expectedValidity = TryGetEnumByDisplayName(name, ignoreCase, out expectedResult);
@@ -71,9 +109,6 @@ public abstract class ExtensionTests<T> where T : struct
         {
             expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
         }
-        _ = new AssertionScope();
-        isValid.Should().Be(expectedValidity);
-        result.Should().Be(expectedResult);
     }
 
     protected void GeneratesGetValuesTest(T[] values)
@@ -96,7 +131,7 @@ public abstract class ExtensionTests<T> where T : struct
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {
-            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, stringComparisonOptions))
+            if (TryGetDisplayName(value.ToString(), out var displayName) && string.Equals(displayName,name, stringComparisonOptions))
             {
                 enumValue = value;
                 return true;

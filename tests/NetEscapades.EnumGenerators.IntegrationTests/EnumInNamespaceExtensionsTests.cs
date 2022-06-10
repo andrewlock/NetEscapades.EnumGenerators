@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -31,8 +32,15 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
-    protected override bool TryParse(string name,bool ignoreCase, out EnumInNamespace parsed, bool allowMatchingMetadataAttribute)
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
+#endif
+    protected override bool TryParse(string name, out EnumInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    protected override bool TryParse(in ReadOnlySpan<char> name, out EnumInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
+#endif
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
@@ -46,9 +54,21 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
+#endif
+
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
+
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+    [Theory]
+    [MemberData(nameof(ValuesToParse))]
+    public void GeneratesTryParseUsingSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
+#endif
 
     [Theory]
     [MemberData(nameof(ValuesToParse))]

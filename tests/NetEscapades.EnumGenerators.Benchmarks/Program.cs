@@ -102,6 +102,53 @@ public class IsDefinedNameBenchmark
     }
 }
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+[MemoryDiagnoser]
+public class IsDefinedNameFromSpanBenchmark
+{
+    private static readonly char[] _enum = new char[] { 'S', 'e', 'c', 'o', 'n', 'd' };
+    private static readonly char[] _enumDisplayName = new char[] { '2', 'n', 'd' };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool EnumIsDefined()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return Enum.IsDefined(typeof(TestEnum), _enumAsSpan.ToString());
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool EnumIsDefinedNameDisplayNameWithReflection()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumAsSpan.ToString(), ignoreCase:false, out _);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefined()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.IsDefined(_enumAsSpan.ToString(), allowMatchingMetadataAttribute: false);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedSpan()
+    {
+        return TestEnumExtensions.IsDefined(_enum.AsSpan(), allowMatchingMetadataAttribute: false);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public bool ExtensionsIsDefinedDisplayNameSpan()
+    {
+        return TestEnumExtensions.IsDefined(_enumDisplayName.AsSpan(), allowMatchingMetadataAttribute: true);
+    }
+}
+#endif
+
 [MemoryDiagnoser]
 public class GetValuesBenchmark
 {
@@ -194,6 +241,71 @@ public class TryParseBenchmark
     }
 }
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+[MemoryDiagnoser]
+public class TryParseFromSpanBenchmark
+{
+    private static readonly char[] _enum = new char[] { 'S', 'e', 'c', 'o', 'n', 'd' };
+    private static readonly char[] _enumDisplayName = new char[] { '2', 'n', 'd' };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParse()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return Enum.TryParse(_enumAsSpan.ToString(), ignoreCase: false, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParse()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.TryParse(_enumAsSpan.ToString(), out TestEnum result, ignoreCase: false)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseSpan()
+    {
+        return TestEnumExtensions.TryParse(_enum.AsSpan(), out TestEnum result, ignoreCase: false)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseDisplayNameWithReflection()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumAsSpan.ToString(), ignoreCase: false, out TestEnum result) ? result : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseDisplayName()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
+        return TestEnumExtensions.TryParse(_enumAsSpan.ToString(), out TestEnum result, ignoreCase: false, allowMatchingMetadataAttribute: true)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseDisplayNameSpan()
+    {
+        return TestEnumExtensions.TryParse(_enumDisplayName.AsSpan(), out TestEnum result, ignoreCase: false, allowMatchingMetadataAttribute: true)
+            ? result
+            : default;
+    }
+}
+#endif
+
 [MemoryDiagnoser]
 public class TryParseIgnoreCaseBenchmark
 {
@@ -231,6 +343,44 @@ public class TryParseIgnoreCaseBenchmark
             : default;
     }
 }
+
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+[MemoryDiagnoser]
+public class TryParseIgnoreCaseFromSpanBenchmark
+{
+    private static readonly char[] _enum = new char[] { 's', 'e', 'c', 'o', 'n', 'd' };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum EnumTryParseIgnoreCase()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return Enum.TryParse(_enumAsSpan.ToString(), ignoreCase: true, out TestEnum result)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCase()
+    {
+        ReadOnlySpan<char> _enumAsSpan = _enum;
+        return TestEnumExtensions.TryParse(_enumAsSpan.ToString(), out TestEnum result, ignoreCase: true)
+            ? result
+            : default;
+    }
+
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCaseSpan()
+    {
+        return TestEnumExtensions.TryParse(_enum.AsSpan(), out TestEnum result, ignoreCase: true)
+            ? result
+            : default;
+    }
+}
+#endif
 
 [MemoryDiagnoser]
 public class EnumLengthBenchmark
