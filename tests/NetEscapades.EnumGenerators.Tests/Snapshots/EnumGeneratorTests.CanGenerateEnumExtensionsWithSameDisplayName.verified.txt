@@ -8,7 +8,10 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
 using System;
+#endif
+
 namespace MyTestNameSpace
 {
     public static partial class MyEnumExtensions
@@ -69,6 +72,7 @@ namespace MyTestNameSpace
             };
         }
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
@@ -104,6 +108,7 @@ namespace MyTestNameSpace
                 _ => false,
             };
         }
+#endif
 
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -207,6 +212,7 @@ namespace MyTestNameSpace
             }
         }
 
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -284,11 +290,7 @@ namespace MyTestNameSpace
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
                         result = MyTestNameSpace.MyEnum.Fourth;
                         return true;
-#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-#else
-                    case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
-#endif
                         result = (MyTestNameSpace.MyEnum)numericResult;
                         return true;
                     default:
@@ -312,11 +314,7 @@ namespace MyTestNameSpace
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.Ordinal):
                         result = MyTestNameSpace.MyEnum.Fourth;
                         return true;
-#if NETCOREAPP
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-#else
-                    case ReadOnlySpan<char> current when int.TryParse(name.ToString(), out var numericResult):
-#endif
                         result = (MyTestNameSpace.MyEnum)numericResult;
                         return true;
                     default:
@@ -325,6 +323,7 @@ namespace MyTestNameSpace
                 }
             }
         }
+#endif
 
         public static MyTestNameSpace.MyEnum[] GetValues()
         {
