@@ -163,6 +163,31 @@ namespace MyTestNameSpace
     }
 
     [Fact]
+    public Task CanGenerateEnumExtensionsWithDescription()
+    {
+        const string input = @"using NetEscapades.EnumGenerators;
+using System.ComponentModel;
+
+namespace MyTestNameSpace
+{
+    [EnumExtensions]
+    public enum MyEnum
+    {
+        First = 0,        
+        Second = 1,
+        [Description(""3rd"")]
+        Third = 2,
+        [Description(""4th"")]
+        Fourth = 3
+    }
+}";
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
+    [Fact]
     public Task CanGenerateEnumExtensionsWithSameDisplayName()
     {
         const string input = @"using NetEscapades.EnumGenerators;
@@ -180,6 +205,57 @@ namespace MyTestNameSpace
         Third = 2,
 
         [Display(Name = ""2nd"")]
+        Fourth = 3
+    }
+}";
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateEnumExtensionsWithSameDescription()
+    {
+        const string input = @"using NetEscapades.EnumGenerators;
+using System.ComponentModel;
+
+namespace MyTestNameSpace
+{
+    [EnumExtensions]
+    public enum MyEnum
+    {
+        First = 0,        
+        Second = 1,
+        [Description(""3rd"")]
+        Third = 2,
+        [Description(""3rd"")]
+        Fourth = 3
+    }
+}";
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateEnumExtensionsWithDisplayNameAndDescription()
+    {
+        const string input = @"using NetEscapades.EnumGenerators;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace MyTestNameSpace
+{
+    [EnumExtensions]
+    public enum MyEnum
+    {
+        First = 0,        
+        [Display(Name = ""2nd"")]        
+        Second = 1,
+        [Description(""3rd"")]
+        Third = 2,        
         Fourth = 3
     }
 }";

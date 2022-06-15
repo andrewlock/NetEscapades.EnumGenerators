@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace NetEscapades.EnumGenerators.Benchmarks;
@@ -69,6 +70,27 @@ internal static class EnumHelper<T> where T : struct
                 }
 
                 return displayName;
+            }
+        }
+
+        return string.Empty;
+    }
+
+    internal static string GetDescription(T value)
+    {
+        if (typeof(T).IsEnum)
+        {
+            var enumString = value.ToString();
+            var memberInfo = typeof(T).GetMember(enumString);
+            if (memberInfo.Length > 0)
+            {
+                var description = memberInfo[0].GetCustomAttribute<DescriptionAttribute>()?.Description;
+                if (description is null)
+                {
+                    return enumString;
+                }
+
+                return description;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
@@ -17,6 +18,7 @@ public enum TestEnum
 
     [Display(Name = "2nd")]
     Second = 1,
+    [Description("3rd")]
     Third = 2,
 }
 
@@ -44,6 +46,26 @@ public class ToStringBenchmark
     public string ToStringFast()
     {
         return _enum.ToStringFast();
+    }
+}
+
+[MemoryDiagnoser]
+public class DescriptionBenchmark
+{
+    private static readonly TestEnum _enum = TestEnum.Third;
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public string GetDescriptionWithReflection()
+    {
+        return EnumHelper<TestEnum>.GetDescription(_enum);
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public string GetDescriptionFast()
+    {
+        return _enum.GetDescription();
     }
 }
 

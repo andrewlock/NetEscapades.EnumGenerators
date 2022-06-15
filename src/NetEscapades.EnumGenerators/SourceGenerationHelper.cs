@@ -93,6 +93,35 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 _ => value.ToString(),
             };");
 
+        if (enumToGenerate.IsDescriptionAttributeUsed)
+        {
+            sb.Append(@"
+
+        public static string GetDescription(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            => value switch
+            {");
+
+            foreach (var member in enumToGenerate.Names)
+            {
+                sb.Append(@"
+                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                    .Append(" => ");
+
+                if (member.Value.DescriptionName is null)
+                {
+                    sb.Append("nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                }
+                else
+                {
+                    sb.Append('"').Append(member.Value.DescriptionName).Append(@""",");
+                }
+            }
+
+            sb.Append(@"
+                _ => value.ToString(),
+            };");
+        }
+
         if (enumToGenerate.HasFlags)
         {
             sb.Append(@"
@@ -138,7 +167,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
-                    {
+                {
                     sb.Append(@"
                     """).Append(member.Value.DisplayName).Append(@""" => true,");
                 }
@@ -160,8 +189,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             return name switch
             {");
         foreach (var member in enumToGenerate.Names)
-            {
-             sb.Append(@"
+        {
+            sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
         }
 
@@ -444,20 +473,20 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
 ");
         }
-            sb.Append(@"
+        sb.Append(@"
             if (ignoreCase)
             {
                 switch (name)
                 {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
                     case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.OrdinalIgnoreCase):
                         result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
-            }
+        }
 
-            sb.Append(@"
+        sb.Append(@"
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
                         result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
                         return true;
@@ -470,15 +499,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             {
                 switch (name)
                 {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
                     case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.Ordinal):
                         result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
-            }
+        }
 
-            sb.Append(@"
+        sb.Append(@"
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
                         result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
                         return true;

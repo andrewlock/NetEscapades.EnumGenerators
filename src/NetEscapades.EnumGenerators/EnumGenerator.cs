@@ -1,8 +1,8 @@
-using System.Collections.Immutable;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Immutable;
+using System.Text;
 
 namespace NetEscapades.EnumGenerators;
 
@@ -10,6 +10,7 @@ namespace NetEscapades.EnumGenerators;
 public class EnumGenerator : IIncrementalGenerator
 {
     private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
+    private const string DescriptionAttribute = "System.ComponentModel.DescriptionAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
     private const string HasFlagsAttribute = "System.HasFlagsAttribute";
 
@@ -100,6 +101,7 @@ public class EnumGenerator : IIncrementalGenerator
         }
 
         INamedTypeSymbol? displayAttribute = compilation.GetTypeByMetadataName(DisplayAttribute);
+        INamedTypeSymbol? descriptionAttribute = compilation.GetTypeByMetadataName(DescriptionAttribute);
         INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
         foreach (var enumDeclarationSyntax in enums)
         {
@@ -154,6 +156,7 @@ public class EnumGenerator : IIncrementalGenerator
             var members = new List<KeyValuePair<string, EnumValueOption>>(enumMembers.Length);
             var displayNames = new HashSet<string>();
             var isDisplayNameTheFirstPresence = false;
+            var descriptionNames = new HashSet<string>();
 
             foreach (var member in enumMembers)
             {
@@ -168,7 +171,7 @@ public class EnumGenerator : IIncrementalGenerator
                 {
                     foreach (var attribute in member.GetAttributes())
                     {
-                        if(!displayAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
+                        if (!displayAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
                         {
                             continue;
                         }
@@ -185,7 +188,29 @@ public class EnumGenerator : IIncrementalGenerator
                     }
                 }
 
-                members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
+                string? descriptionName = null;
+                if (descriptionAttribute is not null)
+                {
+                    foreach (var attribute in member.GetAttributes())
+                    {
+                        if (!descriptionAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
+                        {
+                            continue;
+                        }
+
+                        foreach (var constructorArgument in attribute.ConstructorArguments)
+                        {
+                            if (constructorArgument.Value?.ToString() is { } dn)
+                            {
+                                descriptionName = dn;
+                                descriptionNames.Add(descriptionName);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence, descriptionName)));
             }
 
             enumsToGenerate.Add(new EnumToGenerate(
@@ -196,7 +221,8 @@ public class EnumGenerator : IIncrementalGenerator
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
                 hasFlags: hasFlags,
                 names: members,
-                isDisplayAttributeUsed: displayNames.Count > 0));
+                isDisplayAttributeUsed: displayNames.Count > 0,
+                isDescriptionAttributeUsed: descriptionNames.Count > 0));
         }
 
         return enumsToGenerate;

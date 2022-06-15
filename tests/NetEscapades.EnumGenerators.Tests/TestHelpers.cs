@@ -20,6 +20,7 @@ internal class TestHelpers
                 MetadataReference.CreateFromFile(typeof(T).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DescriptionAttribute).Assembly.Location),
             });
 
         var compilation = CSharpCompilation.Create(
