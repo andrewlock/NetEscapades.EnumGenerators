@@ -21,11 +21,12 @@ public class SourceGenerationHelperSnapshotTests
             isPublic: true,
             new Dictionary<string, EnumValueOption>
             {
-                { "First", new EnumValueOption(null, false) }, 
-                { "Second", new EnumValueOption(null, false) }
+                { "First", new EnumValueOption(null, false, null) },
+                { "Second", new EnumValueOption(null, false, null) }
             }.ToList(),
             hasFlags: false,
-            isDisplayAttributeUsed: false);
+            isDisplayAttributeUsed: false,
+            isDescriptionAttributeUsed: false);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
@@ -45,11 +46,12 @@ public class SourceGenerationHelperSnapshotTests
             isPublic: true,
             new Dictionary<string, EnumValueOption>
             {
-                { "First", new EnumValueOption(null, false) },
-                { "Second", new EnumValueOption(null, false) }
+                { "First", new EnumValueOption(null, false, null) },
+                { "Second", new EnumValueOption(null, false, null) }
             }.ToList(),
             hasFlags: true,
-            isDisplayAttributeUsed: false);
+            isDisplayAttributeUsed: false,
+            isDescriptionAttributeUsed: false);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
