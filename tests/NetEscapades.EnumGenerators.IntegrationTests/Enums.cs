@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests
@@ -10,7 +11,7 @@ namespace NetEscapades.EnumGenerators.IntegrationTests
         Second = 1,
         Third = 2,
     }
-    
+
     [EnumExtensions]
     public enum EnumWithDisplayNameInNamespace
     {
@@ -35,7 +36,26 @@ namespace NetEscapades.EnumGenerators.IntegrationTests
     }
 
     [EnumExtensions]
-    public enum LongEnum: long
+    public enum EnumWithDescriptionInNamespace
+    {
+        First = 0,
+        Second = 1,
+        [Description("3rd")]
+        Third = 2
+    }
+
+    [EnumExtensions]
+    public enum EnumWithSameDescription
+    {
+        First = 0,
+        [Description("3rd")]
+        Second = 1,
+        [Description("3rd")]
+        Third = 2
+    }
+
+    [EnumExtensions]
+    public enum LongEnum : long
     {
         First = 0,
         Second = 1,
