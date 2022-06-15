@@ -84,19 +84,13 @@ internal static class EnumHelper<T> where T : struct
             var memberInfo = typeof(T).GetMember(enumString);
             if (memberInfo.Length > 0)
             {
-                var descAttribute = memberInfo[0].GetCustomAttribute<DescriptionAttribute>();
-                if (descAttribute is null)
+                var description = memberInfo[0].GetCustomAttribute<DescriptionAttribute>()?.Description;
+                if (description is null)
                 {
                     return enumString;
                 }
 
-                var desc = descAttribute.Description;
-                if (desc is null)
-                {
-                    return enumString;
-                }
-
-                return desc;
+                return description;
             }
         }
 
