@@ -154,7 +154,7 @@ You can override the name of the extension class by setting `ExtensionClassName`
 
 By default, the `[EnumExtensions]` attributes referenced in your application are contained in an external dll. It is also possible to embed the attributes directly in your project, so they appear in the dll when your project is built. If you wish to do this, you must do two things:
 
-1. Define the MSBuild constant `NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES`. This ensures the attributes are embedded in your project
+1. Define the MSBuild property `<EnumGenerators_EmbedAttributes>true</EnumGenerators_EmbedAttributes>`. This ensures the attributes are embedded in your project
 2. Add `compile` to the list of excluded assets in your `<PackageReference>` element. This ensures the attributes in your project are referenced, instead of the _NetEscapades.EnumGenerators.Attributes.dll_ library.
 
 Your project file should look something like this:
@@ -165,8 +165,7 @@ Your project file should look something like this:
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <!--  Define the MSBuild constant    -->
-    <DefineConstants>NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES</DefineConstants>
+    <EnumGenerators_EmbedAttributes>true</EnumGenerators_EmbedAttributes>
   </PropertyGroup>
 
   <!-- Add the package -->

@@ -1,0 +1,12 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <EnumGenerators_EmbedAttributes>false</EnumGenerators_EmbedAttributes>
+    <EnumGenerators_EmbeddedAttributesVisible>true</EnumGenerators_EmbeddedAttributesVisible>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(EnumGenerators_EmbedAttributes)">
+    <Compile Include="$(MSBuildThisFileDirectory)*.cs" Visible="$(EnumGenerators_EmbeddedAttributesVisible)" />
+  </ItemGroup>
+  
+</Project>
