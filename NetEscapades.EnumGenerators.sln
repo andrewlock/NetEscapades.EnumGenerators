@@ -1,35 +1,37 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{78D56637-F921-437D-A9AC-FBEAD78344BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators", "src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj", "{FC6F4934-4512-45DB-ABDA-5FAD96742B73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetEscapades.EnumGenerators", "src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj", "{FC6F4934-4512-45DB-ABDA-5FAD96742B73}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.IntegrationTests", "tests\NetEscapades.EnumGenerators.IntegrationTests\NetEscapades.EnumGenerators.IntegrationTests.csproj", "{443BC4C1-CF11-45E3-B772-72F886826C69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetEscapades.EnumGenerators.IntegrationTests", "tests\NetEscapades.EnumGenerators.IntegrationTests\NetEscapades.EnumGenerators.IntegrationTests.csproj", "{443BC4C1-CF11-45E3-B772-72F886826C69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.IntegrationTests\NetEscapades.EnumGenerators.Nuget.IntegrationTests.csproj", "{F03831B0-630E-4B0E-BD25-AFE975B35E69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetEscapades.EnumGenerators.Nuget.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.IntegrationTests\NetEscapades.EnumGenerators.Nuget.IntegrationTests.csproj", "{F03831B0-630E-4B0E-BD25-AFE975B35E69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Tests", "tests\NetEscapades.EnumGenerators.Tests\NetEscapades.EnumGenerators.Tests.csproj", "{328EFEB4-1D15-453E-9929-6FD0FACF3512}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetEscapades.EnumGenerators.Tests", "tests\NetEscapades.EnumGenerators.Tests\NetEscapades.EnumGenerators.Tests.csproj", "{328EFEB4-1D15-453E-9929-6FD0FACF3512}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_build", "build\_build.csproj", "{C4F84B6F-D2AE-4B3D-9CAD-90E6BC71F524}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{C4F84B6F-D2AE-4B3D-9CAD-90E6BC71F524}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Benchmarks", "tests\NetEscapades.EnumGenerators.Benchmarks\NetEscapades.EnumGenerators.Benchmarks.csproj", "{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetEscapades.EnumGenerators.Benchmarks", "tests\NetEscapades.EnumGenerators.Benchmarks\NetEscapades.EnumGenerators.Benchmarks.csproj", "{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Attributes", "src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj", "{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetEscapades.EnumGenerators.Attributes", "src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj", "{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests.csproj", "{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests.csproj", "{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{816A6AC8-6C4D-4ECE-9E9C-865DFE9C1175}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FC6F4934-4512-45DB-ABDA-5FAD96742B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -59,6 +61,9 @@ Global
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FC6F4934-4512-45DB-ABDA-5FAD96742B73} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 		{443BC4C1-CF11-45E3-B772-72F886826C69} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
@@ -67,5 +72,8 @@ Global
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {57A23F4B-2555-410E-8739-B683AEDA88B0}
 	EndGlobalSection
 EndGlobal
