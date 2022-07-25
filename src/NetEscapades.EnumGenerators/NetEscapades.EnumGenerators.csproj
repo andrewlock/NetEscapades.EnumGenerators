@@ -21,7 +21,7 @@
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="true" />
-    <None Include="$(OutputPath)\$(AssemblyName).Attributes.dll" Pack="true" PackagePath="lib\net451" Visible="true" />
-    <None Include="$(OutputPath)\$(AssemblyName).Attributes.xml" Pack="true" PackagePath="lib\net451" Visible="true" />
+    <None Include="..\$(AssemblyName).Attributes\bin\$(Configuration)\net4.5.1\$(AssemblyName).Attributes.dll" Pack="true" PackagePath="lib\net451" Visible="true" />
+    <None Include="..\$(AssemblyName).Attributes\bin\$(Configuration)\net4.5.1\$(AssemblyName).Attributes.xml" Pack="true" PackagePath="lib\net451" Visible="true" />
   </ItemGroup>
 </Project>
