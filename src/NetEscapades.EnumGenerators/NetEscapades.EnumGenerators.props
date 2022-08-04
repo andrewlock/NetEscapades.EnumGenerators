@@ -1,7 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <EnumGenerators_EmbedAttributes>false</EnumGenerators_EmbedAttributes>
+    <EnumGenerators_EmbedAttributes>$(DefineConstants.Contains('NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES'))</EnumGenerators_EmbedAttributes>
     <EnumGenerators_EmbeddedAttributesVisible>true</EnumGenerators_EmbeddedAttributesVisible>
   </PropertyGroup>
 
