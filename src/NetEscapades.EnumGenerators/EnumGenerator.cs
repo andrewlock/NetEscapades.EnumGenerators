@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,28 +11,23 @@ public class EnumGenerator : IIncrementalGenerator
     private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
     private const string HasFlagsAttribute = "System.HasFlagsAttribute";
+    private readonly ChangesComparer changesComparer = new();
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
             "EnumExtensionsAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
 
-        IncrementalValuesProvider<EnumDeclarationSyntax> enumDeclarations = context.SyntaxProvider
+        IncrementalValuesProvider<(EnumDeclarationSyntax, Compilation)> enumDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
                 transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
-            .Where(static m => m is not null)!;
+            .Where(static m => m is not null)!
+            .Combine(context.CompilationProvider)!
+            .WithComparer(changesComparer);
 
-        var enums = enumDeclarations.Combine(context.CompilationProvider)
-            .Select((s, _) => new ExecuteInfo(s.Left, s.Right.GetSemanticModel(s.Left.SyntaxTree)))
-            .Collect();
-        var compilation = context.CompilationProvider
-            .Select((c, _) => (c.GetTypeByMetadataName(EnumExtensionsAttribute), c.GetTypeByMetadataName(DisplayAttribute), c.GetTypeByMetadataName(HasFlagsAttribute)));
-
-        var compilationAndEnums = compilation.Combine(enums);
-
-        context.RegisterSourceOutput(compilationAndEnums,
-            static (spc, source) => Execute(source.Left, source.Right, spc));
+        context.RegisterSourceOutput(enumDeclarations,
+                static (spc, source) => Execute(source.Item1, source.Item2, spc));
     }
 
     static bool IsSyntaxTargetForGeneration(SyntaxNode node)
@@ -71,166 +65,137 @@ public class EnumGenerator : IIncrementalGenerator
         return null;
     }
 
-    static void Execute((INamedTypeSymbol? EnumAttribute, INamedTypeSymbol? DisplayAttribute, INamedTypeSymbol? HasFlagsAttribute) compilationInfo,
-        ImmutableArray<ExecuteInfo> enums, SourceProductionContext context)
+    static void Execute(EnumDeclarationSyntax enumDeclarationSyntax, Compilation compilation, SourceProductionContext context)
     {
-        if (enums.IsDefaultOrEmpty)
-        {
-            // nothing to do yet
-            return;
-        }
-
-        IEnumerable<ExecuteInfo> distinctEnums = enums.Distinct();
-
-        List<EnumToGenerate> enumsToGenerate = GetTypesToGenerate(compilationInfo, distinctEnums, context.CancellationToken);
-        if (enumsToGenerate.Count > 0)
+        var enumToGenerate = GetTypesToGenerate(compilation, enumDeclarationSyntax, context.CancellationToken);
+        if (enumToGenerate is EnumToGenerate eg && enumToGenerate != null)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var enumToGenerate in enumsToGenerate)
-            {
-                sb.Clear();
-                var result = SourceGenerationHelper.GenerateExtensionClass(sb, enumToGenerate);
-                context.AddSource(enumToGenerate.Name + "_EnumExtensions.g.cs", SourceText.From(result, Encoding.UTF8));
-            }
+            var result = SourceGenerationHelper.GenerateExtensionClass(sb, eg);
+            context.AddSource(eg.Name + "_EnumExtensions.g.cs", SourceText.From(result, Encoding.UTF8));
         }
     }
 
-    static List<EnumToGenerate> GetTypesToGenerate((INamedTypeSymbol? EnumAttribute, INamedTypeSymbol? DisplayAttribute, INamedTypeSymbol? HasFlagsAttribute) compilationInfo,
-        IEnumerable<ExecuteInfo> enums, CancellationToken ct)
+    static EnumToGenerate? GetTypesToGenerate(Compilation compilation, EnumDeclarationSyntax enumDeclarationSyntax, CancellationToken ct)
     {
-        var enumsToGenerate = new List<EnumToGenerate>();
-        if (compilationInfo.EnumAttribute == null)
+        INamedTypeSymbol? enumAttribute = compilation.GetTypeByMetadataName(EnumExtensionsAttribute);
+        if (enumAttribute == null)
         {
             // nothing to do if this type isn't available
-            return enumsToGenerate;
+            return null;
         }
 
-        //INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
-        foreach (var executeInfo in enums)
-        {
-            // stop if we're asked to
-            ct.ThrowIfCancellationRequested();
+        INamedTypeSymbol? displayAttribute = compilation.GetTypeByMetadataName(DisplayAttribute);
+        INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
+        // stop if we're asked to
+        ct.ThrowIfCancellationRequested();
 
-            SemanticModel semanticModel = executeInfo.SemanticModel;
-            if (semanticModel.GetDeclaredSymbol(executeInfo.EnumDeclarationSyntax) is not INamedTypeSymbol enumSymbol)
+        SemanticModel semanticModel = compilation.GetSemanticModel(enumDeclarationSyntax.SyntaxTree);
+        if (semanticModel.GetDeclaredSymbol(enumDeclarationSyntax) is not INamedTypeSymbol enumSymbol)
+        {
+            // report diagnostic, something went wrong
+            return null;
+        }
+
+        string name = enumSymbol.Name + "Extensions";
+        string nameSpace = enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
+        var hasFlags = false;
+
+        foreach (AttributeData attributeData in enumSymbol.GetAttributes())
+        {
+            if (hasFlagsAttribute is not null && hasFlagsAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
             {
-                // report diagnostic, something went wrong
+                hasFlags = true;
                 continue;
             }
 
-            string name = enumSymbol.Name + "Extensions";
-            string nameSpace = enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
-            var hasFlags = false;
-
-            foreach (AttributeData attributeData in enumSymbol.GetAttributes())
+            if (!enumAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
             {
-                if (compilationInfo.HasFlagsAttribute is not null && compilationInfo.HasFlagsAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
+                continue;
+            }
+
+            foreach (KeyValuePair<string, TypedConstant> namedArgument in attributeData.NamedArguments)
+            {
+                if (namedArgument.Key == "ExtensionClassNamespace"
+                    && namedArgument.Value.Value?.ToString() is { } ns)
                 {
-                    hasFlags = true;
+                    nameSpace = ns;
                     continue;
                 }
 
-                if (!compilationInfo.EnumAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
+                if (namedArgument.Key == "ExtensionClassName"
+                    && namedArgument.Value.Value?.ToString() is { } n)
                 {
-                    continue;
+                    name = n;
                 }
+            }
+        }
 
-                foreach (KeyValuePair<string, TypedConstant> namedArgument in attributeData.NamedArguments)
+        string fullyQualifiedName = enumSymbol.ToString();
+        string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";
+
+        var enumMembers = enumSymbol.GetMembers();
+        var members = new List<KeyValuePair<string, EnumValueOption>>(enumMembers.Length);
+        var displayNames = new HashSet<string>();
+        var isDisplayNameTheFirstPresence = false;
+
+        foreach (var member in enumMembers)
+        {
+            if (member is not IFieldSymbol field
+                || field.ConstantValue is null)
+            {
+                continue;
+            }
+
+            string? displayName = null;
+            if (displayAttribute is not null)
+            {
+                foreach (var attribute in member.GetAttributes())
                 {
-                    if (namedArgument.Key == "ExtensionClassNamespace"
-                        && namedArgument.Value.Value?.ToString() is { } ns)
+                    if (!displayAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
                     {
-                        nameSpace = ns;
                         continue;
                     }
 
-                    if (namedArgument.Key == "ExtensionClassName"
-                        && namedArgument.Value.Value?.ToString() is { } n)
+                    foreach (var namedArgument in attribute.NamedArguments)
                     {
-                        name = n;
+                        if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
+                        {
+                            displayName = dn;
+                            isDisplayNameTheFirstPresence = displayNames.Add(displayName);
+                            break;
+                        }
                     }
                 }
             }
 
-            string fullyQualifiedName = enumSymbol.ToString();
-            string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";
-
-            var enumMembers = enumSymbol.GetMembers();
-            var members = new List<KeyValuePair<string, EnumValueOption>>(enumMembers.Length);
-            var displayNames = new HashSet<string>();
-            var isDisplayNameTheFirstPresence = false;
-
-            foreach (var member in enumMembers)
-            {
-                if (member is not IFieldSymbol field
-                    || field.ConstantValue is null)
-                {
-                    continue;
-                }
-
-                string? displayName = null;
-                if (compilationInfo.DisplayAttribute is not null)
-                {
-                    foreach (var attribute in member.GetAttributes())
-                    {
-                        if(!compilationInfo.DisplayAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
-                        {
-                            continue;
-                        }
-
-                        foreach (var namedArgument in attribute.NamedArguments)
-                        {
-                            if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
-                            {
-                                displayName = dn;
-                                isDisplayNameTheFirstPresence = displayNames.Add(displayName);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
-            }
-
-            enumsToGenerate.Add(new EnumToGenerate(
-                name: name,
-                fullyQualifiedName: fullyQualifiedName,
-                ns: nameSpace,
-                underlyingType: underlyingType,
-                isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
-                hasFlags: hasFlags,
-                names: members,
-                isDisplayAttributeUsed: displayNames.Count > 0));
+            members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
         }
 
-        return enumsToGenerate;
+        return new EnumToGenerate(
+            name: name,
+            fullyQualifiedName: fullyQualifiedName,
+            ns: nameSpace,
+            underlyingType: underlyingType,
+            isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
+            hasFlags: hasFlags,
+            names: members,
+            isDisplayAttributeUsed: displayNames.Count > 0);
     }
-
-    private readonly struct ExecuteInfo : IEqualityComparer<ExecuteInfo>, IEquatable<ExecuteInfo>
+    private class ChangesComparer : IEqualityComparer<(EnumDeclarationSyntax Syntax, Compilation compilation)>
     {
-        public ExecuteInfo(EnumDeclarationSyntax enumDeclarationSyntax, SemanticModel semanticModel)
+        public ChangesComparer()
         {
-            EnumDeclarationSyntax = enumDeclarationSyntax;
-            SemanticModel = semanticModel;
         }
 
-        public EnumDeclarationSyntax EnumDeclarationSyntax { get; }
-        public SemanticModel SemanticModel { get; }
-
-        public bool Equals(ExecuteInfo x, ExecuteInfo y)
+        public bool Equals((EnumDeclarationSyntax Syntax, Compilation compilation) x, (EnumDeclarationSyntax Syntax, Compilation compilation) y)
         {
-            return x.EnumDeclarationSyntax.Equals(y.EnumDeclarationSyntax);
+            return x.Syntax.Equals(y.Syntax);
         }
 
-        public bool Equals(ExecuteInfo other)
+        public int GetHashCode((EnumDeclarationSyntax Syntax, Compilation compilation) obj)
         {
-            return EnumDeclarationSyntax.Equals(other.EnumDeclarationSyntax);
-        }
-
-        public int GetHashCode(ExecuteInfo obj)
-        {
-            return obj.EnumDeclarationSyntax.GetHashCode();
+            return obj.Syntax.GetHashCode();
         }
     }
 }
