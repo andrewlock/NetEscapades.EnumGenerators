@@ -24,11 +24,16 @@ public class EnumGenerator : IIncrementalGenerator
                 transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
             .Where(static m => m is not null)!;
 
-        IncrementalValueProvider<(Compilation, ImmutableArray<EnumDeclarationSyntax>)> compilationAndEnums
-            = context.CompilationProvider.Combine(enumDeclarations.Collect());
+        var enums = enumDeclarations.Combine(context.CompilationProvider)
+            .Select((s, _) => new ExecuteInfo(s.Left, s.Right.GetSemanticModel(s.Left.SyntaxTree)))
+            .Collect();
+        var compilation = context.CompilationProvider
+            .Select((c, _) => (c.GetTypeByMetadataName(EnumExtensionsAttribute), c.GetTypeByMetadataName(DisplayAttribute), c.GetTypeByMetadataName(HasFlagsAttribute)));
+
+        var compilationAndEnums = compilation.Combine(enums);
 
         context.RegisterSourceOutput(compilationAndEnums,
-            static (spc, source) => Execute(source.Item1, source.Item2, spc));
+            static (spc, source) => Execute(source.Left, source.Right, spc));
     }
 
     static bool IsSyntaxTargetForGeneration(SyntaxNode node)
@@ -66,7 +71,8 @@ public class EnumGenerator : IIncrementalGenerator
         return null;
     }
 
-    static void Execute(Compilation compilation, ImmutableArray<EnumDeclarationSyntax> enums, SourceProductionContext context)
+    static void Execute((INamedTypeSymbol? EnumAttribute, INamedTypeSymbol? DisplayAttribute, INamedTypeSymbol? HasFlagsAttribute) compilationInfo,
+        ImmutableArray<ExecuteInfo> enums, SourceProductionContext context)
     {
         if (enums.IsDefaultOrEmpty)
         {
@@ -74,9 +80,9 @@ public class EnumGenerator : IIncrementalGenerator
             return;
         }
 
-        IEnumerable<EnumDeclarationSyntax> distinctEnums = enums.Distinct();
+        IEnumerable<ExecuteInfo> distinctEnums = enums.Distinct();
 
-        List<EnumToGenerate> enumsToGenerate = GetTypesToGenerate(compilation, distinctEnums, context.CancellationToken);
+        List<EnumToGenerate> enumsToGenerate = GetTypesToGenerate(compilationInfo, distinctEnums, context.CancellationToken);
         if (enumsToGenerate.Count > 0)
         {
             StringBuilder sb = new StringBuilder();
@@ -89,25 +95,24 @@ public class EnumGenerator : IIncrementalGenerator
         }
     }
 
-    static List<EnumToGenerate> GetTypesToGenerate(Compilation compilation, IEnumerable<EnumDeclarationSyntax> enums, CancellationToken ct)
+    static List<EnumToGenerate> GetTypesToGenerate((INamedTypeSymbol? EnumAttribute, INamedTypeSymbol? DisplayAttribute, INamedTypeSymbol? HasFlagsAttribute) compilationInfo,
+        IEnumerable<ExecuteInfo> enums, CancellationToken ct)
     {
         var enumsToGenerate = new List<EnumToGenerate>();
-        INamedTypeSymbol? enumAttribute = compilation.GetTypeByMetadataName(EnumExtensionsAttribute);
-        if (enumAttribute == null)
+        if (compilationInfo.EnumAttribute == null)
         {
             // nothing to do if this type isn't available
             return enumsToGenerate;
         }
 
-        INamedTypeSymbol? displayAttribute = compilation.GetTypeByMetadataName(DisplayAttribute);
-        INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
-        foreach (var enumDeclarationSyntax in enums)
+        //INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
+        foreach (var executeInfo in enums)
         {
             // stop if we're asked to
             ct.ThrowIfCancellationRequested();
 
-            SemanticModel semanticModel = compilation.GetSemanticModel(enumDeclarationSyntax.SyntaxTree);
-            if (semanticModel.GetDeclaredSymbol(enumDeclarationSyntax) is not INamedTypeSymbol enumSymbol)
+            SemanticModel semanticModel = executeInfo.SemanticModel;
+            if (semanticModel.GetDeclaredSymbol(executeInfo.EnumDeclarationSyntax) is not INamedTypeSymbol enumSymbol)
             {
                 // report diagnostic, something went wrong
                 continue;
@@ -119,13 +124,13 @@ public class EnumGenerator : IIncrementalGenerator
 
             foreach (AttributeData attributeData in enumSymbol.GetAttributes())
             {
-                if (hasFlagsAttribute is not null && hasFlagsAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
+                if (compilationInfo.HasFlagsAttribute is not null && compilationInfo.HasFlagsAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
                 {
                     hasFlags = true;
                     continue;
                 }
 
-                if (!enumAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
+                if (!compilationInfo.EnumAttribute.Equals(attributeData.AttributeClass, SymbolEqualityComparer.Default))
                 {
                     continue;
                 }
@@ -164,11 +169,11 @@ public class EnumGenerator : IIncrementalGenerator
                 }
 
                 string? displayName = null;
-                if (displayAttribute is not null)
+                if (compilationInfo.DisplayAttribute is not null)
                 {
                     foreach (var attribute in member.GetAttributes())
                     {
-                        if(!displayAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
+                        if(!compilationInfo.DisplayAttribute.Equals(attribute.AttributeClass, SymbolEqualityComparer.Default))
                         {
                             continue;
                         }
@@ -202,33 +207,30 @@ public class EnumGenerator : IIncrementalGenerator
         return enumsToGenerate;
     }
 
-    static string GetNamespace(EnumDeclarationSyntax enumDeclarationSyntax)
+    private readonly struct ExecuteInfo : IEqualityComparer<ExecuteInfo>, IEquatable<ExecuteInfo>
     {
-        // determine the namespace the class is declared in, if any
-        string nameSpace = string.Empty;
-        SyntaxNode? potentialNamespaceParent = enumDeclarationSyntax.Parent;
-        while (potentialNamespaceParent != null &&
-               potentialNamespaceParent is not NamespaceDeclarationSyntax
-               && potentialNamespaceParent is not FileScopedNamespaceDeclarationSyntax)
+        public ExecuteInfo(EnumDeclarationSyntax enumDeclarationSyntax, SemanticModel semanticModel)
         {
-            potentialNamespaceParent = potentialNamespaceParent.Parent;
+            EnumDeclarationSyntax = enumDeclarationSyntax;
+            SemanticModel = semanticModel;
         }
 
-        if (potentialNamespaceParent is BaseNamespaceDeclarationSyntax namespaceParent)
-        {
-            nameSpace = namespaceParent.Name.ToString();
-            while (true)
-            {
-                if (namespaceParent.Parent is not NamespaceDeclarationSyntax parent)
-                {
-                    break;
-                }
+        public EnumDeclarationSyntax EnumDeclarationSyntax { get; }
+        public SemanticModel SemanticModel { get; }
 
-                namespaceParent = parent;
-                nameSpace = $"{namespaceParent.Name}.{nameSpace}";
-            }
+        public bool Equals(ExecuteInfo x, ExecuteInfo y)
+        {
+            return x.EnumDeclarationSyntax.Equals(y.EnumDeclarationSyntax);
         }
 
-        return nameSpace;
+        public bool Equals(ExecuteInfo other)
+        {
+            return EnumDeclarationSyntax.Equals(other.EnumDeclarationSyntax);
+        }
+
+        public int GetHashCode(ExecuteInfo obj)
+        {
+            return obj.EnumDeclarationSyntax.GetHashCode();
+        }
     }
 }
