@@ -1,6 +1,6 @@
 namespace NetEscapades.EnumGenerators;
 
-public readonly struct EnumToGenerate
+public readonly struct EnumToGenerate : IEquatable<EnumToGenerate>
 {
     public readonly string Name;
     public readonly string FullyQualifiedName;
@@ -34,5 +34,17 @@ public readonly struct EnumToGenerate
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
         IsDisplayAttributeUsed = isDisplayAttributeUsed;
+    }
+
+    public bool Equals(EnumToGenerate other)
+    {
+        return Name == other.Name &&
+            Namespace == other.Namespace &&
+            UnderlyingType == other.UnderlyingType &&
+            Names.All(other.Names.Contains) &&
+            HasFlags == other.HasFlags &&
+            IsPublic == other.IsPublic &&
+            FullyQualifiedName == other.FullyQualifiedName &&
+            IsDisplayAttributeUsed == other.IsDisplayAttributeUsed;
     }
 }

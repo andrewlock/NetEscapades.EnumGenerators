@@ -6,34 +6,39 @@ using Microsoft.CodeAnalysis.Text;
 namespace NetEscapades.EnumGenerators;
 
 [Generator]
-public class EnumGenerator : IIncrementalGenerator
+public partial class EnumGenerator : IIncrementalGenerator
 {
     private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
     private const string HasFlagsAttribute = "System.HasFlagsAttribute";
-    private readonly ChangesComparer changesComparer = new();
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
             "EnumExtensionsAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
 
-        IncrementalValuesProvider<(EnumDeclarationSyntax, Compilation)> enumDeclarations = context.SyntaxProvider
+        IncrementalValueProvider<CompilationInfo> compilationInfo = 
+            context.CompilationProvider
+                .Select((c, _) => new CompilationInfo(c.GetTypeByMetadataName(EnumExtensionsAttribute), c.GetTypeByMetadataName(DisplayAttribute), c.GetTypeByMetadataName(HasFlagsAttribute)));
+
+        IncrementalValuesProvider<ISymbol> enumDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
                 transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
-            .Where(static m => m is not null)!
-            .Combine(context.CompilationProvider)!
-            .WithComparer(changesComparer);
+            .Where(static m => m is not null)!;
 
-        context.RegisterSourceOutput(enumDeclarations,
-                static (spc, source) => Execute(source.Item1, source.Item2, spc));
+        IncrementalValuesProvider<EnumToGenerate?> enumToGenerate = enumDeclarations.Combine(compilationInfo)
+            .Select((source, ct) => GetTypesToGenerate(source.Right, source.Left, ct))
+            .Where(static m => m is not null);
+
+        context.RegisterSourceOutput(enumToGenerate,
+                static (spc, source) => Execute(source, spc));
     }
 
     static bool IsSyntaxTargetForGeneration(SyntaxNode node)
         => node is EnumDeclarationSyntax m && m.AttributeLists.Count > 0;
 
-    static EnumDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    static ISymbol? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
         // we know the node is a EnumDeclarationSyntax thanks to IsSyntaxTargetForGeneration
         var enumDeclarationSyntax = (EnumDeclarationSyntax)context.Node;
@@ -56,7 +61,7 @@ public class EnumGenerator : IIncrementalGenerator
                 if (fullName == EnumExtensionsAttribute)
                 {
                     // return the enum
-                    return enumDeclarationSyntax;
+                    return context.SemanticModel.GetDeclaredSymbol(enumDeclarationSyntax);
                 }
             }
         }
@@ -65,33 +70,31 @@ public class EnumGenerator : IIncrementalGenerator
         return null;
     }
 
-    static void Execute(EnumDeclarationSyntax enumDeclarationSyntax, Compilation compilation, SourceProductionContext context)
+    static void Execute(EnumToGenerate? enumToGenerate, SourceProductionContext context)
     {
-        var enumToGenerate = GetTypesToGenerate(compilation, enumDeclarationSyntax, context.CancellationToken);
         if (enumToGenerate is EnumToGenerate eg && enumToGenerate != null)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             var result = SourceGenerationHelper.GenerateExtensionClass(sb, eg);
             context.AddSource(eg.Name + "_EnumExtensions.g.cs", SourceText.From(result, Encoding.UTF8));
         }
     }
 
-    static EnumToGenerate? GetTypesToGenerate(Compilation compilation, EnumDeclarationSyntax enumDeclarationSyntax, CancellationToken ct)
+    static EnumToGenerate? GetTypesToGenerate(CompilationInfo compilationInfo, ISymbol declaredSymbol, CancellationToken ct)
     {
-        INamedTypeSymbol? enumAttribute = compilation.GetTypeByMetadataName(EnumExtensionsAttribute);
+        INamedTypeSymbol? enumAttribute = compilationInfo.EnumAttribute;
         if (enumAttribute == null)
         {
             // nothing to do if this type isn't available
             return null;
         }
 
-        INamedTypeSymbol? displayAttribute = compilation.GetTypeByMetadataName(DisplayAttribute);
-        INamedTypeSymbol? hasFlagsAttribute = compilation.GetTypeByMetadataName(HasFlagsAttribute);
+        INamedTypeSymbol? displayAttribute = compilationInfo.DisplayAttribute;
+        INamedTypeSymbol? hasFlagsAttribute = compilationInfo.HasFlagsAttribute;
         // stop if we're asked to
         ct.ThrowIfCancellationRequested();
 
-        SemanticModel semanticModel = compilation.GetSemanticModel(enumDeclarationSyntax.SyntaxTree);
-        if (semanticModel.GetDeclaredSymbol(enumDeclarationSyntax) is not INamedTypeSymbol enumSymbol)
+        if (declaredSymbol is not INamedTypeSymbol enumSymbol)
         {
             // report diagnostic, something went wrong
             return null;
@@ -181,21 +184,5 @@ public class EnumGenerator : IIncrementalGenerator
             hasFlags: hasFlags,
             names: members,
             isDisplayAttributeUsed: displayNames.Count > 0);
-    }
-    private class ChangesComparer : IEqualityComparer<(EnumDeclarationSyntax Syntax, Compilation compilation)>
-    {
-        public ChangesComparer()
-        {
-        }
-
-        public bool Equals((EnumDeclarationSyntax Syntax, Compilation compilation) x, (EnumDeclarationSyntax Syntax, Compilation compilation) y)
-        {
-            return x.Syntax.Equals(y.Syntax);
-        }
-
-        public int GetHashCode((EnumDeclarationSyntax Syntax, Compilation compilation) obj)
-        {
-            return obj.Syntax.GetHashCode();
-        }
     }
 }

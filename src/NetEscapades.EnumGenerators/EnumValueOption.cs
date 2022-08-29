@@ -1,6 +1,6 @@
 ﻿namespace NetEscapades.EnumGenerators;
 
-public readonly struct EnumValueOption
+public readonly struct EnumValueOption : IEquatable<EnumValueOption>
 {
     /// <summary>
     /// Custom name setted by the <c>[Display(Name)]</c> attribute.
@@ -12,5 +12,11 @@ public readonly struct EnumValueOption
     {
         DisplayName = displayName;
         IsDisplayNameTheFirstPresence = isDisplayNameTheFirstPresence;
+    }
+
+    public bool Equals(EnumValueOption other)
+    {
+        return DisplayName == other.DisplayName &&
+            IsDisplayNameTheFirstPresence == other.IsDisplayNameTheFirstPresence;
     }
 }
