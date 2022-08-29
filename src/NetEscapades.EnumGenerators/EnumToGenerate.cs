@@ -12,7 +12,7 @@ public readonly struct EnumToGenerate : IEquatable<EnumToGenerate>
     /// <summary>
     /// Key is the enum name.
     /// </summary>
-    public readonly List<KeyValuePair<string, EnumValueOption>> Names;
+    public readonly List<(string Key, EnumValueOption Value)> Names;
 
     public readonly bool IsDisplayAttributeUsed;
 
@@ -22,7 +22,7 @@ public readonly struct EnumToGenerate : IEquatable<EnumToGenerate>
     string fullyQualifiedName,
     string underlyingType,
     bool isPublic,
-    List<KeyValuePair<string, EnumValueOption>> names,
+    List<(string Key, EnumValueOption Value)> names,
     bool hasFlags,
     bool isDisplayAttributeUsed)
     {
@@ -41,7 +41,7 @@ public readonly struct EnumToGenerate : IEquatable<EnumToGenerate>
         return Name == other.Name &&
             Namespace == other.Namespace &&
             UnderlyingType == other.UnderlyingType &&
-            Names.All(other.Names.Contains) &&
+            Names.SequenceEqual(other.Names) &&
             HasFlags == other.HasFlags &&
             IsPublic == other.IsPublic &&
             FullyQualifiedName == other.FullyQualifiedName &&

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,6 +9,7 @@ namespace NetEscapades.EnumGenerators;
 [Generator]
 public partial class EnumGenerator : IIncrementalGenerator
 {
+    private static int counter;
     private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
     private const string HasFlagsAttribute = "System.HasFlagsAttribute";
@@ -17,9 +19,9 @@ public partial class EnumGenerator : IIncrementalGenerator
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
             "EnumExtensionsAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
 
-        IncrementalValueProvider<CompilationInfo> compilationInfo = 
+        IncrementalValueProvider<(INamedTypeSymbol? EnumAttribute, INamedTypeSymbol? DisplayAttribute, INamedTypeSymbol? HasFlagsAttribute) > compilationInfo = 
             context.CompilationProvider
-                .Select((c, _) => new CompilationInfo(c.GetTypeByMetadataName(EnumExtensionsAttribute), c.GetTypeByMetadataName(DisplayAttribute), c.GetTypeByMetadataName(HasFlagsAttribute)));
+                .Select((c, _) => (c.GetTypeByMetadataName(EnumExtensionsAttribute), c.GetTypeByMetadataName(DisplayAttribute), c.GetTypeByMetadataName(HasFlagsAttribute)));
 
         IncrementalValuesProvider<ISymbol> enumDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
@@ -75,12 +77,12 @@ public partial class EnumGenerator : IIncrementalGenerator
         if (enumToGenerate is EnumToGenerate eg && enumToGenerate != null)
         {
             StringBuilder sb = new();
-            var result = SourceGenerationHelper.GenerateExtensionClass(sb, eg);
+            var result = SourceGenerationHelper.GenerateExtensionClass(sb, eg, Interlocked.Increment(ref counter));
             context.AddSource(eg.Name + "_EnumExtensions.g.cs", SourceText.From(result, Encoding.UTF8));
         }
     }
 
-    static EnumToGenerate? GetTypesToGenerate(CompilationInfo compilationInfo, ISymbol declaredSymbol, CancellationToken ct)
+    static EnumToGenerate? GetTypesToGenerate((INamedTypeSymbol? EnumAttribute, INamedTypeSymbol? DisplayAttribute, INamedTypeSymbol? HasFlagsAttribute) compilationInfo, ISymbol declaredSymbol, CancellationToken ct)
     {
         INamedTypeSymbol? enumAttribute = compilationInfo.EnumAttribute;
         if (enumAttribute == null)
@@ -138,7 +140,7 @@ public partial class EnumGenerator : IIncrementalGenerator
         string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";
 
         var enumMembers = enumSymbol.GetMembers();
-        var members = new List<KeyValuePair<string, EnumValueOption>>(enumMembers.Length);
+        var members = new List<(string, EnumValueOption)>(enumMembers.Length);
         var displayNames = new HashSet<string>();
         var isDisplayNameTheFirstPresence = false;
 
@@ -172,7 +174,7 @@ public partial class EnumGenerator : IIncrementalGenerator
                 }
             }
 
-            members.Add(new KeyValuePair<string, EnumValueOption>(member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
+            members.Add((member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
         }
 
         return new EnumToGenerate(
