@@ -30,6 +30,8 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
     };
 
     protected override string ToStringFast(EnumWithSameDisplayName value) => value.ToStringFast();
+    protected override string ToStringFastLowerCase(EnumWithSameDisplayName value)=> value.ToStringFastLowerCase();
+
     protected override bool IsDefined(EnumWithSameDisplayName value) => EnumWithSameDisplayNameExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithSameDisplayNameExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
@@ -45,6 +47,10 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(EnumWithSameDisplayName value) => GeneratesToStringFastTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesToStringFastLowerCase(EnumWithSameDisplayName value) => GeneratesToStringFastLowerCaseTest(value);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

@@ -32,6 +32,8 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     };
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
+    protected override string ToStringFastLowerCase(FlagsEnum value) => value.ToStringFast();
+
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
@@ -47,6 +49,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(FlagsEnum value) => GeneratesToStringFastTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesToStringFastLowerCase(FlagsEnum value) => GeneratesToStringFastLowerCaseTest(value);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

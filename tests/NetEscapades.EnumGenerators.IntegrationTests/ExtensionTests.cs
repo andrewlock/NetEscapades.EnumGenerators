@@ -10,6 +10,7 @@ namespace NetEscapades.EnumGenerators.IntegrationTests;
 public abstract class ExtensionTests<T> where T : struct
 {
     protected abstract string ToStringFast(T value);
+    protected abstract string ToStringFastLowerCase(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
@@ -27,7 +28,18 @@ public abstract class ExtensionTests<T> where T : struct
 
         TryGetDisplayName(valueAsString, out var displayName);
         var expectedValue = displayName is null ? valueAsString : displayName;
-        
+
+        serialized.Should().Be(expectedValue);
+    }
+
+    protected void GeneratesToStringFastLowerCaseTest(T value)
+    {
+        var serialized = ToStringFastLowerCase(value);
+        var valueAsString = value.ToString()!.ToLowerInvariant();
+
+        TryGetDisplayName(valueAsString, out var displayName);
+        var expectedValue = displayName is null ? valueAsString : displayName;
+
         serialized.Should().Be(expectedValue);
     }
 
@@ -164,7 +176,7 @@ public abstract class ExtensionTests<T> where T : struct
                     {
                         return false;
                     }
-                    
+
                     return true;
                 }
             }

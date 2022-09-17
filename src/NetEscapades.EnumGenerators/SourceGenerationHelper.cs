@@ -93,6 +93,31 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 _ => value.ToString(),
             };");
 
+        sb.Append(@"
+
+        public static string ToStringFastLowerCase(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            => value switch
+            {");
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
+                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                .Append(" => ");
+
+            if (member.Value.DisplayName is null)
+            {
+                sb.Append("\"").Append(member.Key.ToLowerInvariant()).Append("\",");
+            }
+            else
+            {
+                sb.Append('"').Append(member.Value.DisplayName).Append(@""",");
+            }
+        }
+
+        sb.Append(@"
+                _ => value.ToString().ToLowerInvariant(),
+            };");
+
         if (enumToGenerate.HasFlags)
         {
             sb.Append(@"
