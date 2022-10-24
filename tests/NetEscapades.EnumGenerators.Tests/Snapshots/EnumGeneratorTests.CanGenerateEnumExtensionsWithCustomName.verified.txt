@@ -11,6 +11,7 @@
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
 using System;
 #endif
+#pragma warning disable 1591
 
 namespace MyTestNameSpace
 {
@@ -54,8 +55,8 @@ namespace MyTestNameSpace
         public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
-        /// Slower then the <see cref="IsDefined(string, bool)",
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// Slower then the <see cref="IsDefined(string, bool)"/>,
+        /// bacause the <c>ReadOnlySpan&lt;char&gt;</c> can't be cached like a string, tho it doesn't allocate memory./>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="allowMatchingMetadataAttribute"></param>
@@ -155,7 +156,7 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Slower then the <see cref="TryParse(string, out MyTestNameSpace.MyEnum, bool, bool)"/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// bacause the <c>ReadOnlySpan&lt;char&gt;</c> can't be cached like a string, tho it doesn't allocate memory./>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="result"></param>
@@ -229,3 +230,4 @@ namespace MyTestNameSpace
         }
     }
 }
+#pragma warning restore 1591

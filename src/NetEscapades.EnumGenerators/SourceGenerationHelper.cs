@@ -54,6 +54,9 @@ namespace NetEscapades.EnumGenerators
 using System;
 #endif
 ");
+
+        sb.AppendLine(@"#pragma warning disable 1591");
+
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
@@ -138,7 +141,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
-                    {
+                {
                     sb.Append(@"
                     """).Append(member.Value.DisplayName).Append(@""" => true,");
                 }
@@ -160,8 +163,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             return name switch
             {");
         foreach (var member in enumToGenerate.Names)
-            {
-             sb.Append(@"
+        {
+            sb.Append(@"
                 nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
         }
 
@@ -176,8 +179,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
-        /// Slower then the <see cref=""IsDefined(string, bool)"",
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// Slower then the <see cref=""IsDefined(string, bool)""/>,
+        /// bacause the <c>ReadOnlySpan&lt;char&gt;</c> can't be cached like a string, tho it doesn't allocate memory./>
         /// </summary>
         /// <param name=""name""></param>
         /// <param name=""allowMatchingMetadataAttribute""></param>
@@ -379,7 +382,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Slower then the <see cref=""TryParse(string, out ").Append(enumToGenerate.FullyQualifiedName).Append(@", bool, bool)""/>,
-        /// bacause the <c>ReadOnlySpan<char></c> can't be cached like a string, tho it doesn't allocate memory./>
+        /// bacause the <c>ReadOnlySpan&lt;char&gt;</c> can't be cached like a string, tho it doesn't allocate memory./>
         /// </summary>
         /// <param name=""name""></param>
         /// <param name=""result""></param>
@@ -444,20 +447,20 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
 ");
         }
-            sb.Append(@"
+        sb.Append(@"
             if (ignoreCase)
             {
                 switch (name)
                 {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
                     case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.OrdinalIgnoreCase):
                         result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
-            }
+        }
 
-            sb.Append(@"
+        sb.Append(@"
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
                         result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
                         return true;
@@ -470,15 +473,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             {
                 switch (name)
                 {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                sb.Append(@"
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
                     case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@").AsSpan(), System.StringComparison.Ordinal):
                         result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
-            }
+        }
 
-            sb.Append(@"
+        sb.Append(@"
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
                         result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
                         return true;
@@ -528,6 +531,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 }");
         }
 
+        sb.AppendLine();
+        sb.Append(@"#pragma warning restore 1591");
         return sb.ToString();
     }
 }
