@@ -45,7 +45,7 @@ namespace NetEscapades.EnumGenerators
 #endif
 ";
 
-    public static string GenerateExtensionClass(StringBuilder sb, EnumToGenerate enumToGenerate)
+    public static string GenerateExtensionClass(StringBuilder sb, in EnumToGenerate enumToGenerate)
     {
         sb
             .Append(Header)
