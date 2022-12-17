@@ -5,7 +5,7 @@
 
 A Source Generator package that generates extension methods for enums, to allow fast "reflection".
 
-> This source generator requires the .NET 6 SDK. You can target earlier frameworks like .NET Core 3.1 etc, but the _SDK_ must be at least 6.0.100
+> This source generator requires the .NET 7 SDK. You can target earlier frameworks like .NET Core 3.1 etc, but the _SDK_ must be at least 7.0.100
 
 Add the package to your application using
 
