@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VerifyXunit;
@@ -19,11 +18,11 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, EnumValueOption>
+            new List<(string Key, EnumValueOption Value)>
             {
-                { "First", new EnumValueOption(null, false) }, 
-                { "Second", new EnumValueOption(null, false) }
-            }.ToList(),
+                ("First", new EnumValueOption(null, false)),
+                ("Second", new EnumValueOption(null, false)),
+            },
             hasFlags: false,
             isDisplayAttributeUsed: false);
 
@@ -43,11 +42,11 @@ public class SourceGenerationHelperSnapshotTests
             "Something.Blah.ShortName",
             "int",
             isPublic: true,
-            new Dictionary<string, EnumValueOption>
+            new List<(string, EnumValueOption)>
             {
-                { "First", new EnumValueOption(null, false) },
-                { "Second", new EnumValueOption(null, false) }
-            }.ToList(),
+                ("First", new EnumValueOption(null, false)),
+                ("Second", new EnumValueOption(null, false)),
+            },
             hasFlags: true,
             isDisplayAttributeUsed: false);
 
