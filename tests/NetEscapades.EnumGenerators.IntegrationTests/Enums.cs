@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests
@@ -17,6 +18,17 @@ namespace NetEscapades.EnumGenerators.IntegrationTests
         First = 0,
 
         [Display(Name = "2nd")]
+        Second = 1,
+
+        Third = 2,
+    }
+
+    [EnumExtensions]
+    public enum EnumWithDescriptionInNamespace
+    {
+        First = 0,
+
+        [Description("2nd")]
         Second = 1,
 
         Third = 2,

@@ -9,6 +9,7 @@ namespace NetEscapades.EnumGenerators;
 public class EnumGenerator : IIncrementalGenerator
 {
     private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
+    private const string DescriptionAttribute = "System.ComponentModel.DescriptionAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
     private const string FlagsAttribute = "System.FlagsAttribute";
 
@@ -105,25 +106,40 @@ public class EnumGenerator : IIncrementalGenerator
             string? displayName = null;
             foreach (var attribute in member.GetAttributes())
             {
-                
-                if (attribute.AttributeClass?.Name != "DisplayAttribute" ||
-                    attribute.AttributeClass.ToDisplayString() != DisplayAttribute)
+                if (attribute.AttributeClass?.Name == "DisplayAttribute" &&
+                    attribute.AttributeClass.ToDisplayString() == DisplayAttribute)
                 {
-                    continue;
-                }
-
-                foreach (var namedArgument in attribute.NamedArguments)
-                {
-                    if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
+                    foreach (var namedArgument in attribute.NamedArguments)
                     {
+                        if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
+                        {
+                            // found display attribute, all done
+                            displayName = dn;
+                            goto addDisplayName;
+                        }
+                    }
+                }
+                
+                if (attribute.AttributeClass?.Name == "DescriptionAttribute" 
+                    && attribute.AttributeClass.ToDisplayString() == DescriptionAttribute
+                    && attribute.ConstructorArguments.Length == 1)
+                {
+                    if (attribute.ConstructorArguments[0].Value?.ToString() is { } dn)
+                    {
+                        // found display attribute, all done
                         displayName = dn;
-                        displayNames ??= new();
-                        isDisplayNameTheFirstPresence = displayNames.Add(displayName);
-                        break;
+                        goto addDisplayName;
                     }
                 }
             }
 
+            addDisplayName:
+            if (displayName is not null)
+            {
+                displayNames ??= new();
+                isDisplayNameTheFirstPresence = displayNames.Add(displayName);    
+            }
+            
             members.Add((member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence)));
         }
 
