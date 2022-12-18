@@ -2,7 +2,6 @@
 
   <Import Project="version.props" />
 
-
   <PropertyGroup>
     <Authors>Andrew Lock</Authors>
     <Copyright>Copyright © AndrewLock</Copyright>
@@ -11,24 +10,18 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/andrewlock/NetEscapades.EnumGenerators</PackageProjectUrl>
     <PackageTags>enums attribute generator generation codegen codegenerator codegeneration netescapades</PackageTags>
-    <RepositoryUrl>https://github.com/andrewlock/NetEscapades.EnumGenerators</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
-    <DebugType>embedded</DebugType>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <LangVersion>latest</LangVersion>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageOutputPath>$(MSBuildThisFileDirectory)\artifacts</PackageOutputPath>
   </PropertyGroup>
 
-  <!--  Reproducible build properties-->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 
   <Import Project="releasenotes.props" />
