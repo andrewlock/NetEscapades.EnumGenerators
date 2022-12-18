@@ -155,7 +155,7 @@ public static bool HasFlagFast(this MyEnum value, MyEnum flag)
     => flag == 0 ? true : (value & flag) == flag;
 ```
 
-Note that if you provide a `[Display]` or `[Description]` attribute, the value you provide for this attribute can be used by methods like `ToStringFast()` and `TryParse()` by passing the argument `allowMatchingMetadataAttribute: true`.
+Note that if you provide a `[Display]` or `[Description]` attribute, the value you provide for this attribute can be used by methods like `ToStringFast()` and `TryParse()` by passing the argument `allowMatchingMetadataAttribute: true`. Adding both attributes to an enum member is not supported, though conventionally the "first" attribute will be used.
 
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
 
