@@ -148,6 +148,13 @@ public static partial class MyEnumExtensions
 }
 ```
 
+If you create a "Flags" `enum` by decorating it with the `[Flags]` attribute, an additional method is created, which provides a bitwise alternative to :
+
+```csharp
+public static bool HasFlagFast(this MyEnum value, MyEnum flag)
+    => flag == 0 ? true : (value & flag) == flag;
+```
+
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
 
 ## Embedding the attributes in your project
