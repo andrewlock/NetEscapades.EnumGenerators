@@ -173,7 +173,7 @@ Your project file should look something like this:
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <!--  Define the MSBuild constant    -->
-    <DefineConstants>NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 
   <!-- Add the package -->
@@ -198,7 +198,7 @@ If you wish to preserve these attributes in the build output, you can define the
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <!--  Define the MSBuild constant to preserve usages   -->
-    <DefineConstants>NETESCAPADES_ENUMGENERATORS_USAGES</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_USAGES</DefineConstants>
   </PropertyGroup>
 
   <!-- Add the package -->
