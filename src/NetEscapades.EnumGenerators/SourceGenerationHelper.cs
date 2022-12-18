@@ -110,17 +110,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Determines whether one or more bit fields are set in the current instance.
-        /// Equivalent to calling <c>value.HasFlag(flag)</c> 
+        /// Equivalent to calling <see cref=""Enum.HasFlag(Enum)"" /> on <paramref name=""value""/>.
         /// </summary>
         /// <param name=""value"">The value of the instance to investiage</param>
         /// <param name=""flag"">The flag to check for</param>
         /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
-        public static bool HasFlag(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, ").Append(enumToGenerate.FullyQualifiedName).Append(@" flag)
-            => value switch
-            {
-                0  => flag.Equals(0),
-                _ => (value & flag) != 0,
-            };");
+        /// <remarks>If the underlying value of <paramref name=""flag""/> is zero, the method returns true.
+        /// This is consistent with the behaviour of <see cref=""Enum.HasFlag(Enum)"" /></remarks>
+        public static bool HasFlagFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, ").Append(enumToGenerate.FullyQualifiedName).Append(@" flag)
+            => flag == 0 ? true : (value & flag) == flag;");
         }
 
         sb.Append(@"

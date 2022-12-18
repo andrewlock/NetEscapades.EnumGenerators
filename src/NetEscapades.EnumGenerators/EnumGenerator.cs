@@ -10,7 +10,7 @@ public class EnumGenerator : IIncrementalGenerator
 {
     private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
-    private const string HasFlagsAttribute = "System.HasFlagsAttribute";
+    private const string FlagsAttribute = "System.FlagsAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -55,8 +55,9 @@ public class EnumGenerator : IIncrementalGenerator
 
         foreach (AttributeData attributeData in enumSymbol.GetAttributes())
         {
-            if (attributeData.AttributeClass?.Name == "HasFlagsAttribute" &&
-                attributeData.AttributeClass.ToDisplayString() == HasFlagsAttribute)
+            if ((attributeData.AttributeClass?.Name == "FlagsAttribute" ||
+                 attributeData.AttributeClass?.Name == "Flags") &&
+                attributeData.AttributeClass.ToDisplayString() == FlagsAttribute)
             {
                 hasFlags = true;
                 continue;
