@@ -32,22 +32,17 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '5.0.x'
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '2.1.x'
+          dotnet-version: |
+            7.0.x
+            6.0.x
+            5.0.x
+            3.1.x
+            2.1.x
       - name: Cache .nuke/temp, ~/.nuget/packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             .nuke/temp
@@ -69,22 +64,17 @@ jobs:
     name: windows-latest
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '5.0.x'
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '2.1.x'
+          dotnet-version: |
+            7.0.x
+            6.0.x
+            5.0.x
+            3.1.x
+            2.1.x
       - name: Cache .nuke/temp, ~/.nuget/packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             .nuke/temp
@@ -106,22 +96,17 @@ jobs:
     name: macOS-latest
     runs-on: macOS-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '5.0.x'
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '2.1.x'
+          dotnet-version: |
+            7.0.x
+            6.0.x
+            5.0.x
+            3.1.x
+            2.1.x
       - name: Cache .nuke/temp, ~/.nuget/packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             .nuke/temp

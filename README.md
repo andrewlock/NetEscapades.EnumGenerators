@@ -5,7 +5,7 @@
 
 A Source Generator package that generates extension methods for enums, to allow fast "reflection".
 
-> This source generator requires the .NET 6 SDK. You can target earlier frameworks like .NET Core 3.1 etc, but the _SDK_ must be at least 6.0.100
+> This source generator requires the .NET 7 SDK. You can target earlier frameworks like .NET Core 3.1 etc, but the _SDK_ must be at least 7.0.100
 
 Add the package to your application using
 
@@ -148,6 +148,13 @@ public static partial class MyEnumExtensions
 }
 ```
 
+If you create a "Flags" `enum` by decorating it with the `[Flags]` attribute, an additional method is created, which provides a bitwise alternative to :
+
+```csharp
+public static bool HasFlagFast(this MyEnum value, MyEnum flag)
+    => flag == 0 ? true : (value & flag) == flag;
+```
+
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
 
 ## Embedding the attributes in your project
@@ -190,7 +197,7 @@ If you wish to preserve these attributes in the build output, you can define the
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <!--  Define the MSBuild constant to preserve usages   -->
-    <DefineConstants>NETESCAPADES_ENUMGENERATORS_USAGES</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_USAGES</DefineConstants>
   </PropertyGroup>
 
   <!-- Add the package -->

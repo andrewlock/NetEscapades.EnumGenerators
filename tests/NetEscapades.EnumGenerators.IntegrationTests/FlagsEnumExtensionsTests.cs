@@ -1,5 +1,7 @@
 using FluentAssertions;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -44,6 +46,12 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
+    /// This is consistent with the behaviour of <see cref=""Enum.HasFlag(Enum)""></remarks>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(FlagsEnum value) => GeneratesToStringFastTest(value);
@@ -62,16 +70,29 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
 #endif
 
-    [Theory]
-    [InlineData(FlagsEnum.First)]
-    [InlineData(FlagsEnum.Second)]
-    [InlineData(FlagsEnum.First | FlagsEnum.Second)]
-    [InlineData(FlagsEnum.Third)]
-    [InlineData((FlagsEnum)65)]
-    public void HasFlags(FlagsEnum value)
+    public static IEnumerable<object[]> AllFlags()
     {
-        var flag = FlagsEnum.Second;
-        var isDefined = value.HasFlag(flag);
+        var values = new[]
+        {
+            FlagsEnum.First,
+            FlagsEnum.Second,
+            FlagsEnum.Third,
+            FlagsEnum.ThirdAndFourth,
+            FlagsEnum.First | FlagsEnum.Second,
+            (FlagsEnum)65,
+            (FlagsEnum)0,
+        };
+
+        return from v1 in values
+            from v2 in values
+            select new object[] { v1, v2 };
+    }
+    
+    [Theory]
+    [MemberData(nameof(AllFlags))]
+    public void HasFlags(FlagsEnum value, FlagsEnum flag)
+    {
+        var isDefined = value.HasFlagFast(flag);
 
         isDefined.Should().Be(value.HasFlag(flag));
     }

@@ -188,4 +188,36 @@ namespace MyTestNameSpace
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
+
+    [Theory]
+    [InlineData("", "System.Flags")]
+    [InlineData("", "System.FlagsAttribute")]
+    [InlineData("using System;", "FlagsAttribute")]
+    [InlineData("using System;", "Flags")]
+    public Task CanGenerateEnumExtensionsForFlagsEnum(string usings, string attribute)
+    {
+        string input = $$"""
+        using NetEscapades.EnumGenerators;
+        {{usings}}
+
+        namespace MyTestNameSpace
+        {
+            [EnumExtensions, {{attribute}}]
+            public enum MyEnum
+            {
+                First = 1,
+                Second = 2,
+                Third = 4,
+            }
+        }
+        """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output)
+            .UseTextForParameters("Params")
+            .DisableRequireUniquePrefix()
+            .UseDirectory("Snapshots");
+    }
 }

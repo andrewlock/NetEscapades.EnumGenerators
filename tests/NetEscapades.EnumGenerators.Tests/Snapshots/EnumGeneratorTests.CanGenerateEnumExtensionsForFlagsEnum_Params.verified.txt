@@ -23,7 +23,7 @@ namespace MyTestNameSpace
         /// The number of members in the enum.
         /// This is a non-distinct count of defined names.
         /// </summary>
-        public const int Length = 2;
+        public const int Length = 3;
 
         /// <summary>
         /// Returns the string representation of the <see cref="MyTestNameSpace.MyEnum"/> value.
@@ -38,8 +38,21 @@ namespace MyTestNameSpace
             {
                 MyTestNameSpace.MyEnum.First => nameof(MyTestNameSpace.MyEnum.First),
                 MyTestNameSpace.MyEnum.Second => nameof(MyTestNameSpace.MyEnum.Second),
+                MyTestNameSpace.MyEnum.Third => nameof(MyTestNameSpace.MyEnum.Third),
                 _ => value.ToString(),
             };
+
+        /// <summary>
+        /// Determines whether one or more bit fields are set in the current instance.
+        /// Equivalent to calling <see cref="Enum.HasFlag(Enum)" /> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value of the instance to investiage</param>
+        /// <param name="flag">The flag to check for</param>
+        /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
+        /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
+        /// This is consistent with the behaviour of <see cref="Enum.HasFlag(Enum)" /></remarks>
+        public static bool HasFlagFast(this MyTestNameSpace.MyEnum value, MyTestNameSpace.MyEnum flag)
+            => flag == 0 ? true : (value & flag) == flag;
 
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
@@ -51,6 +64,7 @@ namespace MyTestNameSpace
             {
                 MyTestNameSpace.MyEnum.First => true,
                 MyTestNameSpace.MyEnum.Second => true,
+                MyTestNameSpace.MyEnum.Third => true,
                 _ => false,
             };
 
@@ -76,6 +90,7 @@ namespace MyTestNameSpace
             {
                 nameof(MyTestNameSpace.MyEnum.First) => true,
                 nameof(MyTestNameSpace.MyEnum.Second) => true,
+                nameof(MyTestNameSpace.MyEnum.Third) => true,
                 _ => false,
             };
         }
@@ -104,6 +119,7 @@ namespace MyTestNameSpace
             {
                 ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), System.StringComparison.Ordinal) => true,
                 ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -185,6 +201,9 @@ namespace MyTestNameSpace
                     case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.Second;
                         return true;
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), System.StringComparison.OrdinalIgnoreCase):
+                        value = MyTestNameSpace.MyEnum.Third;
+                        return true;
                     case string s when int.TryParse(name, out var val):
                         value = (MyTestNameSpace.MyEnum)val;
                         return true;
@@ -202,6 +221,9 @@ namespace MyTestNameSpace
                         return true;
                     case nameof(MyTestNameSpace.MyEnum.Second):
                         value = MyTestNameSpace.MyEnum.Second;
+                        return true;
+                    case nameof(MyTestNameSpace.MyEnum.Third):
+                        value = MyTestNameSpace.MyEnum.Third;
                         return true;
                     case string s when int.TryParse(name, out var val):
                         value = (MyTestNameSpace.MyEnum)val;
@@ -290,6 +312,9 @@ namespace MyTestNameSpace
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
                         result = MyTestNameSpace.MyEnum.Second;
                         return true;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                        result = MyTestNameSpace.MyEnum.Third;
+                        return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                         result = (MyTestNameSpace.MyEnum)numericResult;
                         return true;
@@ -307,6 +332,9 @@ namespace MyTestNameSpace
                         return true;
                     case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), System.StringComparison.Ordinal):
                         result = MyTestNameSpace.MyEnum.Second;
+                        return true;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), System.StringComparison.Ordinal):
+                        result = MyTestNameSpace.MyEnum.Third;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                         result = (MyTestNameSpace.MyEnum)numericResult;
@@ -332,6 +360,7 @@ namespace MyTestNameSpace
             {
                 MyTestNameSpace.MyEnum.First,
                 MyTestNameSpace.MyEnum.Second,
+                MyTestNameSpace.MyEnum.Third,
             };
         }
 
@@ -348,6 +377,7 @@ namespace MyTestNameSpace
             {
                 nameof(MyTestNameSpace.MyEnum.First),
                 nameof(MyTestNameSpace.MyEnum.Second),
+                nameof(MyTestNameSpace.MyEnum.Third),
             };
         }
     }
