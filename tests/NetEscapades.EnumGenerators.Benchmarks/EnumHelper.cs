@@ -13,7 +13,7 @@ internal static class EnumHelper<T> where T : struct
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {
-            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName.Equals(name, stringComparisonOption))
+            if (TryGetDisplayName(value.ToString(), out var displayName) && displayName!.Equals(name, stringComparisonOption))
             {
                 enumValue = value;
                 return true;
@@ -59,10 +59,10 @@ internal static class EnumHelper<T> where T : struct
     {
         if (typeof(T).IsEnum)
         {
-            var memberInfo = typeof(T).GetMember(value.ToString());
+            var memberInfo = typeof(T).GetMember(value.ToString()!);
             if (memberInfo.Length > 0)
             {
-                var displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>().GetName();
+                var displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>()!.GetName();
                 if (displayName is null)
                 {
                     return string.Empty;
