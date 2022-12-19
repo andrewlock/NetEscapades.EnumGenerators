@@ -159,7 +159,79 @@ namespace MyTestNameSpace
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output)
+            .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
+            .DisableRequireUniquePrefix()
+            .UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateEnumExtensionsWithDescription()
+    {
+        var input = """
+        using NetEscapades.EnumGenerators;
+        using System.ComponentModel;
+
+        namespace MyTestNameSpace
+        {
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First = 0,
+
+                [Description("2nd")]
+                Second = 1,
+                Third = 2,
+
+                [Description("4th")]
+                Fourth = 3
+            }
+        }"
+        """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output)
+            .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
+            .DisableRequireUniquePrefix()
+            .UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateEnumExtensionsWithDescriptionAndDisplayName()
+    {
+        var input = """
+        using NetEscapades.EnumGenerators;
+        using System.ComponentModel;
+        using System.ComponentModel.DataAnnotations;
+
+        namespace MyTestNameSpace
+        {
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First = 0,
+
+                [Description("2nd")] // takes precedence
+                [Display(Name = "Secundo")] 
+                Second = 1,
+                Third = 2,
+
+                [Display(Name = "4th")] // takes precedence 
+                [Description("Number 4")]
+                Fourth = 3
+            }
+        }"
+        """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output)
+            .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
+            .DisableRequireUniquePrefix()
+            .UseDirectory("Snapshots");
     }
 
     [Fact]

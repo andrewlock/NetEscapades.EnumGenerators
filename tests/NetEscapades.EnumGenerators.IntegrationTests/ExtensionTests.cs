@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using FluentAssertions;
@@ -25,7 +26,7 @@ public abstract class ExtensionTests<T> where T : struct
         var serialized = ToStringFast(value);
         var valueAsString = value.ToString();
 
-        TryGetDisplayName(valueAsString, out var displayName);
+        TryGetDisplayNameOrDescription(valueAsString, out var displayName);
         var expectedValue = displayName is null ? valueAsString : displayName;
         
         serialized.Should().Be(expectedValue);
@@ -59,7 +60,7 @@ public abstract class ExtensionTests<T> where T : struct
         bool expectedResult;
         if (allowMatchingMetadataAttribute)
         {
-            expectedResult = TryGetEnumByDisplayName(name, ignoreCase: false, out _);
+            expectedResult = TryGetEnumByDisplayNameOrDescription(name, ignoreCase: false, out _);
             if (!expectedResult)
             {
                 expectedResult = Enum.IsDefined(typeof(T), name);
@@ -99,7 +100,7 @@ public abstract class ExtensionTests<T> where T : struct
     {
         if (allowMatchingMetadataAttribute)
         {
-            expectedValidity = TryGetEnumByDisplayName(name, ignoreCase, out expectedResult);
+            expectedValidity = TryGetEnumByDisplayNameOrDescription(name, ignoreCase, out expectedResult);
             if (!expectedValidity)
             {
                 expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
@@ -123,7 +124,7 @@ public abstract class ExtensionTests<T> where T : struct
         names.Should().Equal(expected);
     }
 
-    private bool TryGetEnumByDisplayName(string name, bool ignoreCase, out T enumValue)
+    private bool TryGetEnumByDisplayNameOrDescription(string name, bool ignoreCase, out T enumValue)
     {
         enumValue = default;
 
@@ -131,7 +132,7 @@ public abstract class ExtensionTests<T> where T : struct
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {
-            if (TryGetDisplayName(value.ToString(), out var displayName) && string.Equals(displayName,name, stringComparisonOptions))
+            if (TryGetDisplayNameOrDescription(value.ToString(), out var displayName) && string.Equals(displayName,name, stringComparisonOptions))
             {
                 enumValue = value;
                 return true;
@@ -141,7 +142,7 @@ public abstract class ExtensionTests<T> where T : struct
         return false;
     }
 
-    private bool TryGetDisplayName(
+    private bool TryGetDisplayNameOrDescription(
         string? value,
 #if NETCOREAPP3_0_OR_GREATER
         [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? displayName)
@@ -159,7 +160,9 @@ public abstract class ExtensionTests<T> where T : struct
                 var memberInfo = typeof(T).GetMember(value);
                 if (memberInfo.Length > 0)
                 {
-                    displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>()?.GetName();
+                    // Doesn't take order into account, but we don't test with both currently
+                    displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>()?.GetName()
+                        ?? memberInfo[0].GetCustomAttribute<DescriptionAttribute>()?.Description;
                     if (displayName is null)
                     {
                         return false;
