@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests.csproj", "{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{AC0DDDB0-385D-43B8-A770-C79EE2077D05}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToStringFastExample", "samples\ToStringFastExample\ToStringFastExample.csproj", "{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +62,10 @@ Global
 		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FC6F4934-4512-45DB-ABDA-5FAD96742B73} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
@@ -67,5 +75,6 @@ Global
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
+		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16} = {AC0DDDB0-385D-43B8-A770-C79EE2077D05}
 	EndGlobalSection
 EndGlobal
