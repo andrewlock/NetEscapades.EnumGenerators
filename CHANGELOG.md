@@ -1,6 +1,12 @@
 Changelog
 --- 
 
+## [v1.0.0-beta06](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta05..v1.0.0-beta06) (2022-12-20)
+
+### Fixes
+
+* Fix XML comments for public generated members [#49](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/49)
+
 ## [v1.0.0-beta05](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta04..v1.0.0-beta05) (2022-12-19)
 
 ### Features
@@ -14,7 +20,7 @@ Changelog
 ### Fixes 
 * Fix `HasFlagsFast()` implementation [#44](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/46)
 * Add XML documentation for attributes [9a38580cdc9e](https://github.com/andrewlock/NetEscapades.EnumGenerators/commit/9a38580cdc9e51b113dcd08bff168e0151b87e2d)
-* Add XML comments to public generated members and fix formatting [#42](Add XML comments to public members and fix formatting (#42))
+* Add XML comments to public generated members and fix formatting [#42](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/42)
 * Fixed spelling of `isDisplayAttributeUsed` property [#17](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/17) (thanks [@JasonLautzenheiser](https://github.com/JasonLautzenheiser))
 
 ### Refactoring
