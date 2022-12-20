@@ -27,7 +27,7 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Returns the string representation of the <see cref="MyTestNameSpace.MyEnum"/> value.
-        /// If the attribute is decorated with a <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/>, then
+        /// If the attribute is decorated with a <c>[Display]</c> attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
@@ -45,7 +45,7 @@ namespace MyTestNameSpace
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
         /// <param name="value">The value to check if it's defined</param>
-        /// <returns><c>true</c> if the value exists in the enumeration, <c/>false</c> otherwise</returns>
+        /// <returns><c>true</c> if the value exists in the enumeration, <c>false</c> otherwise</returns>
        public static bool IsDefined(MyTestNameSpace.MyEnum value)
             => value switch
             {
@@ -58,18 +58,18 @@ namespace MyTestNameSpace
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration.
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
-        /// <returns><c>true</c> if a member with the name exists in the enumeration, <c/>false</c> otherwise</returns>
+        /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
         public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
-        /// or if a member decorated with a <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/>
+        /// or if a member decorated with a <c>[Display]</c> attribute
         /// with the required name exists.
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
-        /// with a <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/> with the name, <c/>false</c> otherwise</returns>
+        /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
         {
             return name switch
@@ -85,19 +85,19 @@ namespace MyTestNameSpace
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
-        /// <returns><c>true</c> if a member with the name exists in the enumeration, <c/>false</c> otherwise</returns>
+        /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
         public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
-        /// or optionally if a member decorated with a <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/>
+        /// or optionally if a member decorated with a <c>[Display]</c> attribute
         /// with the required name exists.
         /// Slower then the <see cref="IsDefined(string, bool)" /> overload, but doesn't allocate memory./>
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
-        /// with a <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/> with the name, <c/>false</c> otherwise</returns>
+        /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
         public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
         {
             return name switch
@@ -164,7 +164,7 @@ namespace MyTestNameSpace
         /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
-        /// <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/> when parsing, otherwise only considers the member names.</param>
+        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -269,7 +269,7 @@ namespace MyTestNameSpace
         /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
-        /// <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/> when parsing, otherwise only considers the member names.</param>
+        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
