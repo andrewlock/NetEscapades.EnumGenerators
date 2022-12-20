@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta05'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta05' OR '$(PackageVersion)' == '1.0.0-beta06'">
       <![CDATA[
 
 Features
@@ -13,7 +13,7 @@ Features
 Fixes
 - Fix HasFlagsFast() implementation #44
 - Add XML documentation for attributes 9a38580cdc9e
-- Add XML comments to public generated members and fix formatting #42
+- Add XML comments to public generated members and fix formatting #42, #49
 - Fixed spelling of isDisplayAttributeUsed property #17 (thanks @JasonLautzenheiser)
 
 Refactoring
