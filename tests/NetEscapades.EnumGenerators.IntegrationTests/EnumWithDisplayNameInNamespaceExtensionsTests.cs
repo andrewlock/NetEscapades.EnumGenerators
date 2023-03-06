@@ -32,12 +32,12 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     protected override string ToStringFast(EnumWithDisplayNameInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumWithDisplayNameInNamespace value) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute = false) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #endif
     protected override bool TryParse(string name, out EnumWithDisplayNameInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithDisplayNameInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
@@ -54,7 +54,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
@@ -64,7 +64,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingNameallowMatchingMetadataAttribute(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: true);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingNameallowMatchingMetadataAttributeAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: true);
@@ -74,7 +74,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
@@ -84,7 +84,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: true);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: true);
@@ -94,7 +94,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
@@ -104,7 +104,7 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: true);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: true);

@@ -32,12 +32,12 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => LongEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => LongEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #endif
     protected override bool TryParse(string name, out LongEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out LongEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
@@ -54,7 +54,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
@@ -64,7 +64,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase:false, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
@@ -74,7 +74,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCaseAsAspan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);

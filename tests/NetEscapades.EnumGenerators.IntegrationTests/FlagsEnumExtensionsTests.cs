@@ -36,12 +36,12 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #endif
     protected override bool TryParse(string name, out FlagsEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out FlagsEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
@@ -64,7 +64,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
@@ -101,7 +101,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
@@ -111,7 +111,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     [Theory]
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);

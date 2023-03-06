@@ -13,11 +13,11 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract string ToStringFast(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected abstract bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute);
 #endif
     protected abstract bool TryParse(string name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute);
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected abstract bool TryParse(in ReadOnlySpan<char> name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute);
 #endif
 
@@ -46,7 +46,7 @@ public abstract class ExtensionTests<T> where T : struct
         isDefined.Should().Be(expectedResult);
     }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
     {
         var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
@@ -84,7 +84,7 @@ public abstract class ExtensionTests<T> where T : struct
         result.Should().Be(expectedResult);
     }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if READONLYSPAN
     protected void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);

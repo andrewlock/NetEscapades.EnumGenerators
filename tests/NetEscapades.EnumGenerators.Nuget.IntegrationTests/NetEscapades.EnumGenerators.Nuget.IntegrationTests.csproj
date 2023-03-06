@@ -5,6 +5,7 @@
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net48;$(TargetFrameworks)</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
+    <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
