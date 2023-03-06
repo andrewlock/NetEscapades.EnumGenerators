@@ -5,21 +5,20 @@
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net48;$(TargetFrameworks)</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
-    <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES</DefineConstants>
-    <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\*.cs" Link="%(Filename)%(Extension)" />
+    <ProjectReference Include="..\\NetEscapades.EnumGenerators.NetStandard\NetEscapades.EnumGenerators.NetStandard.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\*Tests.cs" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\NetEscapades.EnumGenerators.IntegrationTests\xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="$(Version)" ExcludeAssets="compile;runtime" PrivateAssets="all" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.2.0" />
@@ -37,4 +36,3 @@
   </ItemGroup>
 
 </Project>
-
