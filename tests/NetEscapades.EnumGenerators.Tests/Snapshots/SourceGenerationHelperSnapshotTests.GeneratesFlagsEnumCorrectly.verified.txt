@@ -43,13 +43,13 @@ namespace Something.Blah
 
         /// <summary>
         /// Determines whether one or more bit fields are set in the current instance.
-        /// Equivalent to calling <see cref="System.Enum.HasFlag" /> on <paramref name="value"/>.
+        /// Equivalent to calling <see cref="global::System.Enum.HasFlag" /> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value of the instance to investigate</param>
         /// <param name="flag">The flag to check for</param>
         /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
         /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
-        /// This is consistent with the behaviour of <see cref="System.Enum.HasFlag" /></remarks>
+        /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
         public static bool HasFlagFast(this Something.Blah.ShortName value, Something.Blah.ShortName flag)
             => flag == 0 ? true : (value & flag) == flag;
 
@@ -114,8 +114,8 @@ namespace Something.Blah
         {
             return name switch
             {
-                ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -135,7 +135,7 @@ namespace Something.Blah
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out Something.Blah.ShortName value)
@@ -156,7 +156,7 @@ namespace Something.Blah
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out Something.Blah.ShortName value,
@@ -180,7 +180,7 @@ namespace Something.Blah
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out Something.Blah.ShortName value, 
@@ -191,10 +191,10 @@ namespace Something.Blah
             {
                 switch (name)
                 {
-                    case string s when s.Equals(nameof(Something.Blah.ShortName.First), System.StringComparison.OrdinalIgnoreCase):
+                    case string s when s.Equals(nameof(Something.Blah.ShortName.First), global::System.StringComparison.OrdinalIgnoreCase):
                         value = Something.Blah.ShortName.First;
                         return true;
-                    case string s when s.Equals(nameof(Something.Blah.ShortName.Second), System.StringComparison.OrdinalIgnoreCase):
+                    case string s when s.Equals(nameof(Something.Blah.ShortName.Second), global::System.StringComparison.OrdinalIgnoreCase):
                         value = Something.Blah.ShortName.Second;
                         return true;
                     case string s when int.TryParse(name, out var val):
@@ -240,7 +240,7 @@ namespace Something.Blah
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out Something.Blah.ShortName value)
@@ -261,7 +261,7 @@ namespace Something.Blah
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out Something.Blah.ShortName value,
@@ -285,7 +285,7 @@ namespace Something.Blah
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out Something.Blah.ShortName result, 
@@ -296,10 +296,10 @@ namespace Something.Blah
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = Something.Blah.ShortName.First;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = Something.Blah.ShortName.Second;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
@@ -314,10 +314,10 @@ namespace Something.Blah
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.Ordinal):
                         result = Something.Blah.ShortName.First;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.Ordinal):
                         result = Something.Blah.ShortName.Second;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):

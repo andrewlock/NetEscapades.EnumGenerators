@@ -23,9 +23,9 @@ namespace NetEscapades.EnumGenerators
     /// <summary>
     /// Add to enums to indicate that extension methods should be generated for the type
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Enum)]
-    [System.Diagnostics.Conditional(""NETESCAPADES_ENUMGENERATORS_USAGES"")]
-    public class EnumExtensionsAttribute : System.Attribute
+    [global::System.AttributeUsage(global::System.AttributeTargets.Enum)]
+    [global::System.Diagnostics.Conditional(""NETESCAPADES_ENUMGENERATORS_USAGES"")]
+    public class EnumExtensionsAttribute : global::System.Attribute
     {
         /// <summary>
         /// The namespace to generate the extension class.
@@ -110,13 +110,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Determines whether one or more bit fields are set in the current instance.
-        /// Equivalent to calling <see cref=""System.Enum.HasFlag"" /> on <paramref name=""value""/>.
+        /// Equivalent to calling <see cref=""global::System.Enum.HasFlag"" /> on <paramref name=""value""/>.
         /// </summary>
         /// <param name=""value"">The value of the instance to investigate</param>
         /// <param name=""flag"">The flag to check for</param>
         /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
         /// <remarks>If the underlying value of <paramref name=""flag""/> is zero, the method returns true.
-        /// This is consistent with the behaviour of <see cref=""System.Enum.HasFlag"" /></remarks>
+        /// This is consistent with the behaviour of <see cref=""global::System.Enum.HasFlag"" /></remarks>
         public static bool HasFlagFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, ").Append(enumToGenerate.FullyQualifiedName).Append(@" flag)
             => flag == 0 ? true : (value & flag) == flag;");
         }
@@ -242,7 +242,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                    ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.Ordinal) => true,");
+                    ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), global::System.StringComparison.Ordinal) => true,");
                 }
             }
 
@@ -265,7 +265,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                 ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
-                .Append(@").AsSpan(), System.StringComparison.Ordinal) => true,");
+                .Append(@").AsSpan(), global::System.StringComparison.Ordinal) => true,");
         }
 
         sb.Append(@"
@@ -290,7 +290,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
@@ -312,7 +312,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value,
@@ -337,7 +337,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
@@ -359,7 +359,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                        case string s when s.Equals(""").Append(member.Value.DisplayName).Append(@""", System.StringComparison.OrdinalIgnoreCase):
+                        case string s when s.Equals(""").Append(member.Value.DisplayName).Append(@""", global::System.StringComparison.OrdinalIgnoreCase):
                             value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                             return true;");
                 }
@@ -403,7 +403,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                     case string s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(
-                @"), System.StringComparison.OrdinalIgnoreCase):
+                @"), global::System.StringComparison.OrdinalIgnoreCase):
                         value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
         }
@@ -457,7 +457,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
@@ -479,7 +479,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value,
@@ -505,7 +505,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result, 
@@ -528,7 +528,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {
                     sb.Append(@"
                         case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(
-                        @""".AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                        @""".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                             result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                             return true;");
                 }
@@ -548,7 +548,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                        case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), System.StringComparison.Ordinal):
+                        case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), global::System.StringComparison.Ordinal):
                             result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                             return true;");
                 }
@@ -572,7 +572,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                     case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(
-                @").AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                @").AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
         }
@@ -594,7 +594,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                     case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(
-                @").AsSpan(), System.StringComparison.Ordinal):
+                @").AsSpan(), global::System.StringComparison.Ordinal):
                         result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
         }
