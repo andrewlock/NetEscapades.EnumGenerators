@@ -1,26 +1,10 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta05' OR '$(PackageVersion)' == '1.0.0-beta06'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta07'">
       <![CDATA[
 
-Features
-- Add support for overriding ToStringFast() and related methods by adding [Description] attribute to members #46
-- Add support for overriding ToStringFast() and related methods by adding [Display] attribute to members #13 (thanks @adamradocz)
-- Add a .NET 4.5.1 target to the attributes dll, to reduce dependencies introduced by .NET Standard #45
-- Add parsing overloads for ReadOnlySpan<T> #16 (thanks @adamradocz)
-- Add Length extension method #7 (thanks @tothalexlaszlo)
-
 Fixes
-- Fix HasFlagsFast() implementation #44
-- Add XML documentation for attributes 9a38580cdc9e
-- Add XML comments to public generated members and fix formatting #42, #49
-- Fixed spelling of isDisplayAttributeUsed property #17 (thanks @JasonLautzenheiser)
-
-Refactoring
-- Use DotNet.ReproducibleBuilds #35 (thanks @HavenDV)
-- Switch to ForAttributeWithMetadataName #41
-- Update README #8 #20 #1 (thanks @tothalexlaszlo, @Rekkonnect)
-- Fix typo #5
+- Add global:: prefix to System namespace references #55
 
 ]]>
     </PackageReleaseNotes>
