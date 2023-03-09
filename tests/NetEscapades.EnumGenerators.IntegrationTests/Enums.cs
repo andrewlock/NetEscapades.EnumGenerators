@@ -2,6 +2,19 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
+namespace System
+{
+    using NetEscapades.EnumGenerators;
+
+    [EnumExtensions]
+    public enum EnumInSystem
+    {
+        First = 0,
+        Second = 1,
+        Third = 2,
+    }
+}
+
 namespace NetEscapades.EnumGenerators.IntegrationTests
 {
     [EnumExtensions]

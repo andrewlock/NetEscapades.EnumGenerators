@@ -127,7 +127,7 @@ namespace MyTestNameSpace
             {
                 isDefinedInDisplayAttribute = name switch
                 {
-                    ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), System.StringComparison.Ordinal) => true,
+                    ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), global::System.StringComparison.Ordinal) => true,
                     _ => false,
                 };
             }
@@ -139,10 +139,10 @@ namespace MyTestNameSpace
 
             return name switch
             {
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -162,7 +162,7 @@ namespace MyTestNameSpace
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out MyTestNameSpace.MyEnum value)
@@ -183,7 +183,7 @@ namespace MyTestNameSpace
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out MyTestNameSpace.MyEnum value,
@@ -207,7 +207,7 @@ namespace MyTestNameSpace
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
             out MyTestNameSpace.MyEnum value, 
@@ -220,7 +220,7 @@ namespace MyTestNameSpace
                 {
                     switch (name)
                     {
-                        case string s when s.Equals("2nd", System.StringComparison.OrdinalIgnoreCase):
+                        case string s when s.Equals("2nd", global::System.StringComparison.OrdinalIgnoreCase):
                             value = MyTestNameSpace.MyEnum.Second;
                             return true;
                         default:
@@ -244,16 +244,16 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), global::System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.First;
                         return true;
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), global::System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.Second;
                         return true;
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), System.StringComparison.OrdinalIgnoreCase):
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), global::System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.Third;
                         return true;
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), System.StringComparison.OrdinalIgnoreCase):
+                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), global::System.StringComparison.OrdinalIgnoreCase):
                         value = MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case string s when int.TryParse(name, out var val):
@@ -305,7 +305,7 @@ namespace MyTestNameSpace
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out MyTestNameSpace.MyEnum value)
@@ -326,7 +326,7 @@ namespace MyTestNameSpace
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out MyTestNameSpace.MyEnum value,
@@ -350,7 +350,7 @@ namespace MyTestNameSpace
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
-            [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
             out MyTestNameSpace.MyEnum result, 
@@ -363,7 +363,7 @@ namespace MyTestNameSpace
                 {
                     switch (name)
                     {
-                        case ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                        case ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                             result = MyTestNameSpace.MyEnum.Second;
                             return true;
                         default:
@@ -374,7 +374,7 @@ namespace MyTestNameSpace
                 {
                     switch (name)
                     {
-                        case ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), System.StringComparison.Ordinal):
+                        case ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), global::System.StringComparison.Ordinal):
                             result = MyTestNameSpace.MyEnum.Second;
                             return true;
                         default:
@@ -387,16 +387,16 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = MyTestNameSpace.MyEnum.First;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = MyTestNameSpace.MyEnum.Second;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = MyTestNameSpace.MyEnum.Third;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
@@ -411,16 +411,16 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.Ordinal):
                         result = MyTestNameSpace.MyEnum.First;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal):
                         result = MyTestNameSpace.MyEnum.Second;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal):
                         result = MyTestNameSpace.MyEnum.Third;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.Ordinal):
                         result = MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
