@@ -1,6 +1,12 @@
 Changelog
 --- 
 
+## [v1.0.0-beta07](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta06..v1.0.0-beta07) (2023-03-09)
+
+### Fixes
+
+* Add `global::` prefix to System namespace references [#55](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/55)
+
 ## [v1.0.0-beta06](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta05..v1.0.0-beta06) (2022-12-20)
 
 ### Fixes

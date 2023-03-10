@@ -104,7 +104,7 @@ class Build : NukeBuild
         {
             DotNetPack(s => s
                 .SetConfiguration(Configuration)
-                .SetProperty("PublishDir", ArtifactsDirectory)
+                .SetOutputDirectory(ArtifactsDirectory)
                 .EnableNoBuild()
                 .EnableNoRestore()
                 .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
