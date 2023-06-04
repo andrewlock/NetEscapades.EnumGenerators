@@ -15,7 +15,7 @@ using System;
 namespace MyTestNameSpace
 {
     /// <summary>
-    /// Extension methods for <see cref="MyTestNameSpace.MyEnum" />
+    /// Extension methods for <see cref="global::MyTestNameSpace.MyEnum" />
     /// </summary>
     public static partial class MyEnumExtensions
     {
@@ -26,20 +26,20 @@ namespace MyTestNameSpace
         public const int Length = 4;
 
         /// <summary>
-        /// Returns the string representation of the <see cref="MyTestNameSpace.MyEnum"/> value.
+        /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
         /// If the attribute is decorated with a <c>[Display]</c> attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
         /// <returns>The string representation of the value</returns>
-        public static string ToStringFast(this MyTestNameSpace.MyEnum value)
+        public static string ToStringFast(this global::MyTestNameSpace.MyEnum value)
             => value switch
             {
-                MyTestNameSpace.MyEnum.First => nameof(MyTestNameSpace.MyEnum.First),
-                MyTestNameSpace.MyEnum.Second => "2nd",
-                MyTestNameSpace.MyEnum.Third => nameof(MyTestNameSpace.MyEnum.Third),
-                MyTestNameSpace.MyEnum.Fourth => "2nd",
+                global::MyTestNameSpace.MyEnum.First => nameof(global::MyTestNameSpace.MyEnum.First),
+                global::MyTestNameSpace.MyEnum.Second => "2nd",
+                global::MyTestNameSpace.MyEnum.Third => nameof(global::MyTestNameSpace.MyEnum.Third),
+                global::MyTestNameSpace.MyEnum.Fourth => "2nd",
                 _ => value.ToString(),
             };
 
@@ -48,13 +48,13 @@ namespace MyTestNameSpace
         /// </summary>
         /// <param name="value">The value to check if it's defined</param>
         /// <returns><c>true</c> if the value exists in the enumeration, <c>false</c> otherwise</returns>
-       public static bool IsDefined(MyTestNameSpace.MyEnum value)
+       public static bool IsDefined(global::MyTestNameSpace.MyEnum value)
             => value switch
             {
-                MyTestNameSpace.MyEnum.First => true,
-                MyTestNameSpace.MyEnum.Second => true,
-                MyTestNameSpace.MyEnum.Third => true,
-                MyTestNameSpace.MyEnum.Fourth => true,
+                global::MyTestNameSpace.MyEnum.First => true,
+                global::MyTestNameSpace.MyEnum.Second => true,
+                global::MyTestNameSpace.MyEnum.Third => true,
+                global::MyTestNameSpace.MyEnum.Fourth => true,
                 _ => false,
             };
 
@@ -94,10 +94,10 @@ namespace MyTestNameSpace
             
             return name switch
             {
-                nameof(MyTestNameSpace.MyEnum.First) => true,
-                nameof(MyTestNameSpace.MyEnum.Second) => true,
-                nameof(MyTestNameSpace.MyEnum.Third) => true,
-                nameof(MyTestNameSpace.MyEnum.Fourth) => true,
+                nameof(global::MyTestNameSpace.MyEnum.First) => true,
+                nameof(global::MyTestNameSpace.MyEnum.Second) => true,
+                nameof(global::MyTestNameSpace.MyEnum.Third) => true,
+                nameof(global::MyTestNameSpace.MyEnum.Fourth) => true,
                 _ => false,
             };
         }
@@ -139,10 +139,10 @@ namespace MyTestNameSpace
 
             return name switch
             {
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -150,35 +150,35 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out MyTestNameSpace.MyEnum value)
+            out global::MyTestNameSpace.MyEnum value)
             => TryParse(name, out value, false, false);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
@@ -186,21 +186,21 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out MyTestNameSpace.MyEnum value,
+            out global::MyTestNameSpace.MyEnum value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
         /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
@@ -210,7 +210,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out MyTestNameSpace.MyEnum value, 
+            out global::MyTestNameSpace.MyEnum value, 
             bool ignoreCase, 
             bool allowMatchingMetadataAttribute)
         {
@@ -221,7 +221,7 @@ namespace MyTestNameSpace
                     switch (name)
                     {
                         case string s when s.Equals("2nd", global::System.StringComparison.OrdinalIgnoreCase):
-                            value = MyTestNameSpace.MyEnum.Second;
+                            value = global::MyTestNameSpace.MyEnum.Second;
                             return true;
                         default:
                             break;
@@ -232,7 +232,7 @@ namespace MyTestNameSpace
                     switch (name)
                     {
                         case "2nd":
-                            value = MyTestNameSpace.MyEnum.Second;
+                            value = global::MyTestNameSpace.MyEnum.Second;
                             return true;
                         default:
                             break;
@@ -244,20 +244,20 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.First), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = MyTestNameSpace.MyEnum.First;
+                    case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.OrdinalIgnoreCase):
+                        value = global::MyTestNameSpace.MyEnum.First;
                         return true;
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Second), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = MyTestNameSpace.MyEnum.Second;
+                    case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.OrdinalIgnoreCase):
+                        value = global::MyTestNameSpace.MyEnum.Second;
                         return true;
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Third), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = MyTestNameSpace.MyEnum.Third;
+                    case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Third), global::System.StringComparison.OrdinalIgnoreCase):
+                        value = global::MyTestNameSpace.MyEnum.Third;
                         return true;
-                    case string s when s.Equals(nameof(MyTestNameSpace.MyEnum.Fourth), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = MyTestNameSpace.MyEnum.Fourth;
+                    case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Fourth), global::System.StringComparison.OrdinalIgnoreCase):
+                        value = global::MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case string s when int.TryParse(name, out var val):
-                        value = (MyTestNameSpace.MyEnum)val;
+                        value = (global::MyTestNameSpace.MyEnum)val;
                         return true;
                     default:
                         value = default;
@@ -268,20 +268,20 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case nameof(MyTestNameSpace.MyEnum.First):
-                        value = MyTestNameSpace.MyEnum.First;
+                    case nameof(global::MyTestNameSpace.MyEnum.First):
+                        value = global::MyTestNameSpace.MyEnum.First;
                         return true;
-                    case nameof(MyTestNameSpace.MyEnum.Second):
-                        value = MyTestNameSpace.MyEnum.Second;
+                    case nameof(global::MyTestNameSpace.MyEnum.Second):
+                        value = global::MyTestNameSpace.MyEnum.Second;
                         return true;
-                    case nameof(MyTestNameSpace.MyEnum.Third):
-                        value = MyTestNameSpace.MyEnum.Third;
+                    case nameof(global::MyTestNameSpace.MyEnum.Third):
+                        value = global::MyTestNameSpace.MyEnum.Third;
                         return true;
-                    case nameof(MyTestNameSpace.MyEnum.Fourth):
-                        value = MyTestNameSpace.MyEnum.Fourth;
+                    case nameof(global::MyTestNameSpace.MyEnum.Fourth):
+                        value = global::MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case string s when int.TryParse(name, out var val):
-                        value = (MyTestNameSpace.MyEnum)val;
+                        value = (global::MyTestNameSpace.MyEnum)val;
                         return true;
                     default:
                         value = default;
@@ -293,35 +293,35 @@ namespace MyTestNameSpace
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out MyTestNameSpace.MyEnum value)
+            out global::MyTestNameSpace.MyEnum value)
             => TryParse(name, out value, false, false);
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
@@ -329,21 +329,21 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out MyTestNameSpace.MyEnum value,
+            out global::MyTestNameSpace.MyEnum value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="result">When this method returns, contains an object of type 
-        /// <see cref="MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
         /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
@@ -353,7 +353,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out MyTestNameSpace.MyEnum result, 
+            out global::MyTestNameSpace.MyEnum result, 
             bool ignoreCase,             
             bool allowMatchingMetadataAttribute)
         {
@@ -364,7 +364,7 @@ namespace MyTestNameSpace
                     switch (name)
                     {
                         case ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                            result = MyTestNameSpace.MyEnum.Second;
+                            result = global::MyTestNameSpace.MyEnum.Second;
                             return true;
                         default:
                             break;
@@ -375,7 +375,7 @@ namespace MyTestNameSpace
                     switch (name)
                     {
                         case ReadOnlySpan<char> current when current.Equals("2nd".AsSpan(), global::System.StringComparison.Ordinal):
-                            result = MyTestNameSpace.MyEnum.Second;
+                            result = global::MyTestNameSpace.MyEnum.Second;
                             return true;
                         default:
                             break;
@@ -387,20 +387,20 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = MyTestNameSpace.MyEnum.First;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                        result = global::MyTestNameSpace.MyEnum.First;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = MyTestNameSpace.MyEnum.Second;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                        result = global::MyTestNameSpace.MyEnum.Second;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = MyTestNameSpace.MyEnum.Third;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                        result = global::MyTestNameSpace.MyEnum.Third;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = MyTestNameSpace.MyEnum.Fourth;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                        result = global::MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                        result = (MyTestNameSpace.MyEnum)numericResult;
+                        result = (global::MyTestNameSpace.MyEnum)numericResult;
                         return true;
                     default:
                         result = default;
@@ -411,20 +411,20 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = MyTestNameSpace.MyEnum.First;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.Ordinal):
+                        result = global::MyTestNameSpace.MyEnum.First;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = MyTestNameSpace.MyEnum.Second;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal):
+                        result = global::MyTestNameSpace.MyEnum.Second;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = MyTestNameSpace.MyEnum.Third;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal):
+                        result = global::MyTestNameSpace.MyEnum.Third;
                         return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = MyTestNameSpace.MyEnum.Fourth;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Fourth).AsSpan(), global::System.StringComparison.Ordinal):
+                        result = global::MyTestNameSpace.MyEnum.Fourth;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                        result = (MyTestNameSpace.MyEnum)numericResult;
+                        result = (global::MyTestNameSpace.MyEnum)numericResult;
                         return true;
                     default:
                         result = default;
@@ -436,37 +436,37 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
-        /// <see cref="MyTestNameSpace.MyEnum" />.
+        /// <see cref="global::MyTestNameSpace.MyEnum" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the values defined in <see cref="MyTestNameSpace.MyEnum" /></returns>
-        public static MyTestNameSpace.MyEnum[] GetValues()
+        /// <returns>An array of the values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
+        public static global::MyTestNameSpace.MyEnum[] GetValues()
         {
             return new[]
             {
-                MyTestNameSpace.MyEnum.First,
-                MyTestNameSpace.MyEnum.Second,
-                MyTestNameSpace.MyEnum.Third,
-                MyTestNameSpace.MyEnum.Fourth,
+                global::MyTestNameSpace.MyEnum.First,
+                global::MyTestNameSpace.MyEnum.Second,
+                global::MyTestNameSpace.MyEnum.Third,
+                global::MyTestNameSpace.MyEnum.Fourth,
             };
         }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
-        /// <see cref="MyTestNameSpace.MyEnum" />.
+        /// <see cref="global::MyTestNameSpace.MyEnum" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the names of the members defined in <see cref="MyTestNameSpace.MyEnum" /></returns>
+        /// <returns>An array of the names of the members defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
         public static string[] GetNames()
         {
             return new[]
             {
-                nameof(MyTestNameSpace.MyEnum.First),
-                nameof(MyTestNameSpace.MyEnum.Second),
-                nameof(MyTestNameSpace.MyEnum.Third),
-                nameof(MyTestNameSpace.MyEnum.Fourth),
+                nameof(global::MyTestNameSpace.MyEnum.First),
+                nameof(global::MyTestNameSpace.MyEnum.Second),
+                nameof(global::MyTestNameSpace.MyEnum.Third),
+                nameof(global::MyTestNameSpace.MyEnum.Fourth),
             };
         }
     }

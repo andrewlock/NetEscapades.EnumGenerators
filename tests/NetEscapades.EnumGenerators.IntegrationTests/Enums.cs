@@ -15,6 +15,26 @@ namespace System
     }
 }
 
+namespace Foo
+{
+    using NetEscapades.EnumGenerators;
+
+    // causes Error CS0426 : The type name 'TestEnum' does not exist in the type 'Foo'.
+    // workaround is to use global prefix 
+
+    public class Foo
+    {
+    }
+
+    [EnumExtensions]
+    public enum EnumInFoo
+    {
+        First = 0,
+        Second = 1,
+        Third = 2,
+    }
+}
+
 namespace NetEscapades.EnumGenerators.IntegrationTests
 {
     [EnumExtensions]

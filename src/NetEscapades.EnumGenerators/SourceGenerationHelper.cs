@@ -66,9 +66,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 {");
         }
 
+        var fullyQualifiedName = $"global::{enumToGenerate.FullyQualifiedName}";
+
         sb.Append(@"
     /// <summary>
-    /// Extension methods for <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />
+    /// Extension methods for <see cref=""").Append(fullyQualifiedName).Append(@""" />
     /// </summary>
     ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
     {
@@ -79,25 +81,25 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         public const int Length = ").Append(enumToGenerate.Names.Count).Append(";").Append(@"
 
         /// <summary>
-        /// Returns the string representation of the <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@"""/> value.
+        /// Returns the string representation of the <see cref=""").Append(fullyQualifiedName).Append(@"""/> value.
         /// If the attribute is decorated with a <c>[Display]</c> attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name=""value""/>.
         /// </summary>
         /// <param name=""value"">The value to retrieve the string value for</param>
         /// <returns>The string representation of the value</returns>
-        public static string ToStringFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        public static string ToStringFast(this ").Append(fullyQualifiedName).Append(@" value)
             => value switch
             {");
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                ").Append(fullyQualifiedName).Append('.').Append(member.Key)
                 .Append(" => ");
 
             if (member.Value.DisplayName is null)
             {
-                sb.Append("nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
             }
             else
             {
@@ -122,7 +124,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
         /// <remarks>If the underlying value of <paramref name=""flag""/> is zero, the method returns true.
         /// This is consistent with the behaviour of <see cref=""global::System.Enum.HasFlag"" /></remarks>
-        public static bool HasFlagFast(this ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, ").Append(enumToGenerate.FullyQualifiedName).Append(@" flag)
+        public static bool HasFlagFast(this ").Append(fullyQualifiedName).Append(@" value, ").Append(fullyQualifiedName).Append(@" flag)
             => flag == 0 ? true : (value & flag) == flag;");
         }
 
@@ -133,13 +135,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// </summary>
         /// <param name=""value"">The value to check if it's defined</param>
         /// <returns><c>true</c> if the value exists in the enumeration, <c>false</c> otherwise</returns>
-       public static bool IsDefined(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+       public static bool IsDefined(").Append(fullyQualifiedName).Append(@" value)
             => value switch
             {");
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                ").Append(fullyQualifiedName).Append('.').Append(member.Key)
                 .Append(" => true,");
         }
 
@@ -203,7 +205,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
+                nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@") => true,");
         }
 
         sb.Append(@"
@@ -269,7 +271,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key)
                 .Append(@").AsSpan(), global::System.StringComparison.Ordinal) => true,");
         }
 
@@ -283,36 +285,36 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// an <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name=""name"">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name=""value"">When this method returns, contains an object of type 
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> whose
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose
         /// value is represented by <paramref name=""value""/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
+        /// of <see cref=""").Append(fullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            out ").Append(fullyQualifiedName).Append(@" value)
             => TryParse(name, out value, false, false);");
         sb.Append(@"
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// an <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name=""name"">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name=""value"">When this method returns, contains an object of type 
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> whose
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose
         /// value is represented by <paramref name=""value""/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
+        /// of <see cref=""").Append(fullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
         /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
@@ -320,22 +322,22 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value,
+            out ").Append(fullyQualifiedName).Append(@" value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);");
         sb.Append(@"
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// an <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name=""name"">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name=""value"">When this method returns, contains an object of type 
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> whose
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose
         /// value is represented by <paramref name=""value""/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
+        /// of <see cref=""").Append(fullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
         /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name=""allowMatchingMetadataAttribute"">If <c>true</c>, considers the value included in metadata attributes such as
         /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
@@ -345,7 +347,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value, 
+            out ").Append(fullyQualifiedName).Append(@" value, 
             bool ignoreCase, 
             bool allowMatchingMetadataAttribute)
         {");
@@ -365,7 +367,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {
                     sb.Append(@"
                         case string s when s.Equals(""").Append(member.Value.DisplayName).Append(@""", global::System.StringComparison.OrdinalIgnoreCase):
-                            value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                             return true;");
                 }
             }
@@ -385,7 +387,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {
                     sb.Append(@"
                         case """).Append(member.Value.DisplayName).Append(@""":
-                            value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                             return true;");
                 }
             }
@@ -407,15 +409,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                    case string s when s.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(
+                    case string s when s.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
                 @"), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
         }
 
         sb.Append(@"
                     case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                        value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
+                        value = (").Append(fullyQualifiedName).Append(@")val;
                         return true;
                     default:
                         value = default;
@@ -429,14 +431,14 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                    case nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@"):
-                        value = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                    case nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@"):
+                        value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
         }
 
         sb.Append(@"
                     case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                        value = (").Append(enumToGenerate.FullyQualifiedName).Append(@")val;
+                        value = (").Append(fullyQualifiedName).Append(@")val;
                         return true;
                     default:
                         value = default;
@@ -450,36 +452,36 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// an <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name=""name"">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name=""value"">When this method returns, contains an object of type 
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> whose
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose
         /// value is represented by <paramref name=""value""/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
+        /// of <see cref=""").Append(fullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            out ").Append(fullyQualifiedName).Append(@" value)
             => TryParse(name, out value, false, false);");
         sb.Append(@"
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// an <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name=""name"">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name=""value"">When this method returns, contains an object of type 
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> whose
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose
         /// value is represented by <paramref name=""value""/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
+        /// of <see cref=""").Append(fullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
         /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
@@ -487,7 +489,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" value,
+            out ").Append(fullyQualifiedName).Append(@" value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);");
 
@@ -495,15 +497,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// an <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name=""name"">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name=""result"">When this method returns, contains an object of type 
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /> whose
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose
         /// value is represented by <paramref name=""result""/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
+        /// of <see cref=""").Append(fullyQualifiedName).Append(@""" />. This parameter is passed uninitialized.</param>
         /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name=""allowMatchingMetadataAttribute"">If <c>true</c>, considers the value included in metadata attributes such as
         /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
@@ -513,7 +515,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out ").Append(enumToGenerate.FullyQualifiedName).Append(@" result, 
+            out ").Append(fullyQualifiedName).Append(@" result, 
             bool ignoreCase,             
             bool allowMatchingMetadataAttribute)
         {");
@@ -534,7 +536,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                     sb.Append(@"
                         case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(
                         @""".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                            result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                             return true;");
                 }
             }
@@ -554,7 +556,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {
                     sb.Append(@"
                         case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), global::System.StringComparison.Ordinal):
-                            result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                            result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                             return true;");
                 }
             }
@@ -576,15 +578,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(
+                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
                 @").AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
         }
 
         sb.Append(@"
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-                        result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
+                        result = (").Append(fullyQualifiedName).Append(@")numericResult;
                         return true;
                     default:
                         result = default;
@@ -598,15 +600,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(
+                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
                 @").AsSpan(), global::System.StringComparison.Ordinal):
-                        result = ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
         }
 
         sb.Append(@"
                     case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-                        result = (").Append(enumToGenerate.FullyQualifiedName).Append(@")numericResult;
+                        result = (").Append(fullyQualifiedName).Append(@")numericResult;
                         return true;
                     default:
                         result = default;
@@ -620,19 +622,19 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />.
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the values defined in <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /></returns>
-        public static ").Append(enumToGenerate.FullyQualifiedName).Append(@"[] GetValues()
+        /// <returns>An array of the values defined in <see cref=""").Append(fullyQualifiedName).Append(@""" /></returns>
+        public static ").Append(fullyQualifiedName).Append(@"[] GetValues()
         {
             return new[]
             {");
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(',');
+                ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(',');
         }
 
         sb.Append(@"
@@ -643,11 +645,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
-        /// <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" />.
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the names of the members defined in <see cref=""").Append(enumToGenerate.FullyQualifiedName).Append(@""" /></returns>
+        /// <returns>An array of the names of the members defined in <see cref=""").Append(fullyQualifiedName).Append(@""" /></returns>
         public static string[] GetNames()
         {
             return new[]
@@ -655,7 +657,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                nameof(").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
         }
 
         sb.Append(@"
