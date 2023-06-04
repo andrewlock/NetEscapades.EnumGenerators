@@ -292,4 +292,27 @@ namespace MyTestNameSpace
             .DisableRequireUniquePrefix()
             .UseDirectory("Snapshots");
     }
+
+    [Fact]
+    public Task CanHandleNamespaceAndClassNameAreTheSame()
+    {
+        const string input = @"using NetEscapades.EnumGenerators;
+using System.ComponentModel.DataAnnotations;
+
+namespace Foo
+{
+    public class Foo {}
+  
+    [EnumExtensions]
+    public enum TestEnum
+    {
+        Value1
+    }
+}";
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
 }

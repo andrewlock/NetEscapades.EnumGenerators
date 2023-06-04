@@ -12,32 +12,31 @@
 using System;
 #endif
 
-namespace Something.Blah
+namespace Foo
 {
     /// <summary>
-    /// Extension methods for <see cref="global::Something.Blah.ShortName" />
+    /// Extension methods for <see cref="global::Foo.TestEnum" />
     /// </summary>
-    public static partial class ShortName
+    public static partial class TestEnumExtensions
     {
         /// <summary>
         /// The number of members in the enum.
         /// This is a non-distinct count of defined names.
         /// </summary>
-        public const int Length = 2;
+        public const int Length = 1;
 
         /// <summary>
-        /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
+        /// Returns the string representation of the <see cref="global::Foo.TestEnum"/> value.
         /// If the attribute is decorated with a <c>[Display]</c> attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
         /// <returns>The string representation of the value</returns>
-        public static string ToStringFast(this global::Something.Blah.ShortName value)
+        public static string ToStringFast(this global::Foo.TestEnum value)
             => value switch
             {
-                global::Something.Blah.ShortName.First => nameof(global::Something.Blah.ShortName.First),
-                global::Something.Blah.ShortName.Second => nameof(global::Something.Blah.ShortName.Second),
+                global::Foo.TestEnum.Value1 => nameof(global::Foo.TestEnum.Value1),
                 _ => value.ToString(),
             };
 
@@ -46,11 +45,10 @@ namespace Something.Blah
         /// </summary>
         /// <param name="value">The value to check if it's defined</param>
         /// <returns><c>true</c> if the value exists in the enumeration, <c>false</c> otherwise</returns>
-       public static bool IsDefined(global::Something.Blah.ShortName value)
+       public static bool IsDefined(global::Foo.TestEnum value)
             => value switch
             {
-                global::Something.Blah.ShortName.First => true,
-                global::Something.Blah.ShortName.Second => true,
+                global::Foo.TestEnum.Value1 => true,
                 _ => false,
             };
 
@@ -74,8 +72,7 @@ namespace Something.Blah
         {
             return name switch
             {
-                nameof(global::Something.Blah.ShortName.First) => true,
-                nameof(global::Something.Blah.ShortName.Second) => true,
+                nameof(global::Foo.TestEnum.Value1) => true,
                 _ => false,
             };
         }
@@ -102,8 +99,7 @@ namespace Something.Blah
         {
             return name switch
             {
-                ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(global::Foo.TestEnum.Value1).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -111,35 +107,35 @@ namespace Something.Blah
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
+        /// an <see cref="global::Foo.TestEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="global::Something.Blah.ShortName" /> whose
+        /// <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out global::Something.Blah.ShortName value)
+            out global::Foo.TestEnum value)
             => TryParse(name, out value, false, false);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
+        /// an <see cref="global::Foo.TestEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="global::Something.Blah.ShortName" /> whose
+        /// <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
@@ -147,21 +143,21 @@ namespace Something.Blah
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out global::Something.Blah.ShortName value,
+            out global::Foo.TestEnum value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
+        /// an <see cref="global::Foo.TestEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="global::Something.Blah.ShortName" /> whose
+        /// <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
         /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
@@ -171,7 +167,7 @@ namespace Something.Blah
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name, 
-            out global::Something.Blah.ShortName value, 
+            out global::Foo.TestEnum value, 
             bool ignoreCase, 
             bool allowMatchingMetadataAttribute)
         {
@@ -179,14 +175,11 @@ namespace Something.Blah
             {
                 switch (name)
                 {
-                    case string s when s.Equals(nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = global::Something.Blah.ShortName.First;
-                        return true;
-                    case string s when s.Equals(nameof(global::Something.Blah.ShortName.Second), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = global::Something.Blah.ShortName.Second;
+                    case string s when s.Equals(nameof(global::Foo.TestEnum.Value1), global::System.StringComparison.OrdinalIgnoreCase):
+                        value = global::Foo.TestEnum.Value1;
                         return true;
                     case string s when int.TryParse(name, out var val):
-                        value = (global::Something.Blah.ShortName)val;
+                        value = (global::Foo.TestEnum)val;
                         return true;
                     default:
                         value = default;
@@ -197,14 +190,11 @@ namespace Something.Blah
             {
                 switch (name)
                 {
-                    case nameof(global::Something.Blah.ShortName.First):
-                        value = global::Something.Blah.ShortName.First;
-                        return true;
-                    case nameof(global::Something.Blah.ShortName.Second):
-                        value = global::Something.Blah.ShortName.Second;
+                    case nameof(global::Foo.TestEnum.Value1):
+                        value = global::Foo.TestEnum.Value1;
                         return true;
                     case string s when int.TryParse(name, out var val):
-                        value = (global::Something.Blah.ShortName)val;
+                        value = (global::Foo.TestEnum)val;
                         return true;
                     default:
                         value = default;
@@ -216,35 +206,35 @@ namespace Something.Blah
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
+        /// an <see cref="global::Foo.TestEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="global::Something.Blah.ShortName" /> whose
+        /// <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out global::Something.Blah.ShortName value)
+            out global::Foo.TestEnum value)
             => TryParse(name, out value, false, false);
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
+        /// an <see cref="global::Foo.TestEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type 
-        /// <see cref="global::Something.Blah.ShortName" /> whose
+        /// <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
         public static bool TryParse(
@@ -252,21 +242,21 @@ namespace Something.Blah
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out global::Something.Blah.ShortName value,
+            out global::Foo.TestEnum value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
+        /// an <see cref="global::Foo.TestEnum" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="result">When this method returns, contains an object of type 
-        /// <see cref="global::Something.Blah.ShortName" /> whose
+        /// <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
         /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
@@ -276,7 +266,7 @@ namespace Something.Blah
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in ReadOnlySpan<char> name, 
-            out global::Something.Blah.ShortName result, 
+            out global::Foo.TestEnum result, 
             bool ignoreCase,             
             bool allowMatchingMetadataAttribute)
         {
@@ -284,14 +274,11 @@ namespace Something.Blah
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = global::Something.Blah.ShortName.First;
-                        return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = global::Something.Blah.ShortName.Second;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Foo.TestEnum.Value1).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                        result = global::Foo.TestEnum.Value1;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                        result = (global::Something.Blah.ShortName)numericResult;
+                        result = (global::Foo.TestEnum)numericResult;
                         return true;
                     default:
                         result = default;
@@ -302,14 +289,11 @@ namespace Something.Blah
             {
                 switch (name)
                 {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = global::Something.Blah.ShortName.First;
-                        return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = global::Something.Blah.ShortName.Second;
+                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Foo.TestEnum.Value1).AsSpan(), global::System.StringComparison.Ordinal):
+                        result = global::Foo.TestEnum.Value1;
                         return true;
                     case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                        result = (global::Something.Blah.ShortName)numericResult;
+                        result = (global::Foo.TestEnum)numericResult;
                         return true;
                     default:
                         result = default;
@@ -321,33 +305,31 @@ namespace Something.Blah
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
-        /// <see cref="global::Something.Blah.ShortName" />.
+        /// <see cref="global::Foo.TestEnum" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the values defined in <see cref="global::Something.Blah.ShortName" /></returns>
-        public static global::Something.Blah.ShortName[] GetValues()
+        /// <returns>An array of the values defined in <see cref="global::Foo.TestEnum" /></returns>
+        public static global::Foo.TestEnum[] GetValues()
         {
             return new[]
             {
-                global::Something.Blah.ShortName.First,
-                global::Something.Blah.ShortName.Second,
+                global::Foo.TestEnum.Value1,
             };
         }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
-        /// <see cref="global::Something.Blah.ShortName" />.
+        /// <see cref="global::Foo.TestEnum" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the names of the members defined in <see cref="global::Something.Blah.ShortName" /></returns>
+        /// <returns>An array of the names of the members defined in <see cref="global::Foo.TestEnum" /></returns>
         public static string[] GetNames()
         {
             return new[]
             {
-                nameof(global::Something.Blah.ShortName.First),
-                nameof(global::Something.Blah.ShortName.Second),
+                nameof(global::Foo.TestEnum.Value1),
             };
         }
     }
