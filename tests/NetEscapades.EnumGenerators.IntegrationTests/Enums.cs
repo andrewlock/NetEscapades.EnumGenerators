@@ -97,4 +97,12 @@ namespace NetEscapades.EnumGenerators.IntegrationTests
         Fourth = 1 << 3,
         ThirdAndFourth = Third | Fourth,
     }
+
+    public enum StringTesting
+    {
+        [System.ComponentModel.Description("Quotes \"")]   Quotes,
+        [System.ComponentModel.Description(@"Literal Quotes """)]   LiteralQuotes,
+        [System.ComponentModel.Description("Backslash \\")]   Backslash,
+        [System.ComponentModel.Description(@"LiteralBackslash \")]   BackslashLiteral,
+    }
 }
