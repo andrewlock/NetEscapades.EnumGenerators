@@ -1,10 +1,14 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta07'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta08'">
       <![CDATA[
 
 Fixes
-- Add global:: prefix to System namespace references #55
+- Exclude embedded attribute from code coverage #59 (Thanks @erri120!)
+- Fix Error when a class with the same name as namespace #62
+- Support quotes and slashes in description/displayname attribute #63
+
+
 
 ]]>
     </PackageReleaseNotes>

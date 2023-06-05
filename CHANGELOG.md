@@ -1,6 +1,15 @@
 Changelog
 --- 
 
+
+## [v1.0.0-beta08](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta07..v1.0.0-beta08) (2023-06-05)
+
+### Fixes
+
+- Exclude embedded attribute from code coverage [#59](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/59) (Thanks [@erri120](https://github.com/erri120)!)
+- Fix Error when a class with the same name as namespace [#62](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/62)
+- Support quotes and slashes in description/displayname attribute [#63](https://github.com/andrewlock/NetEscapades.EnumGenerators/pull/63)
+
 ## [v1.0.0-beta07](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta06..v1.0.0-beta07) (2023-03-09)
 
 ### Fixes
