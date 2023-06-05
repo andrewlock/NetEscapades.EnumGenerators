@@ -315,4 +315,29 @@ namespace Foo
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
 
+    [Fact]
+    public Task HandlesStringsWithQuotesAndSlashesInDescription()
+    {
+        const string input =
+            """"
+            using NetEscapades.EnumGenerators;
+            using System.ComponentModel.DataAnnotations;
+
+            namespace Test;
+
+            [EnumExtensions]
+            public enum StringTesting
+            {
+               [System.ComponentModel.Description("Quotes \"")]   Quotes,
+               [System.ComponentModel.Description(@"Literal Quotes """)]   LiteralQuotes,
+               [System.ComponentModel.Description("Backslash \\")]   Backslash,
+               [System.ComponentModel.Description(@"LiteralBackslash \")]   BackslashLiteral,
+            }
+            """";
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
 }

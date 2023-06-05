@@ -127,7 +127,10 @@ public class EnumGenerator : IIncrementalGenerator
                     if (attribute.ConstructorArguments[0].Value?.ToString() is { } dn)
                     {
                         // found display attribute, all done
-                        displayName = dn;
+                        // Handle cases where contains a quote or a backslash
+                        displayName = dn
+                            .Replace(@"\", @"\\")
+                            .Replace("\"", "\\\"");
                         goto addDisplayName;
                     }
                 }
