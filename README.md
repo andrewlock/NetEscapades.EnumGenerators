@@ -230,6 +230,8 @@ public sealed class MyEnumConverter : global::System.Text.Json.Serialization.Jso
 }
 ```
 
+_Note: If you've added `JsonStringEnumConverter` to the `JsonSerializerOptions.Converters`, you must add the generated converters manually before adding the `JsonStringEnumConverter`._
+
 You can customize the generated code for the converter by setting the following values:
 - `CaseSensitive` - Indicates if the string representation is case sensitive when deserializing it as an enum.
 - `CamelCase` - Indicates if the value of `PropertyName` should be camel cased.
