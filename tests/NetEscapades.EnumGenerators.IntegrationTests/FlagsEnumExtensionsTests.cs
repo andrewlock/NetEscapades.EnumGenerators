@@ -45,6 +45,12 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     protected override bool TryParse(in ReadOnlySpan<char> name, out FlagsEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
+    protected override FlagsEnum Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => FlagsEnumExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override FlagsEnum Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => FlagsEnumExtensions.Parse(name, ignoreCase);
+#endif
 
     /// <summary>
     /// 

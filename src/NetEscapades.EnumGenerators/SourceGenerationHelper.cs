@@ -621,6 +621,132 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
 
         /// <summary>
+        /// Converts the string representation of the name or numeric value of an 
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// </summary>
+        /// <param name=""name"">The case-sensitive string representation of the enumeration name or underlying value to convert.</param>
+        /// <returns>An object of type <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose 
+        /// value is represented by <paramref name=""name""/>.</returns>
+        /// <exception cref=""ArgumentNullException""><paramref name=""name""/> is <see langword=""null""/>.</exception>
+        public static ").Append(fullyQualifiedName).Append(@" Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string name)
+        => Parse(name, false, false);");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of an 
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// </summary>
+        /// <param name=""name"">The string representation of the enumeration name or underlying value to convert.</param>
+        /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
+        /// <returns>An object of type <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose 
+        /// value is represented by <paramref name=""name""/>.</returns>
+        /// <exception cref=""ArgumentNullException""><paramref name=""name""/> is <see langword=""null""/>.</exception>
+        public static ").Append(fullyQualifiedName).Append(@" Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string name,
+            bool ignoreCase)
+        => Parse(name, ignoreCase, false);");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of an 
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// </summary>
+        /// <param name=""name"">The string representation of the enumeration name or underlying value to convert.</param>
+        /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
+        /// <param name=""allowMatchingMetadataAttribute"">If <c>true</c>, considers the value included in metadata attributes such as
+        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
+        /// <returns>An object of type <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose 
+        /// value is represented by <paramref name=""name""/>.</returns>
+        /// <exception cref=""ArgumentNullException""><paramref name=""name""/> is <see langword=""null""/>.</exception>
+        public static ").Append(fullyQualifiedName).Append(@" Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string name,
+            bool ignoreCase,
+            bool allowMatchingMetadataAttribute)
+        {
+            if (name is null)
+                throw new global::System.ArgumentNullException(nameof(name));
+
+            bool success = TryParse(name, out ").Append(fullyQualifiedName).Append(@" result, ignoreCase, allowMatchingMetadataAttribute);
+            global::System.Diagnostics.Debug.Assert(success && result != default);
+            return result;
+        }");
+
+        sb.Append(@"
+
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+        /// <summary>
+        /// Converts the span of chars representation of the name or numeric value of an 
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// </summary>
+        /// <param name=""name"">The span representation of the enumeration name or underlying value to convert.</param>
+        /// <returns>An object of type <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose 
+        /// value is represented by <paramref name=""name""/>.</returns>
+        public static ").Append(fullyQualifiedName).Append(@" Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            global::System.ReadOnlySpan<char> name)
+        => Parse(name, false, false);");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Converts the span of chars representation of the name or numeric value of an 
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// </summary>
+        /// <param name=""name"">The span representation of the enumeration name or underlying value to convert.</param>
+        /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
+        /// <returns>An object of type <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose 
+        /// value is represented by <paramref name=""name""/>.</returns>
+        public static ").Append(fullyQualifiedName).Append(@" Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            global::System.ReadOnlySpan<char> name,
+            bool ignoreCase)
+        => Parse(name, ignoreCase, false);");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Converts the span of chars representation of the name or numeric value of an 
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
+        /// </summary>
+        /// <param name=""name"">The span representation of the enumeration name or underlying value to convert.</param>
+        /// <param name=""ignoreCase""><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
+        /// <param name=""allowMatchingMetadataAttribute"">If <c>true</c>, considers the value included in metadata attributes such as
+        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
+        /// <returns>An object of type <see cref=""").Append(fullyQualifiedName).Append(@""" /> whose 
+        /// value is represented by <paramref name=""name""/>.</returns>
+        public static ").Append(fullyQualifiedName).Append(@" Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            global::System.ReadOnlySpan<char> name,
+            bool ignoreCase,
+            bool allowMatchingMetadataAttribute)
+        {
+            bool success = TryParse(name, out ").Append(fullyQualifiedName).Append(@" result, ignoreCase, allowMatchingMetadataAttribute);
+            global::System.Diagnostics.Debug.Assert(success && result != default);
+            return result;
+        }
+#endif");
+
+        sb.Append(@"
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref=""").Append(fullyQualifiedName).Append(@""" />.
         /// Note that this returns a new array with every invocation, so
