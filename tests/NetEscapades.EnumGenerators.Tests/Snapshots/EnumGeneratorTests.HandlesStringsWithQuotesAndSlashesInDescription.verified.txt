@@ -531,7 +531,6 @@ namespace Test
                 throw new global::System.ArgumentNullException(nameof(name));
 
             bool success = TryParse(name, out global::Test.StringTesting result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 
@@ -585,7 +584,6 @@ namespace Test
             bool allowMatchingMetadataAttribute)
         {
             bool success = TryParse(name, out global::Test.StringTesting result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 #endif

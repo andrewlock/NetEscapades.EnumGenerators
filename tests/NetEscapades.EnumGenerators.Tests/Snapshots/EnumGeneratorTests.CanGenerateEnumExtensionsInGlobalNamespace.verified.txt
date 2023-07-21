@@ -372,7 +372,6 @@ using System;
                 throw new global::System.ArgumentNullException(nameof(name));
 
             bool success = TryParse(name, out global::MyEnum result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 
@@ -426,7 +425,6 @@ using System;
             bool allowMatchingMetadataAttribute)
         {
             bool success = TryParse(name, out global::MyEnum result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 #endif

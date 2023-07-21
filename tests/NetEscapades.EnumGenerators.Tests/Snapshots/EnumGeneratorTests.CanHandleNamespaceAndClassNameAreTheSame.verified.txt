@@ -358,7 +358,6 @@ namespace Foo
                 throw new global::System.ArgumentNullException(nameof(name));
 
             bool success = TryParse(name, out global::Foo.TestEnum result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 
@@ -412,7 +411,6 @@ namespace Foo
             bool allowMatchingMetadataAttribute)
         {
             bool success = TryParse(name, out global::Foo.TestEnum result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 #endif

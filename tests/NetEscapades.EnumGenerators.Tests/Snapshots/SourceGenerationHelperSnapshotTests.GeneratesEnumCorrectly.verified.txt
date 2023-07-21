@@ -374,7 +374,6 @@ namespace Something.Blah
                 throw new global::System.ArgumentNullException(nameof(name));
 
             bool success = TryParse(name, out global::Something.Blah.ShortName result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 
@@ -428,7 +427,6 @@ namespace Something.Blah
             bool allowMatchingMetadataAttribute)
         {
             bool success = TryParse(name, out global::Something.Blah.ShortName result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 #endif

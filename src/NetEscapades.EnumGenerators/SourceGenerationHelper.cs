@@ -679,7 +679,6 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 throw new global::System.ArgumentNullException(nameof(name));
 
             bool success = TryParse(name, out ").Append(fullyQualifiedName).Append(@" result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }");
 
@@ -739,7 +738,6 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             bool allowMatchingMetadataAttribute)
         {
             bool success = TryParse(name, out ").Append(fullyQualifiedName).Append(@" result, ignoreCase, allowMatchingMetadataAttribute);
-            global::System.Diagnostics.Debug.Assert(success && result != default);
             return result;
         }
 #endif");
