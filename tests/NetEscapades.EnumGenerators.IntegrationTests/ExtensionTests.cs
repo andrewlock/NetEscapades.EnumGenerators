@@ -20,6 +20,10 @@ public abstract class ExtensionTests<T> where T : struct
 #if READONLYSPAN
     protected abstract bool TryParse(in ReadOnlySpan<char> name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute);
 #endif
+    protected abstract T Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute);
+#if READONLYSPAN
+    protected abstract T Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute);
+#endif
 
     protected void GeneratesToStringFastTest(T value)
     {
@@ -27,7 +31,7 @@ public abstract class ExtensionTests<T> where T : struct
         var valueAsString = value.ToString();
 
         TryGetDisplayNameOrDescription(valueAsString, out var displayName);
-        var expectedValue = displayName is null ? valueAsString : displayName;
+        var expectedValue = displayName ?? valueAsString;
         
         serialized.Should().Be(expectedValue);
     }
@@ -92,6 +96,26 @@ public abstract class ExtensionTests<T> where T : struct
 
         _ = new AssertionScope();
         isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+#endif
+
+    protected void GeneratesParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    {
+        var result = Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+        ValidateTryParse(name, ignoreCase, allowMatchingMetadataAttribute, out bool _, out T expectedResult);
+
+        _ = new AssertionScope();
+        result.Should().Be(expectedResult);
+    }
+
+#if READONLYSPAN
+    protected void GeneratesParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    {
+        var result = Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+        ValidateTryParse(name.ToString(), ignoreCase, allowMatchingMetadataAttribute, out bool _, out T expectedResult);
+
+        _ = new AssertionScope();
         result.Should().Be(expectedResult);
     }
 #endif

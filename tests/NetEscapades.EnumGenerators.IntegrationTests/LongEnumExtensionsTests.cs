@@ -41,6 +41,12 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     protected override bool TryParse(in ReadOnlySpan<char> name, out LongEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
+    protected override LongEnum Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => LongEnumExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override LongEnum Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => LongEnumExtensions.Parse(name, ignoreCase);
+#endif
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
