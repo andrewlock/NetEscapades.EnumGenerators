@@ -23,11 +23,11 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta04" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta08" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
@@ -173,13 +173,13 @@ Your project file should look something like this:
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <!--  Define the MSBuild constant    -->
     <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta04" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta08" 
                     PrivateAssets="all"
                     ExcludeAssets="compile;runtime" />
 <!--                               ☝ Add compile to the list of excluded assets. -->
@@ -198,13 +198,13 @@ If you wish to preserve these attributes in the build output, you can define the
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <!--  Define the MSBuild constant to preserve usages   -->
     <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_USAGES</DefineConstants>
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta05" PrivateAssets="all" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta08" PrivateAssets="all" />
   <!--              ☝ You must not exclude the runtime assets in this case -->
 
 </Project>
