@@ -42,7 +42,7 @@ internal static class TestHelpers
     public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<T>(string[] source, params string[] stages)
         where T : IIncrementalGenerator, new()
     {
-        var syntaxTrees = source.Select(static x => CSharpSyntaxTree.ParseText(x));
+        var syntaxTrees = source.Select(static x => CSharpSyntaxTree.ParseText(x, path: "Program.cs"));
         var references = AppDomain.CurrentDomain.GetAssemblies()
             .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
             .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
