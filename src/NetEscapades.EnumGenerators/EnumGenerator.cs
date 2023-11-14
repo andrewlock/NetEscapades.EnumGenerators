@@ -1,6 +1,8 @@
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
 
 namespace NetEscapades.EnumGenerators;
@@ -44,6 +46,31 @@ public class EnumGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(externalEnums,
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
+
+        // Interceptor!
+        var locations = context.SyntaxProvider
+            .CreateSyntaxProvider(InterceptorPredicate, InterceptorParser)
+            .Where(x => x is not null)
+            .Collect()
+            .WithTrackingName(TrackingNames.InterceptedLocations);
+
+        var enumInterceptions = enumsToGenerate
+            .Combine(locations)
+            .Select(FilterInterceptorCandidates!)
+            .Where(x => x is not null)
+            .WithTrackingName(TrackingNames.EnumInterceptions);
+
+        var externalInterceptions = externalEnums
+            .Combine(locations)
+            .Select(FilterInterceptorCandidates!)
+            .Where(x => x is not null)
+            .WithTrackingName(TrackingNames.ExternalInterceptions);
+
+        context.RegisterImplementationSourceOutput(enumInterceptions,
+            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
+
+        context.RegisterImplementationSourceOutput(externalInterceptions,
+            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
     }
 
     static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
@@ -241,5 +268,58 @@ public class EnumGenerator : IIncrementalGenerator
             hasFlags: hasFlags,
             names: members,
             isDisplayAttributeUsed: displayNames?.Count > 0);
+    }
+
+    private static bool InterceptorPredicate(SyntaxNode node, CancellationToken ct) =>
+        node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name.Identifier.ValueText: "ToString"}};
+
+    private static CandidateInvocation? InterceptorParser(GeneratorSyntaxContext ctx, CancellationToken ct)
+    {
+        if (ctx.Node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name: { } nameSyntax}}
+            && ctx.SemanticModel.GetOperation(ctx.Node, ct) is IInvocationOperation targetOperation
+            && targetOperation.TargetMethod is {Name : "ToString", ContainingType: {Name: "Enum", ContainingNamespace: {Name: "System", ContainingNamespace.IsGlobalNamespace: true}}}
+            && targetOperation.Instance?.Type is { } type)
+        {
+            var tree = nameSyntax.SyntaxTree;
+            return new CandidateInvocation(
+                FilePath: tree.FilePath,
+                Position: tree.GetLineSpan(nameSyntax.Span, ct).StartLinePosition,
+                type.ToString());
+        }
+
+        return null;
+    }
+
+    private MethodToIntercept? FilterInterceptorCandidates(
+        (EnumToGenerate Enum, ImmutableArray<CandidateInvocation> Candidates) arg1, 
+        CancellationToken ct)
+    {
+        if (arg1.Candidates.IsDefaultOrEmpty)
+        {
+            return default;
+        }
+
+        List<CandidateInvocation>? results = null;
+        foreach (var candidate in arg1.Candidates)
+        {
+            if (arg1.Enum.FullyQualifiedName.Equals(candidate.EnumName, StringComparison.Ordinal))
+            {
+                results ??= new();
+                results.Add(candidate);
+            }
+        }
+
+        if (results is null)
+        {
+            return null;
+        }
+
+        return new(new(results.ToArray()), arg1.Enum);
+    }
+
+    private static void ExecuteInterceptors(MethodToIntercept? toIntercept, SourceProductionContext spc)
+    {
+        var result = SourceGenerationHelper.GenerateInterceptorsClass(toIntercept!);
+        spc.AddSource(toIntercept!.ExtensionTypeName + "_Interceptors.g.cs", SourceText.From(result, Encoding.UTF8));
     }
 }

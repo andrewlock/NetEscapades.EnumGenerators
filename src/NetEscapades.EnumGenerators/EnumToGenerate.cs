@@ -1,3 +1,5 @@
+using Microsoft.CodeAnalysis.Text;
+
 namespace NetEscapades.EnumGenerators;
 
 public readonly record struct EnumToGenerate
@@ -36,3 +38,20 @@ public readonly record struct EnumToGenerate
         IsDisplayAttributeUsed = isDisplayAttributeUsed;
     }
 }
+
+public record CandidateInvocation(
+    string FilePath,
+    LinePosition Position,
+    string EnumName);
+
+public record MethodToIntercept(
+    EquatableArray<CandidateInvocation> Invocations,
+    string ExtensionTypeName,
+    string FullyQualifiedName,
+    string EnumNamespace)
+{
+    public MethodToIntercept(EquatableArray<CandidateInvocation> invocations, EnumToGenerate enumToGenerate)
+    : this(invocations, enumToGenerate.Name, enumToGenerate.FullyQualifiedName, enumToGenerate.Namespace)
+    {
+    }
+};

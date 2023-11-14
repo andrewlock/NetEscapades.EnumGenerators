@@ -6,6 +6,8 @@
     <IsPackable>false</IsPackable>
     <DefineConstants>$(DefineConstants);INTEGRATION_TESTS</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN;</DefineConstants>
+    <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NetEscapades.EnumGenerators</InterceptorsPreviewNamespaces>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>

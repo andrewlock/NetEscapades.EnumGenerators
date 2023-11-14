@@ -39,6 +39,25 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
         "Fifth",
     };
 
+    [Fact]
+    public void CallingToStringIsIntercepted()
+    {
+        var result1 = EnumWithDisplayNameInNamespace.Second.ToString();
+        var result2 = EnumWithDisplayNameInNamespace.Second.ToStringFast();
+        Assert.Equal(result1, result2);
+
+        AssertValue(EnumWithDisplayNameInNamespace.First);
+        AssertValue(EnumWithDisplayNameInNamespace.Second);
+        AssertValue(EnumWithDisplayNameInNamespace.Third);
+
+        void AssertValue(EnumWithDisplayNameInNamespace value)
+        {
+            var toString = value.ToString();
+            var fast = value.ToStringFast();
+            Assert.Equal(fast, toString);
+        }
+    }
+    
     protected override string ToStringFast(EnumWithDisplayNameInNamespace value) => value.ToStringFast();
     protected override bool IsDefined(EnumWithDisplayNameInNamespace value) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithDisplayNameInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
