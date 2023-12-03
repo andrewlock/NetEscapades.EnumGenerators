@@ -52,6 +52,45 @@ namespace NetEscapades.EnumGenerators
 
     public static string GenerateExtensionClass(StringBuilder sb, in EnumToGenerate enumToGenerate)
     {
+        var fullyQualifiedName = $"global::{enumToGenerate.FullyQualifiedName}";
+        StartFile(sb, in enumToGenerate, fullyQualifiedName);
+
+        Length(sb, in enumToGenerate);
+        ToStringFast(sb, in enumToGenerate, fullyQualifiedName);
+        HasFlagFast(sb, in enumToGenerate, fullyQualifiedName);
+        IsDefinedByValue(sb, in enumToGenerate, fullyQualifiedName);
+        IsDefinedByString(sb);
+        IsDefinedByStringMetadata(sb, in enumToGenerate, fullyQualifiedName);
+
+        IfSpanAllow(sb);
+        {
+            IsDefinedSpan(sb);
+            IsDefinedSpanMetadata(sb, in enumToGenerate, fullyQualifiedName);
+        }
+        EndIfSpanAllow(sb);
+
+        TryParse(sb, fullyQualifiedName);
+        TryParseIngore(sb, fullyQualifiedName);
+        TryParseFull(sb, in enumToGenerate, fullyQualifiedName);
+
+        IfSpanAllow(sb);
+        {
+            TryParseSpan(sb, fullyQualifiedName);
+            TryParseSpanIgnore(sb, fullyQualifiedName);
+            TryParseSpanFull(sb, in enumToGenerate, fullyQualifiedName);
+        }
+        EndIfSpanAllow(sb);
+
+        GetValues(sb, in enumToGenerate, fullyQualifiedName);
+        GetNames(sb, in enumToGenerate, fullyQualifiedName);
+
+        EndFile(sb, in enumToGenerate);
+
+        return sb.ToString();
+    }
+
+    private static void StartFile(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
         sb
             .Append(Header)
             .Append(@"
@@ -66,19 +105,28 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 {");
         }
 
-        var fullyQualifiedName = $"global::{enumToGenerate.FullyQualifiedName}";
-
         sb.Append(@"
     /// <summary>
     /// Extension methods for <see cref=""").Append(fullyQualifiedName).Append(@""" />
     /// </summary>
     ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
+    {");
+
+    }
+
+    private static void Length(StringBuilder sb, in EnumToGenerate enumToGenerate)
     {
+        sb.Append(@"
         /// <summary>
         /// The number of members in the enum.
         /// This is a non-distinct count of defined names.
         /// </summary>
-        public const int Length = ").Append(enumToGenerate.Names.Count).Append(";").Append(@"
+        public const int Length = ").Append(enumToGenerate.Names.Count).Append(";");
+    }
+
+    private static void ToStringFast(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
+        sb.Append(@"
 
         /// <summary>
         /// Returns the string representation of the <see cref=""").Append(fullyQualifiedName).Append(@"""/> value.
@@ -110,10 +158,16 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
                 _ => value.ToString(),
             };");
+    }
 
-        if (enumToGenerate.HasFlags)
+    private static void HasFlagFast(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
+        if (!enumToGenerate.HasFlags)
         {
-            sb.Append(@"
+            return;
+        }
+
+        sb.Append(@"
 
         /// <summary>
         /// Determines whether one or more bit fields are set in the current instance.
@@ -126,8 +180,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// This is consistent with the behaviour of <see cref=""global::System.Enum.HasFlag"" /></remarks>
         public static bool HasFlagFast(this ").Append(fullyQualifiedName).Append(@" value, ").Append(fullyQualifiedName).Append(@" flag)
             => flag == 0 ? true : (value & flag) == flag;");
-        }
+    }
 
+    private static void IsDefinedByValue(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -148,7 +204,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
                 _ => false,
             };");
+    }
 
+    private static void IsDefinedByString(StringBuilder sb)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -156,7 +215,12 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// </summary>
         /// <param name=""name"">The name to check if it's defined</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
-        public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+        public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);");
+    }
+
+    private static void IsDefinedByStringMetadata(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
+        sb.Append(@"
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
@@ -212,16 +276,22 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 _ => false,
             };
         }");
+    }
 
+    private static void IsDefinedSpan(StringBuilder sb)
+    {
         sb.Append(@"
-
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
         /// <param name=""name"">The name to check if it's defined</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);");
+    }
+
+    private static void IsDefinedSpanMetadata(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
+        sb.Append(@"
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
@@ -278,9 +348,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
                 _ => false,
             };
-        }
-#endif");
+        }");
+    }
 
+    private static void TryParse(StringBuilder sb, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -302,6 +374,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             string? name, 
             out ").Append(fullyQualifiedName).Append(@" value)
             => TryParse(name, out value, false, false);");
+    }
+
+    private static void TryParseIngore(StringBuilder sb, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -325,6 +401,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             out ").Append(fullyQualifiedName).Append(@" value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);");
+    }
+
+    private static void TryParseFull(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -446,10 +526,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 }
             }
         }");
+    }
 
+    private static void TryParseSpan(StringBuilder sb, string fullyQualifiedName)
+    {
         sb.Append(@"
-
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the equivalent instance.
@@ -469,6 +550,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             in ReadOnlySpan<char> name, 
             out ").Append(fullyQualifiedName).Append(@" value)
             => TryParse(name, out value, false, false);");
+    }
+
+    private static void TryParseSpanIgnore(StringBuilder sb, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -492,7 +577,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             out ").Append(fullyQualifiedName).Append(@" value,
             bool ignoreCase) 
             => TryParse(name, out value, ignoreCase, false);");
+    }
 
+    private static void TryParseSpanFull(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -615,9 +703,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                         return false;
                 }
             }
-        }
-#endif");
+        }");
+    }
 
+    private static void GetValues(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -640,7 +730,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
             };
         }");
+    }
 
+    private static void GetNames(StringBuilder sb, in EnumToGenerate enumToGenerate, string fullyQualifiedName)
+    {
         sb.Append(@"
 
         /// <summary>
@@ -662,14 +755,30 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
             };
-        }
+        }");
+    }
+
+    private static void IfSpanAllow(StringBuilder sb)
+    {
+        sb.Append(@"
+
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0");
+    }
+
+    private static void EndIfSpanAllow(StringBuilder sb)
+    {
+        sb.Append(@"
+#endif");
+    }
+
+    private static void EndFile(StringBuilder sb, in EnumToGenerate enumToGenerate)
+    {
+        sb.Append(@"
     }");
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
 }");
         }
-
-        return sb.ToString();
     }
 }
