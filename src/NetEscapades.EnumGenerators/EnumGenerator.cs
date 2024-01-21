@@ -23,7 +23,9 @@ public class EnumGenerator : IIncrementalGenerator
                 EnumExtensionsAttribute,
                 predicate: (node, _) => node is EnumDeclarationSyntax,
                 transform: GetTypeToGenerate)
-            .Where(static m => m is not null);
+            .WithTrackingName(TrackingNames.InitialExtraction)
+            .Where(static m => m is not null)
+            .WithTrackingName(TrackingNames.RemovingNulls);
 
         context.RegisterSourceOutput(enumsToGenerate,
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
