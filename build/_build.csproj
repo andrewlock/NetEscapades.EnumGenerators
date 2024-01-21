@@ -14,4 +14,10 @@
     <PackageReference Include="Nuke.Common" Version="5.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="..\tests\Directory.Build.props">
+      <Link>Directory.Build\tests\Directory.Build.props</Link>
+    </None>
+  </ItemGroup>
+
 </Project>
