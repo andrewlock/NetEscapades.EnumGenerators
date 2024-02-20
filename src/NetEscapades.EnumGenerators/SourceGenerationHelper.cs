@@ -34,7 +34,7 @@ namespace NetEscapades.EnumGenerators
     {
         /// <summary>
         /// The namespace to generate the extension class.
-        /// If not provided the namespace of the enum will be used
+        /// If not provided, the namespace of the enum will be used
         /// </summary>
         public string? ExtensionClassNamespace { get; set; }
 
