@@ -286,7 +286,7 @@ internal struct HashCode
 
         uint val = (uint)value;
 
-        // Storing the value of _length locally shaves of quite a few bytes
+        // Storing the value of _length locally shaves off quite a few bytes
         // in the resulting machine code.
         uint previousLength = _length++;
         uint position = previousLength % 4;
@@ -313,7 +313,7 @@ internal struct HashCode
 
     public int ToHashCode()
     {
-        // Storing the value of _length locally shaves of quite a few bytes
+        // Storing the value of _length locally shaves off quite a few bytes
         // in the resulting machine code.
         uint length = _length;
 
