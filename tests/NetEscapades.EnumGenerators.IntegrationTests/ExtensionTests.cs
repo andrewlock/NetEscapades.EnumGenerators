@@ -21,6 +21,11 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract bool TryParse(in ReadOnlySpan<char> name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute);
 #endif
 
+    protected abstract T Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute);
+#if READONLYSPAN
+    protected abstract T Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute);
+#endif
+
     protected void GeneratesToStringFastTest(T value)
     {
         var serialized = ToStringFast(value);
@@ -109,6 +114,86 @@ public abstract class ExtensionTests<T> where T : struct
         else
         {
             expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
+        }
+    }
+
+    protected void GeneratesParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    {
+        Exception? ex = null;
+        T? result = null;
+        try
+        {
+            result = Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+        }
+        catch (Exception e)
+        {
+            ex = e;
+        }
+        
+        ValidateParse(name, ignoreCase, allowMatchingMetadataAttribute, out Exception? expectedException, out T expectedResult);
+
+        _ = new AssertionScope();
+        if (expectedException is null)
+        {
+            ex.Should().Be(expectedException);
+        }
+        else
+        {
+            ex.Should().BeNull();
+            result.Should().Be(expectedResult);
+        }
+    }
+
+#if READONLYSPAN
+    protected void GeneratesParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    {
+        Exception? ex = null;
+        T? result = null;
+        try
+        {
+            result = Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+        }
+        catch (Exception e)
+        {
+            ex = e;
+        }
+        
+        ValidateParse(name.ToString(), ignoreCase, allowMatchingMetadataAttribute, out Exception? expectedException, out T expectedResult);
+
+        _ = new AssertionScope();
+        if (expectedException is null)
+        {
+            ex.Should().Be(expectedException);
+        }
+        else
+        {
+            ex.Should().BeNull();
+            result.Should().Be(expectedResult);
+        }
+    }
+#endif
+
+    private void ValidateParse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute, out Exception? expectedException, out T expectedResult)
+    {
+        expectedException = null;
+        if (allowMatchingMetadataAttribute)
+        {
+            var expectedValidity = TryGetEnumByDisplayNameOrDescription(name, ignoreCase, out expectedResult);
+            if (!expectedValidity)
+            {
+                try
+                {
+                    expectedResult = (T)Enum.Parse(typeof(T), name, ignoreCase);
+                }
+                catch (Exception ex)
+                {
+                    expectedException = ex;
+                }
+            }
+        }
+        else
+        {
+            expectedResult = (T)Enum.Parse(typeof(T), name, ignoreCase);
         }
     }
 

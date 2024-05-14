@@ -44,7 +44,12 @@ public class ExternalEnumExtensionsTests : ExtensionTests<DateTimeKind>
     protected override bool TryParse(in ReadOnlySpan<char> name, out DateTimeKind parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => DateTimeKindExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
-
+    protected override DateTimeKind Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => DateTimeKindExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override DateTimeKind Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => DateTimeKindExtensions.Parse(name, ignoreCase);
+#endif
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(DateTimeKind value) => GeneratesToStringFastTest(value);

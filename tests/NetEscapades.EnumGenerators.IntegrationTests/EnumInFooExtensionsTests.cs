@@ -43,6 +43,13 @@ public class EnumInFooExtensionsTests : ExtensionTests<EnumInFoo>
         => EnumInFooExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
 
+    protected override EnumInFoo Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumInFooExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override EnumInFoo Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumInFooExtensions.Parse(name, ignoreCase);
+#endif
+
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(EnumInFoo value) => GeneratesToStringFastTest(value);

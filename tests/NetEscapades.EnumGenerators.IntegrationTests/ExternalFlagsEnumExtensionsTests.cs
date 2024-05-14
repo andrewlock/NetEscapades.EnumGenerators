@@ -46,7 +46,12 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
     protected override bool TryParse(in ReadOnlySpan<char> name, out FileShare parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FileShareExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
-
+    protected override FileShare Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => FileShareExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override FileShare Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => FileShareExtensions.Parse(name, ignoreCase);
+#endif
     /// <summary>
     /// 
     /// </summary>

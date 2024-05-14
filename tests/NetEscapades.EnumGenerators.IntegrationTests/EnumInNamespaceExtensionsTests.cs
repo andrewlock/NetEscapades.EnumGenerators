@@ -42,6 +42,13 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
         => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
 
+    protected override EnumInNamespace Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumInNamespaceExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override EnumInNamespace Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumInNamespaceExtensions.Parse(name, ignoreCase);
+#endif
+
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(EnumInNamespace value) => GeneratesToStringFastTest(value);
