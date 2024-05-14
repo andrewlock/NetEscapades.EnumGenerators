@@ -41,6 +41,12 @@ public class EnumWithDescriptionInNamespaceExtensionsTests : ExtensionTests<Enum
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithDescriptionInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithDescriptionInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override EnumWithDescriptionInNamespace Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumWithDescriptionInNamespaceExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override EnumWithDescriptionInNamespace Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumWithDescriptionInNamespaceExtensions.Parse(name, ignoreCase);
+#endif
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

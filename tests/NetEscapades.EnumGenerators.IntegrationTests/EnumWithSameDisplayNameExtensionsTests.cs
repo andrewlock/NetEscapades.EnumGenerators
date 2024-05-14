@@ -41,7 +41,12 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithSameDisplayName parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithSameDisplayNameExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
-
+    protected override EnumWithSameDisplayName Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumWithSameDisplayNameExtensions.Parse(name, ignoreCase);
+#if READONLYSPAN
+    protected override EnumWithSameDisplayName Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => EnumWithSameDisplayNameExtensions.Parse(name, ignoreCase);
+#endif
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(EnumWithSameDisplayName value) => GeneratesToStringFastTest(value);
