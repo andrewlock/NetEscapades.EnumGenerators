@@ -2,6 +2,9 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
+[assembly:NetEscapades.EnumGenerators.EnumExtensions<DateTimeKind>()]
+[assembly:NetEscapades.EnumGenerators.EnumExtensions<System.IO.FileShare>()]
+
 namespace System
 {
     using NetEscapades.EnumGenerators;

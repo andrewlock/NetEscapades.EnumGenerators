@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using VerifyXunit;
 using Xunit;
@@ -340,4 +341,91 @@ namespace Foo
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
+
+    [Fact]
+    public Task CanGenerateForExternalEnum()
+    {
+        const string input = """
+                             using System;
+                             using NetEscapades.EnumGenerators;
+
+                             [assembly:EnumExtensions<StringComparison>()]
+                             """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateForExternalFlagsEnum()
+    {
+        const string input = """
+                             using NetEscapades.EnumGenerators;
+
+                             [assembly:EnumExtensions<System.IO.FileShare>()]
+                             """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateForMultipleExternalEnums()
+    {
+        const string input = """
+                             using NetEscapades.EnumGenerators;
+
+                             [assembly:EnumExtensions<System.ConsoleColor>()]
+                             [assembly:EnumExtensions<System.DateTimeKind>()]
+                             """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output.Skip(1)).UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateExternalEnumExtensionsWithCustomName()
+    {
+        const string input = """
+                             using NetEscapades.EnumGenerators;
+
+                             [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassName = "A")]
+                             """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateExternalEnumExtensionsWithCustomNamespace()
+    {
+        const string input = """
+                             using NetEscapades.EnumGenerators;
+
+                             [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassNamespace = "A.B")]
+                             """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanGenerateExternalEnumExtensionsWithCustomNamespaceAndName()
+    {
+        const string input = """
+                             using NetEscapades.EnumGenerators;
+
+                             [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassNamespace = "A.B", ExtensionClassName = "C")]
+                             """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
+
 }
