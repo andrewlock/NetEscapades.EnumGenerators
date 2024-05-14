@@ -185,44 +185,61 @@ namespace Something.Blah
 #endif
             string? name, 
             out global::Something.Blah.ShortName value, 
-            bool ignoreCase, 
+            bool ignoreCase,
+            bool allowMatchingMetadataAttribute)
+                => ignoreCase
+                     ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
+                     : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+
+        private static bool TryParseIgnoreCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name,
+            out global::Something.Blah.ShortName value,
             bool allowMatchingMetadataAttribute)
         {
-            if (ignoreCase)
+
+            switch (name)
             {
-                switch (name)
-                {
-                    case string s when s.Equals(nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = global::Something.Blah.ShortName.First;
-                        return true;
-                    case string s when s.Equals(nameof(global::Something.Blah.ShortName.Second), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = global::Something.Blah.ShortName.Second;
-                        return true;
-                    case string s when int.TryParse(name, out var val):
-                        value = (global::Something.Blah.ShortName)val;
-                        return true;
-                    default:
-                        value = default;
-                        return false;
-                }
+                case string s when s.Equals(nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.OrdinalIgnoreCase):
+                    value = global::Something.Blah.ShortName.First;
+                    return true;
+                case string s when s.Equals(nameof(global::Something.Blah.ShortName.Second), global::System.StringComparison.OrdinalIgnoreCase):
+                    value = global::Something.Blah.ShortName.Second;
+                    return true;
+                case string s when int.TryParse(name, out var val):
+                    value = (global::Something.Blah.ShortName)val;
+                    return true;
+                default:
+                    value = default;
+                    return false;
             }
-            else
+        }
+
+        private static bool TryParseWithCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name,
+            out global::Something.Blah.ShortName value,
+            bool allowMatchingMetadataAttribute)
+        {
+
+            switch (name)
             {
-                switch (name)
-                {
-                    case nameof(global::Something.Blah.ShortName.First):
-                        value = global::Something.Blah.ShortName.First;
-                        return true;
-                    case nameof(global::Something.Blah.ShortName.Second):
-                        value = global::Something.Blah.ShortName.Second;
-                        return true;
-                    case string s when int.TryParse(name, out var val):
-                        value = (global::Something.Blah.ShortName)val;
-                        return true;
-                    default:
-                        value = default;
-                        return false;
-                }
+                case nameof(global::Something.Blah.ShortName.First):
+                    value = global::Something.Blah.ShortName.First;
+                    return true;
+                case nameof(global::Something.Blah.ShortName.Second):
+                    value = global::Something.Blah.ShortName.Second;
+                    return true;
+                case string s when int.TryParse(name, out var val):
+                    value = (global::Something.Blah.ShortName)val;
+                    return true;
+                default:
+                    value = default;
+                    return false;
             }
         }
 
@@ -264,9 +281,9 @@ namespace Something.Blah
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
+            in ReadOnlySpan<char> name,
             out global::Something.Blah.ShortName value,
-            bool ignoreCase) 
+            bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);
 
         /// <summary>
@@ -288,46 +305,61 @@ namespace Something.Blah
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
-            out global::Something.Blah.ShortName result, 
-            bool ignoreCase,             
+            in ReadOnlySpan<char> name,
+            out global::Something.Blah.ShortName result,
+            bool ignoreCase,
+            bool allowMatchingMetadataAttribute)
+                => ignoreCase
+                     ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
+                     : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+
+        private static bool TryParseIgnoreCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            out global::Something.Blah.ShortName result,
             bool allowMatchingMetadataAttribute)
         {
-            if (ignoreCase)
+            switch (name)
             {
-                switch (name)
-                {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = global::Something.Blah.ShortName.First;
-                        return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = global::Something.Blah.ShortName.Second;
-                        return true;
-                    case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                        result = (global::Something.Blah.ShortName)numericResult;
-                        return true;
-                    default:
-                        result = default;
-                        return false;
-                }
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    result = global::Something.Blah.ShortName.First;
+                    return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    result = global::Something.Blah.ShortName.Second;
+                    return true;
+                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                    result = (global::Something.Blah.ShortName)numericResult;
+                    return true;
+                default:
+                    result = default;
+                    return false;
             }
-            else
+        }
+
+        private static bool TryParseWithCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            out global::Something.Blah.ShortName result,
+            bool allowMatchingMetadataAttribute)
+        {
+            switch (name)
             {
-                switch (name)
-                {
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = global::Something.Blah.ShortName.First;
-                        return true;
-                    case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.Ordinal):
-                        result = global::Something.Blah.ShortName.Second;
-                        return true;
-                    case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                        result = (global::Something.Blah.ShortName)numericResult;
-                        return true;
-                    default:
-                        result = default;
-                        return false;
-                }
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.First).AsSpan(), global::System.StringComparison.Ordinal):
+                    result = global::Something.Blah.ShortName.First;
+                    return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::Something.Blah.ShortName.Second).AsSpan(), global::System.StringComparison.Ordinal):
+                    result = global::Something.Blah.ShortName.Second;
+                    return true;
+                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                    result = (global::Something.Blah.ShortName)numericResult;
+                    return true;
+                default:
+                    result = default;
+                    return false;
             }
         }
 #endif

@@ -378,7 +378,18 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #endif
             string? name, 
             out ").Append(fullyQualifiedName).Append(@" value, 
-            bool ignoreCase, 
+            bool ignoreCase,
+            bool allowMatchingMetadataAttribute)
+                => ignoreCase
+                     ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
+                     : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+
+        private static bool TryParseIgnoreCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name,
+            out ").Append(fullyQualifiedName).Append(@" value,
             bool allowMatchingMetadataAttribute)
         {");
 
@@ -387,97 +398,106 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             sb.Append(@"
             if (allowMatchingMetadataAttribute)
             {
-                if (ignoreCase)
-                {
-                    switch (name)
-                    {");
+                switch (name)
+                {");
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                        case string s when s.Equals(""").Append(member.Value.DisplayName).Append(@""", global::System.StringComparison.OrdinalIgnoreCase):
-                            value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                            return true;");
+                    case string s when s.Equals(""").Append(member.Value.DisplayName).Append(
+                        @""", global::System.StringComparison.OrdinalIgnoreCase):
+                        value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        return true;");
                 }
             }
 
             sb.Append(@"
-                        default:
-                            break;
-                    };
-                }
-                else
-                {
-                    switch (name)
-                    {");
+                    default:
+                        break;
+                };
+            }");
+        }
+        
+        sb.Append(@"
+
+            switch (name)
+            {");
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
+                case string s when s.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+            @"), global::System.StringComparison.OrdinalIgnoreCase):
+                    value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                    return true;");
+        }
+
+        sb.Append(@"
+                case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                    value = (").Append(fullyQualifiedName).Append(@")val;
+                    return true;
+                default:
+                    value = default;
+                    return false;
+            }
+        }
+
+        private static bool TryParseWithCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name,
+            out ").Append(fullyQualifiedName).Append(@" value,
+            bool allowMatchingMetadataAttribute)
+        {");
+
+        if (enumToGenerate.IsDisplayAttributeUsed)
+        {
+            sb.Append(@"
+            if (allowMatchingMetadataAttribute)
+            {
+                switch (name)
+                {");
+
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                        case """).Append(member.Value.DisplayName).Append(@""":
-                            value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                            return true;");
+                    case """).Append(member.Value.DisplayName).Append(@""":
+                        value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        return true;");
                 }
             }
 
             sb.Append(@"
-                        default:
-                            break;
-                    };
-                }
-            }
-");
+                    default:
+                        break;
+                };
+            }");
         }
 
         sb.Append(@"
-            if (ignoreCase)
-            {
-                switch (name)
-                {");
+
+            switch (name)
+            {");
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                    case string s when s.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-                @"), global::System.StringComparison.OrdinalIgnoreCase):
-                        value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                        return true;");
+                case nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@"):
+                    value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                    return true;");
         }
 
         sb.Append(@"
-                    case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                        value = (").Append(fullyQualifiedName).Append(@")val;
-                        return true;
-                    default:
-                        value = default;
-                        return false;
-                }
+                case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
+                    value = (").Append(fullyQualifiedName).Append(@")val;
+                    return true;
+                default:
+                    value = default;
+                    return false;
             }
-            else
-            {
-                switch (name)
-                {");
-        foreach (var member in enumToGenerate.Names)
-        {
-            sb.Append(@"
-                    case nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@"):
-                        value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                        return true;");
         }
-
-        sb.Append(@"
-                    case string s when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var val):
-                        value = (").Append(fullyQualifiedName).Append(@")val;
-                        return true;
-                    default:
-                        value = default;
-                        return false;
-                }
-            }
-        }");
-
-        sb.Append(@"
 
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
@@ -518,9 +538,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
+            in ReadOnlySpan<char> name,
             out ").Append(fullyQualifiedName).Append(@" value,
-            bool ignoreCase) 
+            bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);");
 
         sb.Append(@"
@@ -544,9 +564,20 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
-            out ").Append(fullyQualifiedName).Append(@" result, 
-            bool ignoreCase,             
+            in ReadOnlySpan<char> name,
+            out ").Append(fullyQualifiedName).Append(@" result,
+            bool ignoreCase,
+            bool allowMatchingMetadataAttribute)
+                => ignoreCase
+                     ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
+                     : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+
+        private static bool TryParseIgnoreCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            out ").Append(fullyQualifiedName).Append(@" result,
             bool allowMatchingMetadataAttribute)
         {");
 
@@ -555,100 +586,107 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             sb.Append(@"
             if (allowMatchingMetadataAttribute)
             {
-                if (ignoreCase)
-                {
-                    switch (name)
-                    {");
+                switch (name)
+                {");
             foreach (var member in enumToGenerate.Names)
             {
                 if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
                 {
                     sb.Append(@"
-                        case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(
-                        @""".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                            result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                            return true;");
+                    case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(
+                    @""".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                        result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        return true;");
                 }
             }
 
             sb.Append(@"
-                        default:
-                            break;
-                    };
-                }
-                else
-                {
-                    switch (name)
-                    {");
-            foreach (var member in enumToGenerate.Names)
-            {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
-                {
-                    sb.Append(@"
-                        case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), global::System.StringComparison.Ordinal):
-                            result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                            return true;");
-                }
-            }
-
-            sb.Append(@"
-                        default:
-                            break;
-                    };
-                }
+                    default:
+                        break;
+                };
             }
 ");
         }
 
         sb.Append(@"
-            if (ignoreCase)
-            {
-                switch (name)
-                {");
+            switch (name)
+            {");
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-                @").AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
-                        result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                        return true;");
+                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+            @").AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                    return true;");
         }
 
         sb.Append(@"
-                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-                        result = (").Append(fullyQualifiedName).Append(@")numericResult;
-                        return true;
-                    default:
-                        result = default;
-                        return false;
-                }
+                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
+                    result = (").Append(fullyQualifiedName).Append(@")numericResult;
+                    return true;
+                default:
+                    result = default;
+                    return false;
             }
-            else
+        }
+
+        private static bool TryParseWithCase(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in ReadOnlySpan<char> name,
+            out ").Append(fullyQualifiedName).Append(@" result,
+            bool allowMatchingMetadataAttribute)
+        {");
+
+        if (enumToGenerate.IsDisplayAttributeUsed)
+        {
+            sb.Append(@"
+            if (allowMatchingMetadataAttribute)
             {
                 switch (name)
                 {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                {
+                    sb.Append(@"
+                    case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), global::System.StringComparison.Ordinal):
+                        result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                        return true;");
+                }
+            }
+
+            sb.Append(@"
+                    default:
+                        break;
+                };
+            }
+");
+        }
+
+        sb.Append(@"
+            switch (name)
+            {");
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-                @").AsSpan(), global::System.StringComparison.Ordinal):
-                        result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
-                        return true;");
+                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+            @").AsSpan(), global::System.StringComparison.Ordinal):
+                    result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
+                    return true;");
         }
 
         sb.Append(@"
-                    case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
-                        result = (").Append(fullyQualifiedName).Append(@")numericResult;
-                        return true;
-                    default:
-                        result = default;
-                        return false;
-                }
+                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
+                    result = (").Append(fullyQualifiedName).Append(@")numericResult;
+                    return true;
+                default:
+                    result = default;
+                    return false;
             }
         }
-#endif");
-
-        sb.Append(@"
+#endif
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
