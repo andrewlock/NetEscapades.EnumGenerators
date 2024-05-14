@@ -18,6 +18,7 @@ namespace System
     /// <summary>
     /// Extension methods for <see cref="global::System.ConsoleColor" />
     /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")]
     public static partial class ConsoleColorExtensions
     {
         /// <summary>
@@ -625,6 +626,7 @@ namespace System
     /// <summary>
     /// Extension methods for <see cref="global::System.DateTimeKind" />
     /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")]
     public static partial class DateTimeKindExtensions
     {
         /// <summary>

@@ -17,6 +17,7 @@ namespace Test
     /// <summary>
     /// Extension methods for <see cref="global::Test.StringTesting" />
     /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")]
     public static partial class StringTestingExtensions
     {
         /// <summary>

@@ -17,6 +17,7 @@ namespace System
     /// <summary>
     /// Extension methods for <see cref="global::System.DateTimeKind" />
     /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")]
     public static partial class A
     {
         /// <summary>

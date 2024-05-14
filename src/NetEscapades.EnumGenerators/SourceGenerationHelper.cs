@@ -99,8 +99,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         sb.Append(@"
     /// <summary>
-    /// Extension methods for <see cref=""").Append(fullyQualifiedName).Append(@""" />
+    /// Extension methods for <see cref=""").Append(fullyQualifiedName).Append($@""" />
     /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute(""NetEscapades.EnumGenerators"", """).Append(Constants.Version).Append(@""")]
     ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
     {
         /// <summary>

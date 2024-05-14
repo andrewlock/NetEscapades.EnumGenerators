@@ -17,6 +17,7 @@ namespace Foo
     /// <summary>
     /// Extension methods for <see cref="global::Foo.TestEnum" />
     /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")]
     public static partial class TestEnumExtensions
     {
         /// <summary>

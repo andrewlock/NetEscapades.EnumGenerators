@@ -30,7 +30,7 @@ public enum MyEnum
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -50,7 +50,7 @@ namespace MyTestNameSpace
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -73,7 +73,7 @@ namespace MyTestNameSpace
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -93,7 +93,7 @@ namespace MyTestNameSpace
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -113,7 +113,7 @@ namespace MyTestNameSpace
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -133,7 +133,7 @@ namespace MyTestNameSpace
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -163,7 +163,7 @@ namespace MyTestNameSpace
         return Verifier.Verify(output)
             .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
             .DisableRequireUniquePrefix()
-            .UseDirectory("Snapshots");
+            .ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -196,7 +196,7 @@ namespace MyTestNameSpace
         return Verifier.Verify(output)
             .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
             .DisableRequireUniquePrefix()
-            .UseDirectory("Snapshots");
+            .ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -232,7 +232,7 @@ namespace MyTestNameSpace
         return Verifier.Verify(output)
             .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
             .DisableRequireUniquePrefix()
-            .UseDirectory("Snapshots");
+            .ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -259,7 +259,7 @@ namespace MyTestNameSpace
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Theory]
@@ -291,7 +291,7 @@ namespace MyTestNameSpace
         return Verifier.Verify(output)
             .UseTextForParameters("Params")
             .DisableRequireUniquePrefix()
-            .UseDirectory("Snapshots");
+            .ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -313,7 +313,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -339,7 +339,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -354,7 +354,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -368,7 +368,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -383,7 +383,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output.Skip(1)).UseDirectory("Snapshots");
+        return Verifier.Verify(output.Skip(1)).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -397,7 +397,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -411,7 +411,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -425,7 +425,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).UseDirectory("Snapshots");
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
 }
