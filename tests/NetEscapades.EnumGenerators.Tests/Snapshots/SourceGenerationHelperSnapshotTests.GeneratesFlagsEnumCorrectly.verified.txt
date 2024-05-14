@@ -17,6 +17,7 @@ namespace Something.Blah
     /// <summary>
     /// Extension methods for <see cref="global::Something.Blah.ShortName" />
     /// </summary>
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("StronglyTypedId", "FIXED_VERSION")]
     public static partial class ShortName
     {
         /// <summary>

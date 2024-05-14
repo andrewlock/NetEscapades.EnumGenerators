@@ -7,11 +7,17 @@ using System.Reflection;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using VerifyTests;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-internal class TestHelpers
+internal static class TestHelpers
 {
+    public static SettingsTask ScrubGeneratedCodeAttribute(this SettingsTask settings)
+        => settings.ScrubLinesWithReplace(
+            line => line.Replace("""GeneratedCodeAttribute("StronglyTypedId", "1.0.0-beta08")""",
+                """GeneratedCodeAttribute("StronglyTypedId", "FIXED_VERSION")"""));
+    
     public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(params string[] source)
         where T : IIncrementalGenerator, new()
     {
