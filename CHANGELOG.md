@@ -1,6 +1,16 @@
 Changelog
 --- 
 
+## [v1.0.0-beta09](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta08..v1.0.0-beta09) (2024-05-15)
+
+### Features
+- Add support for generating extensions for external enums that come from other assemblies (#82)
+- Add support for new Parse overloads (#85)
+
+### Fixes
+- Add `[GeneratedCodeAttribute]` to the generated extensions (#83)
+- Split TryParse code method to try to fix coverlet issue (#84)
+
 
 ## [v1.0.0-beta08](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta07..v1.0.0-beta08) (2023-06-05)
 
