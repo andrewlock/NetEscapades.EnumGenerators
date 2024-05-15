@@ -15,7 +15,7 @@ internal static class TestHelpers
 {
     public static SettingsTask ScrubGeneratedCodeAttribute(this SettingsTask settings)
         => settings.ScrubLinesWithReplace(
-            line => line.Replace("""GeneratedCodeAttribute("NetEscapades.EnumGenerators", "1.0.0-beta08")""",
+            line => line.Replace($"""GeneratedCodeAttribute("NetEscapades.EnumGenerators", "{Constants.Version}")""",
                 """GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")"""));
     
     public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(params string[] source)

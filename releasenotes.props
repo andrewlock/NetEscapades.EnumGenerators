@@ -1,14 +1,15 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta08'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta09'">
       <![CDATA[
 
+Features
+- Add support for generating extensions for external enums that come from other assemblies (#82)
+- Add support for new Parse overloads (#85)
+
 Fixes
-- Exclude embedded attribute from code coverage #59 (Thanks @erri120!)
-- Fix Error when a class with the same name as namespace #62
-- Support quotes and slashes in description/displayname attribute #63
-
-
+- Add `[GeneratedCodeAttribute]` to the generated extensions (#83)
+- Split TryParse code method to try to fix coverlet issue (#84)
 
 ]]>
     </PackageReleaseNotes>
