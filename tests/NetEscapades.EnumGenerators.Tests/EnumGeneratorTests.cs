@@ -21,7 +21,7 @@ public class EnumGeneratorTests
     {
         const string input = """
             using NetEscapades.EnumGenerators;
-            
+
             [EnumExtensions]
             public enum MyEnum
             {
@@ -40,7 +40,7 @@ public class EnumGeneratorTests
     {
         const string input = """
             using NetEscapades.EnumGenerators;
-            
+
             namespace MyTestNameSpace
             {
                 [EnumExtensions]
@@ -62,7 +62,7 @@ public class EnumGeneratorTests
     {
         const string input = """
             using NetEscapades.EnumGenerators;
-            
+
             namespace MyTestNameSpace
             {
                 public class InnerClass
@@ -87,7 +87,7 @@ public class EnumGeneratorTests
     {
         const string input = """
             using NetEscapades.EnumGenerators;
-            
+
             namespace MyTestNameSpace
             {
                 [EnumExtensions(ExtensionClassName = "A")]
@@ -109,7 +109,7 @@ public class EnumGeneratorTests
     {
         const string input = """
             using NetEscapades.EnumGenerators;
-            
+
             namespace MyTestNameSpace
             {
                 [EnumExtensions(ExtensionClassNamespace = "A.B")]
@@ -131,7 +131,7 @@ public class EnumGeneratorTests
     {
         const string input = """
             using NetEscapades.EnumGenerators;
-            
+
             namespace MyTestNameSpace
             {
                 [EnumExtensions(ExtensionClassNamespace = "A.B", ExtensionClassName = "C")]
@@ -154,18 +154,18 @@ public class EnumGeneratorTests
         const string input = """
             using NetEscapades.EnumGenerators;
             using System.ComponentModel.DataAnnotations;
-            
+
             namespace MyTestNameSpace
             {
                 [EnumExtensions]
                 public enum MyEnum
                 {
                     First = 0,
-            
+
                     [Display(Name = "2nd")]
                     Second = 1,
                     Third = 2,
-            
+
                     [Display(Name = "4th")]
                     Fourth = 3
                 }
@@ -202,7 +202,7 @@ public class EnumGeneratorTests
                     Fourth = 3
                 }
             }"
-        """;
+            """;
 
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
 
@@ -229,11 +229,11 @@ public class EnumGeneratorTests
                     First = 0,
 
                     [Description("2nd")] // takes precedence
-                    [Display(Name = "Secundo")] 
+                    [Display(Name = "Secundo")]
                     Second = 1,
                     Third = 2,
 
-                    [Display(Name = "4th")] // takes precedence 
+                    [Display(Name = "4th")] // takes precedence
                     [Description("Number 4")]
                     Fourth = 3
                 }
@@ -320,7 +320,7 @@ public class EnumGeneratorTests
             namespace Foo
             {
                 public class Foo {}
-              
+
                 [EnumExtensions]
                 public enum TestEnum
                 {
