@@ -1,20 +1,18 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.CodeAnalysis.CSharp;
 using VerifyXunit;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
 [UsesVerify]
 public class EnumGeneratorTests
 {
-    readonly ITestOutputHelper _output;
-
-    public EnumGeneratorTests(ITestOutputHelper output)
-    {
-        _output = output;
-    }
+    private readonly Dictionary<string, string> _interceptionEnabled =
+        new() { { "build_property.EnableEnumGeneratorInterceptor", "true" } };
 
     [Fact]
     public Task CanGenerateEnumExtensionsInGlobalNamespace()
@@ -27,7 +25,7 @@ public enum MyEnum
     First,
     Second,
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -47,7 +45,7 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -70,7 +68,7 @@ namespace MyTestNameSpace
         }
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -90,7 +88,7 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -110,7 +108,7 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -130,7 +128,7 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -157,7 +155,7 @@ namespace MyTestNameSpace
         Fourth = 3
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output)
@@ -190,7 +188,7 @@ namespace MyTestNameSpace
         }"
         """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output)
@@ -226,7 +224,7 @@ namespace MyTestNameSpace
         }"
         """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output)
@@ -256,7 +254,7 @@ namespace MyTestNameSpace
         Fourth = 3
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -285,7 +283,7 @@ namespace MyTestNameSpace
         }
         """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output)
@@ -310,7 +308,7 @@ namespace Foo
         Value1
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -336,7 +334,7 @@ namespace Foo
             }
             """";
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -373,7 +371,8 @@ namespace Foo
                 }
             }
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(input);
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -426,13 +425,13 @@ namespace Foo
                 }
             }
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(input);
+        var (diagnostics, output) = 
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
     }
 
-    
     [Fact]
     public Task CanInterceptExternalEnum()
     {
@@ -466,7 +465,124 @@ namespace Foo
                 }
             }
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(input);
+        var (diagnostics, output) = 
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task DoesNotInterceptWhenDisabled()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions]
+                internal enum MyEnum
+                {
+                    First = 0,
+                    Second = 1,
+                }
+                
+                public class InnerClass
+                {
+                    public MyEnum _field = default;
+                    public MyEnum Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = MyEnum.Second;
+                        var var1 = myValue.ToString();
+                        var var2 = MyEnum.Second.ToString();
+                        var var3 = Property.ToString();
+                        var var4 = _field.ToString();
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task DoesNotInterceptWhenOldCsharp()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions]
+                internal enum MyEnum
+                {
+                    First = 0,
+                    Second = 1,
+                }
+                
+                public class InnerClass
+                {
+                    public MyEnum _field = default;
+                    public MyEnum Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = MyEnum.Second;
+                        var var1 = myValue.ToString();
+                        var var2 = MyEnum.Second.ToString();
+                        var var3 = Property.ToString();
+                        var var4 = _field.ToString();
+                    }
+                }
+            }
+            """;
+        var opts = new TestHelpers.Options(LanguageVersion.CSharp10, _interceptionEnabled, input);
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(opts);
+
+        diagnostics.Should().ContainSingle(x => x.Id == DiagnosticHelper.CsharpVersionLooLow.Id);
+        return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanInterceptWhenCsharp11()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions]
+                internal enum MyEnum
+                {
+                    First = 0,
+                    Second = 1,
+                }
+                
+                public class InnerClass
+                {
+                    public MyEnum _field = default;
+                    public MyEnum Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = MyEnum.Second;
+                        var var1 = myValue.ToString();
+                        var var2 = MyEnum.Second.ToString();
+                        var var3 = Property.ToString();
+                        var var4 = _field.ToString();
+                    }
+                }
+            }
+            """;
+        var opts = new TestHelpers.Options(LanguageVersion.CSharp11, _interceptionEnabled, input);
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(opts);
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -481,7 +597,7 @@ namespace Foo
 
                              [assembly:EnumExtensions<StringComparison>()]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -495,7 +611,7 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.IO.FileShare>()]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -510,7 +626,7 @@ namespace Foo
                              [assembly:EnumExtensions<System.ConsoleColor>()]
                              [assembly:EnumExtensions<System.DateTimeKind>()]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output.Skip(1)).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -524,7 +640,7 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassName = "A")]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -538,7 +654,7 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassNamespace = "A.B")]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");
@@ -552,7 +668,7 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassNamespace = "A.B", ExtensionClassName = "C")]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubGeneratedCodeAttribute().UseDirectory("Snapshots");

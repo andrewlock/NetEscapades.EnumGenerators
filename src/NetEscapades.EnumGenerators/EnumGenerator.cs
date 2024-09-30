@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
@@ -48,9 +49,26 @@ public class EnumGenerator : IIncrementalGenerator
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
 
         // Interceptor!
+        var interceptionExplicitlyEnabled = context.AnalyzerConfigOptionsProvider
+            .Select((x, _) =>
+                x.GlobalOptions.TryGetValue($"build_property.{Constants.EnabledPropertyName}", out var enableSwitch)
+                && enableSwitch.Equals("true", StringComparison.Ordinal));
+
+        var csharpSufficient = context.CompilationProvider
+            .Select((x,_) => x is CSharpCompilation { LanguageVersion: LanguageVersion.Default or >= LanguageVersion.CSharp11 });
+
+        var settings = interceptionExplicitlyEnabled
+            .Combine(csharpSufficient)
+            .WithTrackingName(TrackingNames.Settings);
+
+        var interceptionEnabled = settings
+            .Select((x, _) => x.Left && x.Right);
+
         var locations = context.SyntaxProvider
             .CreateSyntaxProvider(InterceptorPredicate, InterceptorParser)
-            .Where(x => x is not null)
+            .Combine(interceptionEnabled)
+            .Where(x => x.Right && x.Left is not null)
+            .Select((x, _) => x.Left!)
             .Collect()
             .WithTrackingName(TrackingNames.InterceptedLocations);
 
@@ -71,6 +89,14 @@ public class EnumGenerator : IIncrementalGenerator
 
         context.RegisterImplementationSourceOutput(externalInterceptions,
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
+        context.RegisterImplementationSourceOutput(settings,
+            static (spc, args) =>
+            {
+                if (args.Left && !args.Right)
+                {
+                    spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.CsharpVersionLooLow, location: null));
+                }
+            });
     }
 
     static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
