@@ -198,7 +198,7 @@ internal static class TestHelpers
 
                 if (node is IEnumerable collection and not string)
                 {
-                    foreach (object element in collection)
+                    foreach (var element in collection)
                     {
                         Visit(element);
                     }
@@ -235,7 +235,7 @@ internal static class TestHelpers
         public static DictionaryAnalyzerOptions Empty { get; } = new(new());
 
         public override bool TryGetValue(string key, out string value)
-            => properties.TryGetValue(key, out value);
+            => properties.TryGetValue(key, out value!);
     }
 
     public record Options
