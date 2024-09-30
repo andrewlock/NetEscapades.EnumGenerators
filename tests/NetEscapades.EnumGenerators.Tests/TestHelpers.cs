@@ -7,6 +7,7 @@ using System.Reflection;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using VerifyTests;
 
 namespace NetEscapades.EnumGenerators.Tests;
@@ -18,31 +19,29 @@ internal static class TestHelpers
             line => line.Replace($"""GeneratedCodeAttribute("NetEscapades.EnumGenerators", "{Constants.Version}")""",
                 """GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")"""));
     
-    public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(params string[] source)
+    public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(Options opts)
         where T : IIncrementalGenerator, new()
     {
-        var (diagnostics, trees) = GetGeneratedTrees<T, TrackingNames>(source);
+        var (diagnostics, trees) = GetGeneratedTrees<T, TrackingNames>(opts);
         return (diagnostics, trees.LastOrDefault() ?? string.Empty);
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<TGenerator, TTrackingNames>(params string[] sources)
+    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<TGenerator, TTrackingNames>(Options options)
         where TGenerator : IIncrementalGenerator, new()
     {
         // get all the const string fields
-        var trackingNames = typeof(TTrackingNames)
-                           .GetFields()
-                           .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
-                           .Select(x => (string?)x.GetRawConstantValue()!)
-                           .Where(x => !string.IsNullOrEmpty(x))
-                           .ToArray();
-
-        return GetGeneratedTrees<TGenerator>(sources, trackingNames);
+        return GetGeneratedTrees<TGenerator>(options, options.Stages ?? GetTrackingNames<TTrackingNames>());
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<T>(string[] source, params string[] stages)
+    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<T>(Options opts, params string[] stages)
         where T : IIncrementalGenerator, new()
     {
-        var syntaxTrees = source.Select(static x => CSharpSyntaxTree.ParseText(x, path: "Program.cs"));
+        var syntaxTrees = opts.Sources
+            .Select(x =>
+            {
+                var tree = CSharpSyntaxTree.ParseText(x, path: "Program.cs");
+                return tree.WithRootAndOptions(tree.GetRoot(), new CSharpParseOptions(opts.LanguageVersion));
+            });
         var references = AppDomain.CurrentDomain.GetAssemblies()
             .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
             .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
@@ -59,12 +58,12 @@ internal static class TestHelpers
             references,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        GeneratorDriverRunResult runResult = RunGeneratorAndAssertOutput<T>(compilation, stages);
+        GeneratorDriverRunResult runResult = RunGeneratorAndAssertOutput<T>(opts, compilation, stages);
 
         return (runResult.Diagnostics, runResult.GeneratedTrees.Select(x => x.ToString()).ToArray());
     }
 
-    private static GeneratorDriverRunResult RunGeneratorAndAssertOutput<T>(CSharpCompilation compilation, string[] trackingNames, bool assertOutput = true)
+    private static GeneratorDriverRunResult RunGeneratorAndAssertOutput<T>(Options options, CSharpCompilation compilation, string[] stages, bool assertOutput = true)
         where T : IIncrementalGenerator, new()
     {
         ISourceGenerator generator = new T().AsSourceGenerator();
@@ -73,7 +72,12 @@ internal static class TestHelpers
             disabledOutputs: IncrementalGeneratorOutputKind.None,
             trackIncrementalGeneratorSteps: true);
 
-        GeneratorDriver driver = CSharpGeneratorDriver.Create([generator], driverOptions: opts);
+        GeneratorDriver driver =
+            CSharpGeneratorDriver.Create(
+                [generator],
+                driverOptions: opts,
+                optionsProvider: options.OptionsProvider,
+                parseOptions: new CSharpParseOptions(options.LanguageVersion));
 
         var clone = compilation.Clone();
         // Run twice, once with a clone of the compilation
@@ -88,7 +92,7 @@ internal static class TestHelpers
                                                  .RunGenerators(clone)
                                                  .GetRunResult();
 
-            AssertRunsEqual(runResult, runResult2, trackingNames);
+            AssertRunsEqual(runResult, runResult2, stages);
             
             // verify the second run only generated cached source outputs
             runResult2.Results[0]
@@ -209,5 +213,71 @@ internal static class TestHelpers
                 }
             }
         }
+    }
+
+    private static string[] GetTrackingNames<TTrackingNames>()
+        => typeof(TTrackingNames)
+            .GetFields()
+            .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
+            .Select(x => (string?)x.GetRawConstantValue()!)
+            .Where(x => !string.IsNullOrEmpty(x))
+            .ToArray();
+
+    private class OptionsProvider(AnalyzerConfigOptions options) : AnalyzerConfigOptionsProvider
+    {
+        public override AnalyzerConfigOptions GetOptions(SyntaxTree tree) => options;
+        public override AnalyzerConfigOptions GetOptions(AdditionalText textFile) => options;
+        public override AnalyzerConfigOptions GlobalOptions => options;
+    }
+
+    internal sealed class DictionaryAnalyzerOptions(Dictionary<string, string> properties) : AnalyzerConfigOptions
+    {
+        public static DictionaryAnalyzerOptions Empty { get; } = new(new());
+
+        public override bool TryGetValue(string key, out string value)
+            => properties.TryGetValue(key, out value);
+    }
+
+    public record Options
+    {
+        public Options(params string[] sources)
+            : this(LanguageVersion.Default, null, sources, null)
+        {
+        }
+
+        public Options(Dictionary<string, string> options, params string[] sources)
+            : this(LanguageVersion.Default, options, sources, null)
+        {
+        }
+
+        public Options(LanguageVersion languageVersion, Dictionary<string, string> options, params string[] sources)
+            : this(languageVersion, options, sources, null)
+        {
+        }
+
+        public Options(string[] sources, params string[] stages)
+            : this(LanguageVersion.Default, null, sources, stages)
+        {
+        }
+
+        public Options(LanguageVersion LanguageVersion,
+            Dictionary<string, string>? AnalyzerOptions,
+            string[] Sources,
+            string[]? Stages)
+        {
+            this.LanguageVersion = LanguageVersion;
+            this.AnalyzerOptions = AnalyzerOptions;
+            this.Sources = Sources;
+            this.Stages = Stages;
+        }
+
+        public AnalyzerConfigOptionsProvider? OptionsProvider =>
+            AnalyzerOptions is not null ? new OptionsProvider(new DictionaryAnalyzerOptions(AnalyzerOptions)) : null;
+
+        public LanguageVersion LanguageVersion { get;  }
+        public Dictionary<string, string>? AnalyzerOptions { get; }
+        public string[] Sources { get; }
+        public string[]? Stages { get; }
+
     }
 }
