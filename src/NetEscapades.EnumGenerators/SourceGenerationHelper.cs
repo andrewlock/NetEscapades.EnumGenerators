@@ -858,8 +858,14 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             
                 [global::System.Diagnostics.Conditional("DEBUG")] // not needed post-build, so: evaporate
                 [global::System.AttributeUsage(global::System.AttributeTargets.Method, AllowMultiple = true)]
-                sealed file class InterceptsLocationAttribute(string Path, int LineNumber, int ColumnNumber) : global::System.Attribute
+                sealed file class InterceptsLocationAttribute : global::System.Attribute
                 {
+                    public InterceptsLocationAttribute(string Path, int LineNumber, int ColumnNumber)
+                    {
+                        _ = Path;
+                        _ = LineNumber;
+                        _ = ColumnNumber;
+                    }
                 }
             }
             namespace NetEscapades.EnumGenerators
