@@ -1117,7 +1117,7 @@ namespace NetEscapades.EnumGenerators
 {
     static class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 32, 38)]
+        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 41, 38)]
         public static string MyEnumExtensionsToString(this global::System.Enum value)
             => MyTestNameSpace.MyEnumExtensions.ToStringFast((MyTestNameSpace.MyEnum)value);
     }
@@ -1149,8 +1149,8 @@ namespace NetEscapades.EnumGenerators
 {
     static class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 25, 44)]
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 37, 38)]
+        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 32, 44)]
+        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 46, 38)]
         public static string AnotherEnumExtensionsToString(this global::System.Enum value)
             => MyTestNameSpace.AnotherEnumExtensions.ToStringFast((MyTestNameSpace.AnotherEnum)value);
     }
