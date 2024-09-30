@@ -14,19 +14,6 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 [CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
-[GitHubActions("BuildAndPack",
-    GitHubActionsImage.UbuntuLatest,
-    GitHubActionsImage.WindowsLatest,
-    GitHubActionsImage.MacOsLatest,
-    ImportGitHubTokenAs = nameof(GithubToken),
-    CacheExcludePatterns = new[] { "~/.nuget/packages/netescapades.enumgenerators" },
-    OnPushTags = new [] {"*"},
-    OnPushBranches = new[] {"master", "main"},
-    OnPullRequestBranches = new[] {"*"},
-    AutoGenerate = false,
-    ImportSecrets = new[] {nameof(NuGetToken)},
-    InvokedTargets = new[] {nameof(Clean), nameof(Test), nameof(TestPackage), nameof(PushToNuGet)}
-)]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
