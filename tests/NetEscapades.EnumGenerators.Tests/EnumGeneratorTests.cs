@@ -402,6 +402,13 @@ namespace Foo
                     Second = 1,
                     Third = 2,
                 }
+
+                internal enum YetAnotherEnum
+                {
+                    First = 0,
+                    Second = 1,
+                    Third = 2,
+                }
                 
                 public class InnerClass
                 {
@@ -411,6 +418,8 @@ namespace Foo
                         AssertValue(MyEnum.First);
                         AssertValue(AnotherEnum.Second);
                         AssertValue(MyEnum.Third);
+                        var result2 = YetAnotherEnum.First.ToString();
+                        AssertValue(YetAnotherEnum.Second);
                         
                         void AssertValue(MyEnum value)
                         {
@@ -418,6 +427,11 @@ namespace Foo
                         }
 
                         void AssertValue(AnotherEnum value)
+                        {
+                            var toString = value.ToString();
+                        }
+
+                        void AssertValue(YetAnotherEnum value)
                         {
                             var toString = value.ToString();
                         }
