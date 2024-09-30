@@ -235,7 +235,7 @@ internal static class TestHelpers
         public static DictionaryAnalyzerOptions Empty { get; } = new(new());
 
         public override bool TryGetValue(string key, out string value)
-            => properties.TryGetValue(key, out value);
+            => properties.TryGetValue(key, out value!);
     }
 
     public record Options
