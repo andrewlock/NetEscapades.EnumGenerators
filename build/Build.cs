@@ -75,6 +75,7 @@ class Build : NukeBuild
             DotNetTest(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
+                .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
                 .EnableNoBuild()
                 .EnableNoRestore());
         });
