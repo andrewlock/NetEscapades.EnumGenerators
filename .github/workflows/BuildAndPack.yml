@@ -36,14 +36,14 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
-            8.0.101
+            8.0.402
             7.0.x
             6.0.x
             5.0.x
             3.1.x
             2.1.x
       - name: Force globaljson
-        run: dotnet new globaljson --sdk-version "8.0.101" --force
+        run: dotnet new globaljson --sdk-version "8.0.402" --force
       - name: Cache .nuke/temp, ~/.nuget/packages
         uses: actions/cache@v3
         with:
@@ -71,14 +71,14 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
-            8.0.101
+            8.0.402
             7.0.x
             6.0.x
             5.0.x
             3.1.x
             2.1.x
       - name: Force globaljson
-        run: dotnet new globaljson --sdk-version "8.0.101" --force
+        run: dotnet new globaljson --sdk-version "8.0.402" --force
       - name: Cache .nuke/temp, ~/.nuget/packages
         uses: actions/cache@v3
         with:
@@ -106,14 +106,14 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: |
-            8.0.101
+            8.0.402
             7.0.x
             6.0.x
             5.0.x
             3.1.x
             2.1.x
       - name: Force globaljson
-        run: dotnet new globaljson --sdk-version "8.0.101" --force
+        run: dotnet new globaljson --sdk-version "8.0.402" --force
       - name: Cache .nuke/temp, ~/.nuget/packages
         uses: actions/cache@v3
         with:
