@@ -655,11 +655,10 @@ namespace System.Runtime.CompilerServices
     [global::System.AttributeUsage(global::System.AttributeTargets.Method, AllowMultiple = true)]
     sealed file class InterceptsLocationAttribute : global::System.Attribute
     {
-        public InterceptsLocationAttribute(string Path, int LineNumber, int ColumnNumber)
+        public InterceptsLocationAttribute(int version, string data)
         {
-            _ = Path;
-            _ = LineNumber;
-            _ = ColumnNumber;
+            _ = version;
+            _ = data;
         }
     }
 }
@@ -667,11 +666,11 @@ namespace NetEscapades.EnumGenerators
 {
     static class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 15, 32)]
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 16, 49)]
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 17, 33)]
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 18, 31)]
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 23, 38)]
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PI5gBAABQcm9ncmFtLmNz")] // Program.cs(15,32)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PI9UBAABQcm9ncmFtLmNz")] // Program.cs(16,49)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PIwICAABQcm9ncmFtLmNz")] // Program.cs(17,33)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PIy0CAABQcm9ncmFtLmNz")] // Program.cs(18,31)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PI+QCAABQcm9ncmFtLmNz")] // Program.cs(23,38)
         public static string StringComparisonExtensionsToString(this global::System.Enum value)
             => System.StringComparisonExtensions.ToStringFast((System.StringComparison)value);
     }

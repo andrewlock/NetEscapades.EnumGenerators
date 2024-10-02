@@ -301,16 +301,15 @@ public class EnumGenerator : IIncrementalGenerator
 
     private static CandidateInvocation? InterceptorParser(GeneratorSyntaxContext ctx, CancellationToken ct)
     {
-        if (ctx.Node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name: { } nameSyntax}}
+        if (ctx.Node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name: { } nameSyntax}} invocation
             && ctx.SemanticModel.GetOperation(ctx.Node, ct) is IInvocationOperation targetOperation
             && targetOperation.TargetMethod is {Name : "ToString", ContainingType: {Name: "Enum", ContainingNamespace: {Name: "System", ContainingNamespace.IsGlobalNamespace: true}}}
-            && targetOperation.Instance?.Type is { } type)
+            && targetOperation.Instance?.Type is { } type
+#pragma warning disable RSEXPERIMENTAL002 // / Experimental interceptable location API
+            && ctx.SemanticModel.GetInterceptableLocation(invocation) is { } location)
+#pragma warning restore RSEXPERIMENTAL002
         {
-            var tree = nameSyntax.SyntaxTree;
-            return new CandidateInvocation(
-                FilePath: tree.FilePath,
-                Position: tree.GetLineSpan(nameSyntax.Span, ct).StartLinePosition,
-                type.ToString());
+            return new CandidateInvocation(location, type.ToString());
         }
 
         return null;

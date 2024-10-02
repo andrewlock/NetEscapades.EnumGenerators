@@ -8,7 +8,7 @@
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <EnableEnumGeneratorInterceptor>true</EnableEnumGeneratorInterceptor>
-    <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NetEscapades.EnumGenerators</InterceptorsPreviewNamespaces>
+    <InterceptorsNamespaces>$(InterceptorsNamespaces);NetEscapades.EnumGenerators</InterceptorsNamespaces>
   </PropertyGroup>
 
   <ItemGroup>
