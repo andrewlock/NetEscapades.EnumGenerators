@@ -1111,11 +1111,10 @@ namespace System.Runtime.CompilerServices
     [global::System.AttributeUsage(global::System.AttributeTargets.Method, AllowMultiple = true)]
     sealed file class InterceptsLocationAttribute : global::System.Attribute
     {
-        public InterceptsLocationAttribute(string Path, int LineNumber, int ColumnNumber)
+        public InterceptsLocationAttribute(int version, string data)
         {
-            _ = Path;
-            _ = LineNumber;
-            _ = ColumnNumber;
+            _ = version;
+            _ = data;
         }
     }
 }
@@ -1123,7 +1122,7 @@ namespace NetEscapades.EnumGenerators
 {
     static class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 41, 38)]
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "R/zsN8nWhFWJSRH7M3gD/pQDAABQcm9ncmFtLmNz")] // Program.cs(41,38)
         public static string MyEnumExtensionsToString(this global::System.Enum value)
             => MyTestNameSpace.MyEnumExtensions.ToStringFast((MyTestNameSpace.MyEnum)value);
     }
@@ -1149,11 +1148,10 @@ namespace System.Runtime.CompilerServices
     [global::System.AttributeUsage(global::System.AttributeTargets.Method, AllowMultiple = true)]
     sealed file class InterceptsLocationAttribute : global::System.Attribute
     {
-        public InterceptsLocationAttribute(string Path, int LineNumber, int ColumnNumber)
+        public InterceptsLocationAttribute(int version, string data)
         {
-            _ = Path;
-            _ = LineNumber;
-            _ = ColumnNumber;
+            _ = version;
+            _ = data;
         }
     }
 }
@@ -1161,8 +1159,8 @@ namespace NetEscapades.EnumGenerators
 {
     static class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 32, 44)]
-        [global::System.Runtime.CompilerServices.InterceptsLocation(@"Program.cs", 46, 38)]
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "R/zsN8nWhFWJSRH7M3gD/i4CAABQcm9ncmFtLmNz")] // Program.cs(32,44)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "R/zsN8nWhFWJSRH7M3gD/hcEAABQcm9ncmFtLmNz")] // Program.cs(46,38)
         public static string AnotherEnumExtensionsToString(this global::System.Enum value)
             => MyTestNameSpace.AnotherEnumExtensions.ToStringFast((MyTestNameSpace.AnotherEnum)value);
     }

@@ -860,11 +860,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 [global::System.AttributeUsage(global::System.AttributeTargets.Method, AllowMultiple = true)]
                 sealed file class InterceptsLocationAttribute : global::System.Attribute
                 {
-                    public InterceptsLocationAttribute(string Path, int LineNumber, int ColumnNumber)
+                    public InterceptsLocationAttribute(int version, string data)
                     {
-                        _ = Path;
-                        _ = LineNumber;
-                        _ = ColumnNumber;
+                        _ = version;
+                        _ = data;
                     }
                 }
             }
@@ -878,7 +877,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var location in toIntercept.Invocations)
         {
             // locations are 0 based but we need 1 based
-            sb.AppendLine($"        [global::System.Runtime.CompilerServices.InterceptsLocation(@\"{location!.FilePath}\", {location.Position.Line + 1}, {location.Position.Character + 1})]");
+            sb.AppendLine($"""        [global::System.Runtime.CompilerServices.InterceptsLocation({location!.Location.Version}, "{location!.Location.Data}")] // {location.Location.GetDisplayLocation()}""");
         }
 
         sb.AppendLine(
