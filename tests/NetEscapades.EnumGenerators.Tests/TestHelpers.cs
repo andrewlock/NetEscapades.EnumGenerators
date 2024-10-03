@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -14,10 +15,26 @@ namespace NetEscapades.EnumGenerators.Tests;
 
 internal static class TestHelpers
 {
-    public static SettingsTask ScrubGeneratedCodeAttribute(this SettingsTask settings)
+    private static readonly Regex InterceptorAttributeRegex =
+        new(@"InterceptsLocation\(\d+, \"".+\""\)\]");
+
+    public static SettingsTask ScrubExpectedChanges(this SettingsTask settings)
         => settings.ScrubLinesWithReplace(
             line => line.Replace($"""GeneratedCodeAttribute("NetEscapades.EnumGenerators", "{Constants.Version}")""",
-                """GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")"""));
+                """GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")"""))
+            .AddScrubber(builder =>
+            {
+                var value = builder.ToString();
+                var result = InterceptorAttributeRegex.Replace(value, "InterceptsLocation(123, \"REDACTED\")]");
+
+                if (value.Equals(result, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                builder.Clear();
+                builder.Append(result);
+            });
     
     public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(Options opts)
         where T : IIncrementalGenerator, new()

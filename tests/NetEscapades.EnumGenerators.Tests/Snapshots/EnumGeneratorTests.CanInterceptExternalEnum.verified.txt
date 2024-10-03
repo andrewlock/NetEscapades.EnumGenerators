@@ -666,11 +666,11 @@ namespace NetEscapades.EnumGenerators
 {
     static class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PI5gBAABQcm9ncmFtLmNz")] // Program.cs(15,32)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PI9UBAABQcm9ncmFtLmNz")] // Program.cs(16,49)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PIwICAABQcm9ncmFtLmNz")] // Program.cs(17,33)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PIy0CAABQcm9ncmFtLmNz")] // Program.cs(18,31)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(1, "uKD2xKRGX6GAX77IZR6PI+QCAABQcm9ncmFtLmNz")] // Program.cs(23,38)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(15,32)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(16,49)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(17,33)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(18,31)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(23,38)
         public static string StringComparisonExtensionsToString(this global::System.Enum value)
             => System.StringComparisonExtensions.ToStringFast((System.StringComparison)value);
     }
