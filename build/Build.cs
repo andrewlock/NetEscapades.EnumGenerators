@@ -12,7 +12,6 @@ using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
-[CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
 class Build : NukeBuild
 {
@@ -38,19 +37,19 @@ class Build : NukeBuild
     [Parameter] readonly AbsolutePath PackagesDirectory = RootDirectory / "packages";
 
     const string NugetOrgUrl = "https://api.nuget.org/v3/index.json";
-    bool IsTag => GitHubActions.Instance?.GitHubRef?.StartsWith("refs/tags/") ?? false;
+    bool IsTag => GitHubActions.Instance?.Ref?.StartsWith("refs/tags/") ?? false;
 
     Target Clean => _ => _
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(x => x.DeleteDirectory());
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(x => x.DeleteDirectory());
             if (!string.IsNullOrEmpty(PackagesDirectory))
             {
-                EnsureCleanDirectory(PackagesDirectory);
+                PackagesDirectory.CreateOrCleanDirectory();
             }
-            EnsureCleanDirectory(ArtifactsDirectory);
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
@@ -112,8 +111,8 @@ class Build : NukeBuild
 
             if (!string.IsNullOrEmpty(PackagesDirectory))
             {
-                DeleteDirectory(PackagesDirectory / "netescapades.enumgenerators");
-                DeleteDirectory(PackagesDirectory / "netescapades.enumgenerators.attributes");
+                (PackagesDirectory / "netescapades.enumgenerators").DeleteDirectory();
+                (PackagesDirectory / "netescapades.enumgenerators.attributes").DeleteDirectory();
             }
 
             DotNetRestore(s => s
