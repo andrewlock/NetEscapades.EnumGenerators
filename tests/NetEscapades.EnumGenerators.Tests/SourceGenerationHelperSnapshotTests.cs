@@ -30,7 +30,7 @@ public class SourceGenerationHelperSnapshotTests
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
 
         return Verifier.Verify(result)
-            .ScrubGeneratedCodeAttribute()
+            .ScrubExpectedChanges()
             .UseDirectory("Snapshots");
     }
 
@@ -55,7 +55,7 @@ public class SourceGenerationHelperSnapshotTests
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
 
         return Verifier.Verify(result)
-            .ScrubGeneratedCodeAttribute()
+            .ScrubExpectedChanges()
             .UseDirectory("Snapshots");
     }
 }
