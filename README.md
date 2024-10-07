@@ -159,6 +159,86 @@ Note that if you provide a `[Display]` or `[Description]` attribute, the value y
 
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
 
+If you want a `JsonConverter` that uses the generated extensions for efficient serialization and deserialization you can add the `EnumJsonConverter` and `JsonConverter` to the enum. For example:
+```csharp
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+[EnumExtensions]
+[EnumJsonConverter(typeof(MyEnumConverter))]
+[JsonConverter(typeof(MyEnumConverter))]
+public enum MyEnum
+{
+    First,
+    [Display(Name = "2nd")] Second
+}
+```
+
+This will generate a class called `MyEnumConverter`. For example:
+```csharp
+/// <summary>
+/// Converts a <see cref="global::MyEnum" /> to or from JSON.
+/// </summary>
+public sealed class MyEnumConverter : global::System.Text.Json.Serialization.JsonConverter<global::MyEnum>
+{
+    /// <inheritdoc />
+    /// <summary>
+    /// Read and convert the JSON to <see cref="global::MyEnum" />.
+    /// </summary>
+    /// <remarks>
+    /// A converter may throw any Exception, but should throw <see cref="global::System.Text.Json.JsonException" /> when the JSON is invalid.
+    /// </remarks>
+    public override global::MyEnum Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)
+    {
+#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+        char[]? rentedBuffer = null;
+        var bufferLength = reader.HasValueSequence ? checked((int)reader.ValueSequence.Length) : reader.ValueSpan.Length;
+
+        var charBuffer = bufferLength <= 128
+            ? stackalloc char[128]
+            : rentedBuffer = global::System.Buffers.ArrayPool<char>.Shared.Rent(bufferLength);
+
+        var charsWritten = reader.CopyString(charBuffer);
+        global::System.ReadOnlySpan<char> source = charBuffer[..charsWritten];
+        try
+        {
+            if (global::MyEnumExtensions.TryParse(source, out var enumValue, true, false))
+                return enumValue;
+
+            throw new global::System.Text.Json.JsonException($"{source.ToString()} is not a valid value.", null, null, null);
+        }
+        finally
+        {
+            if (rentedBuffer is not null)
+            {
+                charBuffer[..charsWritten].Clear();
+                global::System.Buffers.ArrayPool<char>.Shared.Return(rentedBuffer);
+            }
+        }
+#else
+        var source = reader.GetString();
+        if (global::MyEnumExtensions.TryParse(source, out var enumValue, true, false))
+            return enumValue;
+
+        throw new global::System.Text.Json.JsonException($"{source} is not a valid value.", null, null, null);
+#endif
+    }
+
+    /// <inheritdoc />
+    public override void Write(global::System.Text.Json.Utf8JsonWriter writer, global::MyEnum value, global::System.Text.Json.JsonSerializerOptions options)
+        => writer.WriteStringValue(global::MyEnumExtensions.ToStringFast(value));
+}
+```
+
+_Note: If you've added `JsonStringEnumConverter` to the `JsonSerializerOptions.Converters`, you must add the generated converters manually before adding the `JsonStringEnumConverter`._
+
+You can customize the generated code for the converter by setting the following values:
+- `CaseSensitive` - Indicates if the string representation is case sensitive when deserializing it as an enum.
+- `CamelCase` - Indicates if the value of `PropertyName` should be camel cased.
+- `AllowMatchingMetadataAttribute` - If `true`, considers the value of metadata attributes, otherwise ignores them.
+- `PropertyName` - If set, this value will be used in messages when there are problems with validation and/or serialization/deserialization occurs.
+
+
 ## Embedding the attributes in your project
 
 By default, the `[EnumExtensions]` attributes referenced in your application are contained in an external dll. It is also possible to embed the attributes directly in your project, so they appear in the dll when your project is built. If you wish to do this, you must do two things:

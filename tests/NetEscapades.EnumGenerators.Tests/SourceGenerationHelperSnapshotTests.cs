@@ -58,4 +58,28 @@ public class SourceGenerationHelperSnapshotTests
             .ScrubGeneratedCodeAttribute()
             .UseDirectory("Snapshots");
     }
+
+    [Fact]
+    public Task GeneratesJsonConverterCorrectly()
+    {
+        var value = new JsonConverterToGenerate
+        (
+            camelCase: true,
+            caseSensitive: false,
+            converterNamespace: "Something.Blah",
+            converterType: "ShortNameConverter",
+            extensionName: "ShortNameExtensions",
+            extensionNamespace: "Something.Blah",
+            isPublic: true,
+            propertyName: "ShortName",
+            fullyQualifiedName: "Something.Blah.ShortName",
+            allowMatchingMetadataAttribute: true
+        );
+
+        var sb = new StringBuilder();
+        var result = SourceGenerationHelper.GenerateJsonConverterClass(sb, value);
+
+        return Verifier.Verify(result)
+            .UseDirectory("Snapshots");
+    }
 }

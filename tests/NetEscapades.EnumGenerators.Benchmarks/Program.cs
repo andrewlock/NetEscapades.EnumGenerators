@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using Microsoft.CodeAnalysis.Emit;
@@ -11,6 +13,8 @@ BenchmarkSwitcher
     .Run(args);
 
 [EnumExtensions]
+[EnumJsonConverter(typeof(TestEnumConverter), CaseSensitive = true, AllowMatchingMetadataAttribute = false)]
+[JsonConverter(typeof(TestEnumConverter))]
 public enum TestEnum
 {
     First = 0,
@@ -396,4 +400,73 @@ public class EnumLengthBenchmark
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
     public int EnumLengthProperty() => TestEnumExtensions.Length;
+}
+
+[EnumExtensions]
+[EnumJsonConverter(typeof(TestEnumIgnoreCaseConverter), CaseSensitive = false, AllowMatchingMetadataAttribute = false)]
+[JsonConverter(typeof(TestEnumIgnoreCaseConverter))]
+public enum TestEnumIgnoreCase
+{
+    First = 0,
+    [Display(Name = "2nd")] Second = 1,
+    Third = 2
+}
+
+[MemoryDiagnoser]
+public class DeserializeIgnoreCaseBenchmark
+{
+    private const string EnumsString = """
+            ["second","Third","first","Second"]
+            """;
+
+    private static readonly char[] EnumsChars = EnumsString.ToArray();
+
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+    };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnumIgnoreCase[]? JsonStringEnumConverter() =>
+        JsonSerializer.Deserialize<TestEnumIgnoreCase[]>(EnumsString, JsonSerializerOptions);
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnumIgnoreCase[]? JsonStringEnumConverterSpan() =>
+        JsonSerializer.Deserialize<TestEnumIgnoreCase[]>(EnumsChars.AsSpan(), JsonSerializerOptions);
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnumIgnoreCase[]? EnumJsonConverter() => JsonSerializer.Deserialize<TestEnumIgnoreCase[]>(EnumsString);
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnumIgnoreCase[]? EnumJsonConverterSpan() =>
+        JsonSerializer.Deserialize<TestEnumIgnoreCase[]>(EnumsChars.AsSpan());
+}
+
+[MemoryDiagnoser]
+public class SerializeBenchmark
+{
+    private static readonly TestEnum[] BenchmarkEnums =
+    {
+        TestEnum.Second,
+        TestEnum.Third,
+        TestEnum.First,
+        TestEnum.Second
+    };
+
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        Converters = { new JsonStringEnumConverter() }
+    };
+
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public string JsonStringEnumConverter() => JsonSerializer.Serialize(BenchmarkEnums, JsonSerializerOptions);
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public string EnumJsonConverter() => JsonSerializer.Serialize(BenchmarkEnums);
 }
