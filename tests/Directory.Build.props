@@ -3,5 +3,6 @@
 
   <PropertyGroup>
     <NuGetAudit>false</NuGetAudit>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)../artifacts</ArtifactsPath>
   </PropertyGroup>
 </Project>
