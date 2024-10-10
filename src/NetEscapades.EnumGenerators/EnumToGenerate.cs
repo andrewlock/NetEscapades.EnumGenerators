@@ -40,6 +40,7 @@ public readonly record struct EnumToGenerate
     }
 }
 
+#if INTERCEPTORS
 #pragma warning disable RSEXPERIMENTAL002 // / Experimental interceptable location API
 public record CandidateInvocation(InterceptableLocation Location, string EnumName);
 #pragma warning restore RSEXPERIMENTAL002
@@ -55,3 +56,4 @@ public record MethodToIntercept(
     {
     }
 };
+#endif
