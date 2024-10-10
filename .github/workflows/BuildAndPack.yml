@@ -61,7 +61,7 @@ jobs:
           MSBuildEnableWorkloadResolver: false
       - uses: actions/upload-artifact@v4
         with:
-          name: artifacts-linux
+          name: packages-linux
           path: artifacts/packages
       - uses: actions/upload-artifact@v4
         with:
@@ -100,7 +100,7 @@ jobs:
           MSBuildEnableWorkloadResolver: false
       - uses: actions/upload-artifact@v4
         with:
-          name: artifacts-windows
+          name: packages-windows
           path: artifacts/packages
       - uses: actions/upload-artifact@v4
         with:
@@ -138,8 +138,8 @@ jobs:
           MSBuildEnableWorkloadResolver: false
       - uses: actions/upload-artifact@v4
         with:
-          name: artifacts-macos
-          path: artifacts
+          name: packages-macos
+          path: artifacts/packages
       - uses: actions/upload-artifact@v4
         with:
           name: results-macos
@@ -165,4 +165,4 @@ jobs:
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: "artifacts/**/*.xml"
+          files: "artifacts/**/*.trx"
