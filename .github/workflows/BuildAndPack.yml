@@ -28,9 +28,19 @@ on:
       - '*'
 
 jobs:
-  ubuntu-latest:
-    name: ubuntu-latest
-    runs-on: ubuntu-latest
+  build-and-test:
+    strategy:
+      matrix:
+        include:
+          - os: windows
+            vm: windows-latest
+          - os: linux
+            vm: ubuntu-latest
+          - os: macos
+            vm: macos-13  # latest is arm64, and it breaks a bunch of stuff
+
+    name: ${{ matrix.os}}
+    runs-on: ${{ matrix.vm}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -61,93 +71,16 @@ jobs:
           MSBuildEnableWorkloadResolver: false
       - uses: actions/upload-artifact@v4
         with:
-          name: packages-linux
+          name: packages-${{ matrix.os}}
           path: artifacts/packages
       - uses: actions/upload-artifact@v4
         with:
-          name: results-linux
-          path: artifacts/results
-  windows-latest:
-    name: windows-latest
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            8.0.402
-            7.0.x
-            6.0.x
-            5.0.x
-            3.1.x
-            2.1.x
-      - name: Force globaljson
-        run: dotnet new globaljson --sdk-version "8.0.402" --force
-      - name: Cache .nuke/temp, ~/.nuget/packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            .nuke/temp
-            ~/.nuget/packages
-            !~/.nuget/packages/netescapades.enumgenerators
-            !~/.nuget/packages/netescapades.enumgenerators.attributes
-          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Clean Test TestPackage PushToNuGet'
-        run: ./build.cmd Clean Test TestPackage PushToNuGet
-        env:
-          GithubToken: ${{ secrets.GITHUB_TOKEN }}
-          NuGetToken: ${{ secrets.NUGET_TOKEN }}
-          MSBuildEnableWorkloadResolver: false
-      - uses: actions/upload-artifact@v4
-        with:
-          name: packages-windows
-          path: artifacts/packages
-      - uses: actions/upload-artifact@v4
-        with:
-          name: results-windows
-          path: artifacts/results
-  macOS-latest:
-    name: macos-13 # latest is arm64, and it breaks a bunch of stuff
-    runs-on: macos-13 # latest is arm64, and it breaks a bunch of stuff
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            8.0.402
-            7.0.x
-            6.0.x
-            5.0.x
-            3.1.x
-            2.1.x
-      - name: Force globaljson
-        run: dotnet new globaljson --sdk-version "8.0.402" --force
-      - name: Cache .nuke/temp, ~/.nuget/packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            .nuke/temp
-            ~/.nuget/packages
-            !~/.nuget/packages/netescapades.enumgenerators
-          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Clean Test TestPackage PushToNuGet'
-        run: ./build.cmd Clean Test TestPackage PushToNuGet
-        env:
-          GithubToken: ${{ secrets.GITHUB_TOKEN }}
-          NuGetToken: ${{ secrets.NUGET_TOKEN }}
-          MSBuildEnableWorkloadResolver: false
-      - uses: actions/upload-artifact@v4
-        with:
-          name: packages-macos
-          path: artifacts/packages
-      - uses: actions/upload-artifact@v4
-        with:
-          name: results-macos
+          name: results-${{ matrix.os}}
           path: artifacts/results
 
   publish-test-results:
     name: "Publish Tests Results"
-    needs: [macOS-latest, ubuntu-latest, windows-latest]
+    needs: build-and-test
     runs-on: ubuntu-latest
     permissions:
       checks: write
