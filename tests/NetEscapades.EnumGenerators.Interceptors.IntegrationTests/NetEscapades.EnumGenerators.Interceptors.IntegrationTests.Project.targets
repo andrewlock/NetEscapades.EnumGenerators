@@ -1,5 +1,7 @@
 ﻿<Project>
 
+  <Import Project="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.props" />
+
   <PropertyGroup>
     <AssemblyName>NetEscapades.EnumGenerators.Interceptors.IntegrationTests</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
@@ -9,12 +11,10 @@
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <EnableEnumGeneratorInterceptor>true</EnableEnumGeneratorInterceptor>
-    <InterceptorsNamespaces>$(InterceptorsNamespaces);NetEscapades.EnumGenerators</InterceptorsNamespaces>
   </PropertyGroup>
 
-  <ItemGroup>
-    <CompilerVisibleProperty Include="EnableEnumGeneratorInterceptor" />
-  </ItemGroup>
+  <Import Project="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.targets" />
+
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
