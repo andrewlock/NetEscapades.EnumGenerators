@@ -75,6 +75,9 @@ class Build : NukeBuild
             DotNetTest(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
+                .When(IsServerBuild, x => x
+                    .SetLoggers("trx")
+                    .SetResultsDirectory(ArtifactsDirectory / "results"))
                 .EnableNoBuild()
                 .EnableNoRestore());
         });

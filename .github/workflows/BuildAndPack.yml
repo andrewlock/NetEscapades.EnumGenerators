@@ -61,5 +61,31 @@ jobs:
           MSBuildEnableWorkloadResolver: false
       - uses: actions/upload-artifact@v4
         with:
-          name: artifacts-${{ matrix.os }}
-          path: artifacts
+          name: packages-${{ matrix.os }}
+          path: artifacts/packages
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ matrix.os }}
+          path: artifacts/results
+
+  publish-test-results:
+    name: "Publish Tests Results"
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write # needed unless run with comment_mode: off
+      # contents: read # only needed for private repository
+      # issues: read # only needed for private repository
+    if: always()
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/results
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: "artifacts/**/*.xml"
