@@ -194,7 +194,7 @@ internal static class TestHelpers
 
                 if (node is IEnumerable collection and not string)
                 {
-                    foreach (object element in collection)
+                    foreach (var element in collection)
                     {
                         Visit(element);
                     }
