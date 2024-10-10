@@ -12,6 +12,7 @@
     <PackageTags>enums attribute generator generation codegen codegenerator codegeneration netescapades</PackageTags>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
   </PropertyGroup>
 
   <PropertyGroup>

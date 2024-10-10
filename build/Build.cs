@@ -28,9 +28,8 @@ class Build : NukeBuild
 
     [Solution(GenerateProjects = true)] readonly Solution Solution;
 
-    AbsolutePath SourceDirectory => RootDirectory / "src";
-    AbsolutePath TestsDirectory => RootDirectory / "tests";
-    AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
+    AbsolutePath OutputDirectory => RootDirectory / "artifacts";
+    AbsolutePath ArtifactsDirectory => OutputDirectory / "packages";
 
     [Parameter] readonly string GithubToken;
     [Parameter] readonly string NuGetToken;
@@ -43,13 +42,11 @@ class Build : NukeBuild
         .Before(Restore)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(x => x.DeleteDirectory());
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(x => x.DeleteDirectory());
+            OutputDirectory.CreateOrCleanDirectory();
             if (!string.IsNullOrEmpty(PackagesDirectory))
             {
                 PackagesDirectory.CreateOrCleanDirectory();
             }
-            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _

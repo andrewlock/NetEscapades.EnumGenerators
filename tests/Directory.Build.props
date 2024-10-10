@@ -3,5 +3,17 @@
 
   <PropertyGroup>
     <NuGetAudit>false</NuGetAudit>
+    <ArtifactsPath>$(MSBuildThisFileDirectory)../artifacts</ArtifactsPath>
   </PropertyGroup>
+  <ItemGroup>
+    <!-- Ignore 2.1.0 advisories -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-2xjx-v99w-gqf3" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-3gp9-h8hw-pxpw" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-3w5p-jhp5-c29q" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-5633-f33j-c6f7" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-6px8-22w5-w334" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-g5vf-38cp-4px9" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-vgwq-hfqc-58wv" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-x5qj-9vmx-7g6g" />
+  </ItemGroup>
 </Project>
