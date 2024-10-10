@@ -1,3 +1,6 @@
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
+
 namespace NetEscapades.EnumGenerators;
 
 public readonly record struct EnumToGenerate
@@ -36,3 +39,19 @@ public readonly record struct EnumToGenerate
         IsDisplayAttributeUsed = isDisplayAttributeUsed;
     }
 }
+
+#pragma warning disable RSEXPERIMENTAL002 // / Experimental interceptable location API
+public record CandidateInvocation(InterceptableLocation Location, string EnumName);
+#pragma warning restore RSEXPERIMENTAL002
+
+public record MethodToIntercept(
+    EquatableArray<CandidateInvocation> Invocations,
+    string ExtensionTypeName,
+    string FullyQualifiedName,
+    string EnumNamespace)
+{
+    public MethodToIntercept(EquatableArray<CandidateInvocation> invocations, EnumToGenerate enumToGenerate)
+    : this(invocations, enumToGenerate.Name, enumToGenerate.FullyQualifiedName, enumToGenerate.Namespace)
+    {
+    }
+};

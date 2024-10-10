@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Text;
 
 namespace NetEscapades.EnumGenerators;
@@ -842,6 +843,50 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 }");
         }
 
+        return sb.ToString();
+    }
+
+    public static string GenerateInterceptorsClass(MethodToIntercept toIntercept)
+    {
+        var sb = new StringBuilder(
+            $$"""
+            {{Header}}
+            namespace System.Runtime.CompilerServices
+            {
+                // this type is needed by the compiler to implement interceptors - it doesn't need to
+                // come from the runtime itself, though
+            
+                [global::System.Diagnostics.Conditional("DEBUG")] // not needed post-build, so: evaporate
+                [global::System.AttributeUsage(global::System.AttributeTargets.Method, AllowMultiple = true)]
+                sealed file class InterceptsLocationAttribute : global::System.Attribute
+                {
+                    public InterceptsLocationAttribute(int version, string data)
+                    {
+                        _ = version;
+                        _ = data;
+                    }
+                }
+            }
+            namespace NetEscapades.EnumGenerators
+            {
+                static class EnumInterceptors
+                {
+            
+            """);
+
+        foreach (var location in toIntercept.Invocations)
+        {
+            // locations are 0 based but we need 1 based
+            sb.AppendLine($"""        [global::System.Runtime.CompilerServices.InterceptsLocation({location!.Location.Version}, "{location!.Location.Data}")] // {location.Location.GetDisplayLocation()}""");
+        }
+
+        sb.AppendLine(
+            $$"""
+                      public static string {{toIntercept.ExtensionTypeName}}ToString(this global::System.Enum value)
+                          => {{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.ToStringFast(({{toIntercept.FullyQualifiedName}})value);
+                  }
+              }
+              """);
         return sb.ToString();
     }
 }

@@ -75,6 +75,7 @@ class Build : NukeBuild
             DotNetTest(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
+                .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
                 .EnableNoBuild()
                 .EnableNoRestore());
         });
@@ -104,6 +105,7 @@ class Build : NukeBuild
             {
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_IntegrationTests.Path,
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_Attributes_IntegrationTests.Path,
+                Solution.tests.NetEscapades_EnumGenerators_Nuget_Interceptors_IntegrationTests.Path,
             };
 
             if (!string.IsNullOrEmpty(PackagesDirectory))
