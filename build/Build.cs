@@ -30,6 +30,7 @@ class Build : NukeBuild
 
     AbsolutePath OutputDirectory => RootDirectory / "artifacts";
     AbsolutePath ArtifactsDirectory => OutputDirectory / "packages";
+    AbsolutePath TestResultsDirectory => OutputDirectory / "results";
 
     [Parameter] readonly string GithubToken;
     [Parameter] readonly string NuGetToken;
@@ -77,7 +78,7 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .When(IsServerBuild, x => x
                     .SetLoggers("trx")
-                    .SetResultsDirectory(ArtifactsDirectory / "results"))
+                    .SetResultsDirectory(TestResultsDirectory))
                 .EnableNoBuild()
                 .EnableNoRestore());
         });
