@@ -846,6 +846,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         return sb.ToString();
     }
 
+#if INTERCEPTORS
     public static string GenerateInterceptorsClass(MethodToIntercept toIntercept)
     {
         var sb = new StringBuilder(
@@ -889,4 +890,5 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
               """);
         return sb.ToString();
     }
+#endif
 }

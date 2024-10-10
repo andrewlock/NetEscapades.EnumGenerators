@@ -49,6 +49,7 @@ public class EnumGenerator : IIncrementalGenerator
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
 
         // Interceptor!
+#if INTERCEPTORS
         var interceptionExplicitlyEnabled = context.AnalyzerConfigOptionsProvider
             .Select((x, _) =>
                 x.GlobalOptions.TryGetValue($"build_property.{Constants.EnabledPropertyName}", out var enableSwitch)
@@ -97,6 +98,7 @@ public class EnumGenerator : IIncrementalGenerator
                     spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.CsharpVersionLooLow, location: null));
                 }
             });
+#endif
     }
 
     static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
@@ -296,6 +298,7 @@ public class EnumGenerator : IIncrementalGenerator
             isDisplayAttributeUsed: displayNames?.Count > 0);
     }
 
+#if INTERCEPTORS
     private static bool InterceptorPredicate(SyntaxNode node, CancellationToken ct) =>
         node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name.Identifier.ValueText: "ToString"}};
 
@@ -347,4 +350,5 @@ public class EnumGenerator : IIncrementalGenerator
         var result = SourceGenerationHelper.GenerateInterceptorsClass(toIntercept!);
         spc.AddSource(toIntercept!.ExtensionTypeName + "_Interceptors.g.cs", SourceText.From(result, Encoding.UTF8));
     }
+#endif
 }

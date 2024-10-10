@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RoslynApiVersion>4.4.0</RoslynApiVersion>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <Import Project="NetEscapades.EnumGenerators.Project.targets" />
+
+</Project>
