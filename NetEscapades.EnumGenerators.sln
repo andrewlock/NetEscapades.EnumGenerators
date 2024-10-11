@@ -31,8 +31,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.NetStandard.IntegrationTests", "tests\NetEscapades.EnumGenerators.NetStandard.IntegrationTests\NetEscapades.EnumGenerators.NetStandard.IntegrationTests.csproj", "{7A0F5EA5-DB7B-49E0-827D-946C80175322}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_11", "tests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_11.csproj", "{3B7D934F-61F6-42E9-95D5-BA9E0211CEDF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests\NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests.csproj", "{1A1B48ED-DDE7-4017-A86B-5F7D2FB3A3D0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Roslyn4_04", "src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Roslyn4_04.csproj", "{AB196018-1761-4E61-96EB-DC510117FC20}"
@@ -41,7 +39,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Pack", "src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Pack.csproj", "{F8B8BAC8-5F2D-42DE-8234-16C8C1D11520}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_04", "tests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_04.csproj", "{E390E06A-27EE-49B3-9113-37812B92060A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Interceptors.IntegrationTests", "tests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests.csproj", "{E390E06A-27EE-49B3-9113-37812B92060A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,10 +88,6 @@ Global
 		{7A0F5EA5-DB7B-49E0-827D-946C80175322}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A0F5EA5-DB7B-49E0-827D-946C80175322}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A0F5EA5-DB7B-49E0-827D-946C80175322}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B7D934F-61F6-42E9-95D5-BA9E0211CEDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B7D934F-61F6-42E9-95D5-BA9E0211CEDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B7D934F-61F6-42E9-95D5-BA9E0211CEDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B7D934F-61F6-42E9-95D5-BA9E0211CEDF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A1B48ED-DDE7-4017-A86B-5F7D2FB3A3D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A1B48ED-DDE7-4017-A86B-5F7D2FB3A3D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB196018-1761-4E61-96EB-DC510117FC20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -124,7 +118,6 @@ Global
 		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16} = {AC0DDDB0-385D-43B8-A770-C79EE2077D05}
 		{40B2D8D1-7523-498D-9753-CECC3A44071A} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{7A0F5EA5-DB7B-49E0-827D-946C80175322} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
-		{3B7D934F-61F6-42E9-95D5-BA9E0211CEDF} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{1A1B48ED-DDE7-4017-A86B-5F7D2FB3A3D0} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{AB196018-1761-4E61-96EB-DC510117FC20} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 		{3B52B2FC-007D-4CEE-9EF8-20E94F762850} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
