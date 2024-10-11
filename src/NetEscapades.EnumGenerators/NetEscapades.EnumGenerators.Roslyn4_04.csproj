@@ -5,6 +5,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <Import Project="NetEscapades.EnumGenerators.Project.targets" />
+  <Import Project="NetEscapades.EnumGenerators.Build.targets" />
 
 </Project>

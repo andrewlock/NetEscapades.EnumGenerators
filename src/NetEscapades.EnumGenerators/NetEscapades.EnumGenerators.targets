@@ -1,6 +1,7 @@
 <Project InitialTargets="NetEscapades_EnumGenerators_Interceptors">
   <Target Name="NetEscapades_EnumGenerators_Interceptors">
     <PropertyGroup Condition="'$(EnableEnumGeneratorInterceptor)' == 'true'">
+      <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NetEscapades.EnumGenerators</InterceptorsPreviewNamespaces>
       <InterceptorsNamespaces>$(InterceptorsNamespaces);NetEscapades.EnumGenerators</InterceptorsNamespaces>
       <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NetEscapades.EnumGenerators</InterceptorsPreviewNamespaces>
     </PropertyGroup>

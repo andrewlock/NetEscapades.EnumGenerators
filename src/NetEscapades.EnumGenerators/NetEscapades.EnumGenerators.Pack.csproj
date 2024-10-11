@@ -5,7 +5,7 @@
     <RoslynApiVersion>4.11.0</RoslynApiVersion>
   </PropertyGroup>
 
-  <Import Project="NetEscapades.EnumGenerators.Project.targets" />
+  <Import Project="NetEscapades.EnumGenerators.Build.targets" />
 
   <ItemGroup>
     <ProjectReference Include="..\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Roslyn4_04.csproj" PrivateAssets="All" ReferenceOutputAssembly="false" />
