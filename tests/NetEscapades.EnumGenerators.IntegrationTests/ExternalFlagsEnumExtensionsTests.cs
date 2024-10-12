@@ -5,7 +5,17 @@ using System.Linq;
 using FluentAssertions;
 using Xunit;
 
+#if INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.IntegrationTests;
+#elif NETSTANDARD_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.NetStandard.IntegrationTests;
+#elif NUGET_ATTRS_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests;
+#elif NUGET_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.IntegrationTests;
+#else
+#error Unknown integration tests
+#endif
 
 public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
 {

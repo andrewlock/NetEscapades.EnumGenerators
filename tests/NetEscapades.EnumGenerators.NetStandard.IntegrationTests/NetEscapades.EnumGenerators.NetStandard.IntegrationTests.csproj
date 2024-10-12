@@ -5,6 +5,7 @@
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net48;$(TargetFrameworks)</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);NETSTANDARD_INTEGRATION_TESTS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
