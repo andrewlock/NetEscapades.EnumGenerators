@@ -3,6 +3,7 @@
   <!-- This project is just used to _pack_ the NuGet, containing both the other analyzers -->
   <PropertyGroup>
     <RoslynApiVersion>4.11.0</RoslynApiVersion>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <Import Project="NetEscapades.EnumGenerators.Build.targets" />
@@ -15,15 +16,15 @@
   <ItemGroup>
     <Compile Remove="**\*.cs" />
     <None Include="../../README.md" Pack="true" PackagePath="\" />
-    <None Include="$(ArtifactsPath)\NetEscapades.EnumGenerators.Roslyn4_11\$(AssemblyName).dll" Pack="false"
-          PackagePath="analyzers/dotnet/roslyn4.11/cs" Visible="false" />
-    <None Include="$(ArtifactsPath)\NetEscapades.EnumGenerators.Roslyn4_04\$(AssemblyName).dll" Pack="false"
-          PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="false" PackagePath="analyzers/dotnet/roslyn4.11/cs" Visible="false" />
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="false" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
+    <None Include="$(OutputPath)\..\..\NetEscapades.EnumGenerators.Roslyn4_04\$(ArtifactsPivots)\$(AssemblyName).dll"
+          Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
+    <None Include="$(OutputPath)\..\..\NetEscapades.EnumGenerators.Roslyn4_11\$(ArtifactsPivots)\$(AssemblyName).dll"
+          Pack="true" PackagePath="analyzers/dotnet/roslyn4.11/cs" Visible="false" />
 
-    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
-    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/roslyn4.11/cs" Visible="false" />
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true"
+          PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true"
+          PackagePath="analyzers/dotnet/roslyn4.11/cs" Visible="false" />
 
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
