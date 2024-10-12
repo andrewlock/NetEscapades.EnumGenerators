@@ -1,10 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using Xunit;
 
-#if NUGET_INTERCEPTOR_TESTS
+#if INTERCEPTORS && NUGET_INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
-#elif INTERCEPTOR_TESTS
+#elif INTERCEPTORS && INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests;
+#elif NUGET_INTERCEPTOR_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests.Roslyn4_4;
+#elif INTERCEPTOR_TESTS
+namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_4;
 #else
 #error Unknown project combination
 #endif

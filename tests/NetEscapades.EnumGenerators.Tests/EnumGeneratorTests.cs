@@ -6,7 +6,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using VerifyXunit;
 using Xunit;
 
+#if INTERCEPTORS
 namespace NetEscapades.EnumGenerators.Tests;
+#else
+namespace NetEscapades.EnumGenerators.Tests.Roslyn4_04;
+#endif
 
 [UsesVerify]
 public class EnumGeneratorTests

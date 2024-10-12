@@ -1,7 +1,11 @@
 using FluentAssertions;
 using Xunit;
 
+#if INTERCEPTORS
 namespace NetEscapades.EnumGenerators.Tests;
+#else
+namespace NetEscapades.EnumGenerators.Tests.Roslyn4_04;
+#endif
 
 public class EquatableArrayTests
 {
