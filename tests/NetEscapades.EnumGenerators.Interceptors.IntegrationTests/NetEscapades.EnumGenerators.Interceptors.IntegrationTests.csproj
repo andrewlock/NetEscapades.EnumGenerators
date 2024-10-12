@@ -9,6 +9,7 @@
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <EnableEnumGeneratorInterceptor>true</EnableEnumGeneratorInterceptor>
     <InterceptorsNamespaces>$(InterceptorsNamespaces);NetEscapades.EnumGenerators</InterceptorsNamespaces>
+    <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NetEscapades.EnumGenerators</InterceptorsPreviewNamespaces>
   </PropertyGroup>
 
   <ItemGroup>
