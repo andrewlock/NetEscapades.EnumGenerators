@@ -131,6 +131,9 @@ class Build : NukeBuild
                 .SetConfiguration(Configuration)
                 .EnableNoBuild()
                 .EnableNoRestore()
+                .When(IsServerBuild, x => x
+                    .SetLoggers("trx")
+                    .SetResultsDirectory(TestResultsDirectory))
                 .CombineWith(projectFiles, (s, p) => s.SetProjectFile(p)));
         });
 

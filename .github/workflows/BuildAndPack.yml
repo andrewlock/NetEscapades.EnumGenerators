@@ -99,3 +99,5 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: "artifacts/**/*.trx"
+          json_thousands_separator: ","
+          check_run_annotations_branch: "*"

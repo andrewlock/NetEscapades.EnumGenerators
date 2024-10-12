@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);NETSTANDARD_INTEGRATION_TESTS</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
