@@ -4,6 +4,7 @@
   <PropertyGroup>
     <NuGetAudit>false</NuGetAudit>
     <ArtifactsPath>$(MSBuildThisFileDirectory)../artifacts</ArtifactsPath>
+    <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
   </PropertyGroup>
   <ItemGroup>
     <!-- Ignore 2.1.0 advisories -->
