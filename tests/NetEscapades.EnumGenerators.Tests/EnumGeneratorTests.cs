@@ -637,7 +637,7 @@ namespace Foo
         var (diagnostics, output) =
             TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
 
-        Assert.Empty(diagnostics);
+        diagnostics.Should().ContainSingle(x => x.Id == DiagnosticHelper.SdkVersionTooLow.Id);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 

@@ -49,7 +49,6 @@ public class EnumGenerator : IIncrementalGenerator
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
 
         // Interceptor!
-#if INTERCEPTORS
         var interceptionExplicitlyEnabled = context.AnalyzerConfigOptionsProvider
             .Select((x, _) =>
                 x.GlobalOptions.TryGetValue($"build_property.{Constants.EnabledPropertyName}", out var enableSwitch)
@@ -62,6 +61,7 @@ public class EnumGenerator : IIncrementalGenerator
             .Combine(csharpSufficient)
             .WithTrackingName(TrackingNames.Settings);
 
+#if INTERCEPTORS
         var interceptionEnabled = settings
             .Select((x, _) => x.Left && x.Right);
 
@@ -90,15 +90,24 @@ public class EnumGenerator : IIncrementalGenerator
 
         context.RegisterImplementationSourceOutput(externalInterceptions,
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
+#endif
         context.RegisterImplementationSourceOutput(settings,
             static (spc, args) =>
             {
-                if (args.Left && !args.Right)
+                var explicitlyEnabled = args.Left;
+#if INTERCEPTORS
+                var csharpSufficient = args.Right;
+                if (explicitlyEnabled && !csharpSufficient)
                 {
                     spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.CsharpVersionLooLow, location: null));
                 }
-            });
+#else
+                if (explicitlyEnabled)
+                {
+                    spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.SdkVersionTooLow, location: null));
+                }
 #endif
+            });
     }
 
     static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
