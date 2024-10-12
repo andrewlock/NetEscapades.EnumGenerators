@@ -32,7 +32,6 @@ class Build : NukeBuild
     AbsolutePath ArtifactsDirectory => OutputDirectory / "packages";
     AbsolutePath TestResultsDirectory => OutputDirectory / "results";
 
-    [Parameter] readonly string GithubToken;
     [Parameter] readonly string NuGetToken;
     [Parameter] readonly AbsolutePath PackagesDirectory = RootDirectory / "packages";
 
