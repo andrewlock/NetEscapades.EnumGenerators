@@ -1,10 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using Xunit;
 
-#if NUGET_INTERCEPTOR_TESTS
+#if INTERCEPTORS && NUGET_INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
-#elif INTERCEPTOR_TESTS
+#elif INTERCEPTORS && INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests;
+#elif NUGET_INTERCEPTOR_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests.Roslyn4_4;
+#elif INTERCEPTOR_TESTS
+namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_4;
 #else
 #error Unknown project combination
 #endif
@@ -22,13 +26,16 @@ public enum EnumWithDisplayNameInNamespace
 
 public class InterceptorTests
 {
+#if INTERCEPTORS
     [Fact]
+#else
+    [Fact(Skip = "Interceptors are supported in this SDK")]
+#endif
     public void CallingToStringIsIntercepted()
     {
         var result1 = EnumWithDisplayNameInNamespace.Second.ToString();
         var result2 = EnumWithDisplayNameInNamespace.Second.ToStringFast();
         Assert.Equal(result1, result2);
-
 
         AssertValue(EnumWithDisplayNameInNamespace.First);
         AssertValue(EnumWithDisplayNameInNamespace.Second);
@@ -42,5 +49,15 @@ public class InterceptorTests
             Assert.Equal(fast, toString);
         }
     }
-    
+#if INTERCEPTORS
+    [Fact(Skip = "Interceptors are supported in this SDK")]
+#else
+    [Fact]
+#endif
+    public void CallingToStringIsNotIntercepted()
+    {
+        var result1 = EnumWithDisplayNameInNamespace.Second.ToString();
+        var result2 = EnumWithDisplayNameInNamespace.Second.ToStringFast();
+        Assert.NotEqual(result1, result2);
+    }
 }

@@ -38,7 +38,8 @@ jobs:
             vm: ubuntu-latest
           - os: macos
             vm: macos-13  # latest is arm64, and it breaks a bunch of stuff
-
+    env:
+      MSBuildEnableWorkloadResolver: false
     name: ${{ matrix.os}}
     runs-on: ${{ matrix.vm}}
     steps:
@@ -47,13 +48,14 @@ jobs:
         with:
           dotnet-version: |
             8.0.402
+            8.0.110
             7.0.x
             6.0.x
             5.0.x
             3.1.x
             2.1.x
-      - name: Force globaljson
-        run: dotnet new globaljson --sdk-version "8.0.402" --force
+
+      - run: dotnet new globaljson --sdk-version "8.0.402" --force
       - name: Cache .nuke/temp, ~/.nuget/packages
         uses: actions/cache@v3
         with:
@@ -63,12 +65,16 @@ jobs:
             !~/.nuget/packages/netescapades.enumgenerators
             !~/.nuget/packages/netescapades.enumgenerators.attributes
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Clean Test TestPackage PushToNuGet'
-        run: ./build.cmd Clean Test TestPackage PushToNuGet
+
+      - name: Run './build.cmd Clean Test TestPackage'
+        run: ./build.cmd Clean Test TestPackage
+
+      - run: dotnet new globaljson --sdk-version "8.0.110" --force
+      - name: Run './build.cmd TestPackage PushToNuGet --skip'
+        run: ./build.cmd TestPackage PushToNuGet --skip
         env:
-          GithubToken: ${{ secrets.GITHUB_TOKEN }}
           NuGetToken: ${{ secrets.NUGET_TOKEN }}
-          MSBuildEnableWorkloadResolver: false
+
       - uses: actions/upload-artifact@v4
         with:
           name: packages-${{ matrix.os}}

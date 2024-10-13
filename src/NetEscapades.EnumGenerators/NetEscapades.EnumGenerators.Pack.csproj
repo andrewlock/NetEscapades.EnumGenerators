@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- This project is just used to _pack_ the NuGet, containing both the other analyzers -->
+  <PropertyGroup>
+    <RoslynApiVersion>4.11.0</RoslynApiVersion>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <Import Project="NetEscapades.EnumGenerators.Build.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Roslyn4_04.csproj" PrivateAssets="All" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Roslyn4_11.csproj" PrivateAssets="All" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="**\*.cs" />
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="$(OutputPath)\..\..\NetEscapades.EnumGenerators.Roslyn4_04\$(ArtifactsPivots)\$(AssemblyName).dll"
+          Pack="true" PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
+    <None Include="$(OutputPath)\..\..\NetEscapades.EnumGenerators.Roslyn4_11\$(ArtifactsPivots)\$(AssemblyName).dll"
+          Pack="true" PackagePath="analyzers/dotnet/roslyn4.11/cs" Visible="false" />
+
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true"
+          PackagePath="analyzers/dotnet/roslyn4.4/cs" Visible="false" />
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true"
+          PackagePath="analyzers/dotnet/roslyn4.11/cs" Visible="false" />
+
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\net451" Visible="false" />
+    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\net451" Visible="false" />
+
+    <None Include="NetEscapades.EnumGenerators.props" Pack="true" PackagePath="build" Visible="false" />
+    <Content Include="NetEscapades.EnumGenerators.targets" Pack="true" PackagePath="build" Visible="false" />
+  </ItemGroup>
+
+
+</Project>

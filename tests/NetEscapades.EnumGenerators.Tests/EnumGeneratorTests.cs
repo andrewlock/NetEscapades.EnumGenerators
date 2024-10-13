@@ -6,7 +6,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using VerifyXunit;
 using Xunit;
 
+#if INTERCEPTORS
 namespace NetEscapades.EnumGenerators.Tests;
+#else
+namespace NetEscapades.EnumGenerators.Tests.Roslyn4_04;
+#endif
 
 [UsesVerify]
 public class EnumGeneratorTests
@@ -340,6 +344,7 @@ namespace Foo
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
+#if INTERCEPTORS
     [Fact]
     public Task CanInterceptEnum()
     {
@@ -601,6 +606,46 @@ namespace Foo
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
+#else
+    [Fact]
+    public Task CanNotInterceptEnum()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions]
+                internal enum MyEnum
+                {
+                    First = 0,
+                    Second = 1,
+                }
+                
+                public class InnerClass
+                {
+                    public MyEnum _field = default;
+                    public MyEnum Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = MyEnum.Second;
+                        var var1 = myValue.ToString();
+                        var var2 = MyEnum.Second.ToString();
+                        var var3 = Property.ToString();
+                        var var4 = _field.ToString();
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+
+        diagnostics.Should().ContainSingle(x => x.Id == DiagnosticHelper.SdkVersionTooLow.Id);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+#endif
 
     [Fact]
     public Task CanGenerateForExternalEnum()
