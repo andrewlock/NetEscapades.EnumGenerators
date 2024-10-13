@@ -107,3 +107,10 @@ jobs:
           files: "artifacts/**/*.trx"
           json_thousands_separator: ","
           check_run_annotations_branch: "*"
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        with:
+          name: Test results
+          path: artifacts/**/*.trx
+          reporter: dotnet-trx
