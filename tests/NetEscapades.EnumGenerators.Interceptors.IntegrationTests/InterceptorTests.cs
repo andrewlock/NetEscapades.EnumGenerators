@@ -1,8 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using Xunit;
 
+#if NUGET_INTERCEPTOR_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
+#elif INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests;
-
+#else
+#error Unknown project combination
+#endif
 
 [EnumExtensions]
 public enum EnumWithDisplayNameInNamespace
