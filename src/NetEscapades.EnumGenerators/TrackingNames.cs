@@ -8,5 +8,8 @@ public class TrackingNames
     public const string InitialExtraction = nameof(InitialExtraction);
     public const string InitialExternalExtraction = nameof(InitialExternalExtraction);
     public const string RemovingNulls = nameof(RemovingNulls);
-
+    public const string InterceptedLocations = nameof(InterceptedLocations);
+    public const string Settings = nameof(Settings);
+    public const string EnumInterceptions = nameof(EnumInterceptions);
+    public const string ExternalInterceptions = nameof(ExternalInterceptions);
 }

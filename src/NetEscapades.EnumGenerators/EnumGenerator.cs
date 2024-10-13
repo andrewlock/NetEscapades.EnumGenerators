@@ -1,6 +1,9 @@
+using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
 
 namespace NetEscapades.EnumGenerators;
@@ -44,6 +47,56 @@ public class EnumGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(externalEnums,
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
+
+        // Interceptor!
+        var interceptionExplicitlyEnabled = context.AnalyzerConfigOptionsProvider
+            .Select((x, _) =>
+                x.GlobalOptions.TryGetValue($"build_property.{Constants.EnabledPropertyName}", out var enableSwitch)
+                && enableSwitch.Equals("true", StringComparison.Ordinal));
+
+        var csharpSufficient = context.CompilationProvider
+            .Select((x,_) => x is CSharpCompilation { LanguageVersion: LanguageVersion.Default or >= LanguageVersion.CSharp11 });
+
+        var settings = interceptionExplicitlyEnabled
+            .Combine(csharpSufficient)
+            .WithTrackingName(TrackingNames.Settings);
+
+        var interceptionEnabled = settings
+            .Select((x, _) => x.Left && x.Right);
+
+        var locations = context.SyntaxProvider
+            .CreateSyntaxProvider(InterceptorPredicate, InterceptorParser)
+            .Combine(interceptionEnabled)
+            .Where(x => x.Right && x.Left is not null)
+            .Select((x, _) => x.Left!)
+            .Collect()
+            .WithTrackingName(TrackingNames.InterceptedLocations);
+
+        var enumInterceptions = enumsToGenerate
+            .Combine(locations)
+            .Select(FilterInterceptorCandidates!)
+            .Where(x => x is not null)
+            .WithTrackingName(TrackingNames.EnumInterceptions);
+
+        var externalInterceptions = externalEnums
+            .Combine(locations)
+            .Select(FilterInterceptorCandidates!)
+            .Where(x => x is not null)
+            .WithTrackingName(TrackingNames.ExternalInterceptions);
+
+        context.RegisterImplementationSourceOutput(enumInterceptions,
+            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
+
+        context.RegisterImplementationSourceOutput(externalInterceptions,
+            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
+        context.RegisterImplementationSourceOutput(settings,
+            static (spc, args) =>
+            {
+                if (args.Left && !args.Right)
+                {
+                    spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.CsharpVersionLooLow, location: null));
+                }
+            });
     }
 
     static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
@@ -241,5 +294,57 @@ public class EnumGenerator : IIncrementalGenerator
             hasFlags: hasFlags,
             names: members,
             isDisplayAttributeUsed: displayNames?.Count > 0);
+    }
+
+    private static bool InterceptorPredicate(SyntaxNode node, CancellationToken ct) =>
+        node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name.Identifier.ValueText: "ToString"}};
+
+    private static CandidateInvocation? InterceptorParser(GeneratorSyntaxContext ctx, CancellationToken ct)
+    {
+        if (ctx.Node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name: { } nameSyntax}} invocation
+            && ctx.SemanticModel.GetOperation(ctx.Node, ct) is IInvocationOperation targetOperation
+            && targetOperation.TargetMethod is {Name : "ToString", ContainingType: {Name: "Enum", ContainingNamespace: {Name: "System", ContainingNamespace.IsGlobalNamespace: true}}}
+            && targetOperation.Instance?.Type is { } type
+#pragma warning disable RSEXPERIMENTAL002 // / Experimental interceptable location API
+            && ctx.SemanticModel.GetInterceptableLocation(invocation) is { } location)
+#pragma warning restore RSEXPERIMENTAL002
+        {
+            return new CandidateInvocation(location, type.ToString());
+        }
+
+        return null;
+    }
+
+    private MethodToIntercept? FilterInterceptorCandidates(
+        (EnumToGenerate Enum, ImmutableArray<CandidateInvocation> Candidates) arg1, 
+        CancellationToken ct)
+    {
+        if (arg1.Candidates.IsDefaultOrEmpty)
+        {
+            return default;
+        }
+
+        List<CandidateInvocation>? results = null;
+        foreach (var candidate in arg1.Candidates)
+        {
+            if (arg1.Enum.FullyQualifiedName.Equals(candidate.EnumName, StringComparison.Ordinal))
+            {
+                results ??= new();
+                results.Add(candidate);
+            }
+        }
+
+        if (results is null)
+        {
+            return null;
+        }
+
+        return new(new(results.ToArray()), arg1.Enum);
+    }
+
+    private static void ExecuteInterceptors(MethodToIntercept? toIntercept, SourceProductionContext spc)
+    {
+        var result = SourceGenerationHelper.GenerateInterceptorsClass(toIntercept!);
+        spc.AddSource(toIntercept!.ExtensionTypeName + "_Interceptors.g.cs", SourceText.From(result, Encoding.UTF8));
     }
 }

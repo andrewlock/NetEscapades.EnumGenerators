@@ -76,6 +76,7 @@ class Build : NukeBuild
             DotNetTest(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
+                .When(IsServerBuild, x => x.SetProperty("ContinuousIntegrationBuild", "true"))
                 .When(IsServerBuild, x => x
                     .SetLoggers("trx")
                     .SetResultsDirectory(TestResultsDirectory))
@@ -108,6 +109,7 @@ class Build : NukeBuild
             {
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_IntegrationTests.Path,
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_Attributes_IntegrationTests.Path,
+                Solution.tests.NetEscapades_EnumGenerators_Nuget_Interceptors_IntegrationTests.Path,
             };
 
             if (!string.IsNullOrEmpty(PackagesDirectory))
