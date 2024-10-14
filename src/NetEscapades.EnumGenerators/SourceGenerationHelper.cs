@@ -870,25 +870,63 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
             namespace NetEscapades.EnumGenerators
             {
-                static class EnumInterceptors
+                static file class EnumInterceptors
                 {
-            
+
             """);
 
+        bool toStringIntercepted = false;
         foreach (var location in toIntercept.Invocations)
         {
-            // locations are 0 based but we need 1 based
-            sb.AppendLine($"""        [global::System.Runtime.CompilerServices.InterceptsLocation({location!.Location.Version}, "{location!.Location.Data}")] // {location.Location.GetDisplayLocation()}""");
+            if(location!.Target == InterceptorTarget.ToString)
+            {
+                toStringIntercepted = true;
+                sb.AppendLine(GetInterceptorAttr(location));                
+            }
         }
 
+        if(toStringIntercepted)
+        {
+            sb.AppendLine(
+                $$"""
+                          public static string {{toIntercept.ExtensionTypeName}}ToString(this global::System.Enum value)
+                              => global::{{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.ToStringFast((global::{{toIntercept.FullyQualifiedName}})value);
+
+                  """);
+        }
+        
+        bool hasFlagIntercepted = false;
+        foreach (var location in toIntercept.Invocations)
+        {
+            if(location!.Target == InterceptorTarget.HasFlag)
+            {
+                hasFlagIntercepted = true;
+                sb.AppendLine(GetInterceptorAttr(location));                
+            }
+        }
+
+        if(hasFlagIntercepted)
+        {
+            sb.AppendLine(
+                $$"""
+                          public static bool {{toIntercept.ExtensionTypeName}}HasFlag(this global::System.Enum value, global::System.Enum flag)
+                              => global::{{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.HasFlagFast((global::{{toIntercept.FullyQualifiedName}})value, (global::{{toIntercept.FullyQualifiedName}})flag);
+
+                  """);
+        }
+        
         sb.AppendLine(
             $$"""
-                      public static string {{toIntercept.ExtensionTypeName}}ToString(this global::System.Enum value)
-                          => {{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.ToStringFast(({{toIntercept.FullyQualifiedName}})value);
                   }
               }
               """);
         return sb.ToString();
+
+        static string GetInterceptorAttr(CandidateInvocation location)
+        {
+            // locations are 0 based but we need 1 based
+            return $"""        [global::System.Runtime.CompilerServices.InterceptsLocation({location.Location.Version}, "{location.Location.Data}")] // {location.Location.GetDisplayLocation()}""";
+        }
     }
 #endif
 }

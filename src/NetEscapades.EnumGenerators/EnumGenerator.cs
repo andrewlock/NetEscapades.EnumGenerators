@@ -309,19 +309,25 @@ public class EnumGenerator : IIncrementalGenerator
 
 #if INTERCEPTORS
     private static bool InterceptorPredicate(SyntaxNode node, CancellationToken ct) =>
-        node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name.Identifier.ValueText: "ToString"}};
+        node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name.Identifier.ValueText: "ToString" or "HasFlag"}};
 
     private static CandidateInvocation? InterceptorParser(GeneratorSyntaxContext ctx, CancellationToken ct)
     {
         if (ctx.Node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name: { } nameSyntax}} invocation
             && ctx.SemanticModel.GetOperation(ctx.Node, ct) is IInvocationOperation targetOperation
-            && targetOperation.TargetMethod is {Name : "ToString", ContainingType: {Name: "Enum", ContainingNamespace: {Name: "System", ContainingNamespace.IsGlobalNamespace: true}}}
+            && targetOperation.TargetMethod is {Name : "ToString" or "HasFlag", ContainingType: {Name: "Enum", ContainingNamespace: {Name: "System", ContainingNamespace.IsGlobalNamespace: true}}}
             && targetOperation.Instance?.Type is { } type
 #pragma warning disable RSEXPERIMENTAL002 // / Experimental interceptable location API
             && ctx.SemanticModel.GetInterceptableLocation(invocation) is { } location)
 #pragma warning restore RSEXPERIMENTAL002
         {
-            return new CandidateInvocation(location, type.ToString());
+            var targetToIntercept = targetOperation.TargetMethod.Name switch
+            {
+                "ToString" => InterceptorTarget.ToString,
+                "HasFlag" => InterceptorTarget.HasFlag,
+                _ => default, // can't be reached
+            };
+            return new CandidateInvocation(location, type.ToString(), targetToIntercept);
         }
 
         return null;
