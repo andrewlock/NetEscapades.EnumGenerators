@@ -672,7 +672,7 @@ namespace NetEscapades.EnumGenerators
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(18,31)
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(23,38)
         public static string StringComparisonExtensionsToString(this global::System.Enum value)
-            => System.StringComparisonExtensions.ToStringFast((System.StringComparison)value);
+            => global::System.StringComparisonExtensions.ToStringFast((global::System.StringComparison)value);
 
     }
 }

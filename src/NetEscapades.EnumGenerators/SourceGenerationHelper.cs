@@ -890,7 +890,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             sb.AppendLine(
                 $$"""
                           public static string {{toIntercept.ExtensionTypeName}}ToString(this global::System.Enum value)
-                              => {{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.ToStringFast(({{toIntercept.FullyQualifiedName}})value);
+                              => global::{{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.ToStringFast((global::{{toIntercept.FullyQualifiedName}})value);
 
                   """);
         }
@@ -910,7 +910,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             sb.AppendLine(
                 $$"""
                           public static bool {{toIntercept.ExtensionTypeName}}HasFlag(this global::System.Enum value, global::System.Enum flag)
-                              => {{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.HasFlagFast(({{toIntercept.FullyQualifiedName}})value, ({{toIntercept.FullyQualifiedName}})flag);
+                              => global::{{toIntercept.EnumNamespace}}.{{toIntercept.ExtensionTypeName}}.HasFlagFast((global::{{toIntercept.FullyQualifiedName}})value, (global::{{toIntercept.FullyQualifiedName}})flag);
 
                   """);
         }

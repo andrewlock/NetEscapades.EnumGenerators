@@ -599,7 +599,7 @@ namespace NetEscapades.EnumGenerators
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(21,33)
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(22,31)
         public static string MyEnumExtensionsToString(this global::System.Enum value)
-            => MyTestNameSpace.MyEnumExtensions.ToStringFast((MyTestNameSpace.MyEnum)value);
+            => global::MyTestNameSpace.MyEnumExtensions.ToStringFast((global::MyTestNameSpace.MyEnum)value);
 
     }
 }

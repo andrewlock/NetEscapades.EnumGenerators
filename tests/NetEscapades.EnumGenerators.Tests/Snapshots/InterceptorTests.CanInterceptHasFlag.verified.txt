@@ -629,7 +629,7 @@ namespace NetEscapades.EnumGenerators
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(24,33)
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(25,31)
         public static bool MyEnumExtensionsHasFlag(this global::System.Enum value, global::System.Enum flag)
-            => MyTestNameSpace.MyEnumExtensions.HasFlagFast((MyTestNameSpace.MyEnum)value, (MyTestNameSpace.MyEnum)flag);
+            => global::MyTestNameSpace.MyEnumExtensions.HasFlagFast((global::MyTestNameSpace.MyEnum)value, (global::MyTestNameSpace.MyEnum)flag);
 
     }
 }
