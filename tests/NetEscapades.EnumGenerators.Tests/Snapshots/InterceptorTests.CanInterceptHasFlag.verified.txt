@@ -98,7 +98,7 @@ namespace MyTestNameSpace
         /// The number of members in the enum.
         /// This is a non-distinct count of defined names.
         /// </summary>
-        public const int Length = 2;
+        public const int Length = 3;
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
@@ -113,8 +113,21 @@ namespace MyTestNameSpace
             {
                 global::MyTestNameSpace.MyEnum.First => nameof(global::MyTestNameSpace.MyEnum.First),
                 global::MyTestNameSpace.MyEnum.Second => nameof(global::MyTestNameSpace.MyEnum.Second),
+                global::MyTestNameSpace.MyEnum.Third => nameof(global::MyTestNameSpace.MyEnum.Third),
                 _ => value.ToString(),
             };
+
+        /// <summary>
+        /// Determines whether one or more bit fields are set in the current instance.
+        /// Equivalent to calling <see cref="global::System.Enum.HasFlag" /> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <param name="flag">The flag to check for</param>
+        /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
+        /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
+        /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
+        public static bool HasFlagFast(this global::MyTestNameSpace.MyEnum value, global::MyTestNameSpace.MyEnum flag)
+            => flag == 0 ? true : (value & flag) == flag;
 
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
@@ -126,6 +139,7 @@ namespace MyTestNameSpace
             {
                 global::MyTestNameSpace.MyEnum.First => true,
                 global::MyTestNameSpace.MyEnum.Second => true,
+                global::MyTestNameSpace.MyEnum.Third => true,
                 _ => false,
             };
 
@@ -151,6 +165,7 @@ namespace MyTestNameSpace
             {
                 nameof(global::MyTestNameSpace.MyEnum.First) => true,
                 nameof(global::MyTestNameSpace.MyEnum.Second) => true,
+                nameof(global::MyTestNameSpace.MyEnum.Third) => true,
                 _ => false,
             };
         }
@@ -179,6 +194,7 @@ namespace MyTestNameSpace
             {
                 ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.First).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -325,6 +341,9 @@ namespace MyTestNameSpace
                 case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.OrdinalIgnoreCase):
                     value = global::MyTestNameSpace.MyEnum.Second;
                     return true;
+                case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Third), global::System.StringComparison.OrdinalIgnoreCase):
+                    value = global::MyTestNameSpace.MyEnum.Third;
+                    return true;
                 case string s when int.TryParse(name, out var val):
                     value = (global::MyTestNameSpace.MyEnum)val;
                     return true;
@@ -350,6 +369,9 @@ namespace MyTestNameSpace
                     return true;
                 case nameof(global::MyTestNameSpace.MyEnum.Second):
                     value = global::MyTestNameSpace.MyEnum.Second;
+                    return true;
+                case nameof(global::MyTestNameSpace.MyEnum.Third):
+                    value = global::MyTestNameSpace.MyEnum.Third;
                     return true;
                 case string s when int.TryParse(name, out var val):
                     value = (global::MyTestNameSpace.MyEnum)val;
@@ -495,6 +517,9 @@ namespace MyTestNameSpace
                 case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::MyTestNameSpace.MyEnum.Second;
                     return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    result = global::MyTestNameSpace.MyEnum.Third;
+                    return true;
                 case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::MyTestNameSpace.MyEnum)numericResult;
                     return true;
@@ -520,6 +545,9 @@ namespace MyTestNameSpace
                 case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Second).AsSpan(), global::System.StringComparison.Ordinal):
                     result = global::MyTestNameSpace.MyEnum.Second;
                     return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::MyTestNameSpace.MyEnum.Third).AsSpan(), global::System.StringComparison.Ordinal):
+                    result = global::MyTestNameSpace.MyEnum.Third;
+                    return true;
                 case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::MyTestNameSpace.MyEnum)numericResult;
                     return true;
@@ -543,6 +571,7 @@ namespace MyTestNameSpace
             {
                 global::MyTestNameSpace.MyEnum.First,
                 global::MyTestNameSpace.MyEnum.Second,
+                global::MyTestNameSpace.MyEnum.Third,
             };
         }
 
@@ -559,6 +588,7 @@ namespace MyTestNameSpace
             {
                 nameof(global::MyTestNameSpace.MyEnum.First),
                 nameof(global::MyTestNameSpace.MyEnum.Second),
+                nameof(global::MyTestNameSpace.MyEnum.Third),
             };
         }
     }
@@ -594,12 +624,12 @@ namespace NetEscapades.EnumGenerators
 {
     static file class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(19,32)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(20,38)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(21,33)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(22,31)
-        public static string MyEnumExtensionsToString(this global::System.Enum value)
-            => MyTestNameSpace.MyEnumExtensions.ToStringFast((MyTestNameSpace.MyEnum)value);
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(22,32)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(23,38)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(24,33)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(25,31)
+        public static bool MyEnumExtensionsHasFlag(this global::System.Enum value, global::System.Enum flag)
+            => MyTestNameSpace.MyEnumExtensions.HasFlagFast((MyTestNameSpace.MyEnum)value, (MyTestNameSpace.MyEnum)flag);
 
     }
 }

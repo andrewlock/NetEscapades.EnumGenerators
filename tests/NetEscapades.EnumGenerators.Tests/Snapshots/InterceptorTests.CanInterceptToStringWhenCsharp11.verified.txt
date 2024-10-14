@@ -592,7 +592,7 @@ namespace System.Runtime.CompilerServices
 }
 namespace NetEscapades.EnumGenerators
 {
-    static class EnumInterceptors
+    static file class EnumInterceptors
     {
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(19,32)
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(20,38)
@@ -600,6 +600,7 @@ namespace NetEscapades.EnumGenerators
         [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(22,31)
         public static string MyEnumExtensionsToString(this global::System.Enum value)
             => MyTestNameSpace.MyEnumExtensions.ToStringFast((MyTestNameSpace.MyEnum)value);
+
     }
 }
 

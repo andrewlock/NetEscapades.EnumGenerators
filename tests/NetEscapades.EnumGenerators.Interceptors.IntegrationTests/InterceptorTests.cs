@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
 
@@ -22,6 +23,15 @@ public enum EnumWithDisplayNameInNamespace
     Second = 1,
 
     Third = 2,
+}
+
+[EnumExtensions]
+[Flags]
+public enum FlagsEnum
+{
+    None = 0,
+    First = 1,
+    Second = 2,
 }
 
 public class InterceptorTests
@@ -49,6 +59,22 @@ public class InterceptorTests
             Assert.Equal(fast, toString);
         }
     }
+
+    [Fact]
+    public void CallingHasFlagIsIntercepted()
+    {
+        // This doesn't _actually_ test interception, because can't
+        // differentiate with built-in version, it's only really verifying the generated code compiles
+        var value1 = FlagsEnum.First;
+        var result2 = FlagsEnum.Second.HasFlag(value1);
+        Assert.False(result2);
+        Assert.True(value1.HasFlag(FlagsEnum.None));
+
+        var combined = FlagsEnum.First | FlagsEnum.Second;
+        Assert.True(combined.HasFlag(FlagsEnum.First));
+        Assert.False(FlagsEnum.First.HasFlag(combined));
+    }
+
 #if INTERCEPTORS
     [Fact(Skip = "Interceptors are supported in this SDK")]
 #else
