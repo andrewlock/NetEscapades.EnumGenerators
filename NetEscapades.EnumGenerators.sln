@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_build", "build\_build.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Benchmarks", "tests\NetEscapades.EnumGenerators.Benchmarks\NetEscapades.EnumGenerators.Benchmarks.csproj", "{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Attributes", "src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj", "{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests\NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests.csproj", "{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{AC0DDDB0-385D-43B8-A770-C79EE2077D05}"
@@ -40,6 +38,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Pack", "src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Pack.csproj", "{F8B8BAC8-5F2D-42DE-8234-16C8C1D11520}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Interceptors.IntegrationTests", "tests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests\NetEscapades.EnumGenerators.Interceptors.IntegrationTests.csproj", "{E390E06A-27EE-49B3-9113-37812B92060A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.NetStandard.Interceptors.IntegrationTests", "tests\NetEscapades.EnumGenerators.NetStandard.Interceptors.IntegrationTests\NetEscapades.EnumGenerators.NetStandard.Interceptors.IntegrationTests.csproj", "{B7C9B52C-94C5-4729-9C5E-F49B3A112130}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Attributes", "src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj", "{EA85D7C6-8691-47B9-92D1-DCDA98E16D02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.NetStandard", "tests\NetEscapades.EnumGenerators.Nuget.NetStandard\NetEscapades.EnumGenerators.Nuget.NetStandard.csproj", "{0011A3F4-BBFC-40CE-B8A3-A23FDAC60DE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests", "tests\NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests\NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests.csproj", "{99AC1B59-04D1-4B19-957B-D7DE4D19A7CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,10 +76,6 @@ Global
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -106,6 +108,18 @@ Global
 		{E390E06A-27EE-49B3-9113-37812B92060A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E390E06A-27EE-49B3-9113-37812B92060A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E390E06A-27EE-49B3-9113-37812B92060A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7C9B52C-94C5-4729-9C5E-F49B3A112130}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C9B52C-94C5-4729-9C5E-F49B3A112130}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C9B52C-94C5-4729-9C5E-F49B3A112130}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C9B52C-94C5-4729-9C5E-F49B3A112130}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA85D7C6-8691-47B9-92D1-DCDA98E16D02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA85D7C6-8691-47B9-92D1-DCDA98E16D02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA85D7C6-8691-47B9-92D1-DCDA98E16D02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA85D7C6-8691-47B9-92D1-DCDA98E16D02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0011A3F4-BBFC-40CE-B8A3-A23FDAC60DE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0011A3F4-BBFC-40CE-B8A3-A23FDAC60DE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99AC1B59-04D1-4B19-957B-D7DE4D19A7CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99AC1B59-04D1-4B19-957B-D7DE4D19A7CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FC6F4934-4512-45DB-ABDA-5FAD96742B73} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
@@ -113,7 +127,6 @@ Global
 		{F03831B0-630E-4B0E-BD25-AFE975B35E69} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{328EFEB4-1D15-453E-9929-6FD0FACF3512} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{C7CFC4AC-BC5B-4F07-BE93-4F245D5547D9} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
-		{8B6E63F3-EB6A-4A72-86B1-A49E53C62305} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 		{E7D66FE9-65BC-4DC8-AC86-5C5BE10D8E61} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{BDF8C04B-D0E3-4FF5-82C3-E8FDF3916C16} = {AC0DDDB0-385D-43B8-A770-C79EE2077D05}
 		{40B2D8D1-7523-498D-9753-CECC3A44071A} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
@@ -123,5 +136,9 @@ Global
 		{3B52B2FC-007D-4CEE-9EF8-20E94F762850} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{F8B8BAC8-5F2D-42DE-8234-16C8C1D11520} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 		{E390E06A-27EE-49B3-9113-37812B92060A} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
+		{B7C9B52C-94C5-4729-9C5E-F49B3A112130} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
+		{EA85D7C6-8691-47B9-92D1-DCDA98E16D02} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
+		{0011A3F4-BBFC-40CE-B8A3-A23FDAC60DE7} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
+		{99AC1B59-04D1-4B19-957B-D7DE4D19A7CD} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 	EndGlobalSection
 EndGlobal

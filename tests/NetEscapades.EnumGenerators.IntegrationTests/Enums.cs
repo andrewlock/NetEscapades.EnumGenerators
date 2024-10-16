@@ -16,6 +16,14 @@ namespace System
         Second = 1,
         Third = 2,
     }
+
+    [EnumExtensions(IsInterceptable = false)]
+    public enum NonInterceptableEnum
+    {
+        First = 0,
+        [Display(Name = "2nd")] Second = 1,
+        Third = 2,
+    }
 }
 
 namespace Foo
@@ -33,6 +41,7 @@ namespace Foo
     public enum EnumInFoo
     {
         First = 0,
+        [Display(Name = "2nd")]
         Second = 1,
         Third = 2,
     }
@@ -51,6 +60,8 @@ namespace NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests
 namespace NetEscapades.EnumGenerators.Nuget.IntegrationTests
 #elif NUGET_INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests
+#elif NUGET_NETSTANDARD_INTERCEPTOR_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests
 #else
 #error Unknown integration tests
 #endif
@@ -109,6 +120,7 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests
     [Flags]
     public enum FlagsEnum
     {
+        None = 0,
         First = 1 << 0,
         Second = 1 << 1,
         Third = 1 << 2,
@@ -116,11 +128,22 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests
         ThirdAndFourth = Third | Fourth,
     }
 
+    [EnumExtensions]
     public enum StringTesting
     {
         [System.ComponentModel.Description("Quotes \"")]   Quotes,
         [System.ComponentModel.Description(@"Literal Quotes """)]   LiteralQuotes,
         [System.ComponentModel.Description("Backslash \\")]   Backslash,
         [System.ComponentModel.Description(@"LiteralBackslash \")]   BackslashLiteral,
+    }
+
+    [EnumExtensions(ExtensionClassName="SomeExtension", ExtensionClassNamespace = "SomethingElse")]
+    public enum EnumWithExtensionInOtherNamespace
+    {
+        First = 0,
+
+        [Display(Name = "2nd")] Second = 1,
+
+        Third = 2,
     }
 }
