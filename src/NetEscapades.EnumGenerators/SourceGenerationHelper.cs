@@ -46,6 +46,14 @@ namespace NetEscapades.EnumGenerators
         /// will be StatusCodesExtensions
         /// </summary>
         public string? ExtensionClassName { get; set; }
+
+        /// <summary>
+        /// By default, when interceptors are enabled for a project, any
+        /// interceptable usages of the enum will be replaced by usages of
+        /// the extension method in this project. To disable interception of
+        /// the enum in this project, set <see cref=""IsInterceptable""/> to <c>false</c>.
+        /// </summary>
+        public bool IsInterceptable { get; set; } = true;
     }
 
     
@@ -75,6 +83,14 @@ namespace NetEscapades.EnumGenerators
         /// will be StatusCodesExtensions
         /// </summary>
         public string? ExtensionClassName { get; set; }
+
+        /// <summary>
+        /// By default, when interceptors are enabled for a project, any
+        /// interceptable usages of the enum will be replaced by usages of
+        /// the extension method in this project. To disable interception of
+        /// the enum in this project, set <see cref=""IsInterceptable""/> to <c>false</c>.
+        /// </summary>
+        public bool IsInterceptable { get; set; } = true;
     }
 }
 #endif

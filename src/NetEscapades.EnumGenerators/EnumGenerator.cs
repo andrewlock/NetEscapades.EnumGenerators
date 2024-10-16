@@ -74,12 +74,14 @@ public class EnumGenerator : IIncrementalGenerator
             .WithTrackingName(TrackingNames.InterceptedLocations);
 
         var enumInterceptions = enumsToGenerate
+            .Where(x => x.IsInterceptable)
             .Combine(locations)
             .Select(FilterInterceptorCandidates!)
             .Where(x => x is not null)
             .WithTrackingName(TrackingNames.EnumInterceptions);
 
         var externalInterceptions = externalEnums
+            .Where(x => x.IsInterceptable)
             .Combine(locations)
             .Select(FilterInterceptorCandidates!)
             .Where(x => x is not null)
@@ -138,6 +140,7 @@ public class EnumGenerator : IIncrementalGenerator
             }
 
             bool hasFlags = false;
+            var isInterceptable = true;
             string? name = null;
             string? nameSpace = null;
 
@@ -155,6 +158,12 @@ public class EnumGenerator : IIncrementalGenerator
                 {
                     name = n;
                 }
+
+                if (namedArgument.Key == "IsInterceptable"
+                    && namedArgument.Value.Value is false)
+                {
+                    isInterceptable = false;
+                }
             }
 
             foreach (var attrData in enumSymbol.GetAttributes())
@@ -168,7 +177,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
             }
 
-            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
+            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags, isInterceptable);
             if (enumToGenerate is not null)
             {
                 enums ??= new();
@@ -193,6 +202,7 @@ public class EnumGenerator : IIncrementalGenerator
         ct.ThrowIfCancellationRequested();
 
         var hasFlags = false;
+        var isInterceptable = true;
         string? nameSpace = null;
         string? name = null;
 
@@ -226,13 +236,20 @@ public class EnumGenerator : IIncrementalGenerator
                 {
                     name = n;
                 }
+
+                if (namedArgument.Key == "IsInterceptable"
+                    && namedArgument.Value.Value is false)
+                {
+                    isInterceptable = false;
+                }
             }
         }
 
-        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
+        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags, isInterceptable);
     }
 
-    static EnumToGenerate? TryExtractEnumSymbol(INamedTypeSymbol enumSymbol, string? name, string? nameSpace, bool hasFlags)
+    static EnumToGenerate? TryExtractEnumSymbol(INamedTypeSymbol enumSymbol, string? name, string? nameSpace,
+        bool hasFlags, bool isInterceptable)
     {
         name ??= enumSymbol.Name + "Extensions";
         nameSpace ??= enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
@@ -304,7 +321,8 @@ public class EnumGenerator : IIncrementalGenerator
             isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
             hasFlags: hasFlags,
             names: members,
-            isDisplayAttributeUsed: displayNames?.Count > 0);
+            isDisplayAttributeUsed: displayNames?.Count > 0,
+            isInterceptable: isInterceptable);
     }
 
 #if INTERCEPTORS
