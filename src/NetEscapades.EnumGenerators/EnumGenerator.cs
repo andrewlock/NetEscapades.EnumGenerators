@@ -15,6 +15,7 @@ public class EnumGenerator : IIncrementalGenerator
     private const string DescriptionAttribute = "System.ComponentModel.DescriptionAttribute";
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
     private const string ExternalEnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute`1";
+    private const string InterceptableAttribute = "NetEscapades.EnumGenerators.InterceptableAttribute`1";
     private const string FlagsAttribute = "System.FlagsAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -25,7 +26,7 @@ public class EnumGenerator : IIncrementalGenerator
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 EnumExtensionsAttribute,
-                predicate: (node, _) => node is EnumDeclarationSyntax,
+                predicate: static (node, _) => node is EnumDeclarationSyntax,
                 transform: GetTypeToGenerate)
             .WithTrackingName(TrackingNames.InitialExtraction)
             .Where(static m => m is not null)
@@ -36,12 +37,12 @@ public class EnumGenerator : IIncrementalGenerator
             .SyntaxProvider
             .ForAttributeWithMetadataName(
                 ExternalEnumExtensionsAttribute,
-                predicate: (node, _) => node is CompilationUnitSyntax,
-                transform: GetExternalTypeToGenerate)
+                predicate: static (node, _) => node is CompilationUnitSyntax,
+                transform: static (context1, ct) => GetEnumToGenerateFromGenericAssemblyAttribute(context1, ct, "EnumExtensionsAttribute", "EnumExtensions"))
             .Where(static m => m is not null)
             .SelectMany(static (m, _) => m!.Value)
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
-        
+
         context.RegisterSourceOutput(enumsToGenerate,
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
 
@@ -62,6 +63,17 @@ public class EnumGenerator : IIncrementalGenerator
             .WithTrackingName(TrackingNames.Settings);
 
 #if INTERCEPTORS
+        // TODO: add an analyzer for these for old roslyn
+        var interceptableEnums = context
+            .SyntaxProvider
+            .ForAttributeWithMetadataName(
+                InterceptableAttribute,
+                predicate: (node, _) => node is CompilationUnitSyntax,
+                transform: (context1, ct) => GetEnumToGenerateFromGenericAssemblyAttribute(context1, ct, "InterceptableAttribute", "Interceptable"))
+            .Where(static m => m is not null)
+            .SelectMany(static (m, _) => m!.Value)
+            .WithTrackingName(TrackingNames.InitialExternalExtraction);
+
         var interceptionEnabled = settings
             .Select((x, _) => x.Left && x.Right);
 
@@ -87,10 +99,19 @@ public class EnumGenerator : IIncrementalGenerator
             .Where(x => x is not null)
             .WithTrackingName(TrackingNames.ExternalInterceptions);
 
+        var additionalInterceptions = interceptableEnums
+            .Combine(locations)
+            .Select(FilterInterceptorCandidates!)
+            .Where(x => x is not null)
+            .WithTrackingName(TrackingNames.AdditionalInterceptions);
+
         context.RegisterImplementationSourceOutput(enumInterceptions,
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
 
         context.RegisterImplementationSourceOutput(externalInterceptions,
+            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
+
+        context.RegisterImplementationSourceOutput(additionalInterceptions,
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
 #endif
         context.RegisterImplementationSourceOutput(settings,
@@ -119,13 +140,14 @@ public class EnumGenerator : IIncrementalGenerator
         context.AddSource(enumToGenerate.Name + "_EnumExtensions.g.cs", SourceText.From(result, Encoding.UTF8));    
     }
 
-    static EquatableArray<EnumToGenerate>? GetExternalTypeToGenerate(GeneratorAttributeSyntaxContext context, CancellationToken ct)
+    static EquatableArray<EnumToGenerate>? GetEnumToGenerateFromGenericAssemblyAttribute(
+        GeneratorAttributeSyntaxContext context, CancellationToken ct, string fullAttributeName, string shortAttributeName)
     {
         List<EnumToGenerate>? enums = null;
         foreach (AttributeData attribute in context.Attributes)
         {
-            if (!((attribute.AttributeClass?.Name == "EnumExtensionsAttribute" ||
-                   attribute.AttributeClass?.Name == "EnumExtensions") &&
+            if (!((attribute.AttributeClass?.Name == fullAttributeName ||
+                   attribute.AttributeClass?.Name == shortAttributeName) &&
                   attribute.AttributeClass.IsGenericType &&
                   attribute.AttributeClass.TypeArguments.Length == 1))
             {
