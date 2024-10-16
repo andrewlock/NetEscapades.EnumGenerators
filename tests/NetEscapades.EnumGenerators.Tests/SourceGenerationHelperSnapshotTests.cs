@@ -28,7 +28,8 @@ public class SourceGenerationHelperSnapshotTests
                 ("Second", new EnumValueOption(null, false)),
             },
             hasFlags: false,
-            isDisplayAttributeUsed: false);
+            isDisplayAttributeUsed: false,
+            isInterceptable: true);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
@@ -53,7 +54,8 @@ public class SourceGenerationHelperSnapshotTests
                 ("Second", new EnumValueOption(null, false)),
             },
             hasFlags: true,
-            isDisplayAttributeUsed: false);
+            isDisplayAttributeUsed: false,
+            isInterceptable: true);
 
         var sb = new StringBuilder();
         var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);

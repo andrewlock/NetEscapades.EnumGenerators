@@ -167,6 +167,77 @@ public class InterceptorTests
     }
 
     [Fact]
+    public Task DoesNotInterceptEnumMarkedAsNotInterceptable()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions(IsInterceptable = false)]
+                internal enum MyEnum
+                {
+                    First = 0,
+                    Second = 1,
+                    Third = 2,
+                }
+
+                [EnumExtensions]
+                [Flags]
+                internal enum AnotherEnum
+                {
+                    First = 0,
+                    Second = 1,
+                    Third = 2,
+                }
+
+                internal enum YetAnotherEnum
+                {
+                    First = 0,
+                    Second = 1,
+                    Third = 2,
+                }
+                
+                public class InnerClass
+                {
+                    public void MyTest()
+                    {
+                        var result = AnotherEnum.First.ToString();
+                        AssertValue(MyEnum.First);
+                        AssertValue(AnotherEnum.Second);
+                        AssertValue(MyEnum.Third);
+                        var result2 = YetAnotherEnum.First.ToString();
+                        AssertValue(YetAnotherEnum.Second);
+                        
+                        var hasValue = AnotherEnum.Second.HasFlag(AnotherEnum.First);
+                        
+                        void AssertValue(MyEnum value)
+                        {
+                            var toString = value.ToString();
+                        }
+
+                        void AssertValue(AnotherEnum value)
+                        {
+                            var toString = value.ToString();
+                        }
+
+                        void AssertValue(YetAnotherEnum value)
+                        {
+                            var toString = value.ToString();
+                        }
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) = 
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
     public Task CanInterceptExternalEnumToString()
     {
         const string input =
@@ -190,6 +261,49 @@ public class InterceptorTests
                         var var3 = Property.ToString();
                         var var4 = _field.ToString();
                         AssertValue(StringComparison.OrdinalIgnoreCase);
+
+                        void AssertValue(StringComparison value)
+                        {
+                            var toString = value.ToString();
+                        }
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) = 
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task DoesNotInterceptExternalEnumMarkedAsNotInterceptable()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+            
+            [assembly:EnumExtensions<StringComparison>()]
+            [assembly:NetEscapades.EnumGenerators.EnumExtensions<DateTimeKind>(IsInterceptable = false)]
+
+            namespace MyTestNameSpace
+            {
+                public class InnerClass
+                {
+                    public StringComparison _field = default;
+                    public StringComparison Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = StringComparison.Ordinal;
+                        var var1 = myValue.ToString();
+                        var var2 = StringComparison.Ordinal.ToString();
+                        var var3 = Property.ToString();
+                        var var4 = _field.ToString();
+                        AssertValue(StringComparison.OrdinalIgnoreCase);
+                        
+                        var var5 = DateTimeKind.Unspecified.ToString();
 
                         void AssertValue(StringComparison value)
                         {

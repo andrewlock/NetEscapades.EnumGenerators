@@ -18,6 +18,7 @@ public readonly record struct EnumToGenerate
     public readonly EquatableArray<(string Key, EnumValueOption Value)> Names;
 
     public readonly bool IsDisplayAttributeUsed;
+    public readonly bool IsInterceptable;
 
     public EnumToGenerate(
         string name,
@@ -27,7 +28,8 @@ public readonly record struct EnumToGenerate
         bool isPublic,
         List<(string, EnumValueOption)> names,
         bool hasFlags,
-        bool isDisplayAttributeUsed)
+        bool isDisplayAttributeUsed,
+        bool isInterceptable)
     {
         Name = name;
         Namespace = ns;
@@ -37,6 +39,7 @@ public readonly record struct EnumToGenerate
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
         IsDisplayAttributeUsed = isDisplayAttributeUsed;
+        IsInterceptable = isInterceptable;
     }
 }
 
