@@ -81,6 +81,14 @@ namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_4
         BackslashLiteral,
     }
 
+    [EnumExtensions(IsInterceptable = false)]
+    public enum NonInterceptableEnum
+    {
+        First = 0,
+        [Display(Name = "2nd")] Second = 1,
+        Third = 2,
+    }
+
     public class InterceptorTests
     {
 #if INTERCEPTORS
@@ -181,6 +189,14 @@ namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_4
             var combined = FileShare.Read | FileShare.Write;
             Assert.True(combined.HasFlag(FileShare.Read));
             Assert.False(FileShare.Read.HasFlag(combined));
+        }
+
+        [Fact]
+        public void CallingNonInterceptableEnumIsNotIntercepted()
+        {
+            var result1 = NonInterceptableEnum.Second.ToString();
+            var result2 = NonInterceptableEnum.Second.ToStringFast();
+            Assert.NotEqual(result1, result2);
         }
 
 #if INTERCEPTORS
