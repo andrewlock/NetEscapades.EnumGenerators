@@ -278,6 +278,48 @@ public class InterceptorTests
     }
 
     [Fact]
+    public Task CanInterceptUsingInterceptableAttributeToString()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+            
+            [assembly:EnumExtensions<StringComparison>(IsInterceptable = false)]
+            [assembly:Interceptable<StringComparison>]
+
+            namespace MyTestNameSpace
+            {
+                public class InnerClass
+                {
+                    public StringComparison _field = default;
+                    
+                    public StringComparison Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = StringComparison.Ordinal;
+                        var var1 = myValue.ToString();
+                        var var2 = StringComparison.Ordinal.ToString();
+                        var var3 = Property.ToString();
+                        var var4 = _field.ToString();
+                        AssertValue(StringComparison.OrdinalIgnoreCase);
+
+                        void AssertValue(StringComparison value)
+                        {
+                            var toString = value.ToString();
+                        }
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) = 
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
     public Task DoesNotInterceptExternalEnumMarkedAsNotInterceptable()
     {
         const string input =
