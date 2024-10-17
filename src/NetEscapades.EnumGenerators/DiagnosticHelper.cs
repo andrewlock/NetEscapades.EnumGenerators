@@ -11,6 +11,7 @@ public static class DiagnosticHelper
         category: "Requirements",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
+
     public static readonly DiagnosticDescriptor SdkVersionTooLow = new(
         id: "NEEG002",
         title: ".NET SDK version too low",
