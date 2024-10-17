@@ -14,10 +14,9 @@ public static class DiagnosticHelper
 
     public static readonly DiagnosticDescriptor SdkVersionTooLow = new(
         id: "NEEG002",
-        title: ".NET SDK version too low",
+        title: "Current .NET SDK version does not support interceptors",
         messageFormat: "Interceptors require a .NET SDK version of at least 8.0.400",
         category: "Requirements",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
-
 }
