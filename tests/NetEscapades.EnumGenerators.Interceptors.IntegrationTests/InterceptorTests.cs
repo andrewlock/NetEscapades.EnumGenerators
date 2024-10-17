@@ -142,7 +142,7 @@ public class InterceptorTests
 #else
     [Fact]
 #endif
-    public void CallingToStringIsNotIntercepted()
+    public void CallingToStringIsNotInterceptedWhenNotSupportedBySdk()
     {
         var result1 = EnumWithDisplayNameInNamespace.Second.ToString();
         var result2 = EnumWithDisplayNameInNamespace.Second.ToStringFast();
