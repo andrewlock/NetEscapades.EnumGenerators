@@ -62,17 +62,25 @@ public class EnumGenerator : IIncrementalGenerator
             .Combine(csharpSufficient)
             .WithTrackingName(TrackingNames.Settings);
 
-#if INTERCEPTORS
-        // TODO: add an analyzer for these for old roslyn
-        var interceptableEnums = context
+        var interceptableEnumsAndLocations = context
             .SyntaxProvider
             .ForAttributeWithMetadataName(
                 InterceptableAttribute,
-                predicate: (node, _) => node is CompilationUnitSyntax,
-                transform: (context1, ct) => GetEnumToGenerateFromGenericAssemblyAttribute(context1, ct, "InterceptableAttribute", "Interceptable"))
-            .Where(static m => m is not null)
-            .SelectMany(static (m, _) => m!.Value)
-            .WithTrackingName(TrackingNames.InitialExternalExtraction);
+                predicate: static (node, _) => node is CompilationUnitSyntax,
+                transform: static (ctx, ct) =>
+                {
+                    var enumToIntercept = GetEnumToGenerateFromGenericAssemblyAttribute(ctx, ct, "InterceptableAttribute",
+                        "Interceptable");
+                    var location = LocationInfo.CreateFrom(ctx.TargetNode.GetLocation());
+                    return (enumToIntercept, location);
+                })
+            .WithTrackingName(TrackingNames.InitialInterceptable);
+
+#if INTERCEPTORS
+        var interceptableEnums = interceptableEnumsAndLocations
+            .Where(static m => m.enumToIntercept is not null)
+            .SelectMany(static (m, _) => m.enumToIntercept!.Value)
+            .WithTrackingName(TrackingNames.InitialInterceptableOnly);
 
         var interceptionEnabled = settings
             .Select((x, _) => x.Left && x.Right);
@@ -105,14 +113,20 @@ public class EnumGenerator : IIncrementalGenerator
             .Where(x => x is not null)
             .WithTrackingName(TrackingNames.AdditionalInterceptions);
 
-        context.RegisterImplementationSourceOutput(enumInterceptions,
+        context.RegisterSourceOutput(enumInterceptions,
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
 
-        context.RegisterImplementationSourceOutput(externalInterceptions,
+        context.RegisterSourceOutput(externalInterceptions,
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
 
-        context.RegisterImplementationSourceOutput(additionalInterceptions,
+        context.RegisterSourceOutput(additionalInterceptions,
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
+#else
+        context.RegisterSourceOutput(interceptableEnumsAndLocations,
+            static (spc, enumAndlocation) =>
+            {
+                spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.SdkVersionTooLow, location: enumAndlocation.location.ToLocation()));
+            });
 #endif
         context.RegisterImplementationSourceOutput(settings,
             static (spc, args) =>
