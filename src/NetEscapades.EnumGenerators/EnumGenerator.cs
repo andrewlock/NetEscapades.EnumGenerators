@@ -331,9 +331,7 @@ public class EnumGenerator : IIncrementalGenerator
                     {
                         // found display attribute, all done
                         // Handle cases where contains a quote or a backslash
-                        displayName = dn
-                            .Replace(@"\", @"\\")
-                            .Replace("\"", "\\\"");
+                        displayName = dn;
                         goto addDisplayName;
                     }
                 }

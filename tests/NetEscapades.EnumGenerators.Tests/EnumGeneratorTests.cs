@@ -332,6 +332,7 @@ namespace Foo
                [System.ComponentModel.Description(@"Literal Quotes """)]   LiteralQuotes,
                [System.ComponentModel.Description("Backslash \\")]   Backslash,
                [System.ComponentModel.Description(@"LiteralBackslash \")]   BackslashLiteral,
+               [System.ComponentModel.Description("New\nLine")]   NewLine,
             }
             """";
 
