@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace NetEscapades.EnumGenerators;
 
@@ -176,13 +177,13 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 ").Append(fullyQualifiedName).Append('.').Append(member.Key)
                 .Append(" => ");
 
-            if (member.Value.DisplayName is null)
+            if (member.Value.DisplayName is { } dn)
             {
-                sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                sb.Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(',');
             }
             else
             {
-                sb.Append('"').Append(member.Value.DisplayName).Append(@""",");
+                sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
             }
         }
 
@@ -258,10 +259,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                if (member.Value is { DisplayName: {} dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    """).Append(member.Value.DisplayName).Append(@""" => true,");
+                    ").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(@" => true,");
                 }
             }
 
@@ -325,10 +326,12 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), global::System.StringComparison.Ordinal) => true,");
+                    ReadOnlySpan<char> current when current.Equals(")
+                        .Append(SymbolDisplay.FormatLiteral(dn, quote: true))
+                        .Append(@".AsSpan(), global::System.StringComparison.Ordinal) => true,");
                 }
             }
 
@@ -506,11 +509,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case string s when s.Equals(""").Append(member.Value.DisplayName).Append(
-                        @""", global::System.StringComparison.OrdinalIgnoreCase):
+                    case string s when s.Equals(").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
+                        @", global::System.StringComparison.OrdinalIgnoreCase):
                         value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }
@@ -565,10 +568,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case """).Append(member.Value.DisplayName).Append(@""":
+                    case ").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(@":
                         value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }
@@ -743,11 +746,11 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(
-                    @""".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
+                    @".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }
@@ -801,10 +804,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value.DisplayName is not null && member.Value.IsDisplayNameTheFirstPresence)
+                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(""").Append(member.Value.DisplayName).Append(@""".AsSpan(), global::System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(@".AsSpan(), global::System.StringComparison.Ordinal):
                         result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }

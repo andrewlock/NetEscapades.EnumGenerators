@@ -24,7 +24,7 @@ namespace Test
         /// The number of members in the enum.
         /// This is a non-distinct count of defined names.
         /// </summary>
-        public const int Length = 4;
+        public const int Length = 5;
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Test.StringTesting"/> value.
@@ -41,6 +41,7 @@ namespace Test
                 global::Test.StringTesting.LiteralQuotes => "Literal Quotes \"",
                 global::Test.StringTesting.Backslash => "Backslash \\",
                 global::Test.StringTesting.BackslashLiteral => "LiteralBackslash \\",
+                global::Test.StringTesting.NewLine => "New\nLine",
                 _ => value.ToString(),
             };
 
@@ -56,6 +57,7 @@ namespace Test
                 global::Test.StringTesting.LiteralQuotes => true,
                 global::Test.StringTesting.Backslash => true,
                 global::Test.StringTesting.BackslashLiteral => true,
+                global::Test.StringTesting.NewLine => true,
                 _ => false,
             };
 
@@ -86,6 +88,7 @@ namespace Test
                     "Literal Quotes \"" => true,
                     "Backslash \\" => true,
                     "LiteralBackslash \\" => true,
+                    "New\nLine" => true,
                     _ => false,
                 };
             }
@@ -102,6 +105,7 @@ namespace Test
                 nameof(global::Test.StringTesting.LiteralQuotes) => true,
                 nameof(global::Test.StringTesting.Backslash) => true,
                 nameof(global::Test.StringTesting.BackslashLiteral) => true,
+                nameof(global::Test.StringTesting.NewLine) => true,
                 _ => false,
             };
         }
@@ -135,6 +139,7 @@ namespace Test
                     ReadOnlySpan<char> current when current.Equals("Literal Quotes \"".AsSpan(), global::System.StringComparison.Ordinal) => true,
                     ReadOnlySpan<char> current when current.Equals("Backslash \\".AsSpan(), global::System.StringComparison.Ordinal) => true,
                     ReadOnlySpan<char> current when current.Equals("LiteralBackslash \\".AsSpan(), global::System.StringComparison.Ordinal) => true,
+                    ReadOnlySpan<char> current when current.Equals("New\nLine".AsSpan(), global::System.StringComparison.Ordinal) => true,
                     _ => false,
                 };
             }
@@ -150,6 +155,7 @@ namespace Test
                 ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.LiteralQuotes).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.Backslash).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.BackslashLiteral).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.NewLine).AsSpan(), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -303,6 +309,9 @@ namespace Test
                     case string s when s.Equals("LiteralBackslash \\", global::System.StringComparison.OrdinalIgnoreCase):
                         value = global::Test.StringTesting.BackslashLiteral;
                         return true;
+                    case string s when s.Equals("New\nLine", global::System.StringComparison.OrdinalIgnoreCase):
+                        value = global::Test.StringTesting.NewLine;
+                        return true;
                     default:
                         break;
                 };
@@ -321,6 +330,9 @@ namespace Test
                     return true;
                 case string s when s.Equals(nameof(global::Test.StringTesting.BackslashLiteral), global::System.StringComparison.OrdinalIgnoreCase):
                     value = global::Test.StringTesting.BackslashLiteral;
+                    return true;
+                case string s when s.Equals(nameof(global::Test.StringTesting.NewLine), global::System.StringComparison.OrdinalIgnoreCase):
+                    value = global::Test.StringTesting.NewLine;
                     return true;
                 case string s when int.TryParse(name, out var val):
                     value = (global::Test.StringTesting)val;
@@ -355,6 +367,9 @@ namespace Test
                     case "LiteralBackslash \\":
                         value = global::Test.StringTesting.BackslashLiteral;
                         return true;
+                    case "New\nLine":
+                        value = global::Test.StringTesting.NewLine;
+                        return true;
                     default:
                         break;
                 };
@@ -373,6 +388,9 @@ namespace Test
                     return true;
                 case nameof(global::Test.StringTesting.BackslashLiteral):
                     value = global::Test.StringTesting.BackslashLiteral;
+                    return true;
+                case nameof(global::Test.StringTesting.NewLine):
+                    value = global::Test.StringTesting.NewLine;
                     return true;
                 case string s when int.TryParse(name, out var val):
                     value = (global::Test.StringTesting)val;
@@ -526,6 +544,9 @@ namespace Test
                     case ReadOnlySpan<char> current when current.Equals("LiteralBackslash \\".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = global::Test.StringTesting.BackslashLiteral;
                         return true;
+                    case ReadOnlySpan<char> current when current.Equals("New\nLine".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                        result = global::Test.StringTesting.NewLine;
+                        return true;
                     default:
                         break;
                 };
@@ -544,6 +565,9 @@ namespace Test
                     return true;
                 case ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.BackslashLiteral).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::Test.StringTesting.BackslashLiteral;
+                    return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.NewLine).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    result = global::Test.StringTesting.NewLine;
                     return true;
                 case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::Test.StringTesting)numericResult;
@@ -578,6 +602,9 @@ namespace Test
                     case ReadOnlySpan<char> current when current.Equals("LiteralBackslash \\".AsSpan(), global::System.StringComparison.Ordinal):
                         result = global::Test.StringTesting.BackslashLiteral;
                         return true;
+                    case ReadOnlySpan<char> current when current.Equals("New\nLine".AsSpan(), global::System.StringComparison.Ordinal):
+                        result = global::Test.StringTesting.NewLine;
+                        return true;
                     default:
                         break;
                 };
@@ -596,6 +623,9 @@ namespace Test
                     return true;
                 case ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.BackslashLiteral).AsSpan(), global::System.StringComparison.Ordinal):
                     result = global::Test.StringTesting.BackslashLiteral;
+                    return true;
+                case ReadOnlySpan<char> current when current.Equals(nameof(global::Test.StringTesting.NewLine).AsSpan(), global::System.StringComparison.Ordinal):
+                    result = global::Test.StringTesting.NewLine;
                     return true;
                 case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::Test.StringTesting)numericResult;
@@ -622,6 +652,7 @@ namespace Test
                 global::Test.StringTesting.LiteralQuotes,
                 global::Test.StringTesting.Backslash,
                 global::Test.StringTesting.BackslashLiteral,
+                global::Test.StringTesting.NewLine,
             };
         }
 
@@ -640,6 +671,7 @@ namespace Test
                 nameof(global::Test.StringTesting.LiteralQuotes),
                 nameof(global::Test.StringTesting.Backslash),
                 nameof(global::Test.StringTesting.BackslashLiteral),
+                nameof(global::Test.StringTesting.NewLine),
             };
         }
     }
