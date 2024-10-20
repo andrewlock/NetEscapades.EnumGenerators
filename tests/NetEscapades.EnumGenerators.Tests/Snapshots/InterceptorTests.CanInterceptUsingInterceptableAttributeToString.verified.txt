@@ -136,6 +136,8 @@ using System;
 
 namespace System
 {
+#pragma warning disable CS0612 // Ignore usages of obsolete members or enums
+#pragma warning disable CS0618 // Ignore usages of obsolete members or enums
     /// <summary>
     /// Extension methods for <see cref="global::System.StringComparison" />
     /// </summary>
@@ -682,6 +684,8 @@ namespace System
             };
         }
     }
+#pragma warning restore CS0612 // Ignore usages of obsolete members or enums
+#pragma warning restore CS0618 // Ignore usages of obsolete members or enums
 }
   
 //------------------------------------------------------------------------------
@@ -710,6 +714,9 @@ namespace System.Runtime.CompilerServices
         }
     }
 }
+
+#pragma warning disable CS0612 // Ignore usages of obsolete members or enums
+#pragma warning disable CS0618 // Ignore usages of obsolete members or enums
 namespace NetEscapades.EnumGenerators
 {
     static file class EnumInterceptors
@@ -724,5 +731,7 @@ namespace NetEscapades.EnumGenerators
 
     }
 }
+#pragma warning restore CS0612 // Ignore usages of obsolete members or enums
+#pragma warning restore CS0618 // Ignore usages of obsolete members or enums
 
 ]

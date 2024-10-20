@@ -426,4 +426,96 @@ namespace Foo
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
+
+    [Fact]
+    public Task DoesNotGenerateWarningsForObsoleteMembers_CS0612_Issue97()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                [Obsolete]
+                Second,
+            }
+
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task DoesNotGenerateWarningsForObsoleteMembers_CS0618_Issue97()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                [Obsolete("This is obsolete")]
+                Second,
+            }
+
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task DoesNotGenerateWarningsForObsoleteEnums_CS0612_Issue97()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+
+            [Obsolete]
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task DoesNotGenerateWarningsForObsoleteEnums_CS0618_Issue97()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+
+            [Obsolete("This is obsolete", false)]
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
 }

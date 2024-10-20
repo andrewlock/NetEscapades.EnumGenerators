@@ -82,6 +82,9 @@ namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_4
 
         [System.ComponentModel.Description(@"LiteralBackslash \")]
         BackslashLiteral,
+
+        [System.ComponentModel.Description("Line\nBreak")]
+        LineBreak,
     }
 
     [EnumExtensions(IsInterceptable = false)]

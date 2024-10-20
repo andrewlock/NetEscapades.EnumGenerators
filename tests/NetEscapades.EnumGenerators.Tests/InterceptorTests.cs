@@ -448,6 +448,94 @@ public class InterceptorTests
     }
 
     [Fact]
+    public Task DoesNotGenerateWarningsForUseOfObsoleteEnums_CS0612_Issue97()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                [Obsolete]
+                Second,
+            }
+
+            [EnumExtensions]
+            public enum OtherEnum
+            {
+                First,
+                Second,
+            }
+            
+            internal class InnerClass
+            {
+                public void MyTest()
+                {
+            #pragma warning disable CS0612
+            #pragma warning disable CS0618
+                    var var1 = OtherEnum.Second.ToString();
+                    var var2 = MyEnum.Second.ToString();
+            #pragma warning restore CS0612
+            #pragma warning restore CS0618
+                }
+            }
+
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+
+    [Fact]
+    public Task DoesNotGenerateWarningsForUseOfObsoleteEnums_CS0618_Issue97()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                [Obsolete("This is obsolete")]
+                Second,
+            }
+
+            [EnumExtensions]
+            [Obsolete("This is obsolete")]
+            public enum OtherEnum
+            {
+                First,
+                Second,
+            }
+            
+            internal class InnerClass
+            {
+                public void MyTest()
+                {
+            #pragma warning disable CS0612
+            #pragma warning disable CS0618
+                    var var1 = OtherEnum.Second.ToString();
+                    var var2 = MyEnum.Second.ToString();
+            #pragma warning restore CS0612
+            #pragma warning restore CS0618
+                }
+            }
+
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
     public Task DoesNotInterceptToStringWhenOldCsharp()
     {
         const string input =

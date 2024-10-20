@@ -133,6 +133,7 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
     {
         [System.ComponentModel.Description("Quotes \"")]   Quotes,
         [System.ComponentModel.Description(@"Literal Quotes """)]   LiteralQuotes,
+        [Obsolete]
         [System.ComponentModel.Description("Backslash \\")]   Backslash,
         [System.ComponentModel.Description(@"LiteralBackslash \")]   BackslashLiteral,
         [System.ComponentModel.Description("Line\nBreak")]   LineBreak,
