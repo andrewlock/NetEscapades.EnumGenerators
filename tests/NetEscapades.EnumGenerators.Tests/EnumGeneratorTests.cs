@@ -186,7 +186,7 @@ namespace MyTestNameSpace
                 [Description("4th")]
                 Fourth = 3
             }
-        }"
+        }
         """;
 
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
@@ -222,7 +222,7 @@ namespace MyTestNameSpace
                 [Description("Number 4")]
                 Fourth = 3
             }
-        }"
+        }
         """;
 
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
@@ -297,7 +297,6 @@ namespace MyTestNameSpace
     public Task CanHandleNamespaceAndClassNameAreTheSame()
     {
         const string input = @"using NetEscapades.EnumGenerators;
-using System.ComponentModel.DataAnnotations;
 
 namespace Foo
 {
@@ -321,18 +320,18 @@ namespace Foo
         const string input =
             """"
             using NetEscapades.EnumGenerators;
-            using System.ComponentModel.DataAnnotations;
+            using System.ComponentModel;
 
             namespace Test;
 
             [EnumExtensions]
             public enum StringTesting
             {
-               [System.ComponentModel.Description("Quotes \"")]   Quotes,
-               [System.ComponentModel.Description(@"Literal Quotes """)]   LiteralQuotes,
-               [System.ComponentModel.Description("Backslash \\")]   Backslash,
-               [System.ComponentModel.Description(@"LiteralBackslash \")]   BackslashLiteral,
-               [System.ComponentModel.Description("New\nLine")]   NewLine,
+               [Description("Quotes \"")]   Quotes,
+               [Description(@"Literal Quotes """)]   LiteralQuotes,
+               [Description("Backslash \\")]   Backslash,
+               [Description(@"LiteralBackslash \")]   BackslashLiteral,
+               [Description("New\nLine")]   NewLine,
             }
             """";
 
@@ -427,5 +426,4 @@ namespace Foo
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
-
 }

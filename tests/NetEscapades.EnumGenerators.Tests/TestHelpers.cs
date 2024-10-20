@@ -57,7 +57,9 @@ internal static class TestHelpers
             .Select(x =>
             {
                 var tree = CSharpSyntaxTree.ParseText(x, path: "Program.cs");
-                return tree.WithRootAndOptions(tree.GetRoot(), new CSharpParseOptions(opts.LanguageVersion));
+                var options = new CSharpParseOptions(opts.LanguageVersion)
+                    .WithFeatures(opts.Features);
+                return tree.WithRootAndOptions(tree.GetRoot(), options);
             });
         var references = AppDomain.CurrentDomain.GetAssemblies()
             .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
@@ -67,6 +69,7 @@ internal static class TestHelpers
                 MetadataReference.CreateFromFile(typeof(T).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location),
             });
 
         var compilation = CSharpCompilation.Create(
@@ -75,12 +78,14 @@ internal static class TestHelpers
             references,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        GeneratorDriverRunResult runResult = RunGeneratorAndAssertOutput<T>(opts, compilation, stages);
+        var (runResult, diagnostics)  = RunGeneratorAndAssertOutput<T>(opts, compilation, stages);
 
-        return (runResult.Diagnostics, runResult.GeneratedTrees.Select(x => x.ToString()).ToArray());
+        var combinedDiagnostics = runResult.Diagnostics.AddRange(diagnostics);
+
+        return (combinedDiagnostics, runResult.GeneratedTrees.Select(x => x.ToString()).ToArray());
     }
 
-    private static GeneratorDriverRunResult RunGeneratorAndAssertOutput<T>(Options options, CSharpCompilation compilation, string[] stages, bool assertOutput = true)
+    private static (GeneratorDriverRunResult runResult, ImmutableArray<Diagnostic> diagnostics) RunGeneratorAndAssertOutput<T>(Options options, CSharpCompilation compilation, string[] stages, bool assertOutput = true)
         where T : IIncrementalGenerator, new()
     {
         ISourceGenerator generator = new T().AsSourceGenerator();
@@ -94,12 +99,13 @@ internal static class TestHelpers
                 [generator],
                 driverOptions: opts,
                 optionsProvider: options.OptionsProvider,
-                parseOptions: new CSharpParseOptions(options.LanguageVersion));
+                parseOptions: new CSharpParseOptions(options.LanguageVersion).WithFeatures(options.Features));
 
         var clone = compilation.Clone();
         // Run twice, once with a clone of the compilation
         // Note that we store the returned drive value, as it contains cached previous outputs
-        driver = driver.RunGenerators(compilation);
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _);
+
         GeneratorDriverRunResult runResult = driver.GetRunResult();
 
         if (assertOutput)
@@ -120,7 +126,7 @@ internal static class TestHelpers
                 .OnlyContain(x => x.Reason == IncrementalStepRunReason.Cached);
         }
 
-        return runResult;
+        return (runResult, outputCompilation.GetDiagnostics());
     }
 
     private static void AssertRunsEqual(GeneratorDriverRunResult runResult1, GeneratorDriverRunResult runResult2, string[] trackingNames)
@@ -258,32 +264,39 @@ internal static class TestHelpers
     public record Options
     {
         public Options(params string[] sources)
-            : this(LanguageVersion.Default, null, sources, null)
+            : this(LanguageVersion.Default, null, null, sources, null)
         {
         }
 
         public Options(Dictionary<string, string> options, params string[] sources)
-            : this(LanguageVersion.Default, options, sources, null)
+            : this(LanguageVersion.Default, options, null, sources, null)
         {
         }
 
         public Options(LanguageVersion languageVersion, Dictionary<string, string> options, params string[] sources)
-            : this(languageVersion, options, sources, null)
+            : this(languageVersion, options, null, sources, null)
         {
         }
 
-        public Options(string[] sources, params string[] stages)
-            : this(LanguageVersion.Default, null, sources, stages)
+        public Options(Dictionary<string, string> options, Dictionary<string, string> features, params string[] sources)
+            : this(LanguageVersion.Default, options, features, sources, null)
+        {
+        }
+ 
+        public Options(LanguageVersion languageVersion, Dictionary<string, string> options, Dictionary<string, string> features, params string[] sources)
+            : this(languageVersion, options, features, sources, null)
         {
         }
 
         public Options(LanguageVersion LanguageVersion,
             Dictionary<string, string>? AnalyzerOptions,
+            Dictionary<string, string>? Features,
             string[] Sources,
             string[]? Stages)
         {
             this.LanguageVersion = LanguageVersion;
             this.AnalyzerOptions = AnalyzerOptions;
+            this.Features = Features;
             this.Sources = Sources;
             this.Stages = Stages;
         }
@@ -293,6 +306,7 @@ internal static class TestHelpers
 
         public LanguageVersion LanguageVersion { get;  }
         public Dictionary<string, string>? AnalyzerOptions { get; }
+        public Dictionary<string, string>? Features { get; }
         public string[] Sources { get; }
         public string[]? Stages { get; }
 

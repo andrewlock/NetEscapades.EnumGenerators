@@ -16,9 +16,15 @@ namespace NetEscapades.EnumGenerators.Tests.Roslyn4_04;
 [UsesVerify]
 public class InterceptorTests
 {
-    private readonly Dictionary<string, string> _interceptionEnabled =
+    private readonly Dictionary<string, string> _analyzerOpts =
         new() { { "build_property.EnableEnumGeneratorInterceptor", "true" } };
 
+    private readonly Dictionary<string, string> _features =
+        new()
+        {
+            { "InterceptorsPreviewNamespaces", "NetEscapades.EnumGenerators" },
+            { "InterceptorsNamespaces", "NetEscapades.EnumGenerators" },
+        };
 #if INTERCEPTORS
     [Fact]
     public Task CanInterceptToString()
@@ -36,7 +42,7 @@ public class InterceptorTests
                     Second = 1,
                 }
                 
-                public class InnerClass
+                internal class InnerClass
                 {
                     public MyEnum _field = default;
                     public MyEnum Property {get;set;} = default;
@@ -52,7 +58,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) =
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -77,7 +83,7 @@ public class InterceptorTests
                     Third = 4,
                 }
                 
-                public class InnerClass
+                internal class InnerClass
                 {
                     public MyEnum _field = default;
                     public MyEnum Property {get;set;} = default;
@@ -93,7 +99,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) =
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -136,23 +142,23 @@ public class InterceptorTests
                     public void MyTest()
                     {
                         var result = AnotherEnum.First.ToString();
-                        AssertValue(MyEnum.First);
-                        AssertValue(AnotherEnum.Second);
-                        AssertValue(MyEnum.Third);
+                        AssertValue1(MyEnum.First);
+                        AssertValue2(AnotherEnum.Second);
+                        AssertValue1(MyEnum.Third);
                         var result2 = YetAnotherEnum.First.ToString();
-                        AssertValue(YetAnotherEnum.Second);
+                        AssertValue3(YetAnotherEnum.Second);
                         
-                        void AssertValue(MyEnum value)
+                        void AssertValue1(MyEnum value)
                         {
                             var toString = value.ToString();
                         }
 
-                        void AssertValue(AnotherEnum value)
+                        void AssertValue2(AnotherEnum value)
                         {
                             var toString = value.ToString();
                         }
 
-                        void AssertValue(YetAnotherEnum value)
+                        void AssertValue3(YetAnotherEnum value)
                         {
                             var toString = value.ToString();
                         }
@@ -161,7 +167,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) = 
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -173,6 +179,7 @@ public class InterceptorTests
         const string input =
             """
             using NetEscapades.EnumGenerators;
+            using System;
 
             namespace MyTestNameSpace
             {
@@ -200,30 +207,30 @@ public class InterceptorTests
                     Third = 2,
                 }
                 
-                public class InnerClass
+                internal class InnerClass
                 {
                     public void MyTest()
                     {
                         var result = AnotherEnum.First.ToString();
-                        AssertValue(MyEnum.First);
-                        AssertValue(AnotherEnum.Second);
-                        AssertValue(MyEnum.Third);
+                        AssertValue1(MyEnum.First);
+                        AssertValue2(AnotherEnum.Second);
+                        AssertValue1(MyEnum.Third);
                         var result2 = YetAnotherEnum.First.ToString();
-                        AssertValue(YetAnotherEnum.Second);
+                        AssertValue3(YetAnotherEnum.Second);
                         
                         var hasValue = AnotherEnum.Second.HasFlag(AnotherEnum.First);
                         
-                        void AssertValue(MyEnum value)
+                        void AssertValue1(MyEnum value)
                         {
                             var toString = value.ToString();
                         }
 
-                        void AssertValue(AnotherEnum value)
+                        void AssertValue2(AnotherEnum value)
                         {
                             var toString = value.ToString();
                         }
 
-                        void AssertValue(YetAnotherEnum value)
+                        void AssertValue3(YetAnotherEnum value)
                         {
                             var toString = value.ToString();
                         }
@@ -232,7 +239,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) = 
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -272,7 +279,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) = 
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -314,7 +321,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) = 
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -357,7 +364,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) = 
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -379,7 +386,7 @@ public class InterceptorTests
                     Second = 1,
                 }
                 
-                public class InnerClass
+                internal class InnerClass
                 {
                     public MyEnum _field = default;
                     public MyEnum Property {get;set;} = default;
@@ -394,7 +401,7 @@ public class InterceptorTests
                 }
             }
             """;
-        var opts = new TestHelpers.Options(LanguageVersion.CSharp11, _interceptionEnabled, input);
+        var opts = new TestHelpers.Options(LanguageVersion.CSharp11, _analyzerOpts, _features, input);
         var (diagnostics, output) =
             TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(opts);
 
@@ -418,7 +425,7 @@ public class InterceptorTests
                     Second = 1,
                 }
                 
-                public class InnerClass
+                internal class InnerClass
                 {
                     public MyEnum _field = default;
                     public MyEnum Property {get;set;} = default;
@@ -456,7 +463,7 @@ public class InterceptorTests
                     Second = 1,
                 }
                 
-                public class InnerClass
+                internal class InnerClass
                 {
                     public MyEnum _field = default;
                     public MyEnum Property {get;set;} = default;
@@ -471,7 +478,7 @@ public class InterceptorTests
                 }
             }
             """;
-        var opts = new TestHelpers.Options(LanguageVersion.CSharp10, _interceptionEnabled, input);
+        var opts = new TestHelpers.Options(LanguageVersion.CSharp10, _analyzerOpts, _features, input);
         var (diagnostics, output) =
             TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(opts);
 
@@ -512,7 +519,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) =
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         diagnostics.Should().ContainSingle(x => x.Id == DiagnosticHelper.SdkVersionTooLow.Id);
         return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
@@ -554,7 +561,7 @@ public class InterceptorTests
             }
             """;
         var (diagnostics, output) = 
-            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_interceptionEnabled, input));
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
 
         diagnostics.Should()
             .OnlyContain(x => x.Id == DiagnosticHelper.SdkVersionTooLow.Id)
