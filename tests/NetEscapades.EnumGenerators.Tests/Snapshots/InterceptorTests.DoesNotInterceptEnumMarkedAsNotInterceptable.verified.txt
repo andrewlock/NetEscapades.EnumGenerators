@@ -676,6 +676,18 @@ namespace MyTestNameSpace
             };
 
         /// <summary>
+        /// Determines whether one or more bit fields are set in the current instance.
+        /// Equivalent to calling <see cref="global::System.Enum.HasFlag" /> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <param name="flag">The flag to check for</param>
+        /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
+        /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
+        /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
+        public static bool HasFlagFast(this global::MyTestNameSpace.AnotherEnum value, global::MyTestNameSpace.AnotherEnum flag)
+            => flag == 0 ? true : (value & flag) == flag;
+
+        /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
         /// <param name="value">The value to check if it's defined</param>
@@ -1170,12 +1182,12 @@ namespace NetEscapades.EnumGenerators
 {
     static file class EnumInterceptors
     {
-        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(33,44)
-        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(49,38)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(34,44)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(50,38)
         public static string AnotherEnumExtensionsToString(this global::System.Enum value)
             => global::MyTestNameSpace.AnotherEnumExtensions.ToStringFast((global::MyTestNameSpace.AnotherEnum)value);
 
-        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(40,47)
+        [global::System.Runtime.CompilerServices.InterceptsLocation(123, "REDACTED")] // Program.cs(41,47)
         public static bool AnotherEnumExtensionsHasFlag(this global::System.Enum value, global::System.Enum flag)
             => global::MyTestNameSpace.AnotherEnumExtensions.HasFlagFast((global::MyTestNameSpace.AnotherEnum)value, (global::MyTestNameSpace.AnotherEnum)flag);
 

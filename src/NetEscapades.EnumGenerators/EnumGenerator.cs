@@ -123,9 +123,9 @@ public class EnumGenerator : IIncrementalGenerator
             static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
 #else
         context.RegisterSourceOutput(interceptableEnumsAndLocations,
-            static (spc, enumAndlocation) =>
+            static (spc, enumAndLocation) =>
             {
-                spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.SdkVersionTooLow, location: enumAndlocation.location.ToLocation()));
+                spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.SdkVersionTooLow, location: enumAndLocation.location?.ToLocation()));
             });
 #endif
         context.RegisterImplementationSourceOutput(settings,
