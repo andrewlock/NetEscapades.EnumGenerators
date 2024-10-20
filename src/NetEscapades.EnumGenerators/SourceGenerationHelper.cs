@@ -148,6 +148,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         var fullyQualifiedName = $"global::{enumToGenerate.FullyQualifiedName}";
 
         sb.Append(@"
+#pragma warning disable CS0612 // Ignore usages of obsolete members or enums
+#pragma warning disable CS0618 // Ignore usages of obsolete members or enums
     /// <summary>
     /// Extension methods for <see cref=""").Append(fullyQualifiedName).Append($@""" />
     /// </summary>
@@ -887,7 +889,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         sb.Append(@"
             };
         }
-    }");
+    }
+#pragma warning restore CS0612 // Ignore usages of obsolete members or enums
+#pragma warning restore CS0618 // Ignore usages of obsolete members or enums");
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
@@ -919,6 +923,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                     }
                 }
             }
+
+            #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
+            #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
             namespace NetEscapades.EnumGenerators
             {
                 static file class EnumInterceptors
@@ -970,6 +977,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             $$"""
                   }
               }
+              #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
+              #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
               """);
         return sb.ToString();
 
