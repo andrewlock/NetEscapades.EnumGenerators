@@ -1,15 +1,14 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta09'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta10'">
       <![CDATA[
 
 Features
-- Add support for generating extensions for external enums that come from other assemblies (#82)
-- Add support for new Parse overloads (#85)
+- Add optional interceptor for ToString() and HasFlag() (#94, #101, #104, #105, #106, #108)
+- Ignore usages of obsolete enum members in generated code (#111)
 
 Fixes
-- Add `[GeneratedCodeAttribute]` to the generated extensions (#83)
-- Split TryParse code method to try to fix coverlet issue (#84)
+- Fix escaping of strings in description and display attributes (#109)
 
 ]]>
     </PackageReleaseNotes>
