@@ -27,7 +27,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta09" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
@@ -159,6 +159,59 @@ Note that if you provide a `[Display]` or `[Description]` attribute, the value y
 
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
 
+## Enabling interception
+
+Interceptors were introduced as an experimental feature in C#12 with .NET 8. They allow a source generator to "intercept" certain method calls, and replace the call with a different one. _NetEscapades.EnumGenerators_ has support for intercepting `ToString()` and `HasFlag()` method calls.
+
+> To use interceptors, you must be using at least version 8.0.400 of the .NET SDK. [This ships with Visual Studio version 17.11](https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs), so you will need at least that version or higher.
+
+To enable interception for a project, update to the latest version of _NetEscapades.EnumGenerators_ and set the `EnableEnumGeneratorInterceptor` property in your _.csproj_ to `true`:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- 👇 Add this property to enable the interceptor in the project -->
+    <EnableEnumGeneratorInterceptor>true</EnableEnumGeneratorInterceptor>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" 
+    PrivateAssets="all" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+</Project>
+```
+
+This enables interception for all enums defined in the project that use the `[EnumExtensions]` or `[EnumExtensions<T>]` attributes. If you wish to intercept calls made to enums with extensions defined in _other_ projects, you must add the `[Interceptable<T>]` attribute in the project where you want the interception to happen, e.g.
+
+```csharp
+[assembly:Interceptable<DateTimeKind>]
+[assembly:Interceptable<Color>]
+```
+
+If you don't want a specific enum to be intercepted, you can set the `IsInterceptable` property to `false`, e.g.
+
+```csharp
+[EnumExtensions(IsInterceptable = false)]
+public enum Colour
+{
+    Red = 0,
+    Blue = 1,
+}
+```
+
+Interception only works when the target type is unambiguously an interceptable enum, so it won't work
+
+
+- When `ToString()` is called in other source generated code.
+- When `ToString()` is called in already-compiled code.
+- If the `ToString()` call is _implicit_ (for example in `string` interpolation)
+- If the `ToString()` call is made on a base type, such as `System.Enum` or `object`
+- If the `ToString()` call is made on a generic type
+
 ## Embedding the attributes in your project
 
 By default, the `[EnumExtensions]` attributes referenced in your application are contained in an external dll. It is also possible to embed the attributes directly in your project, so they appear in the dll when your project is built. If you wish to do this, you must do two things:
@@ -179,7 +232,7 @@ Your project file should look something like this:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta09" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" 
                     PrivateAssets="all"
                     ExcludeAssets="compile;runtime" />
 <!--                               ☝ Add compile to the list of excluded assets. -->
@@ -204,7 +257,7 @@ If you wish to preserve these attributes in the build output, you can define the
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta09" PrivateAssets="all" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" PrivateAssets="all" />
   <!--              ☝ You must not exclude the runtime assets in this case -->
 
 </Project>

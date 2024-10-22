@@ -1,6 +1,15 @@
 Changelog
 --- 
 
+## [v1.0.0-beta10](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta09..v1.0.0-beta10) (2024-10-22)
+
+### Features
+- Add optional interceptor for ToString() and HasFlag() (#94, #101, #104, #105, #106, #108)
+- Ignore usages of obsolete enum members in generated code (#111)
+
+### Fixes
+- Fix escaping of strings in description and display attributes (#109)
+
 ## [v1.0.0-beta09](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta08..v1.0.0-beta09) (2024-05-15)
 
 ### Features
