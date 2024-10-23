@@ -106,6 +106,91 @@ public class InterceptorTests
     }
 
     [Fact]
+    public Task CanInterceptEnumInGlobalNamespace()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+            using System;
+
+            [EnumExtensions]
+            [Flags]
+            internal enum MyEnum
+            {
+                First = 1,
+                Second = 2,
+                Third = 4,
+            }
+            
+            internal class InnerClass
+            {
+                public MyEnum _field = default;
+                public MyEnum Property {get;set;} = default;
+                public void MyTest()
+                {
+                    var myValue = MyEnum.Second;
+                    var var1 = myValue.HasFlag(MyEnum.First);
+                    var var2 = MyEnum.Second.HasFlag(myValue);
+                    var var3 = Property.HasFlag(MyEnum.First);
+                    var var4 = _field.HasFlag(MyEnum.First);
+                    var var5 = myValue.ToString();
+                }
+            }
+            """;
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanInterceptEnumInDifferentNamespace()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+            using System;
+
+            namespace Foo
+            {
+                [EnumExtensions(ExtensionClassNamespace = "Bar", ExtensionClassName = "SomethingElse")]
+                [Flags]
+                internal enum MyEnum
+                {
+                    First = 1,
+                    Second = 2,
+                    Third = 4,
+                }
+            }
+            
+            namespace Baz
+            {
+                using Foo;
+                internal class InnerClass
+                {
+                    public MyEnum _field = default;
+                    public MyEnum Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = MyEnum.Second;
+                        var var1 = myValue.HasFlag(MyEnum.First);
+                        var var2 = MyEnum.Second.HasFlag(myValue);
+                        var var3 = Property.HasFlag(MyEnum.First);
+                        var var4 = _field.HasFlag(MyEnum.First);
+                        var var5 = myValue.ToString();
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
     public Task CanInterceptMultipleEnumsToString()
     {
         const string input =
