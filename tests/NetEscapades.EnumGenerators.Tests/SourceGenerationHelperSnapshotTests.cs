@@ -31,8 +31,7 @@ public class SourceGenerationHelperSnapshotTests
             isDisplayAttributeUsed: false,
             isInterceptable: true);
 
-        var sb = new StringBuilder();
-        var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
+        var result = SourceGenerationHelper.GenerateExtensionClass(value).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -57,8 +56,7 @@ public class SourceGenerationHelperSnapshotTests
             isDisplayAttributeUsed: false,
             isInterceptable: true);
 
-        var sb = new StringBuilder();
-        var result = SourceGenerationHelper.GenerateExtensionClass(sb, value);
+        var result = SourceGenerationHelper.GenerateExtensionClass(value).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
