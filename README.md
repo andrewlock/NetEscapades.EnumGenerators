@@ -27,7 +27,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta11" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
@@ -178,7 +178,7 @@ To enable interception for a project, update to the latest version of _NetEscapa
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" 
+    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta11" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
 
@@ -232,7 +232,7 @@ Your project file should look something like this:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta11" 
                     PrivateAssets="all"
                     ExcludeAssets="compile;runtime" />
 <!--                               ☝ Add compile to the list of excluded assets. -->
@@ -257,7 +257,7 @@ If you wish to preserve these attributes in the build output, you can define the
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta10" PrivateAssets="all" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta11" PrivateAssets="all" />
   <!--              ☝ You must not exclude the runtime assets in this case -->
 
 </Project>
