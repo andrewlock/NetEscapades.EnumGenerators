@@ -1,14 +1,15 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta10'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta11'">
       <![CDATA[
 
 Features
-- Add optional interceptor for ToString() and HasFlag() (#94, #101, #104, #105, #106, #108)
+- Add optional interceptor for ToString() and HasFlag() (#94, #101, #104, #105, #106, #108, #113)
 - Ignore usages of obsolete enum members in generated code (#111)
 
 Fixes
 - Fix escaping of strings in description and display attributes (#109)
+- Ensure we can handle enums with the same name in different namespaces (#114)
 
 ]]>
     </PackageReleaseNotes>
