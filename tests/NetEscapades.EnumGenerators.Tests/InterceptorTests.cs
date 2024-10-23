@@ -191,6 +191,64 @@ public class InterceptorTests
     }
 
     [Fact]
+    public Task CanHandleEnumsWithSameNameInDifferentNamespaces()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+            using System;
+
+            namespace Foo
+            {
+                [EnumExtensions]
+                [Flags]
+                internal enum MyEnum
+                {
+                    First = 1,
+                    Second = 2,
+                    Third = 4,
+                }
+            }
+
+            namespace Bar
+            {
+                [EnumExtensions]
+                [Flags]
+                internal enum MyEnum
+                {
+                    First = 1,
+                    Second = 2,
+                    Third = 4,
+                }
+            }
+            
+            namespace Baz
+            {
+                internal class InnerClass
+                {
+                    public Foo.MyEnum _field = default;
+                    public Bar.MyEnum Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = Foo.MyEnum.Second;
+                        var var1 = myValue.HasFlag(Foo.MyEnum.First);
+                        var var2 = Foo.MyEnum.Second.HasFlag(myValue);
+                        var var3 = Property.HasFlag(Bar.MyEnum.First);
+                        var var4 = _field.HasFlag(Foo.MyEnum.First);
+                        var var5 = myValue.ToString();
+                        var var6 = Bar.MyEnum.First.ToString();
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(_analyzerOpts, _features, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
     public Task CanInterceptMultipleEnumsToString()
     {
         const string input =

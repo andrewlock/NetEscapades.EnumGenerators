@@ -129,8 +129,9 @@ namespace NetEscapades.EnumGenerators
 #endif
 ";
 
-    public static string GenerateExtensionClass(StringBuilder sb, in EnumToGenerate enumToGenerate)
+    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate)
     {
+        var sb = new StringBuilder();
         sb
             .Append(Header)
             .Append(@"
@@ -898,11 +899,21 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 }");
         }
 
-        return sb.ToString();
+        var content = sb.ToString();
+        sb.Clear();
+        var filename = sb
+            .Append(enumToGenerate.FullyQualifiedName)
+            .Append("_EnumExtensions.g.cs")
+            .Replace('<', '_')
+            .Replace('>', '_')
+            .Replace(',', '.')
+            .Replace(' ', '_')
+            .ToString();
+        return (content, filename);
     }
 
 #if INTERCEPTORS
-    public static string GenerateInterceptorsClass(MethodToIntercept toIntercept)
+    public static (string Content, string Filename) GenerateInterceptorsClass(MethodToIntercept toIntercept)
     {
         var sb = new StringBuilder(
             $$"""
@@ -980,7 +991,18 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
               #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
               #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
               """);
-        return sb.ToString();
+        var content = sb.ToString();
+        sb.Clear();
+        
+        var filename = sb
+            .Append(toIntercept!.FullyQualifiedName)
+            .Append("_Interceptors.g.cs")
+            .Replace('<', '_')
+            .Replace('>', '_')
+            .Replace(',', '.')
+            .Replace(' ', '_')
+            .ToString();
+        return (content, filename);
 
         static string GetInterceptorAttr(CandidateInvocation location)
         {

@@ -149,9 +149,8 @@ public class EnumGenerator : IIncrementalGenerator
 
     static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
     {
-        StringBuilder sb = new StringBuilder();
-        var result = SourceGenerationHelper.GenerateExtensionClass(sb, in enumToGenerate);
-        context.AddSource(enumToGenerate.Name + "_EnumExtensions.g.cs", SourceText.From(result, Encoding.UTF8));    
+        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate);
+        context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
     static EquatableArray<EnumToGenerate>? GetEnumToGenerateFromGenericAssemblyAttribute(
@@ -414,8 +413,8 @@ public class EnumGenerator : IIncrementalGenerator
 
     private static void ExecuteInterceptors(MethodToIntercept? toIntercept, SourceProductionContext spc)
     {
-        var result = SourceGenerationHelper.GenerateInterceptorsClass(toIntercept!);
-        spc.AddSource(toIntercept!.ExtensionTypeName + "_Interceptors.g.cs", SourceText.From(result, Encoding.UTF8));
+        var (result, filename) = SourceGenerationHelper.GenerateInterceptorsClass(toIntercept!);
+        spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 #endif
 }
