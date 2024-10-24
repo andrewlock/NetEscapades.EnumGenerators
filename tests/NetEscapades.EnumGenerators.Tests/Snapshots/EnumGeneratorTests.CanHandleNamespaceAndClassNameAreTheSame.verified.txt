@@ -158,10 +158,10 @@ namespace Foo
                 => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
     
 #if NETCOREAPP3_0_OR_GREATER
-        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
+        [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
 #endif
         private static global::Foo.TestEnum ThrowValueNotFound(string? name)
-            => throw new System.ArgumentException($"Requested value '{name}' was not found.");
+            => throw new global::System.ArgumentException($"Requested value '{name}' was not found.");
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
