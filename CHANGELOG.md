@@ -10,6 +10,7 @@ Changelog
 ### Fixes
 - Fix escaping of strings in description and display attributes (#109)
 - Ensure we can handle enums with the same name in different namespaces (#114)
+- Fix naming conflicts in System namespace (#118) Thanks [@henrikwidlund](https://github.com/henrikwidlund)!
 
 ## [v1.0.0-beta09](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta08..v1.0.0-beta09) (2024-05-15)
 

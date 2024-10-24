@@ -10,6 +10,7 @@ Features
 Fixes
 - Fix escaping of strings in description and display attributes (#109)
 - Ensure we can handle enums with the same name in different namespaces (#114)
+- Fix naming conflicts in System namespace (#118) Thanks @henrikwidlund!
 
 ]]>
     </PackageReleaseNotes>
