@@ -61,7 +61,7 @@ namespace Something.Blah
         /// </summary>
         /// <param name="value">The value to check if it's defined</param>
         /// <returns><c>true</c> if the value exists in the enumeration, <c>false</c> otherwise</returns>
-       public static bool IsDefined(global::Something.Blah.ShortName value)
+        public static bool IsDefined(global::Something.Blah.ShortName value)
             => value switch
             {
                 global::Something.Blah.ShortName.First => true,
@@ -245,8 +245,8 @@ namespace Something.Blah
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => ignoreCase
-                     ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                     : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
+                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
 
         private static bool TryParseIgnoreCase(
 #if NETCOREAPP3_0_OR_GREATER
@@ -416,8 +416,8 @@ namespace Something.Blah
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => ignoreCase
-                     ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
-                     : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+                    ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
+                    : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
 
         private static bool TryParseIgnoreCase(
 #if NETCOREAPP3_0_OR_GREATER

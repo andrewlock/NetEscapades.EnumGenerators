@@ -218,7 +218,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// </summary>
         /// <param name=""value"">The value to check if it's defined</param>
         /// <returns><c>true</c> if the value exists in the enumeration, <c>false</c> otherwise</returns>
-       public static bool IsDefined(").Append(fullyQualifiedName).Append(@" value)
+        public static bool IsDefined(").Append(fullyQualifiedName).Append(@" value)
             => value switch
             {");
         foreach (var member in enumToGenerate.Names)
@@ -491,8 +491,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => ignoreCase
-                     ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                     : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
+                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
 
         private static bool TryParseIgnoreCase(
 #if NETCOREAPP3_0_OR_GREATER
@@ -728,8 +728,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => ignoreCase
-                     ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
-                     : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+                    ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
+                    : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
 
         private static bool TryParseIgnoreCase(
 #if NETCOREAPP3_0_OR_GREATER
