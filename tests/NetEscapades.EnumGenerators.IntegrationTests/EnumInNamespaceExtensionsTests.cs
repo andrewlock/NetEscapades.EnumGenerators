@@ -44,6 +44,7 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     };
 
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
+    protected override string ToStringFast(EnumInNamespace value, bool withMetadata) => value.ToStringFast(withMetadata);
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN
@@ -66,6 +67,10 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(EnumInNamespace value) => GeneratesToStringFastTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesToStringFastWithMetadata(EnumInNamespace value) => GeneratesToStringFastWithMetadataTest(value);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

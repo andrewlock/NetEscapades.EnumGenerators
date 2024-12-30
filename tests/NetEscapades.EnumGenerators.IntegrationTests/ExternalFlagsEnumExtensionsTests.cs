@@ -49,6 +49,7 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
     };
 
     protected override string ToStringFast(FileShare value) => value.ToStringFast();
+    protected override string ToStringFast(FileShare value, bool withMetadata) => value.ToStringFast(withMetadata);
     protected override bool IsDefined(FileShare value) => FileShareExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FileShareExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN
@@ -75,6 +76,10 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(FileShare value) => GeneratesToStringFastTest(value);
+ 
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesToStringFastWithMetadata(FileShare value) => GeneratesToStringFastWithMetadataTest(value);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

@@ -44,6 +44,7 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     };
 
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
+    protected override string ToStringFast(LongEnum value, bool withMetadata) => value.ToStringFast(withMetadata);
     protected override bool IsDefined(LongEnum value) => LongEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => LongEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN
@@ -65,6 +66,10 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(LongEnum value) => GeneratesToStringFastTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesToStringFastWithMetadata(LongEnum value) => GeneratesToStringFastWithMetadataTest(value);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

@@ -30,12 +30,24 @@ namespace A.B
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
-        /// If the attribute is decorated with a <c>[Display]</c> attribute, then
+        /// If the attribute is decorated with a <c>[Display]</c> or <c>[Description]</c>attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="useMetadataAttributes">If <c>true</c> uses the value provided in the
+        /// <c>[Display]</c> or <c>[Description]</c>attribute as the string representation of the member.
+        /// If <c>false</c>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
         /// <returns>The string representation of the value</returns>
+        public static string ToStringFast(this global::MyTestNameSpace.MyEnum value, bool useMetadataAttributes)
+            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <returns>The string representation of the value, the same as that returned by <c>ToString()</c></returns>
         public static string ToStringFast(this global::MyTestNameSpace.MyEnum value)
             => value switch
             {
@@ -43,6 +55,9 @@ namespace A.B
                 global::MyTestNameSpace.MyEnum.Second => nameof(global::MyTestNameSpace.MyEnum.Second),
                 _ => value.ToString(),
             };
+
+        private static string ToStringFastWithMetadata(this global::MyTestNameSpace.MyEnum value)
+            => value.ToStringFast();
 
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.

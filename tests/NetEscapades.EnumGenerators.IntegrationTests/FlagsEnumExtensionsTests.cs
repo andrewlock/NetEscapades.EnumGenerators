@@ -48,6 +48,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     };
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
+    protected override string ToStringFast(FlagsEnum value, bool withMetadata) => value.ToStringFast(withMetadata);
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN
@@ -75,6 +76,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(FlagsEnum value) => GeneratesToStringFastTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesToStringFastWithMetadata(FlagsEnum value) => GeneratesToStringFastWithMetadataTest(value);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]

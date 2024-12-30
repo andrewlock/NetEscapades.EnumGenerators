@@ -47,6 +47,7 @@ public class ExternalEnumExtensionsTests : ExtensionTests<DateTimeKind>
     };
 
     protected override string ToStringFast(DateTimeKind value) => value.ToStringFast();
+    protected override string ToStringFast(DateTimeKind value, bool withMetadata) => value.ToStringFast(withMetadata);
     protected override bool IsDefined(DateTimeKind value) => DateTimeKindExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => DateTimeKindExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN
@@ -67,6 +68,10 @@ public class ExternalEnumExtensionsTests : ExtensionTests<DateTimeKind>
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
     public void GeneratesToStringFast(DateTimeKind value) => GeneratesToStringFastTest(value);
+
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesToStringFastWithMetadata(DateTimeKind value) => GeneratesToStringFastWithMetadataTest(value);
 
     [Theory]
     [MemberData(nameof(ValidEnumValues))]
