@@ -143,7 +143,7 @@ public class InterceptorTests
 #if INTERCEPTORS
     [Fact(Skip = "Interceptors are supported in this SDK")]
 #else
-    [Fact]
+    [Fact(Skip = "Can't actually verify it's not interceptable")]
 #endif
     public void CallingToStringIsNotInterceptedWhenNotSupportedBySdk()
     {
