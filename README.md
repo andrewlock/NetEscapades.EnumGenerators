@@ -56,7 +56,18 @@ public static partial class MyEnumExtensions
 {
     public const int Length = 2;
 
+    public static string ToStringFast(this MyEnum value, bool useMetadataAttributes)
+        => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+
     public static string ToStringFast(this MyEnum value)
+        => value switch
+        {
+            MyEnum.First => nameof(MyEnum.First),
+            MyEnum.Second => nameof(MyEnum.Second),
+            _ => value.ToString(),
+        };
+
+    private static string ToStringFastWithMetadata(this MyEnum value)
         => value switch
         {
             MyEnum.First => nameof(MyEnum.First),
@@ -64,7 +75,7 @@ public static partial class MyEnumExtensions
             _ => value.ToString(),
         };
 
-   public static bool IsDefined(MyEnum value)
+    public static bool IsDefined(MyEnum value)
         => value switch
         {
             MyEnum.First => true,
@@ -72,33 +83,77 @@ public static partial class MyEnumExtensions
             _ => false,
         };
 
-    public static bool IsDefined(string name)
-        => name switch
+    public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+
+    public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
+    {
+        var isDefinedInDisplayAttribute = false;
+        if (allowMatchingMetadataAttribute)
+        {
+            isDefinedInDisplayAttribute = name switch
+            {
+                "2nd" => true,
+                _ => false,
+            };
+        }
+
+        if (isDefinedInDisplayAttribute)
+        {
+            return true;
+        }
+
+        
+        return name switch
         {
             nameof(MyEnum.First) => true,
             nameof(MyEnum.Second) => true,
             _ => false,
         };
+    }
 
-    public static bool TryParse(
-        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name, 
-        bool ignoreCase, 
-        out MyEnum value)
-        => ignoreCase ? TryParseIgnoreCase(name, out value) : TryParse(name, out value);
+    public static MyEnum Parse(string? name)
+        => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name);
 
-    private static bool TryParseIgnoreCase(
-        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name, 
-        out MyEnum value)
+    public static MyEnum Parse(string? name, bool ignoreCase)
+        => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name);
+
+    public static MyEnum Parse(string? name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : throw new ArgumentException($"Requested value '{name}' was not found.");
+
+    public static bool TryParse(string? name, out MyEnum value)
+        => TryParse(name, out value, false, false);
+
+    public static bool TryParse(string? name, out MyEnum value, bool ignoreCase) 
+        => TryParse(name, out value, ignoreCase, false);
+
+    public static bool TryParse(string? name, out MyEnum value, bool ignoreCase, bool allowMatchingMetadataAttribute)
+        => ignoreCase
+            ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
+            : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+
+    private static bool TryParseIgnoreCase(string? name, out MyEnum value, bool allowMatchingMetadataAttribute)
     {
+        if (allowMatchingMetadataAttribute)
+        {
+            switch (name)
+            {
+                case string s when s.Equals("2nd", System.StringComparison.OrdinalIgnoreCase):
+                    value = MyEnum.Second;
+                    return true;
+                default:
+                    break;
+            };
+        }
+
         switch (name)
         {
-            case { } s when s.Equals(nameof(MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
+            case string s when s.Equals(nameof(MyEnum.First), System.StringComparison.OrdinalIgnoreCase):
                 value = MyEnum.First;
                 return true;
-            case { } s when s.Equals(nameof(MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
+            case string s when s.Equals(nameof(MyEnum.Second), System.StringComparison.OrdinalIgnoreCase):
                 value = MyEnum.Second;
                 return true;
-            case { } s when int.TryParse(name, out var val):
+            case string s when int.TryParse(name, out var val):
                 value = (MyEnum)val;
                 return true;
             default:
@@ -107,10 +162,20 @@ public static partial class MyEnumExtensions
         }
     }
 
-    public static bool TryParse(
-        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] string? name, 
-        out MyEnum value)
+    private static bool TryParseWithCase(string? name, out MyEnum value, bool allowMatchingMetadataAttribute)
     {
+        if (allowMatchingMetadataAttribute)
+        {
+            switch (name)
+            {
+                case "2nd":
+                    value = MyEnum.Second;
+                    return true;
+                default:
+                    break;
+            };
+        }
+
         switch (name)
         {
             case nameof(MyEnum.First):
@@ -119,7 +184,7 @@ public static partial class MyEnumExtensions
             case nameof(MyEnum.Second):
                 value = MyEnum.Second;
                 return true;
-            case { } s when int.TryParse(name, out var val):
+            case string s when int.TryParse(name, out var val):
                 value = (MyEnum)val;
                 return true;
             default:

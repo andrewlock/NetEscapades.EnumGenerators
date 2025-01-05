@@ -154,8 +154,10 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
     /// <summary>
     /// Extension methods for <see cref=""").Append(fullyQualifiedName).Append($@""" />
     /// </summary>
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute(""NetEscapades.EnumGenerators"", """).Append(Constants.Version).Append(@""")]
-    ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ").Append(enumToGenerate.Name).Append(@"
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute(""NetEscapades.EnumGenerators"", """)
+            .Append(Constants.Version).Append(@""")]
+    ").Append(enumToGenerate.IsPublic ? "public" : "internal").Append(@" static partial class ")
+            .Append(enumToGenerate.Name).Append(@"
     {
         /// <summary>
         /// The number of members in the enum.
@@ -165,34 +167,72 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 
         /// <summary>
         /// Returns the string representation of the <see cref=""").Append(fullyQualifiedName).Append(@"""/> value.
-        /// If the attribute is decorated with a <c>[Display]</c> attribute, then
+        /// If the attribute is decorated with a <c>[Display]</c> or <c>[Description]</c>attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name=""value""/>.
         /// </summary>
         /// <param name=""value"">The value to retrieve the string value for</param>
+        /// <param name=""useMetadataAttributes"">If <c>true</c> uses the value provided in the
+        /// <c>[Display]</c> or <c>[Description]</c>attribute as the string representation of the member.
+        /// If <c>false</c>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
         /// <returns>The string representation of the value</returns>
+        public static string ToStringFast(this ").Append(fullyQualifiedName).Append(
+                @" value, bool useMetadataAttributes)
+            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+
+        /// <summary>
+        /// Returns the string representation of the <see cref=""").Append(fullyQualifiedName).Append(@"""/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name=""value""/>.
+        /// </summary>
+        /// <param name=""value"">The value to retrieve the string value for</param>
+        /// <returns>The string representation of the value, the same as that returned by <c>ToString()</c></returns>
         public static string ToStringFast(this ").Append(fullyQualifiedName).Append(@" value)
             => value switch
             {");
+
+        var hasDisplayNames = false;
         foreach (var member in enumToGenerate.Names)
         {
+            hasDisplayNames |= member.Value.DisplayName is not null;
             sb.Append(@"
                 ").Append(fullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => ");
-
-            if (member.Value.DisplayName is { } dn)
-            {
-                sb.Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(',');
-            }
-            else
-            {
-                sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
-            }
+                .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
         }
 
         sb.Append(@"
                 _ => value.ToString(),
+            };
+
+        private static string ToStringFastWithMetadata(this ").Append(fullyQualifiedName).Append(@" value)
+            => ");
+        if (hasDisplayNames)
+        {
+            sb.Append(@"value switch
+            {");
+            foreach (var member in enumToGenerate.Names)
+            {
+                sb.Append(@"
+                ").Append(fullyQualifiedName).Append('.').Append(member.Key)
+                    .Append(" => ");
+
+                if (member.Value.DisplayName is { } dn)
+                {
+                    sb.Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(',');
+                }
+                else
+                {
+                    sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                }
+            }
+
+            sb.Append(@"
+                _ => value.ToString(),
             };");
+        }
+        else
+        {
+            sb.Append("value.ToStringFast();");
+        }
 
         if (enumToGenerate.HasFlags)
         {
@@ -207,7 +247,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
         /// <remarks>If the underlying value of <paramref name=""flag""/> is zero, the method returns true.
         /// This is consistent with the behaviour of <see cref=""global::System.Enum.HasFlag"" /></remarks>
-        public static bool HasFlagFast(this ").Append(fullyQualifiedName).Append(@" value, ").Append(fullyQualifiedName).Append(@" flag)
+        public static bool HasFlagFast(this ").Append(fullyQualifiedName).Append(@" value, ").Append(fullyQualifiedName)
+                .Append(@" flag)
             => flag == 0 ? true : (value & flag) == flag;");
         }
 
@@ -262,7 +303,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 {");
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value is { DisplayName: {} dn, IsDisplayNameTheFirstPresence: true })
+                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
                     ").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(@" => true,");
@@ -356,7 +397,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key)
+                ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.')
+                .Append(member.Key)
                 .Append(@").AsSpan(), global::System.StringComparison.Ordinal) => true,");
         }
 
@@ -528,7 +570,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 };
             }");
         }
-        
+
         sb.Append(@"
 
             switch (name)
@@ -537,7 +579,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                 case string s when s.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-            @"), global::System.StringComparison.OrdinalIgnoreCase):
+                @"), global::System.StringComparison.OrdinalIgnoreCase):
                     value = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
         }
@@ -752,8 +794,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
-                    @".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    case ReadOnlySpan<char> current when current.Equals(")
+                        .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
+                            @".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                         result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }
@@ -773,14 +816,16 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-            @").AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.')
+                .Append(member.Key).Append(
+                    @").AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
                     result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
         }
 
         sb.Append(@"
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
+                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(
+            @".TryParse(name, out var numericResult):
                     result = (").Append(fullyQualifiedName).Append(@")numericResult;
                     return true;
                 default:
@@ -810,7 +855,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(").Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(@".AsSpan(), global::System.StringComparison.Ordinal):
+                    case ReadOnlySpan<char> current when current.Equals(")
+                        .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
+                            @".AsSpan(), global::System.StringComparison.Ordinal):
                         result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }
@@ -830,14 +877,16 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-            @").AsSpan(), global::System.StringComparison.Ordinal):
+                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.')
+                .Append(member.Key).Append(
+                    @").AsSpan(), global::System.StringComparison.Ordinal):
                     result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
         }
 
         sb.Append(@"
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(@".TryParse(name, out var numericResult):
+                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(
+            @".TryParse(name, out var numericResult):
                     result = (").Append(fullyQualifiedName).Append(@")numericResult;
                     return true;
                 default:
@@ -853,7 +902,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the values defined in <see cref=""").Append(fullyQualifiedName).Append(@""" /></returns>
+        /// <returns>An array of the values defined in <see cref=""").Append(fullyQualifiedName).Append(
+            @""" /></returns>
         public static ").Append(fullyQualifiedName).Append(@"[] GetValues()
         {
             return new[]
@@ -876,7 +926,8 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the names of the members defined in <see cref=""").Append(fullyQualifiedName).Append(@""" /></returns>
+        /// <returns>An array of the names of the members defined in <see cref=""").Append(fullyQualifiedName).Append(
+            @""" /></returns>
         public static string[] GetNames()
         {
             return new[]

@@ -36,17 +36,14 @@ public class InterceptorTests
 #endif
     public void CallingToStringIsIntercepted()
     {
-        var result1 = EnumWithDisplayNameInNamespace.Second.ToString();
-        var result2 = EnumWithDisplayNameInNamespace.Second.ToStringFast();
-        Assert.Equal(result1, result2);
-
         AssertValue(EnumWithDisplayNameInNamespace.First);
         AssertValue(EnumWithDisplayNameInNamespace.Second);
         AssertValue(EnumWithDisplayNameInNamespace.Third);
 
         void AssertValue(EnumWithDisplayNameInNamespace value)
         {
-            // These return different values when interception is not enabled
+            // This doesn't _actually_ test interception, because can't
+            // differentiate with built-in version, it's only really verifying the generated code compiles 
             var toString = value.ToString();
             var fast = value.ToStringFast();
             Assert.Equal(fast, toString);
@@ -74,6 +71,8 @@ public class InterceptorTests
 #endif
     public void CallingToStringIsIntercepted_EnumInFoo()
     {
+        // This doesn't _actually_ test interception, because can't
+        // differentiate with built-in version, it's only really verifying the generated code compiles 
         var result1 = EnumInFoo.Second.ToString();
         var result2 = EnumInFoo.Second.ToStringFast();
         Assert.Equal(result1, result2);
@@ -86,6 +85,8 @@ public class InterceptorTests
 #endif
     public void CallingToStringIsIntercepted_EnumWithExtensionInOtherNamespace()
     {
+        // This doesn't _actually_ test interception, because can't
+        // differentiate with built-in version, it's only really verifying the generated code compiles 
         var result1 = EnumWithExtensionInOtherNamespace.Second.ToString();
         var result2 = SomethingElse.SomeExtension.ToStringFast(EnumWithExtensionInOtherNamespace.Second);
         Assert.Equal(result1, result2);
@@ -131,7 +132,7 @@ public class InterceptorTests
         Assert.False(FileShare.Read.HasFlag(combined));
     }
 
-    [Fact]
+    [Fact(Skip = "Can't actually verify it's not interceptable")]
     public void CallingNonInterceptableEnumIsNotIntercepted()
     {
         var result1 = NonInterceptableEnum.Second.ToString();
@@ -142,7 +143,7 @@ public class InterceptorTests
 #if INTERCEPTORS
     [Fact(Skip = "Interceptors are supported in this SDK")]
 #else
-    [Fact]
+    [Fact(Skip = "Can't actually verify it's not interceptable")]
 #endif
     public void CallingToStringIsNotInterceptedWhenNotSupportedBySdk()
     {

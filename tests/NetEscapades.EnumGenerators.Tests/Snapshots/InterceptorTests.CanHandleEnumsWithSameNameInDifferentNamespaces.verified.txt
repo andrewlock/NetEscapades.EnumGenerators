@@ -152,12 +152,24 @@ namespace Foo
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Foo.MyEnum"/> value.
-        /// If the attribute is decorated with a <c>[Display]</c> attribute, then
+        /// If the attribute is decorated with a <c>[Display]</c> or <c>[Description]</c>attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="useMetadataAttributes">If <c>true</c> uses the value provided in the
+        /// <c>[Display]</c> or <c>[Description]</c>attribute as the string representation of the member.
+        /// If <c>false</c>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
         /// <returns>The string representation of the value</returns>
+        public static string ToStringFast(this global::Foo.MyEnum value, bool useMetadataAttributes)
+            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::Foo.MyEnum"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <returns>The string representation of the value, the same as that returned by <c>ToString()</c></returns>
         public static string ToStringFast(this global::Foo.MyEnum value)
             => value switch
             {
@@ -166,6 +178,9 @@ namespace Foo
                 global::Foo.MyEnum.Third => nameof(global::Foo.MyEnum.Third),
                 _ => value.ToString(),
             };
+
+        private static string ToStringFastWithMetadata(this global::Foo.MyEnum value)
+            => value.ToStringFast();
 
         /// <summary>
         /// Determines whether one or more bit fields are set in the current instance.
@@ -678,12 +693,24 @@ namespace Bar
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Bar.MyEnum"/> value.
-        /// If the attribute is decorated with a <c>[Display]</c> attribute, then
+        /// If the attribute is decorated with a <c>[Display]</c> or <c>[Description]</c>attribute, then
         /// uses the provided value. Otherwise uses the name of the member, equivalent to
         /// calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="useMetadataAttributes">If <c>true</c> uses the value provided in the
+        /// <c>[Display]</c> or <c>[Description]</c>attribute as the string representation of the member.
+        /// If <c>false</c>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
         /// <returns>The string representation of the value</returns>
+        public static string ToStringFast(this global::Bar.MyEnum value, bool useMetadataAttributes)
+            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::Bar.MyEnum"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <returns>The string representation of the value, the same as that returned by <c>ToString()</c></returns>
         public static string ToStringFast(this global::Bar.MyEnum value)
             => value switch
             {
@@ -692,6 +719,9 @@ namespace Bar
                 global::Bar.MyEnum.Third => nameof(global::Bar.MyEnum.Third),
                 _ => value.ToString(),
             };
+
+        private static string ToStringFastWithMetadata(this global::Bar.MyEnum value)
+            => value.ToStringFast();
 
         /// <summary>
         /// Determines whether one or more bit fields are set in the current instance.

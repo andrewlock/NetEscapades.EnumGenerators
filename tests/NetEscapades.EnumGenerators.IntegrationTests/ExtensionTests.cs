@@ -25,6 +25,7 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 public abstract class ExtensionTests<T> where T : struct
 {
     protected abstract string ToStringFast(T value);
+    protected abstract string ToStringFast(T value, bool withMetadata);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
 #if READONLYSPAN
@@ -43,6 +44,17 @@ public abstract class ExtensionTests<T> where T : struct
     protected void GeneratesToStringFastTest(T value)
     {
         var serialized = ToStringFast(value);
+        var expectedValue = value.ToString();
+
+        serialized.Should().Be(expectedValue);
+
+        var serializedAltPath = ToStringFast(value, withMetadata: false);
+        serializedAltPath.Should().Be(expectedValue);
+    }
+
+    protected void GeneratesToStringFastWithMetadataTest(T value)
+    {
+        var serialized = ToStringFast(value, withMetadata: true);
         var valueAsString = value.ToString();
 
         TryGetDisplayNameOrDescription(valueAsString, out var displayName);
