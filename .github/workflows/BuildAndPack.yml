@@ -40,6 +40,7 @@ jobs:
             vm: macos-13  # latest is arm64, and it breaks a bunch of stuff
     env:
       MSBuildEnableWorkloadResolver: false
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "true"
     name: ${{ matrix.os}}
     runs-on: ${{ matrix.vm}}
     steps:
@@ -51,9 +52,7 @@ jobs:
             8.0.110
             7.0.x
             6.0.x
-            5.0.x
             3.1.x
-            2.1.x
 
       - run: dotnet new globaljson --sdk-version "8.0.402" --force
       - name: Cache .nuke/temp, ~/.nuget/packages
