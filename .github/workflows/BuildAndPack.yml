@@ -40,6 +40,7 @@ jobs:
             vm: macos-13  # latest is arm64, and it breaks a bunch of stuff
     env:
       MSBuildEnableWorkloadResolver: false
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "true"
     name: ${{ matrix.os}}
     runs-on: ${{ matrix.vm}}
     steps:
