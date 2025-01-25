@@ -36,7 +36,7 @@ public class EnumGenerator : IIncrementalGenerator
 
         var interceptionExplicitlyEnabled = context.AnalyzerConfigOptionsProvider
             .Select((x, _) =>
-                x.GlobalOptions.TryGetValue($"build_property.{Attributes.EnabledPropertyName}", out var enableSwitch)
+                x.GlobalOptions.TryGetValue($"build_property.{Constants.EnabledPropertyName}", out var enableSwitch)
                 && enableSwitch.Equals("true", StringComparison.Ordinal));
 
         var csharpSufficient = context.CompilationProvider
@@ -49,7 +49,7 @@ public class EnumGenerator : IIncrementalGenerator
         var interceptableEnumsAndLocations = context
             .SyntaxProvider
             .ForAttributeWithMetadataName(
-                Attributes.InterceptableAttribute,
+                Constants.InterceptableAttribute,
                 predicate: static (node, _) => node is CompilationUnitSyntax,
                 transform: static (ctx, ct) =>
                 {
