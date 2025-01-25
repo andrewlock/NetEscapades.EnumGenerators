@@ -11,21 +11,13 @@ namespace NetEscapades.EnumGenerators;
 [Generator]
 public class EnumGenerator : IIncrementalGenerator
 {
-    private const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
-    private const string DescriptionAttribute = "System.ComponentModel.DescriptionAttribute";
-    private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
-    private const string ExternalEnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute`1";
-    private const string InterceptableAttribute = "NetEscapades.EnumGenerators.InterceptableAttribute`1";
-    private const string FlagsAttribute = "System.FlagsAttribute";
-
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
             "EnumExtensionsAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
 
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
-            .ForAttributeWithMetadataName(
-                EnumExtensionsAttribute,
+            .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
                 predicate: static (node, _) => node is EnumDeclarationSyntax,
                 transform: GetTypeToGenerate)
             .WithTrackingName(TrackingNames.InitialExtraction)
@@ -35,8 +27,7 @@ public class EnumGenerator : IIncrementalGenerator
 
         IncrementalValuesProvider<EnumToGenerate> externalEnums = context
             .SyntaxProvider
-            .ForAttributeWithMetadataName(
-                ExternalEnumExtensionsAttribute,
+            .ForAttributeWithMetadataName(Attributes.ExternalEnumExtensionsAttribute,
                 predicate: static (node, _) => node is CompilationUnitSyntax,
                 transform: static (context1, ct) => GetEnumToGenerateFromGenericAssemblyAttribute(context1, ct, "EnumExtensionsAttribute", "EnumExtensions"))
             .Where(static m => m is not null)
@@ -48,103 +39,6 @@ public class EnumGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(externalEnums,
             static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
-
-        // Interceptor!
-        var interceptionExplicitlyEnabled = context.AnalyzerConfigOptionsProvider
-            .Select((x, _) =>
-                x.GlobalOptions.TryGetValue($"build_property.{Constants.EnabledPropertyName}", out var enableSwitch)
-                && enableSwitch.Equals("true", StringComparison.Ordinal));
-
-        var csharpSufficient = context.CompilationProvider
-            .Select((x,_) => x is CSharpCompilation { LanguageVersion: LanguageVersion.Default or >= LanguageVersion.CSharp11 });
-
-        var settings = interceptionExplicitlyEnabled
-            .Combine(csharpSufficient)
-            .WithTrackingName(TrackingNames.Settings);
-
-        var interceptableEnumsAndLocations = context
-            .SyntaxProvider
-            .ForAttributeWithMetadataName(
-                InterceptableAttribute,
-                predicate: static (node, _) => node is CompilationUnitSyntax,
-                transform: static (ctx, ct) =>
-                {
-                    var enumToIntercept = GetEnumToGenerateFromGenericAssemblyAttribute(ctx, ct, "InterceptableAttribute",
-                        "Interceptable");
-                    var location = LocationInfo.CreateFrom(ctx.TargetNode.GetLocation());
-                    return (enumToIntercept, location);
-                })
-            .WithTrackingName(TrackingNames.InitialInterceptable);
-
-#if INTERCEPTORS
-        var interceptableEnums = interceptableEnumsAndLocations
-            .Where(static m => m.enumToIntercept is not null)
-            .SelectMany(static (m, _) => m.enumToIntercept!.Value)
-            .WithTrackingName(TrackingNames.InitialInterceptableOnly);
-
-        var interceptionEnabled = settings
-            .Select((x, _) => x.Left && x.Right);
-
-        var locations = context.SyntaxProvider
-            .CreateSyntaxProvider(InterceptorPredicate, InterceptorParser)
-            .Combine(interceptionEnabled)
-            .Where(x => x.Right && x.Left is not null)
-            .Select((x, _) => x.Left!)
-            .Collect()
-            .WithTrackingName(TrackingNames.InterceptedLocations);
-
-        var enumInterceptions = enumsToGenerate
-            .Where(x => x.IsInterceptable)
-            .Combine(locations)
-            .Select(FilterInterceptorCandidates!)
-            .Where(x => x is not null)
-            .WithTrackingName(TrackingNames.EnumInterceptions);
-
-        var externalInterceptions = externalEnums
-            .Where(x => x.IsInterceptable)
-            .Combine(locations)
-            .Select(FilterInterceptorCandidates!)
-            .Where(x => x is not null)
-            .WithTrackingName(TrackingNames.ExternalInterceptions);
-
-        var additionalInterceptions = interceptableEnums
-            .Combine(locations)
-            .Select(FilterInterceptorCandidates!)
-            .Where(x => x is not null)
-            .WithTrackingName(TrackingNames.AdditionalInterceptions);
-
-        context.RegisterSourceOutput(enumInterceptions,
-            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
-
-        context.RegisterSourceOutput(externalInterceptions,
-            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
-
-        context.RegisterSourceOutput(additionalInterceptions,
-            static (spc, toIntercept) => ExecuteInterceptors(toIntercept, spc));
-#else
-        context.RegisterSourceOutput(interceptableEnumsAndLocations,
-            static (spc, enumAndLocation) =>
-            {
-                spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.SdkVersionTooLow, location: enumAndLocation.location?.ToLocation()));
-            });
-#endif
-        context.RegisterImplementationSourceOutput(settings,
-            static (spc, args) =>
-            {
-                var explicitlyEnabled = args.Left;
-#if INTERCEPTORS
-                var csharpSufficient = args.Right;
-                if (explicitlyEnabled && !csharpSufficient)
-                {
-                    spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.CsharpVersionLooLow, location: null));
-                }
-#else
-                if (explicitlyEnabled)
-                {
-                    spc.ReportDiagnostic(Diagnostic.Create(DiagnosticHelper.SdkVersionTooLow, location: null));
-                }
-#endif
-            });
     }
 
     static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
@@ -175,7 +69,6 @@ public class EnumGenerator : IIncrementalGenerator
             }
 
             bool hasFlags = false;
-            var isInterceptable = true;
             string? name = null;
             string? nameSpace = null;
 
@@ -193,26 +86,20 @@ public class EnumGenerator : IIncrementalGenerator
                 {
                     name = n;
                 }
-
-                if (namedArgument.Key == "IsInterceptable"
-                    && namedArgument.Value.Value is false)
-                {
-                    isInterceptable = false;
-                }
             }
 
             foreach (var attrData in enumSymbol.GetAttributes())
             {
                 if ((attrData.AttributeClass?.Name == "FlagsAttribute" ||
                      attrData.AttributeClass?.Name == "Flags") &&
-                    attrData.AttributeClass.ToDisplayString() == FlagsAttribute)
+                    attrData.AttributeClass.ToDisplayString() == Attributes.FlagsAttribute)
                 {
                     hasFlags = true;
                     break;
                 }
             }
 
-            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags, isInterceptable);
+            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
             if (enumToGenerate is not null)
             {
                 enums ??= new();
@@ -237,7 +124,6 @@ public class EnumGenerator : IIncrementalGenerator
         ct.ThrowIfCancellationRequested();
 
         var hasFlags = false;
-        var isInterceptable = true;
         string? nameSpace = null;
         string? name = null;
 
@@ -245,14 +131,14 @@ public class EnumGenerator : IIncrementalGenerator
         {
             if ((attributeData.AttributeClass?.Name == "FlagsAttribute" ||
                  attributeData.AttributeClass?.Name == "Flags") &&
-                attributeData.AttributeClass.ToDisplayString() == FlagsAttribute)
+                attributeData.AttributeClass.ToDisplayString() == Attributes.FlagsAttribute)
             {
                 hasFlags = true;
                 continue;
             }
 
             if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
-                attributeData.AttributeClass.ToDisplayString() != EnumExtensionsAttribute)
+                attributeData.AttributeClass.ToDisplayString() != Attributes.EnumExtensionsAttribute)
             {
                 continue;
             }
@@ -271,20 +157,13 @@ public class EnumGenerator : IIncrementalGenerator
                 {
                     name = n;
                 }
-
-                if (namedArgument.Key == "IsInterceptable"
-                    && namedArgument.Value.Value is false)
-                {
-                    isInterceptable = false;
-                }
             }
         }
 
-        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags, isInterceptable);
+        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
     }
 
-    static EnumToGenerate? TryExtractEnumSymbol(INamedTypeSymbol enumSymbol, string? name, string? nameSpace,
-        bool hasFlags, bool isInterceptable)
+    static EnumToGenerate? TryExtractEnumSymbol(INamedTypeSymbol enumSymbol, string? name, string? nameSpace, bool hasFlags)
     {
         name ??= enumSymbol.Name + "Extensions";
         nameSpace ??= enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
@@ -309,7 +188,7 @@ public class EnumGenerator : IIncrementalGenerator
             foreach (var attribute in member.GetAttributes())
             {
                 if (attribute.AttributeClass?.Name == "DisplayAttribute" &&
-                    attribute.AttributeClass.ToDisplayString() == DisplayAttribute)
+                    attribute.AttributeClass.ToDisplayString() == Attributes.DisplayAttribute)
                 {
                     foreach (var namedArgument in attribute.NamedArguments)
                     {
@@ -323,7 +202,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
                 
                 if (attribute.AttributeClass?.Name == "DescriptionAttribute" 
-                    && attribute.AttributeClass.ToDisplayString() == DescriptionAttribute
+                    && attribute.AttributeClass.ToDisplayString() == Attributes.DescriptionAttribute
                     && attribute.ConstructorArguments.Length == 1)
                 {
                     if (attribute.ConstructorArguments[0].Value?.ToString() is { } dn)
@@ -354,67 +233,6 @@ public class EnumGenerator : IIncrementalGenerator
             isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
             hasFlags: hasFlags,
             names: members,
-            isDisplayAttributeUsed: displayNames?.Count > 0,
-            isInterceptable: isInterceptable);
+            isDisplayAttributeUsed: displayNames?.Count > 0);
     }
-
-#if INTERCEPTORS
-    private static bool InterceptorPredicate(SyntaxNode node, CancellationToken ct) =>
-        node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name.Identifier.ValueText: "ToString" or "HasFlag"}};
-
-    private static CandidateInvocation? InterceptorParser(GeneratorSyntaxContext ctx, CancellationToken ct)
-    {
-        if (ctx.Node is InvocationExpressionSyntax {Expression: MemberAccessExpressionSyntax {Name: { } nameSyntax}} invocation
-            && ctx.SemanticModel.GetOperation(ctx.Node, ct) is IInvocationOperation targetOperation
-            && targetOperation.TargetMethod is {Name : "ToString" or "HasFlag", ContainingType: {Name: "Enum", ContainingNamespace: {Name: "System", ContainingNamespace.IsGlobalNamespace: true}}}
-            && targetOperation.Instance?.Type is { } type
-#pragma warning disable RSEXPERIMENTAL002 // / Experimental interceptable location API
-            && ctx.SemanticModel.GetInterceptableLocation(invocation) is { } location)
-#pragma warning restore RSEXPERIMENTAL002
-        {
-            var targetToIntercept = targetOperation.TargetMethod.Name switch
-            {
-                "ToString" => InterceptorTarget.ToString,
-                "HasFlag" => InterceptorTarget.HasFlag,
-                _ => default, // can't be reached
-            };
-            return new CandidateInvocation(location, type.ToString(), targetToIntercept);
-        }
-
-        return null;
-    }
-
-    private MethodToIntercept? FilterInterceptorCandidates(
-        (EnumToGenerate Enum, ImmutableArray<CandidateInvocation> Candidates) arg1, 
-        CancellationToken ct)
-    {
-        if (arg1.Candidates.IsDefaultOrEmpty)
-        {
-            return default;
-        }
-
-        List<CandidateInvocation>? results = null;
-        foreach (var candidate in arg1.Candidates)
-        {
-            if (arg1.Enum.FullyQualifiedName.Equals(candidate.EnumName, StringComparison.Ordinal))
-            {
-                results ??= new();
-                results.Add(candidate);
-            }
-        }
-
-        if (results is null)
-        {
-            return null;
-        }
-
-        return new(new(results.ToArray()), arg1.Enum);
-    }
-
-    private static void ExecuteInterceptors(MethodToIntercept? toIntercept, SourceProductionContext spc)
-    {
-        var (result, filename) = SourceGenerationHelper.GenerateInterceptorsClass(toIntercept!);
-        spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
-    }
-#endif
 }

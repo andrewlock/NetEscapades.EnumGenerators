@@ -5,11 +5,6 @@
     <Nullable>enable</Nullable>
     <DefineConstants>$(DefineConstants);NUGET_NETSTANDARD_INTERCEPTOR_TESTS</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '8.0.400'))">
-    <UsingModernDotNetSdk>true</UsingModernDotNetSdk>
-    <DefineConstants>$(DefineConstants);INTERCEPTORS</DefineConstants>
     <EnableEnumGeneratorInterceptor>true</EnableEnumGeneratorInterceptor>
   </PropertyGroup>
 
@@ -26,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="$(Version)" PrivateAssets="All" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="$(Version)" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

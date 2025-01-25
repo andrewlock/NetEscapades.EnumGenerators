@@ -9,11 +9,6 @@
     <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);NetEscapades.EnumGenerators</InterceptorsPreviewNamespaces>
     <InterceptorsNamespaces>$(InterceptorsNamespaces);NetEscapades.EnumGenerators</InterceptorsNamespaces>
   </PropertyGroup>
-  
-  <PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(NETCoreSdkVersion)', '8.0.400'))">
-    <UsingModernDotNetSdk>true</UsingModernDotNetSdk>
-    <DefineConstants>$(DefineConstants);INTERCEPTORS</DefineConstants>
-  </PropertyGroup>
 
   <ItemGroup>
     <CompilerVisibleProperty Include="EnableEnumGeneratorInterceptor" />
@@ -24,12 +19,10 @@
   </ItemGroup>
 
   <!-- This project can only be loaded when we have a high enough copmiler -->
-  <ItemGroup Condition="$(UsingModernDotNetSdk) != true">
-    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Roslyn4_04.csproj"
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj"
                       OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-  <ItemGroup Condition="$(UsingModernDotNetSdk) == true">
-    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.Roslyn4_11.csproj"
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors\NetEscapades.EnumGenerators.Interceptors.csproj"
                       OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 

@@ -5,35 +5,23 @@ using System.IO;
 using NetEscapades.EnumGenerators;
 using Xunit;
 
-#if INTERCEPTORS && NUGET_INTERCEPTOR_TESTS
+#if NUGET_INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
-#elif INTERCEPTORS && INTERCEPTOR_TESTS
+#elif INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests;
-#elif INTERCEPTORS && NETSTANDARD_INTERCEPTOR_TESTS
+#elif NETSTANDARD_INTERCEPTOR_TESTS
 using NetEscapades.EnumGenerators.NetStandard.IntegrationTests;
 
 namespace NetEscapades.EnumGenerators.NetStandard.Interceptors.IntegrationTests;
-#elif INTERCEPTORS && NUGET_NETSTANDARD_INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests;
-#elif NUGET_INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests.Roslyn4_4;
-#elif INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_4;
-#elif NETSTANDARD_INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.NetStandard.Interceptors.IntegrationTests.Roslyn4_4;
 #elif NUGET_NETSTANDARD_INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests.Roslyn4_4;
+namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests;
 #else
 #error Unknown project combination
 #endif
 
 public class InterceptorTests
 {
-#if INTERCEPTORS
     [Fact]
-#else
-    [Fact(Skip = "Interceptors are not supported in this SDK")]
-#endif
     public void CallingToStringIsIntercepted()
     {
         AssertValue(EnumWithDisplayNameInNamespace.First);
@@ -50,11 +38,7 @@ public class InterceptorTests
         }
     }
 
-#if INTERCEPTORS
     [Fact]
-#else
-    [Fact(Skip = "Interceptors are not supported in this SDK")]
-#endif
     public void CallingToStringIsIntercepted_StringTesting()
     {
 #pragma warning disable CS0612
@@ -64,11 +48,7 @@ public class InterceptorTests
         Assert.Equal(result1, result2);
     }
 
-#if INTERCEPTORS
     [Fact]
-#else
-    [Fact(Skip = "Interceptors are not supported in this SDK")]
-#endif
     public void CallingToStringIsIntercepted_EnumInFoo()
     {
         // This doesn't _actually_ test interception, because can't
@@ -78,11 +58,7 @@ public class InterceptorTests
         Assert.Equal(result1, result2);
     }
 
-#if INTERCEPTORS
     [Fact]
-#else
-    [Fact(Skip = "Interceptors are not supported in this SDK")]
-#endif
     public void CallingToStringIsIntercepted_EnumWithExtensionInOtherNamespace()
     {
         // This doesn't _actually_ test interception, because can't
@@ -137,18 +113,6 @@ public class InterceptorTests
     {
         var result1 = NonInterceptableEnum.Second.ToString();
         var result2 = NonInterceptableEnum.Second.ToStringFast();
-        Assert.NotEqual(result1, result2);
-    }
-
-#if INTERCEPTORS
-    [Fact(Skip = "Interceptors are supported in this SDK")]
-#else
-    [Fact(Skip = "Can't actually verify it's not interceptable")]
-#endif
-    public void CallingToStringIsNotInterceptedWhenNotSupportedBySdk()
-    {
-        var result1 = EnumWithDisplayNameInNamespace.Second.ToString();
-        var result2 = EnumWithDisplayNameInNamespace.Second.ToStringFast();
         Assert.NotEqual(result1, result2);
     }
 }
