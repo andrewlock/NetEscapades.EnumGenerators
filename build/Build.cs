@@ -116,6 +116,8 @@ class Build : NukeBuild
             {
                 (PackagesDirectory / "netescapades.enumgenerators").DeleteDirectory();
                 (PackagesDirectory / "netescapades.enumgenerators.attributes").DeleteDirectory();
+                (PackagesDirectory / "netescapades.enumgenerators.interceptors").DeleteDirectory();
+                (PackagesDirectory / "netescapades.enumgenerators.interceptors.attributes").DeleteDirectory();
             }
 
             DotNetRestore(s => s
