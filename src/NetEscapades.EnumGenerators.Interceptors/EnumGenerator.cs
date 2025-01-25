@@ -37,15 +37,15 @@ public class EnumGenerator : IIncrementalGenerator
             .SelectMany(static (m, _) => m!.Value)
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
 
-        var interceptionExplicitlyEnabled = context.AnalyzerConfigOptionsProvider
+        var interceptionEnabledSetting = context.AnalyzerConfigOptionsProvider
             .Select((x, _) =>
                 x.GlobalOptions.TryGetValue($"build_property.{Constants.EnabledPropertyName}", out var enableSwitch)
-                && enableSwitch.Equals("true", StringComparison.Ordinal));
+                && !enableSwitch.Equals("false", StringComparison.Ordinal));
 
         var csharpSufficient = context.CompilationProvider
             .Select((x,_) => x is CSharpCompilation { LanguageVersion: LanguageVersion.Default or >= LanguageVersion.CSharp11 });
 
-        var settings = interceptionExplicitlyEnabled
+        var settings = interceptionEnabledSetting
             .Combine(csharpSufficient)
             .WithTrackingName(TrackingNames.Settings);
 

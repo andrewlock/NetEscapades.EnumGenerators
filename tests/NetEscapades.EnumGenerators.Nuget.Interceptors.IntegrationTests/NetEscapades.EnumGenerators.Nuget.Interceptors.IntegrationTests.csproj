@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
     <DefineConstants>$(DefineConstants);NUGET_INTERCEPTOR_TESTS</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
-    <EnableEnumGeneratorInterceptor>true</EnableEnumGeneratorInterceptor>
   </PropertyGroup>
 
   <ItemGroup>
