@@ -8,9 +8,6 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
-using System;
-#endif
 
 namespace A.B
 {
@@ -107,7 +104,7 @@ namespace A.B
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
@@ -119,13 +116,13 @@ namespace A.B
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
         /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
         {
             return name switch
             {
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Unspecified).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Utc).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Local).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -325,7 +322,7 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name)
+            in global::System.ReadOnlySpan<char> name)
                 => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
@@ -340,7 +337,7 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase)
                 => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
 
@@ -358,7 +355,7 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
@@ -379,7 +376,7 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
+            in global::System.ReadOnlySpan<char> name, 
             out global::System.DateTimeKind value)
             => TryParse(name, out value, false, false);
 
@@ -400,7 +397,7 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind value,
             bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);
@@ -424,7 +421,7 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
@@ -436,22 +433,22 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind result,
             bool allowMatchingMetadataAttribute)
         {
             switch (name)
             {
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Unspecified).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.DateTimeKind.Unspecified;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Utc).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.DateTimeKind.Utc;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Local).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.DateTimeKind.Local;
                     return true;
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::System.DateTimeKind)numericResult;
                     return true;
                 default:
@@ -464,22 +461,22 @@ namespace A.B
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind result,
             bool allowMatchingMetadataAttribute)
         {
             switch (name)
             {
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Unspecified).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.Ordinal):
                     result = global::System.DateTimeKind.Unspecified;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Utc).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.Ordinal):
                     result = global::System.DateTimeKind.Utc;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Local).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.Ordinal):
                     result = global::System.DateTimeKind.Local;
                     return true;
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::System.DateTimeKind)numericResult;
                     return true;
                 default:

@@ -9,9 +9,6 @@
 //------------------------------------------------------------------------------
 
 #nullable enable
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
-using System;
-#endif
 
 namespace System
 {
@@ -147,7 +144,7 @@ namespace System
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
@@ -159,26 +156,26 @@ namespace System
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
         /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
         {
             return name switch
             {
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Black).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkBlue).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkGreen).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkCyan).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkRed).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkMagenta).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkYellow).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Gray).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkGray).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Blue).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Green).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Cyan).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Red).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Magenta).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Yellow).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.White).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Black), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkBlue), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkGreen), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkCyan), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkRed), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkMagenta), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkYellow), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Gray), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkGray), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Blue), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Green), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Cyan), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Red), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Magenta), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Yellow), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.White), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -456,7 +453,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name)
+            in global::System.ReadOnlySpan<char> name)
                 => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
@@ -471,7 +468,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase)
                 => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
 
@@ -489,7 +486,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
@@ -510,7 +507,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
+            in global::System.ReadOnlySpan<char> name, 
             out global::System.ConsoleColor value)
             => TryParse(name, out value, false, false);
 
@@ -531,7 +528,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.ConsoleColor value,
             bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);
@@ -555,7 +552,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.ConsoleColor result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
@@ -567,61 +564,61 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.ConsoleColor result,
             bool allowMatchingMetadataAttribute)
         {
             switch (name)
             {
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Black).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Black), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Black;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkBlue).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkBlue), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.DarkBlue;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkGreen).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkGreen), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.DarkGreen;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkCyan).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkCyan), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.DarkCyan;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkRed).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkRed), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.DarkRed;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkMagenta).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkMagenta), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.DarkMagenta;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkYellow).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkYellow), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.DarkYellow;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Gray).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Gray), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Gray;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkGray).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkGray), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.DarkGray;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Blue).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Blue), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Blue;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Green).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Green), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Green;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Cyan).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Cyan), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Cyan;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Red).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Red), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Red;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Magenta).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Magenta), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Magenta;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Yellow).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Yellow), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.Yellow;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.White).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.White), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.ConsoleColor.White;
                     return true;
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::System.ConsoleColor)numericResult;
                     return true;
                 default:
@@ -634,61 +631,61 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.ConsoleColor result,
             bool allowMatchingMetadataAttribute)
         {
             switch (name)
             {
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Black).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Black), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Black;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkBlue).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkBlue), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.DarkBlue;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkGreen).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkGreen), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.DarkGreen;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkCyan).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkCyan), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.DarkCyan;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkRed).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkRed), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.DarkRed;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkMagenta).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkMagenta), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.DarkMagenta;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkYellow).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkYellow), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.DarkYellow;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Gray).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Gray), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Gray;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.DarkGray).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.DarkGray), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.DarkGray;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Blue).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Blue), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Blue;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Green).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Green), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Green;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Cyan).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Cyan), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Cyan;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Red).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Red), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Red;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Magenta).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Magenta), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Magenta;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.Yellow).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.Yellow), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.Yellow;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.ConsoleColor.White).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.ConsoleColor.White), global::System.StringComparison.Ordinal):
                     result = global::System.ConsoleColor.White;
                     return true;
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::System.ConsoleColor)numericResult;
                     return true;
                 default:
@@ -772,9 +769,6 @@ namespace System
 //------------------------------------------------------------------------------
 
 #nullable enable
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
-using System;
-#endif
 
 namespace System
 {
@@ -871,7 +865,7 @@ namespace System
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
@@ -883,13 +877,13 @@ namespace System
         /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
         /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
         {
             return name switch
             {
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Unspecified).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Utc).AsSpan(), global::System.StringComparison.Ordinal) => true,
-                ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Local).AsSpan(), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
@@ -1089,7 +1083,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name)
+            in global::System.ReadOnlySpan<char> name)
                 => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
@@ -1104,7 +1098,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase)
                 => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
 
@@ -1122,7 +1116,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
@@ -1143,7 +1137,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
+            in global::System.ReadOnlySpan<char> name, 
             out global::System.DateTimeKind value)
             => TryParse(name, out value, false, false);
 
@@ -1164,7 +1158,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind value,
             bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);
@@ -1188,7 +1182,7 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
@@ -1200,22 +1194,22 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind result,
             bool allowMatchingMetadataAttribute)
         {
             switch (name)
             {
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Unspecified).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.DateTimeKind.Unspecified;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Utc).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.DateTimeKind.Utc;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Local).AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::System.DateTimeKind.Local;
                     return true;
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::System.DateTimeKind)numericResult;
                     return true;
                 default:
@@ -1228,22 +1222,22 @@ namespace System
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind result,
             bool allowMatchingMetadataAttribute)
         {
             switch (name)
             {
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Unspecified).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.Ordinal):
                     result = global::System.DateTimeKind.Unspecified;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Utc).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.Ordinal):
                     result = global::System.DateTimeKind.Utc;
                     return true;
-                case ReadOnlySpan<char> current when current.Equals(nameof(global::System.DateTimeKind.Local).AsSpan(), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.Ordinal):
                     result = global::System.DateTimeKind.Local;
                     return true;
-                case ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
                     result = (global::System.DateTimeKind)numericResult;
                     return true;
                 default:
