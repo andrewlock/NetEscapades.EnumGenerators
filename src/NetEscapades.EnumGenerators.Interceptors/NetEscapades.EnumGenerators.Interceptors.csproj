@@ -8,7 +8,7 @@
     <RootNamespace>$(PackageId)</RootNamespace>
     <Nullable>enable</Nullable>
     <ImplicitUsings>true</ImplicitUsings>
-    <Description>A source generator interceptor for automatically intercepting calls to ToString() enums, and replacing them with calls to ToStringFast() generated from NetEscapades.EnumGenerators</Description>
+    <Description>A source generator interceptor for automatically intercepting calls to ToString() on enums, and replacing them with calls to ToStringFast() generated from NetEscapades.EnumGenerators</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsPackable>true</IsPackable>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../README.md" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="NetEscapades.EnumGenerators.Interceptors.props" Pack="true" PackagePath="build" Visible="false" />
     <None Include="NetEscapades.EnumGenerators.Interceptors.targets" Pack="true" PackagePath="build" Visible="false" />
