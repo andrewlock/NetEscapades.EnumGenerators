@@ -1,16 +1,20 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta11'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta12'">
       <![CDATA[
 
+Breaking Changes:
+- By default, `ToStringFast()` no longer uses `[DisplayName]` and `[Description]` by default. The original behaviour can be restored by passing `allowMatchingMetadataAttribute:true` (#122)
+- Split the experimental interceptor support into a separate project, NetEscapades.EnumGenerators.Interceptors (#125)
+- Enable interception by default when NetEscapades.EnumGenerators.Interceptors is added (#127)
+
 Features
-- Add optional interceptor for ToString() and HasFlag() (#94, #101, #104, #105, #106, #108, #113)
-- Ignore usages of obsolete enum members in generated code (#111)
+- Added a package logo (#125)
 
 Fixes
-- Fix escaping of strings in description and display attributes (#109)
-- Ensure we can handle enums with the same name in different namespaces (#114)
-- Fix naming conflicts in System namespace (#118) Thanks @henrikwidlund!
+- Fixed indentation in generated code so it aligns properly with 4 spaces (#120) Thanks @karl-sjogren!
+- Fix missing global on System namespace usages (#118) Thanks @henrikwidlund!
+- Don't use `using`s in generated code (#129)
 
 ]]>
     </PackageReleaseNotes>
