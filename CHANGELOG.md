@@ -1,6 +1,21 @@
 Changelog
 --- 
 
+## [v1.0.0-beta12](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta11..v1.0.0-beta12) (2025-01-26)
+
+### Breaking Changes:
+- By default, `ToStringFast()` no longer uses `[DisplayName]` and `[Description]` by default. The original behaviour can be restored by passing `allowMatchingMetadataAttribute:true` (#122)
+- Split the experimental interceptor support into a separate project, NetEscapades.EnumGenerators.Interceptors (#125)
+- Enable interception by default when NetEscapades.EnumGenerators.Interceptors is added (#127)
+
+### Features
+- Added a package logo (#125)
+
+### Fixes
+- Fixed indentation in generated code so it aligns properly with 4 spaces (#120) Thanks [@karl-sjogren](https://github.com/karl-sjogren)!
+- Fix missing global on System namespace usages (#118) Thanks [@henrikwidlund](https://github.com/henrikwidlund)!
+- Don't use `using`s in generated code (#129)
+
 ## [v1.0.0-beta11](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta09..v1.0.0-beta11) (2024-10-24)
 
 ### Features
