@@ -48,14 +48,14 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
-            8.0.402
-            8.0.110
+            9.0.x
+            8.0.x
             7.0.x
             6.0.x
             3.1.x
             2.1.x
 
-      - run: dotnet new globaljson --sdk-version "8.0.402" --force
+      # - run: dotnet new globaljson --sdk-version "8.0.402" --force
       - name: Cache .nuke/temp, ~/.nuget/packages
         uses: actions/cache@v3
         with:
@@ -64,14 +64,12 @@ jobs:
             ~/.nuget/packages
             !~/.nuget/packages/netescapades.enumgenerators
             !~/.nuget/packages/netescapades.enumgenerators.attributes
+            !~/.nuget/packages/netescapades.enumgenerators.interceptors
+            !~/.nuget/packages/netescapades.enumgenerators.interceptors.attributes
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
 
-      - name: Run './build.cmd Clean Test TestPackage'
-        run: ./build.cmd Clean Test TestPackage
-
-      - run: dotnet new globaljson --sdk-version "8.0.110" --force
-      - name: Run './build.cmd TestPackage PushToNuGet --skip'
-        run: ./build.cmd TestPackage PushToNuGet --skip
+      - name: Run './build.cmd Clean Test TestPackage PushToNuGet
+        run: ./build.cmd Clean Test TestPackage PushToNuGet
         env:
           NuGetToken: ${{ secrets.NUGET_TOKEN }}
 
