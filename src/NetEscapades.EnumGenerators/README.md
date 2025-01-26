@@ -394,7 +394,7 @@ If you wish to preserve these attributes in the build output, you can define the
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta12~~~~~~~~" PrivateAssets="all" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta12" PrivateAssets="all" />
   <!--              ☝ You must not exclude the runtime assets in this case -->
 
 </Project>
