@@ -14,7 +14,7 @@ namespace NetEscapades.EnumGenerators.Tests;
 public class InterceptorTests
 {
     private IIncrementalGenerator[] Generators()
-        => [new EnumGenerator(), new Interceptors.EnumGenerator()];
+        => [new EnumGenerator(), new InterceptorGenerator()];
 
     private readonly Dictionary<string, string> _analyzerOpts =
         new() { { "build_property.EnableEnumGeneratorInterceptor", "true" } };
@@ -579,6 +579,81 @@ public class InterceptorTests
                         var var2 = MyEnum.Second.ToString();
                         var var3 = Property.ToString();
                         var var4 = _field.ToString();
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanNotInterceptUsageInStringInterpolation()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions]
+                internal enum MyEnum
+                {
+                    First = 0,
+                    Second = 1,
+                }
+                
+                internal class InnerClass
+                {
+                    public MyEnum _field = default;
+                    public MyEnum Property {get;set;} = default;
+                    public void MyTest()
+                    {
+                        var myValue = MyEnum.Second;
+                        var var1 = $"The value is: {myValue}";
+                        var var2 = $"The value is: {Property}";
+                        var var3 = $"The value is: {_field}";
+                    }
+                }
+            }
+            """;
+        var (diagnostics, output) =
+            TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
+    }
+
+    [Fact]
+    public Task CanNotInterceptUsageWithEnumDirectly()
+    {
+        const string input =
+            """
+            using System;
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions]
+                internal enum MyEnum
+                {
+                    First = 0,
+                    Second = 1,
+                }
+                
+                internal class InnerClass
+                {
+                    public Enum _field = default(MyEnum);
+                    public Enum Property {get;set;} = default(MyEnum);
+                    public void MyTest()
+                    {
+                        Enum myValue = MyEnum.Second;
+                        var var1 = myValue.ToString();
+                        var var2 = Property.ToString();
+                        var var3 = _field.ToString();
                     }
                 }
             }
