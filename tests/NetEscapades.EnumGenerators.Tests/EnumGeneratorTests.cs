@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using NetEscapades.EnumGenerators.Interceptors;
 using VerifyTests;
 using VerifyXunit;
 using Xunit;
@@ -15,7 +16,7 @@ public class EnumGeneratorTests : EnumGeneratorTestsBase
 public class EnumGeneratorInterceptorTests : EnumGeneratorTestsBase
 {
     protected override IIncrementalGenerator[] Generators()
-        => [new EnumGenerator(), new Interceptors.EnumGenerator()];
+        => [new EnumGenerator(), new InterceptorGenerator()];
 }
 
 [UsesVerify]

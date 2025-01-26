@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace NetEscapades.EnumGenerators.Interceptors;
 
 [Generator]
-public class EnumGenerator : IIncrementalGenerator
+public class InterceptorGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {

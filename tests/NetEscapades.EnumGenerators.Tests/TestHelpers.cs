@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using NetEscapades.EnumGenerators.Interceptors;
 using VerifyTests;
 
 namespace NetEscapades.EnumGenerators.Tests;
@@ -18,8 +19,8 @@ internal static class TestHelpers
 {
     private static IIncrementalGenerator[] GetSourceGenerators() =>
     [
-        new NetEscapades.EnumGenerators.EnumGenerator(),
-        new NetEscapades.EnumGenerators.Interceptors.EnumGenerator(),
+        new EnumGenerator(),
+        new InterceptorGenerator(),
     ];
 
     private static readonly string[] GeneratedAttributeFileNames =
@@ -95,7 +96,7 @@ internal static class TestHelpers
             .Concat([
                 ..generators.Select(x=> MetadataReference.CreateFromFile(x.GetType().Assembly.Location)),
                 MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.Interceptors.EnumGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.Interceptors.InterceptorGenerator).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(InterceptableAttribute<>).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),

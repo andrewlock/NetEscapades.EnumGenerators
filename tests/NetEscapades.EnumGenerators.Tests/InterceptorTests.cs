@@ -14,7 +14,7 @@ namespace NetEscapades.EnumGenerators.Tests;
 public class InterceptorTests
 {
     private IIncrementalGenerator[] Generators()
-        => [new EnumGenerator(), new Interceptors.EnumGenerator()];
+        => [new EnumGenerator(), new InterceptorGenerator()];
 
     private readonly Dictionary<string, string> _analyzerOpts =
         new() { { "build_property.EnableEnumGeneratorInterceptor", "true" } };
