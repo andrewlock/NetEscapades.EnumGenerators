@@ -13,6 +13,9 @@ public class EnumGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
+            "InterceptableAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
+
         IncrementalValuesProvider<EnumToIntercept> enumsToIntercept = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 Attributes.EnumExtensionsAttribute,

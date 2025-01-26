@@ -26,31 +26,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" />
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors.Attributes\NetEscapades.EnumGenerators.Interceptors.Attributes.csproj" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors\NetEscapades.EnumGenerators.Interceptors.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteMembers_CS0618_Issue97.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteMembers_CS0612_Issue97.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteEnums_CS0618_Issue97.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteEnums_CS0612_Issue97.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanHandleNamespaceAndClassNameAreTheSame.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateForMultipleExternalEnums.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateForExternalFlagsEnum.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateForExternalEnum.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateExternalEnumExtensionsWithCustomNamespaceAndName.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateExternalEnumExtensionsWithCustomNamespace.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateExternalEnumExtensionsWithCustomName.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithSameDisplayName.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomNamespaceAndName.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomNamespace.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomNames.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomName.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsInNestedClass.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsInGlobalNamespace.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsInChildNamespace.verified.txt" />
-    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsForFlagsEnum_Params.verified.txt" />
   </ItemGroup>
 
 </Project>

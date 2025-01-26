@@ -43,6 +43,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators", "src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj", "{55000E98-4A4E-4AD5-BC11-A4F1F38726DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Interceptors.Attributes", "src\NetEscapades.EnumGenerators.Interceptors.Attributes\NetEscapades.EnumGenerators.Interceptors.Attributes.csproj", "{69A5F485-3DC8-48AF-9732-503E4926C92B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{55000E98-4A4E-4AD5-BC11-A4F1F38726DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55000E98-4A4E-4AD5-BC11-A4F1F38726DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55000E98-4A4E-4AD5-BC11-A4F1F38726DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69A5F485-3DC8-48AF-9732-503E4926C92B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69A5F485-3DC8-48AF-9732-503E4926C92B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69A5F485-3DC8-48AF-9732-503E4926C92B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69A5F485-3DC8-48AF-9732-503E4926C92B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{443BC4C1-CF11-45E3-B772-72F886826C69} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
@@ -126,5 +132,6 @@ Global
 		{99AC1B59-04D1-4B19-957B-D7DE4D19A7CD} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{C26CDBC7-5CC3-4F55-8910-095D77DF7FD4} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 		{55000E98-4A4E-4AD5-BC11-A4F1F38726DC} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
+		{69A5F485-3DC8-48AF-9732-503E4926C92B} = {78D56637-F921-437D-A9AC-FBEAD78344BE}
 	EndGlobalSection
 EndGlobal

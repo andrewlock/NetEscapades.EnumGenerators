@@ -22,10 +22,11 @@
         public string? ExtensionClassName { get; set; }
 
         /// <summary>
-        /// By default, when interceptors are enabled for a project, any
-        /// interceptable usages of the enum will be replaced by usages of
+        /// By default, when used with NetEscapades.EnumGenerators.Interceptors
+        /// any interceptable usages of the enum will be replaced by usages of
         /// the extension method in this project. To disable interception of
-        /// the enum in this project, set <see cref="IsInterceptable"/> to <c>false</c>.
+        /// the enum in this project when used with the interceptable package,
+        /// set <see cref="IsInterceptable"/> to <c>false</c>.
         /// </summary>
         public bool IsInterceptable { get; set; } = true;
     }
@@ -40,23 +41,24 @@
     {
         /// <summary>
         /// The namespace to generate the extension class.
-        /// If not provided, the namespace of the enum will be used
+        /// If not provided, the namespace of the enum will be used.
         /// </summary>
         public string? ExtensionClassNamespace { get; set; }
 
         /// <summary>
         /// The name to use for the extension class.
-        /// If not provided, the enum name with ""Extensions"" will be used.
+        /// If not provided, the enum name with an <c>Extensions</c> suffix will be used.
         /// For example for an Enum called StatusCodes, the default name
-        /// will be StatusCodesExtensions
+        /// will be StatusCodesExtensions.
         /// </summary>
         public string? ExtensionClassName { get; set; }
 
         /// <summary>
-        /// By default, when interceptors are enabled for a project, any
-        /// interceptable usages of the enum will be replaced by usages of
+        /// By default, when used with NetEscapades.EnumGenerators.Interceptors
+        /// any interceptable usages of the enum will be replaced by usages of
         /// the extension method in this project. To disable interception of
-        /// the enum in this project, set <see cref="IsInterceptable"/> to <c>false</c>.
+        /// the enum in this project when used with the interceptable package,
+        /// set <see cref="IsInterceptable"/> to <c>false</c>.
         /// </summary>
         public bool IsInterceptable { get; set; } = true;
     }

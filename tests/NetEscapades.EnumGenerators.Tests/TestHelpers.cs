@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -20,6 +21,16 @@ internal static class TestHelpers
         new NetEscapades.EnumGenerators.EnumGenerator(),
         new NetEscapades.EnumGenerators.Interceptors.EnumGenerator(),
     ];
+
+    private static readonly string[] GeneratedAttributeFileNames =
+    [
+        "EnumExtensionsAttribute.g.cs",
+        "InterceptableAttribute.g.cs",
+    ];
+
+    public static IEnumerable<string> WhereNotGeneratedAttribute(this ImmutableArray<SyntaxTree> trees)
+        => trees.Where(tree => !GeneratedAttributeFileNames.Contains(Path.GetFileName(tree.FilePath)))
+            .Select(tree => tree.ToString());
 
     private static readonly Regex InterceptorAttributeRegex =
         new(@"InterceptsLocation\(\d+, \"".+\""\)\]");
@@ -53,18 +64,21 @@ internal static class TestHelpers
 
     public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput(IIncrementalGenerator[] generators, Options opts)
     {
-        var (diagnostics, trees) = GetGeneratedTrees<TrackingNames>(generators, opts);
-        return (diagnostics, trees.LastOrDefault() ?? string.Empty);
+        var (diagnostics, trees) =
+            GetGeneratedTrees(generators, opts, opts.Stages ?? GetTrackingNames<TrackingNames>());
+
+        // exclude generated static attribute files from the output
+        var output = trees.WhereNotGeneratedAttribute().LastOrDefault() ?? string.Empty;
+        return (diagnostics, output);
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<TTrackingNames>(
+    public static (ImmutableArray<Diagnostic> Diagnostics, ImmutableArray<SyntaxTree> Output) GetGeneratedTrees<TTrackingNames>(
         IIncrementalGenerator[] generators, Options options)
     {
-        // get all the const string fields
         return GetGeneratedTrees(generators, options, options.Stages ?? GetTrackingNames<TTrackingNames>());
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees(
+    private static (ImmutableArray<Diagnostic> Diagnostics, ImmutableArray<SyntaxTree> SyntaxTrees) GetGeneratedTrees(
         IIncrementalGenerator[] generators, Options opts, params string[] stages)
     {
         var syntaxTrees = opts.Sources
@@ -83,6 +97,7 @@ internal static class TestHelpers
                 MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.Interceptors.EnumGenerator).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(InterceptableAttribute<>).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
             ]);
@@ -97,7 +112,7 @@ internal static class TestHelpers
 
         var combinedDiagnostics = runResult.Diagnostics.AddRange(diagnostics);
 
-        return (combinedDiagnostics, runResult.GeneratedTrees.Select(x => x.ToString()).ToArray());
+        return (combinedDiagnostics, runResult.GeneratedTrees);
     }
 
     private static (GeneratorDriverRunResult runResult, ImmutableArray<Diagnostic> diagnostics) RunGeneratorAndAssertOutput(
