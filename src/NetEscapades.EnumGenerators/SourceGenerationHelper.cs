@@ -99,13 +99,7 @@ namespace NetEscapades.EnumGenerators
     public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate)
     {
         var sb = new StringBuilder();
-        sb
-            .Append(Header)
-            .Append(@"
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
-using System;
-#endif
-");
+        sb.AppendLine(Header);
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
             sb.Append(@"
@@ -312,7 +306,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// </summary>
         /// <param name=""name"">The name to check if it's defined</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
@@ -324,7 +318,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         /// <param name=""allowMatchingMetadataAttribute"">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
         /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
         /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
-        public static bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
         {");
 
         if (enumToGenerate.IsDisplayAttributeUsed)
@@ -340,9 +334,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    ReadOnlySpan<char> current when current.Equals(")
+                    global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, ")
                         .Append(SymbolDisplay.FormatLiteral(dn, quote: true))
-                        .Append(@".AsSpan(), global::System.StringComparison.Ordinal) => true,");
+                        .Append(@", global::System.StringComparison.Ordinal) => true,");
                 }
             }
 
@@ -364,9 +358,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.')
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(").Append(fullyQualifiedName).Append('.')
                 .Append(member.Key)
-                .Append(@").AsSpan(), global::System.StringComparison.Ordinal) => true,");
+                .Append(@"), global::System.StringComparison.Ordinal) => true,");
         }
 
         sb.Append(@"
@@ -630,7 +624,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name)
+            in global::System.ReadOnlySpan<char> name)
                 => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
@@ -645,7 +639,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase)
                 => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
 
@@ -663,7 +657,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
@@ -684,7 +678,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name, 
+            in global::System.ReadOnlySpan<char> name, 
             out ").Append(fullyQualifiedName).Append(@" value)
             => TryParse(name, out value, false, false);");
         sb.Append(@"
@@ -706,7 +700,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out ").Append(fullyQualifiedName).Append(@" value,
             bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);");
@@ -732,7 +726,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out ").Append(fullyQualifiedName).Append(@" result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
@@ -744,7 +738,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out ").Append(fullyQualifiedName).Append(@" result,
             bool allowMatchingMetadataAttribute)
         {");
@@ -761,9 +755,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(")
+                    case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, ")
                         .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
-                            @".AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                            @", global::System.StringComparison.OrdinalIgnoreCase):
                         result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }
@@ -783,15 +777,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.')
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(").Append(fullyQualifiedName).Append('.')
                 .Append(member.Key).Append(
-                    @").AsSpan(), global::System.StringComparison.OrdinalIgnoreCase):
+                    @"), global::System.StringComparison.OrdinalIgnoreCase):
                     result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
         }
 
         sb.Append(@"
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(
+                case global::System.ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(
             @".TryParse(name, out var numericResult):
                     result = (").Append(fullyQualifiedName).Append(@")numericResult;
                     return true;
@@ -805,7 +799,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in ReadOnlySpan<char> name,
+            in global::System.ReadOnlySpan<char> name,
             out ").Append(fullyQualifiedName).Append(@" result,
             bool allowMatchingMetadataAttribute)
         {");
@@ -822,9 +816,9 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
                 {
                     sb.Append(@"
-                    case ReadOnlySpan<char> current when current.Equals(")
+                    case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, ")
                         .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
-                            @".AsSpan(), global::System.StringComparison.Ordinal):
+                            @", global::System.StringComparison.Ordinal):
                         result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                         return true;");
                 }
@@ -844,15 +838,15 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(@"
-                case ReadOnlySpan<char> current when current.Equals(nameof(").Append(fullyQualifiedName).Append('.')
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(").Append(fullyQualifiedName).Append('.')
                 .Append(member.Key).Append(
-                    @").AsSpan(), global::System.StringComparison.Ordinal):
+                    @"), global::System.StringComparison.Ordinal):
                     result = ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(@";
                     return true;");
         }
 
         sb.Append(@"
-                case ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(
+                case global::System.ReadOnlySpan<char> current when ").Append(enumToGenerate.UnderlyingType).Append(
             @".TryParse(name, out var numericResult):
                     result = (").Append(fullyQualifiedName).Append(@")numericResult;
                     return true;
