@@ -18,7 +18,6 @@ public readonly record struct EnumToGenerate
     public readonly EquatableArray<(string Key, EnumValueOption Value)> Names;
 
     public readonly bool IsDisplayAttributeUsed;
-    public readonly bool IsInterceptable;
 
     public EnumToGenerate(
         string name,
@@ -28,8 +27,7 @@ public readonly record struct EnumToGenerate
         bool isPublic,
         List<(string, EnumValueOption)> names,
         bool hasFlags,
-        bool isDisplayAttributeUsed,
-        bool isInterceptable)
+        bool isDisplayAttributeUsed)
     {
         Name = name;
         Namespace = ns;
@@ -39,30 +37,5 @@ public readonly record struct EnumToGenerate
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
         IsDisplayAttributeUsed = isDisplayAttributeUsed;
-        IsInterceptable = isInterceptable;
     }
 }
-
-#if INTERCEPTORS
-#pragma warning disable RSEXPERIMENTAL002 // / Experimental interceptable location API
-public record CandidateInvocation(InterceptableLocation Location, string EnumName, InterceptorTarget Target);
-#pragma warning restore RSEXPERIMENTAL002
-
-public record MethodToIntercept(
-    EquatableArray<CandidateInvocation> Invocations,
-    string ExtensionTypeName,
-    string FullyQualifiedName,
-    string EnumNamespace)
-{
-    public MethodToIntercept(EquatableArray<CandidateInvocation> invocations, EnumToGenerate enumToGenerate)
-    : this(invocations, enumToGenerate.Name, enumToGenerate.FullyQualifiedName, enumToGenerate.Namespace)
-    {
-    }
-}
-
-public enum InterceptorTarget
-{
-    ToString,
-    HasFlag,
-}
-#endif

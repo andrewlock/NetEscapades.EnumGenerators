@@ -24,14 +24,10 @@ namespace Foo
     }
 }
 
-#if INTERCEPTORS && NUGET_INTERCEPTOR_TESTS
+#if NUGET_INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests
-#elif INTERCEPTORS && INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests
-#elif NUGET_INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests.Roslyn4_4
 #elif INTERCEPTOR_TESTS
-namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests.Roslyn4_4
+namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests
 #else
 #error Unknown project combination
 #endif

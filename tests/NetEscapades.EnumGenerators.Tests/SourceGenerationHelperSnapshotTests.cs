@@ -4,11 +4,7 @@ using System.Threading.Tasks;
 using VerifyXunit;
 using Xunit;
 
-#if INTERCEPTORS
 namespace NetEscapades.EnumGenerators.Tests;
-#else
-namespace NetEscapades.EnumGenerators.Tests.Roslyn4_04;
-#endif
 
 [UsesVerify]
 public class SourceGenerationHelperSnapshotTests
@@ -28,8 +24,7 @@ public class SourceGenerationHelperSnapshotTests
                 ("Second", new EnumValueOption(null, false)),
             },
             hasFlags: false,
-            isDisplayAttributeUsed: false,
-            isInterceptable: true);
+            isDisplayAttributeUsed: false);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(value).Content;
 
@@ -53,8 +48,7 @@ public class SourceGenerationHelperSnapshotTests
                 ("Second", new EnumValueOption(null, false)),
             },
             hasFlags: true,
-            isDisplayAttributeUsed: false,
-            isInterceptable: true);
+            isDisplayAttributeUsed: false);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(value).Content;
 

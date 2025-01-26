@@ -1,20 +1,39 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
+using VerifyTests;
 using VerifyXunit;
 using Xunit;
 
-#if INTERCEPTORS
 namespace NetEscapades.EnumGenerators.Tests;
-#else
-namespace NetEscapades.EnumGenerators.Tests.Roslyn4_04;
-#endif
+
+public class EnumGeneratorTests : EnumGeneratorTestsBase
+{
+    protected override IIncrementalGenerator[] Generators() => [new EnumGenerator()];
+}
+
+public class EnumGeneratorInterceptorTests : EnumGeneratorTestsBase
+{
+    protected override IIncrementalGenerator[] Generators()
+        => [new EnumGenerator(), new Interceptors.EnumGenerator()];
+}
 
 [UsesVerify]
-public class EnumGeneratorTests
+public abstract class EnumGeneratorTestsBase
 {
+    protected abstract IIncrementalGenerator[] Generators();
+    
+    private VerifySettings Settings()
+    {
+        var settings = new VerifySettings();
+        settings.ScrubExpectedChanges();
+        settings.UseDirectory("Snapshots");
+        settings.UseTypeName(nameof(EnumGeneratorTests));
+        settings.DisableRequireUniquePrefix();
+
+        return settings;
+    }
+
     [Fact]
     public Task CanGenerateEnumExtensionsInGlobalNamespace()
     {
@@ -26,10 +45,10 @@ public enum MyEnum
     First,
     Second,
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -46,10 +65,10 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -69,10 +88,10 @@ namespace MyTestNameSpace
         }
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -89,10 +108,10 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -109,10 +128,10 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -129,10 +148,10 @@ namespace MyTestNameSpace
         Second = 1,
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -156,13 +175,12 @@ namespace MyTestNameSpace
         Fourth = 3
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output)
-            .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
-            .DisableRequireUniquePrefix()
-            .ScrubExpectedChanges().UseDirectory("Snapshots");
+        var settings = Settings();
+        settings.UseMethodName("CanGenerateEnumExtensionsWithCustomNames");
+        return Verifier.Verify(output, settings);
     }
 
     [Fact]
@@ -189,13 +207,12 @@ namespace MyTestNameSpace
         }
         """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output)
-            .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
-            .DisableRequireUniquePrefix()
-            .ScrubExpectedChanges().UseDirectory("Snapshots");
+        var settings = Settings();
+        settings.UseMethodName("CanGenerateEnumExtensionsWithCustomNames");
+        return Verifier.Verify(output, settings);
     }
 
     [Fact]
@@ -225,13 +242,12 @@ namespace MyTestNameSpace
         }
         """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output)
-            .UseMethodName("CanGenerateEnumExtensionsWithCustomNames")
-            .DisableRequireUniquePrefix()
-            .ScrubExpectedChanges().UseDirectory("Snapshots");
+        var settings = Settings();
+        settings.UseMethodName("CanGenerateEnumExtensionsWithCustomNames");
+        return Verifier.Verify(output, settings);
     }
 
     [Fact]
@@ -255,10 +271,10 @@ namespace MyTestNameSpace
         Fourth = 3
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Theory]
@@ -284,13 +300,12 @@ namespace MyTestNameSpace
         }
         """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output)
-            .UseTextForParameters("Params")
-            .DisableRequireUniquePrefix()
-            .ScrubExpectedChanges().UseDirectory("Snapshots");
+        var settings = Settings();
+        settings.UseTextForParameters("Params");
+        return Verifier.Verify(output, settings);
     }
 
     [Fact]
@@ -308,10 +323,10 @@ namespace Foo
         Value1
     }
 }";
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -335,10 +350,10 @@ namespace Foo
             }
             """";
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -350,10 +365,10 @@ namespace Foo
 
                              [assembly:EnumExtensions<StringComparison>()]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -364,10 +379,10 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.IO.FileShare>()]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -379,10 +394,10 @@ namespace Foo
                              [assembly:EnumExtensions<System.ConsoleColor>()]
                              [assembly:EnumExtensions<System.DateTimeKind>()]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<EnumGenerator, TrackingNames>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedTrees<TrackingNames>(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output.Skip(1)).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Skip(1), Settings());
     }
 
     [Fact]
@@ -393,10 +408,10 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassName = "A")]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -407,10 +422,10 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassNamespace = "A.B")]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -421,10 +436,10 @@ namespace Foo
 
                              [assembly:EnumExtensions<System.DateTimeKind>(ExtensionClassNamespace = "A.B", ExtensionClassName = "C")]
                              """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -444,10 +459,10 @@ namespace Foo
             }
 
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -467,10 +482,10 @@ namespace Foo
             }
 
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -490,10 +505,10 @@ namespace Foo
             }
 
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 
     [Fact]
@@ -513,9 +528,9 @@ namespace Foo
             }
 
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(new(input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output, Settings());
     }
 }

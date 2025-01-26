@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>NetEscapades.EnumGenerators.Tests</AssemblyName>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" Condition="'$(TargetFramework)' == 'net48'" />
+    <PackageReference Include="Verify.Xunit" Version="14.3.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="3.1.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="6.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" />
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj" />
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors\NetEscapades.EnumGenerators.Interceptors.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteMembers_CS0618_Issue97.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteMembers_CS0612_Issue97.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteEnums_CS0618_Issue97.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.DoesNotGenerateWarningsForObsoleteEnums_CS0612_Issue97.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanHandleNamespaceAndClassNameAreTheSame.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateForMultipleExternalEnums.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateForExternalFlagsEnum.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateForExternalEnum.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateExternalEnumExtensionsWithCustomNamespaceAndName.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateExternalEnumExtensionsWithCustomNamespace.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateExternalEnumExtensionsWithCustomName.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithSameDisplayName.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomNamespaceAndName.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomNamespace.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomNames.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsWithCustomName.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsInNestedClass.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsInGlobalNamespace.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsInChildNamespace.verified.txt" />
+    <None Remove="Snapshots\EnumGeneratorInterceptorTests.CanGenerateEnumExtensionsForFlagsEnum_Params.verified.txt" />
+  </ItemGroup>
+
+</Project>

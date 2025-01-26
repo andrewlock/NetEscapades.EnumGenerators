@@ -15,43 +15,57 @@ namespace NetEscapades.EnumGenerators.Tests;
 
 internal static class TestHelpers
 {
+    private static IIncrementalGenerator[] GetSourceGenerators() =>
+    [
+        new NetEscapades.EnumGenerators.EnumGenerator(),
+        new NetEscapades.EnumGenerators.Interceptors.EnumGenerator(),
+    ];
+
     private static readonly Regex InterceptorAttributeRegex =
         new(@"InterceptsLocation\(\d+, \"".+\""\)\]");
 
     public static SettingsTask ScrubExpectedChanges(this SettingsTask settings)
-        => settings.ScrubLinesWithReplace(
-            line => line.Replace($"""GeneratedCodeAttribute("NetEscapades.EnumGenerators", "{Constants.Version}")""",
-                """GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")"""))
-            .AddScrubber(builder =>
-            {
-                var value = builder.ToString();
-                var result = InterceptorAttributeRegex.Replace(value, "InterceptsLocation(123, \"REDACTED\")]");
-
-                if (value.Equals(result, StringComparison.Ordinal))
-                {
-                    return;
-                }
-
-                builder.Clear();
-                builder.Append(result);
-            });
-    
-    public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput<T>(Options opts)
-        where T : IIncrementalGenerator, new()
     {
-        var (diagnostics, trees) = GetGeneratedTrees<T, TrackingNames>(opts);
+        settings.CurrentSettings.ScrubExpectedChanges();
+        return settings;
+    }
+
+    public static void ScrubExpectedChanges(this VerifySettings settings)
+    {
+        settings.ScrubLinesWithReplace(
+                line => line.Replace(
+                    $"""GeneratedCodeAttribute("NetEscapades.EnumGenerators", "{Constants.Version}")""",
+                    """GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")"""));
+        settings.AddScrubber(builder =>
+        {
+            var value = builder.ToString();
+            var result = InterceptorAttributeRegex.Replace(value, "InterceptsLocation(123, \"REDACTED\")]");
+
+            if (value.Equals(result, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            builder.Clear();
+            builder.Append(result);
+        });
+    }
+
+    public static (ImmutableArray<Diagnostic> Diagnostics, string Output) GetGeneratedOutput(IIncrementalGenerator[] generators, Options opts)
+    {
+        var (diagnostics, trees) = GetGeneratedTrees<TrackingNames>(generators, opts);
         return (diagnostics, trees.LastOrDefault() ?? string.Empty);
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<TGenerator, TTrackingNames>(Options options)
-        where TGenerator : IIncrementalGenerator, new()
+    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<TTrackingNames>(
+        IIncrementalGenerator[] generators, Options options)
     {
         // get all the const string fields
-        return GetGeneratedTrees<TGenerator>(options, options.Stages ?? GetTrackingNames<TTrackingNames>());
+        return GetGeneratedTrees(generators, options, options.Stages ?? GetTrackingNames<TTrackingNames>());
     }
 
-    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees<T>(Options opts, params string[] stages)
-        where T : IIncrementalGenerator, new()
+    public static (ImmutableArray<Diagnostic> Diagnostics, string[] Output) GetGeneratedTrees(
+        IIncrementalGenerator[] generators, Options opts, params string[] stages)
     {
         var syntaxTrees = opts.Sources
             .Select(x =>
@@ -64,13 +78,14 @@ internal static class TestHelpers
         var references = AppDomain.CurrentDomain.GetAssemblies()
             .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
             .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
-            .Concat(new[]
-            {
-                MetadataReference.CreateFromFile(typeof(T).Assembly.Location),
+            .Concat([
+                ..generators.Select(x=> MetadataReference.CreateFromFile(x.GetType().Assembly.Location)),
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.Interceptors.EnumGenerator).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location),
-            });
+                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
+            ]);
 
         var compilation = CSharpCompilation.Create(
             "generator",
@@ -78,25 +93,27 @@ internal static class TestHelpers
             references,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-        var (runResult, diagnostics)  = RunGeneratorAndAssertOutput<T>(opts, compilation, stages);
+        var (runResult, diagnostics)  = RunGeneratorAndAssertOutput(generators, opts, compilation, stages);
 
         var combinedDiagnostics = runResult.Diagnostics.AddRange(diagnostics);
 
         return (combinedDiagnostics, runResult.GeneratedTrees.Select(x => x.ToString()).ToArray());
     }
 
-    private static (GeneratorDriverRunResult runResult, ImmutableArray<Diagnostic> diagnostics) RunGeneratorAndAssertOutput<T>(Options options, CSharpCompilation compilation, string[] stages, bool assertOutput = true)
-        where T : IIncrementalGenerator, new()
+    private static (GeneratorDriverRunResult runResult, ImmutableArray<Diagnostic> diagnostics) RunGeneratorAndAssertOutput(
+        IIncrementalGenerator[] generators,
+        Options options,
+        CSharpCompilation compilation,
+        string[] stages,
+        bool assertOutput = true)
     {
-        ISourceGenerator generator = new T().AsSourceGenerator();
-
         var opts = new GeneratorDriverOptions(
             disabledOutputs: IncrementalGeneratorOutputKind.None,
             trackIncrementalGeneratorSteps: true);
 
         GeneratorDriver driver =
             CSharpGeneratorDriver.Create(
-                [generator],
+                generators.Select(x=>x.AsSourceGenerator()),
                 driverOptions: opts,
                 optionsProvider: options.OptionsProvider,
                 parseOptions: new CSharpParseOptions(options.LanguageVersion).WithFeatures(options.Features));
