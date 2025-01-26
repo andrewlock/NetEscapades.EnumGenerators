@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
@@ -60,7 +61,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -101,7 +102,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -140,7 +141,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -186,7 +187,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -244,7 +245,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -312,7 +313,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -384,7 +385,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -424,7 +425,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -466,7 +467,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -509,7 +510,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(_analyzerOpts, _features, input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -548,7 +549,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), opts);
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -586,7 +587,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -713,7 +714,7 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), opts);
 
         diagnostics.Should().ContainSingle(x => x.Id == DiagnosticHelper.CsharpVersionLooLow.Id);
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 
     [Fact]
@@ -753,6 +754,6 @@ public class InterceptorTests
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>([new EnumGenerator()],
                 new(_analyzerOpts, _features, input));
 
-        return Verifier.Verify(output).ScrubExpectedChanges().UseDirectory("Snapshots");
+        return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 }

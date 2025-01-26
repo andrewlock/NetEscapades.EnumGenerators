@@ -397,7 +397,7 @@ namespace Foo
         var (diagnostics, output) = TestHelpers.GetGeneratedTrees<TrackingNames>(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output.Skip(1), Settings());
+        return Verifier.Verify(output.WhereNotGeneratedAttribute(), Settings());
     }
 
     [Fact]
