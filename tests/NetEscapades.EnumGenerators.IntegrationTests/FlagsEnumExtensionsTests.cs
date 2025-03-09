@@ -142,8 +142,15 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
     public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
 #endif
 
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesAsUnderlyingType(FlagsEnum value) => GeneratesAsUnderlyingTypeTest(value, value.AsUnderlyingType());
+
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(FlagsEnumExtensions.GetValues());
+
+    [Fact]
+    public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(FlagsEnumExtensions.GetValuesAsUnderlyingType());
 
     [Fact]
     public void GeneratesGetNames() => base.GeneratesGetNamesTest(FlagsEnumExtensions.GetNames());

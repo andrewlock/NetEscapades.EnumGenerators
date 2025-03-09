@@ -483,6 +483,16 @@ namespace Something.Blah
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::Something.Blah.ShortName" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::Something.Blah.ShortName" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::Something.Blah.ShortName value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::Something.Blah.ShortName" />.
         /// Note that this returns a new array with every invocation, so
@@ -495,6 +505,22 @@ namespace Something.Blah
             {
                 global::Something.Blah.ShortName.First,
                 global::Something.Blah.ShortName.Second,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::Something.Blah.ShortName" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::Something.Blah.ShortName" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::Something.Blah.ShortName.First,
+                (int) global::Something.Blah.ShortName.Second,
             };
         }
 

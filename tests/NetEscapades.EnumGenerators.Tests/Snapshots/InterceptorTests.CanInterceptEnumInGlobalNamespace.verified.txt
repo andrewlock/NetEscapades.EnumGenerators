@@ -587,6 +587,16 @@ namespace NetEscapades.EnumGenerators
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::MyEnum" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::MyEnum" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::MyEnum value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::MyEnum" />.
         /// Note that this returns a new array with every invocation, so
@@ -600,6 +610,23 @@ namespace NetEscapades.EnumGenerators
                 global::MyEnum.First,
                 global::MyEnum.Second,
                 global::MyEnum.Third,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::MyEnum" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::MyEnum" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::MyEnum.First,
+                (int) global::MyEnum.Second,
+                (int) global::MyEnum.Third,
             };
         }
 

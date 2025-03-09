@@ -101,8 +101,15 @@ public class EnumInFooExtensionsTests : ExtensionTests<EnumInFoo>
     [MemberData(nameof(ValuesToParse))]
     public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
 
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesAsUnderlyingType(EnumInFoo value) => GeneratesAsUnderlyingTypeTest(value, value.AsUnderlyingType());
+
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumInFooExtensions.GetValues());
+
+    [Fact]
+    public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(EnumInFooExtensions.GetValuesAsUnderlyingType());
 
     [Fact]
     public void GeneratesGetNames() => base.GeneratesGetNamesTest(EnumInFooExtensions.GetNames());

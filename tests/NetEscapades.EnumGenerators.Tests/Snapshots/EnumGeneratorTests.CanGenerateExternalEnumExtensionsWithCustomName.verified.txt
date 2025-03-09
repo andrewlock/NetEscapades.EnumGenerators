@@ -487,6 +487,16 @@ namespace System
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::System.DateTimeKind" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::System.DateTimeKind" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::System.DateTimeKind value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::System.DateTimeKind" />.
         /// Note that this returns a new array with every invocation, so
@@ -500,6 +510,23 @@ namespace System
                 global::System.DateTimeKind.Unspecified,
                 global::System.DateTimeKind.Utc,
                 global::System.DateTimeKind.Local,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::System.DateTimeKind" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::System.DateTimeKind" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::System.DateTimeKind.Unspecified,
+                (int) global::System.DateTimeKind.Utc,
+                (int) global::System.DateTimeKind.Local,
             };
         }
 
