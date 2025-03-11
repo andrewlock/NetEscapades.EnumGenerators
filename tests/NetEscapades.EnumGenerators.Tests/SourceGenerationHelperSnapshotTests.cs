@@ -20,8 +20,8 @@ public class SourceGenerationHelperSnapshotTests
             isPublic: true,
             new List<(string Key, EnumValueOption Value)>
             {
-                ("First", new EnumValueOption(null, false)),
-                ("Second", new EnumValueOption(null, false)),
+                ("First", new EnumValueOption(null, false, 0)),
+                ("Second", new EnumValueOption(null, false, 1)),
             },
             hasFlags: false,
             isDisplayAttributeUsed: false);
@@ -44,8 +44,8 @@ public class SourceGenerationHelperSnapshotTests
             isPublic: true,
             new List<(string, EnumValueOption)>
             {
-                ("First", new EnumValueOption(null, false)),
-                ("Second", new EnumValueOption(null, false)),
+                ("First", new EnumValueOption(null, false, 0)),
+                ("Second", new EnumValueOption(null, false, 1)),
             },
             hasFlags: true,
             isDisplayAttributeUsed: false);
