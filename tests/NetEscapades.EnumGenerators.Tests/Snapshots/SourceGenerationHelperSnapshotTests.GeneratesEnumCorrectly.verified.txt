@@ -50,7 +50,7 @@ namespace Something.Blah
             {
                 global::Something.Blah.ShortName.First => nameof(global::Something.Blah.ShortName.First),
                 global::Something.Blah.ShortName.Second => nameof(global::Something.Blah.ShortName.Second),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::Something.Blah.ShortName value)
