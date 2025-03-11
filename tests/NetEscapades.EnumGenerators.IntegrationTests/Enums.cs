@@ -111,8 +111,8 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
     [EnumExtensions]
     public enum LongEnum: long
     {
-        First = 0,
         Second = 1,
+        First = 0,
         Third = 2,
     }
 
@@ -121,8 +121,8 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
     public enum FlagsEnum
     {
         None = 0,
-        First = 1 << 0,
         Second = 1 << 1,
+        First = 1 << 0,
         Third = 1 << 2,
         Fourth = 1 << 3,
         ThirdAndFourth = Third | Fourth,
