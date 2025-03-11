@@ -144,7 +144,7 @@ namespace System
                 global::System.StringComparison.InvariantCultureIgnoreCase => nameof(global::System.StringComparison.InvariantCultureIgnoreCase),
                 global::System.StringComparison.Ordinal => nameof(global::System.StringComparison.Ordinal),
                 global::System.StringComparison.OrdinalIgnoreCase => nameof(global::System.StringComparison.OrdinalIgnoreCase),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::System.StringComparison value)

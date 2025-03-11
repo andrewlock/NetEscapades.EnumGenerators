@@ -141,7 +141,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.First => nameof(global::MyTestNameSpace.MyEnum.First),
                 global::MyTestNameSpace.MyEnum.Second => nameof(global::MyTestNameSpace.MyEnum.Second),
                 global::MyTestNameSpace.MyEnum.Third => nameof(global::MyTestNameSpace.MyEnum.Third),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::MyTestNameSpace.MyEnum value)
@@ -694,7 +694,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.AnotherEnum.First => nameof(global::MyTestNameSpace.AnotherEnum.First),
                 global::MyTestNameSpace.AnotherEnum.Second => nameof(global::MyTestNameSpace.AnotherEnum.Second),
                 global::MyTestNameSpace.AnotherEnum.Third => nameof(global::MyTestNameSpace.AnotherEnum.Third),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::MyTestNameSpace.AnotherEnum value)
