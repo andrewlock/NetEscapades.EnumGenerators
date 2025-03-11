@@ -71,7 +71,7 @@ jobs:
       - name: Run './build.cmd Clean Test TestPackage PushToNuGet
         run: ./build.cmd Clean Test TestPackage PushToNuGet
         env:
-          NuGetToken: ${{ secrets.NUGET_TOKEN }}
+          NuGetToken: ${{ secrets.NUGET_TOKEN || 'NOT_SET'}}
 
       - uses: actions/upload-artifact@v4
         with:
