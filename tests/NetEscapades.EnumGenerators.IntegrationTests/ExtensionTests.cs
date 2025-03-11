@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Execution;
@@ -223,9 +224,27 @@ public abstract class ExtensionTests<T> where T : struct
         }
     }
 
+    protected void GeneratesAsUnderlyingTypeTest<TUnderlying>(T value, TUnderlying underlyingValue)
+        where TUnderlying : struct
+    {
+        var expected = (TUnderlying) (object) value;
+        underlyingValue.Should().Be(expected);
+    }
+
     protected void GeneratesGetValuesTest(T[] values)
     {
-        var expected = (T[])Enum.GetValues(typeof(T));
+        var expected = (T[]) Enum.GetValues(typeof(T));
+        values.Should().Equal(expected);
+    }
+
+    protected void GeneratesGetValuesAsUnderlyingTypeTest<TUnderlying>(TUnderlying[] values)
+        where TUnderlying : struct
+    {
+#if NET7_OR_GREATER
+        var expected = (TUnderlying[]) Enum.GetValuesAsUnderlyingType(typeof(T));
+#else
+        var expected = Enum.GetValues(typeof(T)).Cast<TUnderlying>().ToArray();
+#endif
         values.Should().Equal(expected);
     }
 

@@ -589,6 +589,16 @@ namespace Bar
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::Foo.MyEnum" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::Foo.MyEnum" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::Foo.MyEnum value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::Foo.MyEnum" />.
         /// Note that this returns a new array with every invocation, so
@@ -602,6 +612,23 @@ namespace Bar
                 global::Foo.MyEnum.First,
                 global::Foo.MyEnum.Second,
                 global::Foo.MyEnum.Third,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::Foo.MyEnum" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::Foo.MyEnum" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::Foo.MyEnum.First,
+                (int) global::Foo.MyEnum.Second,
+                (int) global::Foo.MyEnum.Third,
             };
         }
 

@@ -135,8 +135,15 @@ public class EnumWithDescriptionInNamespaceExtensionsTests : ExtensionTests<Enum
     public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: true);
 #endif
 
+    [Theory]
+    [MemberData(nameof(ValidEnumValues))]
+    public void GeneratesAsUnderlyingType(EnumWithDescriptionInNamespace value) => GeneratesAsUnderlyingTypeTest(value, value.AsUnderlyingType());
+
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(EnumWithDescriptionInNamespaceExtensions.GetValues());
+
+    [Fact]
+    public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(EnumWithDescriptionInNamespaceExtensions.GetValuesAsUnderlyingType());
 
     [Fact]
     public void GeneratesGetNames() => base.GeneratesGetNamesTest(EnumWithDescriptionInNamespaceExtensions.GetNames());

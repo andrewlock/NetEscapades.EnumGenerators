@@ -577,6 +577,16 @@ namespace MyTestNameSpace
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::MyTestNameSpace.MyEnum" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::MyTestNameSpace.MyEnum" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::MyTestNameSpace.MyEnum value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::MyTestNameSpace.MyEnum" />.
         /// Note that this returns a new array with every invocation, so
@@ -590,6 +600,23 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.First,
                 global::MyTestNameSpace.MyEnum.Second,
                 global::MyTestNameSpace.MyEnum.Third,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::MyTestNameSpace.MyEnum" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::MyTestNameSpace.MyEnum.First,
+                (int) global::MyTestNameSpace.MyEnum.Second,
+                (int) global::MyTestNameSpace.MyEnum.Third,
             };
         }
 
@@ -1103,6 +1130,16 @@ namespace MyTestNameSpace
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::MyTestNameSpace.AnotherEnum" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::MyTestNameSpace.AnotherEnum" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::MyTestNameSpace.AnotherEnum value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::MyTestNameSpace.AnotherEnum" />.
         /// Note that this returns a new array with every invocation, so
@@ -1116,6 +1153,23 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.AnotherEnum.First,
                 global::MyTestNameSpace.AnotherEnum.Second,
                 global::MyTestNameSpace.AnotherEnum.Third,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::MyTestNameSpace.AnotherEnum" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::MyTestNameSpace.AnotherEnum" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::MyTestNameSpace.AnotherEnum.First,
+                (int) global::MyTestNameSpace.AnotherEnum.Second,
+                (int) global::MyTestNameSpace.AnotherEnum.Third,
             };
         }
 

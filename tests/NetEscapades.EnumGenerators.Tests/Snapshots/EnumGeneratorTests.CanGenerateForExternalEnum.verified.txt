@@ -535,6 +535,16 @@ namespace System
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::System.StringComparison" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::System.StringComparison" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::System.StringComparison value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::System.StringComparison" />.
         /// Note that this returns a new array with every invocation, so
@@ -551,6 +561,26 @@ namespace System
                 global::System.StringComparison.InvariantCultureIgnoreCase,
                 global::System.StringComparison.Ordinal,
                 global::System.StringComparison.OrdinalIgnoreCase,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::System.StringComparison" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::System.StringComparison" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::System.StringComparison.CurrentCulture,
+                (int) global::System.StringComparison.CurrentCultureIgnoreCase,
+                (int) global::System.StringComparison.InvariantCulture,
+                (int) global::System.StringComparison.InvariantCultureIgnoreCase,
+                (int) global::System.StringComparison.Ordinal,
+                (int) global::System.StringComparison.OrdinalIgnoreCase,
             };
         }
 

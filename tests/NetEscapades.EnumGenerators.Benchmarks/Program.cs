@@ -177,6 +177,40 @@ public class GetValuesBenchmark
 }
 
 [MemoryDiagnoser]
+public class GetValuesAsUnderlyingTypeBenchmark
+{
+#if NETFRAMEWORK
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public int[] EnumGetValuesAsUnderlyingType()
+    {
+        return Enum.GetValues(typeof(TestEnum)).Cast<int>().ToArray();
+    }
+#elif NET7_OR_GREATER
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public int[] EnumGetValuesAsUnderlyingType()
+    {
+        return Enum.GetValuesAsUnderlyingType<TestEnum>();
+    }
+#else
+    [Benchmark(Baseline = true)]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public int[] EnumGetValuesAsUnderlyingType()
+    {
+        return Enum.GetValues<TestEnum>().Cast<int>().ToArray();
+    }
+#endif
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public int[] ExtensionsGetValuesAsUnderlyingType()
+    {
+        return TestEnumExtensions.GetValuesAsUnderlyingType();
+    }
+}
+
+[MemoryDiagnoser]
 public class GetNamesBenchmark
 {
 #if NETFRAMEWORK

@@ -660,6 +660,16 @@ namespace Test
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::Test.StringTesting" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::Test.StringTesting" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::Test.StringTesting value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::Test.StringTesting" />.
         /// Note that this returns a new array with every invocation, so
@@ -675,6 +685,25 @@ namespace Test
                 global::Test.StringTesting.Backslash,
                 global::Test.StringTesting.BackslashLiteral,
                 global::Test.StringTesting.NewLine,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::Test.StringTesting" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::Test.StringTesting" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::Test.StringTesting.Quotes,
+                (int) global::Test.StringTesting.LiteralQuotes,
+                (int) global::Test.StringTesting.Backslash,
+                (int) global::Test.StringTesting.BackslashLiteral,
+                (int) global::Test.StringTesting.NewLine,
             };
         }
 

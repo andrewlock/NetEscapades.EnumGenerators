@@ -855,7 +855,22 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                     return false;
             }
         }
-#endif
+#endif");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Cast a value of <see cref=""").Append(fullyQualifiedName).Append(@""" /> to the underlying type (<c>")
+            .Append(enumToGenerate.UnderlyingType).Append(@"</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref=""").Append(fullyQualifiedName).Append(@""" /> cast to the underlying type.</returns>
+        public static ").Append(enumToGenerate.UnderlyingType).Append(@" AsUnderlyingType(this ").Append(fullyQualifiedName).Append(@" value)
+        {
+            return (").Append(enumToGenerate.UnderlyingType).Append(@") value;
+        }");
+
+        sb.Append(@"
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
@@ -873,6 +888,30 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
                 ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(',');
+        }
+
+        sb.Append(@"
+            };
+        }");
+
+        sb.Append(@"
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref=""").Append(fullyQualifiedName).Append(@""" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref=""").Append(fullyQualifiedName).Append(
+            @""" /></returns>
+        public static ").Append(enumToGenerate.UnderlyingType).Append(@"[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {");
+        foreach (var member in enumToGenerate.Names)
+        {
+            sb.Append(@"
+                (").Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(',');
         }
 
         sb.Append(@"

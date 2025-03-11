@@ -547,6 +547,16 @@ namespace System.IO
 #endif
 
         /// <summary>
+        /// Cast a value of <see cref="global::System.IO.FileShare" /> to the underlying type (<c>int</c>).
+        /// This is mainly a convenience method.
+        /// </summary>
+        /// <returns>The value of <see cref="global::System.IO.FileShare" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::System.IO.FileShare value)
+        {
+            return (int) value;
+        }
+
+        /// <summary>
         /// Retrieves an array of the values of the members defined in
         /// <see cref="global::System.IO.FileShare" />.
         /// Note that this returns a new array with every invocation, so
@@ -563,6 +573,26 @@ namespace System.IO
                 global::System.IO.FileShare.ReadWrite,
                 global::System.IO.FileShare.Delete,
                 global::System.IO.FileShare.Inheritable,
+            };
+        }
+
+        /// <summary>
+        /// Retrieves an array of the underlying-values of the members defined in
+        /// <see cref="global::System.IO.FileShare" />.
+        /// Note that this returns a new array with every invocation, so
+        /// should be cached if appropriate.
+        /// </summary>
+        /// <returns>An array of the underlying-values defined in <see cref="global::System.IO.FileShare" /></returns>
+        public static int[] GetValuesAsUnderlyingType()
+        {
+            return new[]
+            {
+                (int) global::System.IO.FileShare.None,
+                (int) global::System.IO.FileShare.Read,
+                (int) global::System.IO.FileShare.Write,
+                (int) global::System.IO.FileShare.ReadWrite,
+                (int) global::System.IO.FileShare.Delete,
+                (int) global::System.IO.FileShare.Inheritable,
             };
         }
 
