@@ -49,7 +49,7 @@ namespace Foo
             => value switch
             {
                 global::Foo.TestEnum.Value1 => nameof(global::Foo.TestEnum.Value1),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::Foo.TestEnum value)

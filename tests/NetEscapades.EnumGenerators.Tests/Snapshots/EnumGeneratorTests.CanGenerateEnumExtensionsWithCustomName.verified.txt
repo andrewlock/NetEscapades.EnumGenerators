@@ -50,7 +50,7 @@ namespace MyTestNameSpace
             {
                 global::MyTestNameSpace.MyEnum.First => nameof(global::MyTestNameSpace.MyEnum.First),
                 global::MyTestNameSpace.MyEnum.Second => nameof(global::MyTestNameSpace.MyEnum.Second),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::MyTestNameSpace.MyEnum value)

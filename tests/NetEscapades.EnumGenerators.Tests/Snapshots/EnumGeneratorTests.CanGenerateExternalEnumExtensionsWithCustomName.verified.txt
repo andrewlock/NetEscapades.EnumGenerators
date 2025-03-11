@@ -51,7 +51,7 @@ namespace System
                 global::System.DateTimeKind.Unspecified => nameof(global::System.DateTimeKind.Unspecified),
                 global::System.DateTimeKind.Utc => nameof(global::System.DateTimeKind.Utc),
                 global::System.DateTimeKind.Local => nameof(global::System.DateTimeKind.Local),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::System.DateTimeKind value)

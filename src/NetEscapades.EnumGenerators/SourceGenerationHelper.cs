@@ -160,9 +160,22 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
         }
 
-        sb.Append(@"
+        if (enumToGenerate.HasFlags)
+        {
+            // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+            sb.Append(@"
                 _ => value.ToString(),
-            };
+            };");
+        }
+        else
+        {
+            // This should mean, that the value is not named -> generate a numeric string
+            sb.Append(@"
+                _ => value.AsUnderlyingType().ToString(),
+            };");
+        }
+
+        sb.Append(@"
 
         private static string ToStringFastWithMetadata(this ").Append(fullyQualifiedName).Append(@" value)
             => ");
@@ -186,9 +199,20 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 }
             }
 
-            sb.Append(@"
+            if (enumToGenerate.HasFlags)
+            {
+                // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+                sb.Append(@"
                 _ => value.ToString(),
             };");
+            }
+            else
+            {
+                // This should mean, that the value is not named -> generate a numeric string
+                sb.Append(@"
+                _ => value.AsUnderlyingType().ToString(),
+            };");
+            }
         }
         else
         {
