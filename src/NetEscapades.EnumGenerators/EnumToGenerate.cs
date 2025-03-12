@@ -25,7 +25,7 @@ public readonly record struct EnumToGenerate
         string fullyQualifiedName,
         string underlyingType,
         bool isPublic,
-        List<(string, EnumValueOption)> names,
+        List<(string Key, EnumValueOption Value)> names,
         bool hasFlags,
         bool isDisplayAttributeUsed)
     {

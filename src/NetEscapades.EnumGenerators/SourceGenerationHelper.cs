@@ -870,6 +870,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             return (").Append(enumToGenerate.UnderlyingType).Append(@") value;
         }");
 
+        var orderedNames = GetNamesOrderedByValue(enumToGenerate);
         sb.Append(@"
 
         /// <summary>
@@ -884,7 +885,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             return new[]
             {");
-        foreach (var member in enumToGenerate.Names)
+        foreach (var member in orderedNames)
         {
             sb.Append(@"
                 ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(',');
@@ -908,7 +909,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             return new[]
             {");
-        foreach (var member in enumToGenerate.Names)
+        foreach (var member in orderedNames)
         {
             sb.Append(@"
                 (").Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(',');
@@ -932,7 +933,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             return new[]
             {");
-        foreach (var member in enumToGenerate.Names)
+        foreach (var member in orderedNames)
         {
             sb.Append(@"
                 nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
@@ -961,5 +962,64 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             .Replace(' ', '_')
             .ToString();
         return (content, filename);
+    }
+
+    private static IReadOnlyCollection<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(EnumToGenerate enumToGenerate)
+    {
+        var valueComparer = Comparer<object>.Default;
+        var tupleComparer = Comparer<(string Key, EnumValueOption Value)>
+            .Create((x, y) => valueComparer.Compare(x.Value.ConstantValue, y.Value.ConstantValue));
+
+        var names = enumToGenerate.Names;
+        var i = 1;
+        for (; i < names.Count; i++)
+        {
+            if (tupleComparer.Compare(names[i-1], names[i]) > 0)
+            {
+                // ConstantValue i is bigger than ConstantValue[i-1]
+                break;
+            }
+        }
+
+        if (i == names.Count)
+        {
+            // Everything is already ordered
+            return names;
+        }
+
+        var orderedNames = new (string Key, EnumValueOption Value)[names.Count];
+        // Copy the already ordered values
+        names.AsSpan()[..i].CopyTo(orderedNames);
+        
+        for (; i < names.Count; i++)
+        {
+            var targetPos = Array.BinarySearch(orderedNames, 0, i, names[i], tupleComparer);
+            if (targetPos < 0)
+            {
+                // No match, after bit-inverting we are on the lowest bigger entry
+                targetPos = ~ targetPos;
+            }
+            else
+            {
+                // Match, so we are on an equal item. Move to the lowest bigger entry
+                while (targetPos < i)
+                {
+                    targetPos++;
+                    if (tupleComparer.Compare(orderedNames[targetPos], names[i]) > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            if (targetPos < i)
+            {
+                Array.Copy(orderedNames, targetPos, orderedNames, targetPos + 1, i - targetPos);
+            }
+
+            orderedNames[targetPos] = names[i];
+        }
+
+        return new EquatableArray<(string Key, EnumValueOption Value)>(orderedNames);
     }
 }
