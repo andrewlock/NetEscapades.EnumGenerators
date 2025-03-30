@@ -48,7 +48,6 @@ namespace NetEscapades.EnumGenerators
         public bool IsInterceptable { get; set; } = true;
     }
 
-    
     /// <summary>
     /// Add to enums to indicate that extension methods should be generated for the type
     /// </summary>
@@ -266,7 +265,7 @@ namespace MyTestNameSpace
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
-    
+
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
 #endif
@@ -279,7 +278,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -289,7 +288,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            string? name,
             out global::MyTestNameSpace.MyEnum value)
             => TryParse(name, out value, false, false);
 
@@ -299,7 +298,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -310,9 +309,9 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            string? name,
             out global::MyTestNameSpace.MyEnum value,
-            bool ignoreCase) 
+            bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);
 
         /// <summary>
@@ -321,7 +320,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -334,8 +333,8 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
-            out global::MyTestNameSpace.MyEnum value, 
+            string? name,
+            out global::MyTestNameSpace.MyEnum value,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => ignoreCase
@@ -456,7 +455,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -466,7 +465,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in global::System.ReadOnlySpan<char> name, 
+            in global::System.ReadOnlySpan<char> name,
             out global::MyTestNameSpace.MyEnum value)
             => TryParse(name, out value, false, false);
 
@@ -476,7 +475,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -498,7 +497,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
-        /// <param name="result">When this method returns, contains an object of type 
+        /// <param name="result">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -831,7 +830,7 @@ namespace MyTestNameSpace
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
-    
+
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
 #endif
@@ -844,7 +843,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -854,7 +853,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            string? name,
             out global::MyTestNameSpace.AnotherEnum value)
             => TryParse(name, out value, false, false);
 
@@ -864,7 +863,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -875,9 +874,9 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
+            string? name,
             out global::MyTestNameSpace.AnotherEnum value,
-            bool ignoreCase) 
+            bool ignoreCase)
             => TryParse(name, out value, ignoreCase, false);
 
         /// <summary>
@@ -886,7 +885,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -899,8 +898,8 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            string? name, 
-            out global::MyTestNameSpace.AnotherEnum value, 
+            string? name,
+            out global::MyTestNameSpace.AnotherEnum value,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => ignoreCase
@@ -1021,7 +1020,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -1031,7 +1030,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
-            in global::System.ReadOnlySpan<char> name, 
+            in global::System.ReadOnlySpan<char> name,
             out global::MyTestNameSpace.AnotherEnum value)
             => TryParse(name, out value, false, false);
 
@@ -1041,7 +1040,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
-        /// <param name="value">When this method returns, contains an object of type 
+        /// <param name="value">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -1063,7 +1062,7 @@ namespace MyTestNameSpace
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
-        /// <param name="result">When this method returns, contains an object of type 
+        /// <param name="result">When this method returns, contains an object of type
         /// <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
@@ -1243,7 +1242,7 @@ namespace NetEscapades.EnumGenerators
         /// of the extension methods are assumed to be the same as the enum.
         /// </summary>
         public string? ExtensionClassNamespace { get; set; }
-        
+
         /// <summary>
         /// The name used for the extension class. If not provided,
         /// and the referenced enum is in a different project, the enum name
@@ -1265,6 +1264,7 @@ namespace NetEscapades.EnumGenerators
 //------------------------------------------------------------------------------
 
 #nullable enable
+
 namespace System.Runtime.CompilerServices
 {
     // this type is needed by the compiler to implement interceptors - it doesn't need to
