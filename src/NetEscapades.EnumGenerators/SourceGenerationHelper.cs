@@ -1289,6 +1289,7 @@ public static class SourceGenerationHelper
                     }
             """);
 
+        var orderedNames = GetNamesOrderedByValue(enumToGenerate);
         sb.Append(
             """
 
@@ -1314,7 +1315,7 @@ public static class SourceGenerationHelper
                         return new[]
                         {
             """);
-        foreach (var member in enumToGenerate.Names)
+        foreach (var member in orderedNames)
         {
             sb.Append(
                 """
@@ -1355,7 +1356,7 @@ public static class SourceGenerationHelper
                         return new[]
                         {
             """);
-        foreach (var member in enumToGenerate.Names)
+        foreach (var member in orderedNames)
         {
             sb.Append(
                 """
@@ -1394,7 +1395,7 @@ public static class SourceGenerationHelper
                         {
             """);
 
-        foreach (var member in enumToGenerate.Names)
+        foreach (var member in orderedNames)
         {
             sb.Append(
                 """
@@ -1432,5 +1433,16 @@ public static class SourceGenerationHelper
             .Replace(' ', '_')
             .ToString();
         return (content, filename);
+    }
+
+    private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(EnumToGenerate enumToGenerate)
+    {
+        // We order by underlying value, keeping the order of names with the same value, as they were defined
+        return enumToGenerate.Names
+            .Select((name, pos) => (name, pos))
+            .OrderBy(tuple => tuple.name.Value.ConstantValue)
+            .ThenBy(tuple => tuple.pos)
+            .Select(tuple => tuple.name)
+            .ToList();
     }
 }
