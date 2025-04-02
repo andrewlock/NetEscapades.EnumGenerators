@@ -53,7 +53,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => nameof(global::Test.StringTesting.Backslash),
                 global::Test.StringTesting.BackslashLiteral => nameof(global::Test.StringTesting.BackslashLiteral),
                 global::Test.StringTesting.NewLine => nameof(global::Test.StringTesting.NewLine),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::Test.StringTesting value)
@@ -64,7 +64,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => "Backslash \\",
                 global::Test.StringTesting.BackslashLiteral => "LiteralBackslash \\",
                 global::Test.StringTesting.NewLine => "New\nLine",
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         /// <summary>

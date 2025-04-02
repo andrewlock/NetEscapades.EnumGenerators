@@ -48,7 +48,7 @@
             {
                 global::OtherEnum.First => nameof(global::OtherEnum.First),
                 global::OtherEnum.Second => nameof(global::OtherEnum.Second),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::OtherEnum value)
