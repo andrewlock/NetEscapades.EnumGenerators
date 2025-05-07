@@ -48,7 +48,7 @@
             {
                 global::MyEnum.First => nameof(global::MyEnum.First),
                 global::MyEnum.Second => nameof(global::MyEnum.Second),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::MyEnum value)

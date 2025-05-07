@@ -65,7 +65,7 @@ namespace System
                 global::System.ConsoleColor.Magenta => nameof(global::System.ConsoleColor.Magenta),
                 global::System.ConsoleColor.Yellow => nameof(global::System.ConsoleColor.Yellow),
                 global::System.ConsoleColor.White => nameof(global::System.ConsoleColor.White),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::System.ConsoleColor value)
@@ -852,7 +852,7 @@ namespace System
                 global::System.DateTimeKind.Unspecified => nameof(global::System.DateTimeKind.Unspecified),
                 global::System.DateTimeKind.Utc => nameof(global::System.DateTimeKind.Utc),
                 global::System.DateTimeKind.Local => nameof(global::System.DateTimeKind.Local),
-                _ => value.ToString(),
+                _ => value.AsUnderlyingType().ToString(),
             };
 
         private static string ToStringFastWithMetadata(this global::System.DateTimeKind value)

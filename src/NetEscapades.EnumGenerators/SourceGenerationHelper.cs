@@ -198,11 +198,30 @@ public static class SourceGenerationHelper
                 .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
         }
 
+        if (enumToGenerate.HasFlags)
+        {
+            // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+            sb.Append(
+                """
+
+                                _ => value.ToString(),
+                            };
+                """);
+        }
+        else
+        {
+            // This should mean, that the value is not named -> generate a numeric string
+            sb.Append(
+                """
+
+                                _ => value.AsUnderlyingType().ToString(),
+                            };
+                """);
+        }
+
         sb.Append(
             """
 
-                            _ => value.ToString(),
-                        };
 
                     private static string ToStringFastWithMetadata(this 
             """).Append(fullyQualifiedName).Append(
@@ -236,12 +255,26 @@ public static class SourceGenerationHelper
                 }
             }
 
-            sb.Append(
-                """
+            if (enumToGenerate.HasFlags)
+            {
+                // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+                sb.Append(
+                    """
 
-                                _ => value.ToString(),
-                            };
-                """);
+                                    _ => value.ToString(),
+                                };
+                    """);
+            }
+            else
+            {
+                // This should mean, that the value is not named -> generate a numeric string
+                sb.Append(
+                    """
+
+                                    _ => value.AsUnderlyingType().ToString(),
+                                };
+                    """);
+            }
         }
         else
         {
