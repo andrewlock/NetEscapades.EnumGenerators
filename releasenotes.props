@@ -1,20 +1,15 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta12'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta13'">
       <![CDATA[
 
-Breaking Changes:
-- By default, `ToStringFast()` no longer uses `[DisplayName]` and `[Description]` by default. The original behaviour can be restored by passing `allowMatchingMetadataAttribute:true` (#122)
-- Split the experimental interceptor support into a separate project, NetEscapades.EnumGenerators.Interceptors (#125)
-- Enable interception by default when NetEscapades.EnumGenerators.Interceptors is added (#127)
+### Features
+- Added `AsUnderlyingType()` and `GetValuesAsUnderlyingType()` (#125) Thanks @TheConstructor!
 
-Features
-- Added a package logo (#125)
-
-Fixes
-- Fixed indentation in generated code so it aligns properly with 4 spaces (#120) Thanks @karl-sjogren!
-- Fix missing global on System namespace usages (#118) Thanks @henrikwidlund!
-- Don't use `using`s in generated code (#129)
+### Fixes
+- Replaced multiline verbatim strings (`@""`) with raw string literals (#87) Thanks @Guiorgy!
+- Update `GetValues`, `GetNames` and `GetValuesAsUnderlyingType` to match System.Enum order (#134) Thanks @TheConstructor!
+- Directly call `ToString` on unnamed numeric values to reduce overhead (#135) @TheConstructor!
 
 ]]>
     </PackageReleaseNotes>
