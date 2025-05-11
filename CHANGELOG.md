@@ -1,6 +1,16 @@
 Changelog
 --- 
 
+## [v1.0.0-beta13](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta12..v1.0.0-beta13) (2025-05-11)
+
+### Features
+- Added `AsUnderlyingType()` and `GetValuesAsUnderlyingType()` (#125) Thanks [@TheConstructor](https://github.com/TheConstructor)!
+
+### Fixes
+- Replaced multiline verbatim strings (`@""`) with raw string literals (#87) Thanks [@Guiorgy](https://github.com/Guiorgy)!
+- Update `GetValues`, `GetNames` and `GetValuesAsUnderlyingType` to match System.Enum order (#134) Thanks [@TheConstructor](https://github.com/TheConstructor)!
+- Directly call `ToString` on unnamed numeric values to reduce overhead (#135) [@TheConstructor](https://github.com/TheConstructor)!
+
 ## [v1.0.0-beta12](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta11..v1.0.0-beta12) (2025-01-26)
 
 ### Breaking Changes:
