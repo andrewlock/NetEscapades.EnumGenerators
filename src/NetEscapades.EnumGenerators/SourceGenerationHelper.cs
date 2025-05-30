@@ -124,6 +124,7 @@ public static class SourceGenerationHelper
             """
             #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
             #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
+            #pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
                 /// <summary>
                 /// Extension methods for <see cref="
             """).Append(fullyQualifiedName).Append(
@@ -1445,6 +1446,7 @@ public static class SourceGenerationHelper
                 }
             #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
             #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
+            #pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
             """);
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
