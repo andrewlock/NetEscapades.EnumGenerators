@@ -102,6 +102,7 @@ namespace Foo
 {
 #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
 #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
+#pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
     /// <summary>
     /// Extension methods for <see cref="global::Foo.MyEnum" />
     /// </summary>
@@ -650,6 +651,7 @@ namespace Foo
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
+#pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
 }
   
 //------------------------------------------------------------------------------
@@ -667,6 +669,7 @@ namespace Bar
 {
 #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
 #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
+#pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
     /// <summary>
     /// Extension methods for <see cref="global::Bar.MyEnum" />
     /// </summary>
@@ -1215,6 +1218,7 @@ namespace Bar
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
+#pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
 }
   
 //------------------------------------------------------------------------------
@@ -1296,6 +1300,7 @@ namespace System.Runtime.CompilerServices
 
 #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
 #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
+#pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
 namespace NetEscapades.EnumGenerators
 {
     static file class EnumInterceptors
@@ -1314,6 +1319,7 @@ namespace NetEscapades.EnumGenerators
 }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
+#pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
 
   
 //------------------------------------------------------------------------------
@@ -1346,6 +1352,7 @@ namespace System.Runtime.CompilerServices
 
 #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
 #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
+#pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
 namespace NetEscapades.EnumGenerators
 {
     static file class EnumInterceptors
@@ -1362,5 +1369,6 @@ namespace NetEscapades.EnumGenerators
 }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
+#pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
 
 ]

@@ -86,6 +86,7 @@ public static class SourceGenerationHelper
 
             #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
             #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
+            #pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
             namespace NetEscapades.EnumGenerators
             {
                 static file class EnumInterceptors
@@ -139,6 +140,7 @@ public static class SourceGenerationHelper
             }
             #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
             #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
+            #pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
             """);
         var content = sb.ToString();
         sb.Clear();
