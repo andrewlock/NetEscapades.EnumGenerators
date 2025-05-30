@@ -26,7 +26,7 @@
         /// any interceptable usages of the enum will be replaced by usages of
         /// the extension method in this project. To disable interception of
         /// the enum in this project when used with the interceptable package,
-        /// set <see cref="IsInterceptable"/> to <c>false</c>.
+        /// set <see cref="IsInterceptable"/> to <see langword="false"/>.
         /// </summary>
         public bool IsInterceptable { get; set; } = true;
     }
@@ -58,7 +58,7 @@
         /// any interceptable usages of the enum will be replaced by usages of
         /// the extension method in this project. To disable interception of
         /// the enum in this project when used with the interceptable package,
-        /// set <see cref="IsInterceptable"/> to <c>false</c>.
+        /// set <see cref="IsInterceptable"/> to <see langword="false"/>.
         /// </summary>
         public bool IsInterceptable { get; set; } = true;
     }
