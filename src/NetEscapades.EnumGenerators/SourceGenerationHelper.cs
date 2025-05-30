@@ -56,7 +56,7 @@ public static class SourceGenerationHelper
                 /// By default, when interceptors are enabled for a project, any
                 /// interceptable usages of the enum will be replaced by usages of
                 /// the extension method in this project. To disable interception of
-                /// the enum in this project, set <see cref="IsInterceptable"/> to <c>false</c>.
+                /// the enum in this project, set <see cref="IsInterceptable"/> to <see langword="false"/>.
                 /// </summary>
                 public bool IsInterceptable { get; set; } = true;
             }
@@ -92,7 +92,7 @@ public static class SourceGenerationHelper
                 /// By default, when interceptors are enabled for a project, any
                 /// interceptable usages of the enum will be replaced by usages of
                 /// the extension method in this project. To disable interception of
-                /// the enum in this project, set <see cref="IsInterceptable"/> to <c>false</c>.
+                /// the enum in this project, set <see cref="IsInterceptable"/> to <see langword="false"/>.
                 /// </summary>
                 public bool IsInterceptable { get; set; } = true;
             }
@@ -159,9 +159,9 @@ public static class SourceGenerationHelper
                     /// calling <c>ToString()</c> on <paramref name="value"/>.
                     /// </summary>
                     /// <param name="value">The value to retrieve the string value for</param>
-                    /// <param name="useMetadataAttributes">If <c>true</c> uses the value provided in the
+                    /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
                     /// <c>[Display]</c> or <c>[Description]</c>attribute as the string representation of the member.
-                    /// If <c>false</c>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
+                    /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
                     /// <returns>The string representation of the value</returns>
                     public static string ToStringFast(this 
             """).Append(fullyQualifiedName).Append(
@@ -293,7 +293,7 @@ public static class SourceGenerationHelper
                         /// </summary>
                         /// <param name="value">The value of the instance to investigate</param>
                         /// <param name="flag">The flag to check for</param>
-                        /// <returns><c>true</c> if the fields set in the flag are also set in the current instance; otherwise <c>false</c>.</returns>
+                        /// <returns><see langword="true"/> if the fields set in the flag are also set in the current instance; otherwise <see langword="false"/>.</returns>
                         /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
                         /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
                         public static bool HasFlagFast(this 
@@ -313,7 +313,7 @@ public static class SourceGenerationHelper
                     /// Returns a boolean telling whether the given enum value exists in the enumeration.
                     /// </summary>
                     /// <param name="value">The value to check if it's defined</param>
-                    /// <returns><c>true</c> if the value exists in the enumeration, <c>false</c> otherwise</returns>
+                    /// <returns><see langword="true"/> if the value exists in the enumeration, <see langword="false"/> otherwise</returns>
                     public static bool IsDefined(
             """).Append(fullyQualifiedName).Append(
             """
@@ -346,7 +346,7 @@ public static class SourceGenerationHelper
                     /// Returns a boolean telling whether an enum with the given name exists in the enumeration.
                     /// </summary>
                     /// <param name="name">The name to check if it's defined</param>
-                    /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
+                    /// <returns><see langword="true"/> if a member with the name exists in the enumeration, <see langword="false"/> otherwise</returns>
                     public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
                     /// <summary>
@@ -355,9 +355,9 @@ public static class SourceGenerationHelper
                     /// with the required name exists.
                     /// </summary>
                     /// <param name="name">The name to check if it's defined</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
-                    /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
-                    /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value of metadata attributes,otherwise ignores them</param>
+                    /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
+                    /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
                     public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
                     {
             """);
@@ -431,7 +431,7 @@ public static class SourceGenerationHelper
                     /// Returns a boolean telling whether an enum with the given name exists in the enumeration
                     /// </summary>
                     /// <param name="name">The name to check if it's defined</param>
-                    /// <returns><c>true</c> if a member with the name exists in the enumeration, <c>false</c> otherwise</returns>
+                    /// <returns><see langword="true"/> if a member with the name exists in the enumeration, <see langword="false"/> otherwise</returns>
                     public static bool IsDefined(in global::System.ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
 
                     /// <summary>
@@ -441,9 +441,9 @@ public static class SourceGenerationHelper
                     /// Slower then the <see cref="IsDefined(string, bool)" /> overload, but doesn't allocate memory./>
                     /// </summary>
                     /// <param name="name">The name to check if it's defined</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value of metadata attributes,otherwise ignores them</param>
-                    /// <returns><c>true</c> if a member with the name exists in the enumeration, or a member is decorated
-                    /// with a <c>[Display]</c> attribute with the name, <c>false</c> otherwise</returns>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value of metadata attributes,otherwise ignores them</param>
+                    /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
+                    /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
                     public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
                     {
             """);
@@ -549,7 +549,7 @@ public static class SourceGenerationHelper
             " /> to the equivalent instance.
                     /// </summary>
                     /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
                     /// <returns>An object of type <see cref="
             """).Append(fullyQualifiedName).Append(
             """
@@ -574,8 +574,8 @@ public static class SourceGenerationHelper
             " /> to the equivalent instance.
                     /// </summary>
                     /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
                     /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
                     /// <returns>An object of type <see cref="
             """).Append(fullyQualifiedName).Append(
@@ -623,7 +623,7 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             " />. This parameter is passed uninitialized.</param>
-                    /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -659,8 +659,8 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             " />. This parameter is passed uninitialized.</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
-                    /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -697,10 +697,10 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             " />. This parameter is passed uninitialized.</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
                     /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
-                    /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -939,7 +939,7 @@ public static class SourceGenerationHelper
             " /> to the equivalent instance.
                     /// </summary>
                     /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
                     /// <returns>An object of type <see cref="
             """).Append(fullyQualifiedName).Append(
             """
@@ -964,8 +964,8 @@ public static class SourceGenerationHelper
             " /> to the equivalent instance.
                     /// </summary>
                     /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
                     /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
                     /// <returns>An object of type <see cref="
             """).Append(fullyQualifiedName).Append(
@@ -1004,7 +1004,7 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             " />. This parameter is passed uninitialized.</param>
-                    /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1040,8 +1040,8 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             " />. This parameter is passed uninitialized.</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
-                    /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1079,10 +1079,10 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             " />. This parameter is passed uninitialized.</param>
-                    /// <param name="ignoreCase"><c>true</c> to read value in case insensitive mode; <c>false</c> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <c>true</c>, considers the value included in metadata attributes such as
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
                     /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
-                    /// <returns><c>true</c> if the value parameter was converted successfully; otherwise, <c>false</c>.</returns>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
