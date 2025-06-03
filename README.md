@@ -266,7 +266,15 @@ Interceptors were introduced as an experimental feature in C#12 with .NET 8. The
 
 > To use interceptors, you must be using at least version 8.0.400 of the .NET SDK. [This ships with Visual Studio version 17.11](https://learn.microsoft.com/en-us/dotnet/core/porting/versioning-sdk-msbuild-vs), so you will need at least that version or higher.
 
-To enable interception for a project, update to the latest version of _NetEscapades.EnumGenerators_ and set the `EnableEnumGeneratorInterceptor` property in your _.csproj_ to `true`:
+To enable interception for a project, add the interceptor package to your application using:
+
+```bash
+dotnet add package NetEscapades.EnumGenerators.Interceptors
+```
+
+This adds a `<PackageReference>` to your project. You can additionally mark the package as `PrivateAssets="all"` and `ExcludeAssets="runtime"`.
+
+> Setting `PrivateAssets="all"` means any projects referencing this one won't get a reference to the _NetEscapades.EnumGenerators.Interceptors_ package. Setting `ExcludeAssets="runtime"` ensures the _NetEscapades.EnumGenerators.Interceptors.Attributes.dll_ file is _not_ copied to your build output (it is not required at runtime).
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -274,19 +282,17 @@ To enable interception for a project, update to the latest version of _NetEscapa
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <!-- 👇 Add this property to enable the interceptor in the project -->
-    <EnableEnumGeneratorInterceptor>true</EnableEnumGeneratorInterceptor>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta11" 
+  <!-- Add the package -->
+  <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="1.0.0-beta13" 
     PrivateAssets="all" ExcludeAssets="runtime" />
-  </ItemGroup>
+  <!-- -->
 
 </Project>
 ```
 
-This enables interception for all enums defined in the project that use the `[EnumExtensions]` or `[EnumExtensions<T>]` attributes. If you wish to intercept calls made to enums with extensions defined in _other_ projects, you must add the `[Interceptable<T>]` attribute in the project where you want the interception to happen, e.g.
+By default, adding [NetEscapades.EnumGenerators.Interceptors](https://www.nuget.org/packages/NetEscapades.EnumGenerators.Interceptors) to a project enables interception for all enums defined in the project that use the `[EnumExtensions]` or `[EnumExtensions<T>]` attributes. If you wish to intercept calls made to enums with extensions defined in _other_ projects, you must add the `[Interceptable<T>]` attribute in the project where you want the interception to happen, e.g.
 
 ```csharp
 [assembly:Interceptable<DateTimeKind>]
