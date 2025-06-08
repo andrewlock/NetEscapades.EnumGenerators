@@ -36,8 +36,8 @@ jobs:
             vm: windows-latest
           - os: linux
             vm: ubuntu-latest
-          - os: macos
-            vm: macos-13  # latest is arm64, and it breaks a bunch of stuff
+          # - os: macos
+          #   vm: macos-13  # latest is arm64, and it breaks a bunch of stuff
     env:
       MSBuildEnableWorkloadResolver: false
       DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "true"
@@ -48,6 +48,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: |
+            10.0.x
             9.0.x
             8.0.x
             7.0.x
