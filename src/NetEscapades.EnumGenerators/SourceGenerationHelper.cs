@@ -306,6 +306,34 @@ public static class SourceGenerationHelper
         }
 
         sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// Cast a value of <see cref="
+                """).Append(fullyQualifiedName).Append(@""" /> to the underlying type (<c>")
+            .Append(enumToGenerate.UnderlyingType).Append(
+                """
+                </c>).
+                        /// This is mainly a convenience method.
+                        /// </summary>
+                        /// <returns>The value of <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> cast to the underlying type.</returns>
+                        public static 
+                """).Append(enumToGenerate.UnderlyingType).Append(" AsUnderlyingType(this ").Append(fullyQualifiedName).Append(
+                """
+                 value)
+                        {
+                            return (
+                """).Append(enumToGenerate.UnderlyingType).Append(
+                """
+                ) value;
+                        }
+                """);
+
+        sb.Append(
             """
 
 
@@ -337,34 +365,6 @@ public static class SourceGenerationHelper
                             _ => false,
                         };
             """);
-
-        sb.Append(
-                """
-
-
-                        /// <summary>
-                        /// Cast a value of <see cref="
-                """).Append(fullyQualifiedName).Append(@""" /> to the underlying type (<c>")
-            .Append(enumToGenerate.UnderlyingType).Append(
-                """
-                </c>).
-                        /// This is mainly a convenience method.
-                        /// </summary>
-                        /// <returns>The value of <see cref="
-                """).Append(fullyQualifiedName).Append(
-                """
-                " /> cast to the underlying type.</returns>
-                        public static 
-                """).Append(enumToGenerate.UnderlyingType).Append(" AsUnderlyingType(this ").Append(fullyQualifiedName).Append(
-                """
-                 value)
-                        {
-                            return (
-                """).Append(enumToGenerate.UnderlyingType).Append(
-                """
-                ) value;
-                        }
-                """);
 
         sb.Append(
             """
