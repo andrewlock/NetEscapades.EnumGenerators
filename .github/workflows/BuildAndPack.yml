@@ -36,8 +36,8 @@ jobs:
             vm: windows-latest
           - os: linux
             vm: ubuntu-latest
-          # - os: macos
-          #   vm: macos-13  # latest is arm64, and it breaks a bunch of stuff
+          - os: macos
+            vm: macos-15
     env:
       MSBuildEnableWorkloadResolver: false
       DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "true"
