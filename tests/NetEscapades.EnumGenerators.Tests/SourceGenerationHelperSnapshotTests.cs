@@ -9,8 +9,10 @@ namespace NetEscapades.EnumGenerators.Tests;
 [UsesVerify]
 public class SourceGenerationHelperSnapshotTests
 {
-    [Fact]
-    public Task GeneratesEnumCorrectly()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public Task GeneratesEnumCorrectly(bool csharp14IsSupported)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -26,15 +28,18 @@ public class SourceGenerationHelperSnapshotTests
             hasFlags: false,
             isDisplayAttributeUsed: false);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
-            .UseDirectory("Snapshots");
+            .UseDirectory("Snapshots")
+            .UseParameters(csharp14IsSupported);
     }
 
-    [Fact]
-    public Task GeneratesEnumWithRepeatedValuesCorrectly()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public Task GeneratesEnumWithRepeatedValuesCorrectly(bool csharp14IsSupported)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -51,15 +56,18 @@ public class SourceGenerationHelperSnapshotTests
             hasFlags: false,
             isDisplayAttributeUsed: false);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
-            .UseDirectory("Snapshots");
+            .UseDirectory("Snapshots")
+            .UseParameters(csharp14IsSupported);
     }
 
-    [Fact]
-    public Task GeneratesFlagsEnumCorrectly()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public Task GeneratesFlagsEnumCorrectly(bool csharp14IsSupported)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -75,10 +83,11 @@ public class SourceGenerationHelperSnapshotTests
             hasFlags: true,
             isDisplayAttributeUsed: false);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
-            .UseDirectory("Snapshots");
+            .UseDirectory("Snapshots")
+            .UseParameters(csharp14IsSupported);
     }
 }

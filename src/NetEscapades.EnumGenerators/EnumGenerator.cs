@@ -16,6 +16,12 @@ public class EnumGenerator : IIncrementalGenerator
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
             "EnumExtensionsAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
 
+        var csharp14IsSupported = context.CompilationProvider
+            .Select((x,_) => x is CSharpCompilation
+            {
+                LanguageVersion: LanguageVersion.Preview or >= (LanguageVersion)1400 // C#14
+            });
+        
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
                 predicate: static (node, _) => node is EnumDeclarationSyntax,
@@ -34,16 +40,16 @@ public class EnumGenerator : IIncrementalGenerator
             .SelectMany(static (m, _) => m!.Value)
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
 
-        context.RegisterSourceOutput(enumsToGenerate,
-            static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
+        context.RegisterSourceOutput(enumsToGenerate.Combine(csharp14IsSupported),
+            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
 
-        context.RegisterSourceOutput(externalEnums,
-            static (spc, enumToGenerate) => Execute(in enumToGenerate, spc));
+        context.RegisterSourceOutput(externalEnums.Combine(csharp14IsSupported),
+            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
     }
 
-    static void Execute(in EnumToGenerate enumToGenerate, SourceProductionContext context)
+    static void Execute(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, SourceProductionContext context)
     {
-        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate);
+        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, csharp14IsSupported);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 

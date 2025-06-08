@@ -101,7 +101,7 @@ public static class SourceGenerationHelper
 
         """;
 
-    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate)
+    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool csharp14IsSupported)
     {
         var constantValues = new HashSet<object>();
 
