@@ -17,16 +17,16 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 #error Unknown integration tests
 #endif
 
-public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
+public class LongEnumExtensionsTests : ExtensionTests<LongEnum, long, LongEnumExtensionsTests>, ITestData<LongEnum>
 {
-    public static TheoryData<LongEnum> ValidEnumValues() => new()
+    public TheoryData<LongEnum> ValidEnumValues() => new()
     {
         LongEnum.First,
         LongEnum.Second,
         (LongEnum)3,
     };
 
-    public static TheoryData<string> ValuesToParse() => new()
+    public TheoryData<string> ValuesToParse() => new()
     {
         "First",
         "Second",
@@ -42,6 +42,11 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
         "Fourth",
         "Fifth",
     };
+
+    protected override string[] GetNames() => LongEnumExtensions.GetNames();
+    protected override LongEnum[] GetValues() => LongEnumExtensions.GetValues();
+    protected override long[] GetValuesAsUnderlyingType() => LongEnumExtensions.GetValuesAsUnderlyingType();
+    protected override long AsUnderlyingValue(LongEnum value) => value.AsUnderlyingType();
 
     protected override string ToStringFast(LongEnum value) => value.ToStringFast();
     protected override string ToStringFast(LongEnum value, bool withMetadata) => value.ToStringFast(withMetadata);
@@ -62,59 +67,4 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum>
     protected override LongEnum Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => LongEnumExtensions.Parse(name, ignoreCase);
 #endif
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFast(LongEnum value) => GeneratesToStringFastTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFastWithMetadata(LongEnum value) => GeneratesToStringFastWithMetadataTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesIsDefined(LongEnum value) => GeneratesIsDefinedTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase:false, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseAsAspan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesAsUnderlyingType(LongEnum value) => GeneratesAsUnderlyingTypeTest(value, value.AsUnderlyingType());
-
-    [Fact]
-    public void GeneratesGetValues() => GeneratesGetValuesTest(LongEnumExtensions.GetValues());
-
-    [Fact]
-    public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(LongEnumExtensions.GetValuesAsUnderlyingType());
-
-    [Fact]
-    public void GeneratesGetNames() => base.GeneratesGetNamesTest(LongEnumExtensions.GetNames());
 }

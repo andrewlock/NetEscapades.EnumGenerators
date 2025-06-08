@@ -20,9 +20,9 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 #error Unknown integration tests
 #endif
 
-public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
+public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnumExtensionsTests>, ITestData<FlagsEnum>
 {
-    public static TheoryData<FlagsEnum> ValidEnumValues() => new()
+    public TheoryData<FlagsEnum> ValidEnumValues() => new()
     {
         FlagsEnum.First,
         FlagsEnum.Second,
@@ -30,7 +30,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
         (FlagsEnum)3,
     };
 
-    public static TheoryData<string> ValuesToParse() => new()
+    public TheoryData<string> ValuesToParse() => new()
     {
         "First",
         "Second",
@@ -46,6 +46,11 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
         "Fourth",
         "Fifth",
     };
+
+    protected override string[] GetNames() => FlagsEnumExtensions.GetNames();
+    protected override FlagsEnum[] GetValues() => FlagsEnumExtensions.GetValues();
+    protected override int[] GetValuesAsUnderlyingType() => FlagsEnumExtensions.GetValuesAsUnderlyingType();
+    protected override int AsUnderlyingValue(FlagsEnum value) => value.AsUnderlyingType();
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override string ToStringFast(FlagsEnum value, bool withMetadata) => value.ToStringFast(withMetadata);
@@ -65,34 +70,6 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 #if READONLYSPAN
     protected override FlagsEnum Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FlagsEnumExtensions.Parse(name, ignoreCase);
-#endif
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="value"></param>
-    /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
-    /// This is consistent with the behaviour of <see cref=""Enum.HasFlag(Enum)""></remarks>
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFast(FlagsEnum value) => GeneratesToStringFastTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFastWithMetadata(FlagsEnum value) => GeneratesToStringFastWithMetadataTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesIsDefined(FlagsEnum value) => GeneratesIsDefinedTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
 #endif
 
     public static IEnumerable<object[]> AllFlags()
@@ -121,37 +98,4 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum>
 
         isDefined.Should().Be(value.HasFlag(flag));
     }
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesAsUnderlyingType(FlagsEnum value) => GeneratesAsUnderlyingTypeTest(value, value.AsUnderlyingType());
-
-    [Fact]
-    public void GeneratesGetValues() => GeneratesGetValuesTest(FlagsEnumExtensions.GetValues());
-
-    [Fact]
-    public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(FlagsEnumExtensions.GetValuesAsUnderlyingType());
-
-    [Fact]
-    public void GeneratesGetNames() => base.GeneratesGetNamesTest(FlagsEnumExtensions.GetNames());
 }

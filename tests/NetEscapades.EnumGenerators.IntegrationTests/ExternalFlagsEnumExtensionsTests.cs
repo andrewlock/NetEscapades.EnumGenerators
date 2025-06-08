@@ -21,9 +21,9 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 #error Unknown integration tests
 #endif
 
-public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
+public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare, int, ExternalFileShareExtensionsTests>, ITestData<FileShare>
 {
-    public static TheoryData<FileShare> ValidEnumValues() => new()
+    public TheoryData<FileShare> ValidEnumValues() => new()
     {
         FileShare.Read,
         FileShare.Write,
@@ -31,7 +31,7 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
         (FileShare)3,
     };
 
-    public static TheoryData<string> ValuesToParse() => new()
+    public TheoryData<string> ValuesToParse() => new()
     {
         "Read",
         "Write",
@@ -47,6 +47,11 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
         "Fourth",
         "Fifth",
     };
+
+    protected override string[] GetNames() => FileShareExtensions.GetNames();
+    protected override FileShare[] GetValues() => FileShareExtensions.GetValues();
+    protected override int[] GetValuesAsUnderlyingType() => FileShareExtensions.GetValuesAsUnderlyingType();
+    protected override int AsUnderlyingValue(FileShare value) => value.AsUnderlyingType();
 
     protected override string ToStringFast(FileShare value) => value.ToStringFast();
     protected override string ToStringFast(FileShare value, bool withMetadata) => value.ToStringFast(withMetadata);
@@ -66,33 +71,6 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
 #if READONLYSPAN
     protected override FileShare Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => FileShareExtensions.Parse(name, ignoreCase);
-#endif
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="value"></param>
-    /// <remarks>If the underlying value of <paramref name="flag"/> is zero, the method returns true.
-    /// This is consistent with the behaviour of <see cref=""Enum.HasFlag(Enum)""></remarks>
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFast(FileShare value) => GeneratesToStringFastTest(value);
- 
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFastWithMetadata(FileShare value) => GeneratesToStringFastWithMetadataTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesIsDefined(FileShare value) => GeneratesIsDefinedTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
 #endif
 
     public static IEnumerable<object[]> AllFlags()
@@ -121,37 +99,4 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare>
 
         isDefined.Should().Be(value.HasFlag(flag));
     }
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
-#endif
-
-    // Ignoring order in these
-    [Fact]
-    public void GeneratesGetValues()
-        => FileShareExtensions.GetValues()
-            .Should()
-            .BeEquivalentTo((FileShare[])Enum.GetValues(typeof(FileShare)));
-
-    [Fact]
-    public void GeneratesGetNames()
-        => FileShareExtensions.GetNames()
-            .Should()
-            .BeEquivalentTo(Enum.GetNames(typeof(FileShare)));
 }
