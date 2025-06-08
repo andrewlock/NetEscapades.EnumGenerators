@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Xunit;
 
 #if INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.IntegrationTests;
@@ -23,10 +24,20 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 #endif
 
 #nullable enable
-public abstract class ExtensionTests<T> where T : struct
+public abstract class ExtensionTests<T, TUnderlying, TITestData>
+    where T : struct
+    where TUnderlying : struct
+    where TITestData : ITestData<T>, new()
 {
+    public static TheoryData<T> GetValidEnumValues() => new TITestData().ValidEnumValues();
+    public static TheoryData<string> GetValuesToParse() => new TITestData().ValuesToParse();
+
+    protected abstract string[] GetNames();
+    protected abstract T[] GetValues();
+    protected abstract TUnderlying[] GetValuesAsUnderlyingType();
     protected abstract string ToStringFast(T value);
     protected abstract string ToStringFast(T value, bool withMetadata);
+    protected abstract TUnderlying AsUnderlyingValue(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
 #if READONLYSPAN
@@ -42,7 +53,103 @@ public abstract class ExtensionTests<T> where T : struct
     protected abstract T Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute);
 #endif
 
-    protected void GeneratesToStringFastTest(T value)
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesToStringFast(T value) => GeneratesToStringFastTest(value);
+
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesToStringFastWithMetadata(T value) => GeneratesToStringFastWithMetadataTest(value);
+
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesIsDefined(T value) => GeneratesIsDefinedTest(value);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
+
+#if READONLYSPAN
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
+#endif
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
+
+#if READONLYSPAN
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseUsingSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAsAspan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
+#endif
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
+
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesAsUnderlyingType(T value) => GeneratesAsUnderlyingTypeTest(value, AsUnderlyingValue(value));
+
+    [Fact]
+    public void GeneratesGetValues() => GeneratesGetValuesTest(GetValues());
+
+    [Fact]
+    public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(GetValuesAsUnderlyingType());
+
+    [Fact]
+    public void GeneratesGetNames() => GeneratesGetNamesTest(GetNames());
+
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesIsDefinedUsingNameallowMatchingMetadataAttribute(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: true);
+
+#if READONLYSPAN
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesIsDefinedUsingNameallowMatchingMetadataAttributeAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: true);
+#endif
+
+#if READONLYSPAN
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
+#endif
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: true);
+
+#if READONLYSPAN
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: true);
+#endif
+
+#if READONLYSPAN
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
+#endif
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: true);
+
+#if READONLYSPAN
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: true);
+#endif
+
+    private void GeneratesToStringFastTest(T value)
     {
         var serialized = ToStringFast(value);
         var expectedValue = value.ToString();
@@ -53,7 +160,7 @@ public abstract class ExtensionTests<T> where T : struct
         serializedAltPath.Should().Be(expectedValue);
     }
 
-    protected void GeneratesToStringFastWithMetadataTest(T value)
+    private void GeneratesToStringFastWithMetadataTest(T value)
     {
         var serialized = ToStringFast(value, withMetadata: true);
         var valueAsString = value.ToString();
@@ -64,14 +171,14 @@ public abstract class ExtensionTests<T> where T : struct
         serialized.Should().Be(expectedValue);
     }
 
-    protected void GeneratesIsDefinedTest(T value)
+    private void GeneratesIsDefinedTest(T value)
     {
         var isDefined = IsDefined(value);
 
         isDefined.Should().Be(Enum.IsDefined(typeof(T), value));
     }
 
-    protected void GeneratesIsDefinedTest(string name, bool allowMatchingMetadataAttribute)
+    private void GeneratesIsDefinedTest(string name, bool allowMatchingMetadataAttribute)
     {
         var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
         var expectedResult = ValidateIsDefined(name, allowMatchingMetadataAttribute);
@@ -79,7 +186,7 @@ public abstract class ExtensionTests<T> where T : struct
     }
 
 #if READONLYSPAN
-    protected void GeneratesIsDefinedTest(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+    private void GeneratesIsDefinedTest(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
     {
         var isDefined = IsDefined(name, allowMatchingMetadataAttribute);
         var expectedResult = ValidateIsDefined(name.ToString(), allowMatchingMetadataAttribute);
@@ -106,7 +213,7 @@ public abstract class ExtensionTests<T> where T : struct
         return expectedResult;
     }
 
-    protected void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    private void GeneratesTryParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);
         ValidateTryParse(name, ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
@@ -117,7 +224,7 @@ public abstract class ExtensionTests<T> where T : struct
     }
 
 #if READONLYSPAN
-    protected void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    private void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);
         ValidateTryParse(name.ToString(), ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
@@ -144,7 +251,7 @@ public abstract class ExtensionTests<T> where T : struct
         }
     }
 
-    protected void GeneratesParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    private void GeneratesParseTest(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         Exception? ex = null;
         T? result = null;
@@ -172,7 +279,7 @@ public abstract class ExtensionTests<T> where T : struct
     }
 
 #if READONLYSPAN
-    protected void GeneratesParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    private void GeneratesParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         Exception? ex = null;
         T? result = null;
@@ -224,21 +331,19 @@ public abstract class ExtensionTests<T> where T : struct
         }
     }
 
-    protected void GeneratesAsUnderlyingTypeTest<TUnderlying>(T value, TUnderlying underlyingValue)
-        where TUnderlying : struct
+    private void GeneratesAsUnderlyingTypeTest(T value, TUnderlying underlyingValue)
     {
         var expected = (TUnderlying) (object) value;
         underlyingValue.Should().Be(expected);
     }
 
-    protected void GeneratesGetValuesTest(T[] values)
+    private void GeneratesGetValuesTest(T[] values)
     {
         var expected = (T[]) Enum.GetValues(typeof(T));
         values.Should().Equal(expected);
     }
 
-    protected void GeneratesGetValuesAsUnderlyingTypeTest<TUnderlying>(TUnderlying[] values)
-        where TUnderlying : struct
+    private void GeneratesGetValuesAsUnderlyingTypeTest(TUnderlying[] values)
     {
 #if NET7_OR_GREATER
         var expected = (TUnderlying[]) Enum.GetValuesAsUnderlyingType(typeof(T));
@@ -248,7 +353,7 @@ public abstract class ExtensionTests<T> where T : struct
         values.Should().Equal(expected);
     }
 
-    protected void GeneratesGetNamesTest(string[] names)
+    private void GeneratesGetNamesTest(string[] names)
     {
         var expected = Enum.GetNames(typeof(T));
         names.Should().Equal(expected);
@@ -305,4 +410,10 @@ public abstract class ExtensionTests<T> where T : struct
 
         return false;
     }
+}
+
+public interface ITestData<TEnum>
+{
+    public TheoryData<TEnum> ValidEnumValues();
+    public TheoryData<string> ValuesToParse();
 }

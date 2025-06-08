@@ -17,16 +17,16 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 #error Unknown integration tests
 #endif
 
-public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
+public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace, int, EnumInNamespaceExtensionsTests>, ITestData<EnumInNamespace>
 {
-    public static TheoryData<EnumInNamespace> ValidEnumValues() => new()
+    public TheoryData<EnumInNamespace> ValidEnumValues() => new()
     {
         EnumInNamespace.First,
         EnumInNamespace.Second,
         (EnumInNamespace)3,
     };
 
-    public static TheoryData<string> ValuesToParse() => new()
+    public TheoryData<string> ValuesToParse() => new()
     {
         "First",
         "Second",
@@ -43,12 +43,17 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
         "Fifth",
     };
 
+    protected override string[] GetNames() => EnumInNamespaceExtensions.GetNames();
+    protected override EnumInNamespace[] GetValues() => EnumInNamespaceExtensions.GetValues();
+    protected override int[] GetValuesAsUnderlyingType() => EnumInNamespaceExtensions.GetValuesAsUnderlyingType();
+    protected override int AsUnderlyingValue(EnumInNamespace value) => value.AsUnderlyingType();
+
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override string ToStringFast(EnumInNamespace value, bool withMetadata) => value.ToStringFast(withMetadata);
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
-    protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
+    protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #if READONLYSPAN
-    protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
+    protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #endif
     protected override bool TryParse(string name, out EnumInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase);
@@ -63,53 +68,4 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace>
     protected override EnumInNamespace Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumInNamespaceExtensions.Parse(name, ignoreCase);
 #endif
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFast(EnumInNamespace value) => GeneratesToStringFastTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesToStringFastWithMetadata(EnumInNamespace value) => GeneratesToStringFastWithMetadataTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesIsDefined(EnumInNamespace value) => GeneratesIsDefinedTest(value);
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingName(string name) => GeneratesIsDefinedTest(name, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesIsDefinedUsingNameAsSpan(string name) => GeneratesIsDefinedTest(name.AsSpan(), allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
-
-#if READONLYSPAN
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseUsingSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
-#endif
-
-    [Theory]
-    [MemberData(nameof(ValuesToParse))]
-    public void GeneratesTryParseIgnoreCase(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: false);
-
-    [Theory]
-    [MemberData(nameof(ValidEnumValues))]
-    public void GeneratesAsUnderlyingType(EnumInNamespace value) => GeneratesAsUnderlyingTypeTest(value, value.AsUnderlyingType());
-
-    [Fact]
-    public void GeneratesGetValues() => GeneratesGetValuesTest(EnumInNamespaceExtensions.GetValues());
-
-    [Fact]
-    public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(EnumInNamespaceExtensions.GetValuesAsUnderlyingType());
-
-    [Fact]
-    public void GeneratesGetNames() => base.GeneratesGetNamesTest(EnumInNamespaceExtensions.GetNames());
 }
