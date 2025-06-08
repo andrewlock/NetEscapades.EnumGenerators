@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
 
 namespace NetEscapades.EnumGenerators;
 
@@ -8,19 +7,13 @@ namespace NetEscapades.EnumGenerators;
 /// An immutable, equatable array. This is equivalent to <see cref="Array{T}"/> but with value equality support.
 /// </summary>
 /// <typeparam name="T">The type of values in the array.</typeparam>
-public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IReadOnlyList<T>
+public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IReadOnlyCollection<T>
     where T : IEquatable<T>
 {
     /// <summary>
     /// The underlying <typeparamref name="T"/> array.
     /// </summary>
     private readonly T[]? _array;
-
-    /// <summary>
-    /// Get value at <paramref name="index"/>
-    /// </summary>
-    /// <param name="index">The index of the value to get</param>
-    public T this[int index] => _array[index];
 
     /// <summary>
     /// Creates a new <see cref="EquatableArray{T}"/> instance.
