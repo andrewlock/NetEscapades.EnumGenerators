@@ -13,7 +13,6 @@ namespace System
 {
 #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
 #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
-#pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
     /// <summary>
     /// Extension methods for <see cref="global::System.DateTimeKind" />
     /// </summary>
@@ -550,5 +549,4 @@ namespace System
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
-#pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
 }

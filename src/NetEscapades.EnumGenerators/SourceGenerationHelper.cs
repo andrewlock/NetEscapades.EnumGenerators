@@ -124,7 +124,6 @@ public static class SourceGenerationHelper
             """
             #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
             #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
-            #pragma warning disable CS8510 // Ignore unreachable patterns in switch expressions
                 /// <summary>
                 /// Extension methods for <see cref="
             """).Append(fullyQualifiedName).Append(
@@ -188,15 +187,19 @@ public static class SourceGenerationHelper
             """);
 
         var hasDisplayNames = false;
+        var constantValues = new HashSet<object>();
         foreach (var member in enumToGenerate.Names)
         {
-            hasDisplayNames |= member.Value.DisplayName is not null;
-            sb.Append(
-                """
+            if (constantValues.Add(member.Value.ConstantValue))
+            {            
+                hasDisplayNames |= member.Value.DisplayName is not null;
+                    sb.Append(
+                        """
 
-                                
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                                        
+                        """).Append(fullyQualifiedName).Append('.').Append(member.Key)
+                        .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+            }
         }
 
         if (enumToGenerate.HasFlags)
@@ -1446,7 +1449,6 @@ public static class SourceGenerationHelper
                 }
             #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
             #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
-            #pragma warning restore CS8510 // Ignore unreachable patterns in switch expressions
             """);
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
