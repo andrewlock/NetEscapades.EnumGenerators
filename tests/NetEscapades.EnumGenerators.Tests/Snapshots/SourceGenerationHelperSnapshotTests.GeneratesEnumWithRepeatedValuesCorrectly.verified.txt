@@ -76,7 +76,6 @@ namespace Something.Blah
             {
                 global::Something.Blah.ShortName.First => true,
                 global::Something.Blah.ShortName.Second => true,
-                global::Something.Blah.ShortName.Third => true,
                 _ => false,
             };
 
