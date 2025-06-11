@@ -148,4 +148,22 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
 
         Third = 2,
     }
+
+    [EnumExtensions]
+    public enum EnumWithRepeatedValues
+    {
+        First = 0,
+        Second = 1,
+        Third = 0, // Repeated value
+        Fourth = Second, // Repeated value
+        Fifth = Second + Third, // Repeated value
+    }
+
+    [EnumExtensions]
+    public enum EnumWithRepeatedValuesWithDisplayNames
+    {
+        [Display(Name = "Main")] First = 0,
+        Second = 1,
+        [Display(Name = "Repeated")] Third = 0, // Repeated value with display name
+    }
 }

@@ -103,6 +103,8 @@ public static class SourceGenerationHelper
 
     public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate)
     {
+        var constantValues = new HashSet<object>();
+
         var sb = new StringBuilder();
         sb.AppendLine(Header);
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
@@ -187,15 +189,19 @@ public static class SourceGenerationHelper
             """);
 
         var hasDisplayNames = false;
+        constantValues.Clear();
         foreach (var member in enumToGenerate.Names)
         {
-            hasDisplayNames |= member.Value.DisplayName is not null;
-            sb.Append(
-                """
+            if (constantValues.Add(member.Value.ConstantValue))
+            {
+                hasDisplayNames |= member.Value.DisplayName is not null;
+                    sb.Append(
+                        """
 
-                                
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                                        
+                        """).Append(fullyQualifiedName).Append('.').Append(member.Key)
+                        .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+            }
         }
 
         if (enumToGenerate.HasFlags)
@@ -236,22 +242,26 @@ public static class SourceGenerationHelper
                 value switch
                             {
                 """);
+            constantValues.Clear();
             foreach (var member in enumToGenerate.Names)
             {
-                sb.Append(
-                    """
+                if (constantValues.Add(member.Value.ConstantValue))
+                {
+                    sb.Append(
+                        """
 
                                     
                     """).Append(fullyQualifiedName).Append('.').Append(member.Key)
-                    .Append(" => ");
+                        .Append(" => ");
 
-                if (member.Value.DisplayName is { } dn)
-                {
-                    sb.Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(',');
-                }
-                else
-                {
-                    sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                    if (member.Value.DisplayName is { } dn)
+                    {
+                        sb.Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(',');
+                    }
+                    else
+                    {
+                        sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                    }
                 }
             }
 
@@ -349,14 +359,18 @@ public static class SourceGenerationHelper
                         => value switch
                         {
             """);
+        constantValues.Clear();
         foreach (var member in enumToGenerate.Names)
         {
-            sb.Append(
-                """
+            if (constantValues.Add(member.Value.ConstantValue))
+            {
+                sb.Append(
+                    """
 
-                                
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key)
-                .Append(" => true,");
+                                    
+                    """).Append(fullyQualifiedName).Append('.').Append(member.Key)
+                    .Append(" => true,");
+            }
         }
 
         sb.Append(
