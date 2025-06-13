@@ -468,7 +468,6 @@ public static class SourceGenerationHelper
             """
 
 
-            #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
                     /// <summary>
                     /// Returns a boolean telling whether an enum with the given name exists in the enumeration
                     /// </summary>
@@ -508,10 +507,10 @@ public static class SourceGenerationHelper
                     sb.Append(
                         """
 
-                                            global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
+                                            global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(
                         """)
                         .Append(SymbolDisplay.FormatLiteral(dn, quote: true))
-                        .Append(", global::System.StringComparison.Ordinal) => true,");
+                        .Append("), global::System.StringComparison.Ordinal) => true,");
                 }
             }
 
@@ -541,10 +540,10 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
+                                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(
                 """).Append(fullyQualifiedName).Append('.')
                 .Append(member.Key)
-                .Append("), global::System.StringComparison.Ordinal) => true,");
+                .Append(")), global::System.StringComparison.Ordinal) => true,");
         }
 
         sb.Append(
@@ -553,7 +552,6 @@ public static class SourceGenerationHelper
                             _ => false,
                         };
                     }
-            #endif
             """);
 
         sb.Append(
@@ -949,7 +947,6 @@ public static class SourceGenerationHelper
                         }
                     }
 
-            #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1170,11 +1167,11 @@ public static class SourceGenerationHelper
                     sb.Append(
                         """
 
-                                            case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
+                                            case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(
                         """)
                         .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
                         """
-                        , global::System.StringComparison.OrdinalIgnoreCase):
+                        ), global::System.StringComparison.OrdinalIgnoreCase):
                                                 result = 
                         """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
                         """
@@ -1206,11 +1203,11 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
+                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(
                 """).Append(fullyQualifiedName).Append('.')
                 .Append(member.Key).Append(
                 """
-                ), global::System.StringComparison.OrdinalIgnoreCase):
+                )), global::System.StringComparison.OrdinalIgnoreCase):
                                     result = 
                 """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
                 """
@@ -1225,7 +1222,13 @@ public static class SourceGenerationHelper
                             case global::System.ReadOnlySpan<char> current when 
             """).Append(enumToGenerate.UnderlyingType).Append(
             """
-            .TryParse(name, out var numericResult):
+            .TryParse(
+                                name
+            #if !NETCOREAPP || NETCOREAPP2_0 || NETCOREAPP1_1 || NETCOREAPP1_0
+            
+                                .ToString()
+            #endif
+                                , out var numericResult):
                                 result = (
             """).Append(fullyQualifiedName).Append(
             """
@@ -1267,11 +1270,11 @@ public static class SourceGenerationHelper
                     sb.Append(
                         """
 
-                                            case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
+                                            case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(
                         """)
                         .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
                         """
-                        , global::System.StringComparison.Ordinal):
+                        ), global::System.StringComparison.Ordinal):
                                                 result = 
                         """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
                         """
@@ -1303,11 +1306,11 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
+                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(
                 """).Append(fullyQualifiedName).Append('.')
                 .Append(member.Key).Append(
                 """
-                ), global::System.StringComparison.Ordinal):
+                )), global::System.StringComparison.Ordinal):
                                     result = 
                 """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
                 """
@@ -1322,7 +1325,13 @@ public static class SourceGenerationHelper
                             case global::System.ReadOnlySpan<char> current when 
             """).Append(enumToGenerate.UnderlyingType).Append(
             """
-            .TryParse(name, out var numericResult):
+            .TryParse(
+                                name
+            #if !NETCOREAPP || NETCOREAPP2_0 || NETCOREAPP1_1 || NETCOREAPP1_0
+            
+                                .ToString()
+            #endif
+                                , out var numericResult):
                                 result = (
             """).Append(fullyQualifiedName).Append(
             """
@@ -1333,7 +1342,6 @@ public static class SourceGenerationHelper
                                 return false;
                         }
                     }
-            #endif
             """);
 
         var orderedNames = GetNamesOrderedByValue(enumToGenerate);
