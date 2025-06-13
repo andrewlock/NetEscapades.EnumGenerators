@@ -133,7 +133,6 @@ namespace MyTestNameSpace
             };
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -158,7 +157,7 @@ namespace MyTestNameSpace
             {
                 isDefinedInDisplayAttribute = name switch
                 {
-                    global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, "2nd", global::System.StringComparison.Ordinal) => true,
+                    global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan("2nd"), global::System.StringComparison.Ordinal) => true,
                     _ => false,
                 };
             }
@@ -170,14 +169,13 @@ namespace MyTestNameSpace
 
             return name switch
             {
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Third), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Fourth), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.First)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Second)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Third)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Fourth)), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
         }
-#endif
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -389,7 +387,6 @@ namespace MyTestNameSpace
             }
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
@@ -520,7 +517,7 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, "2nd", global::System.StringComparison.OrdinalIgnoreCase):
+                    case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan("2nd"), global::System.StringComparison.OrdinalIgnoreCase):
                         result = global::MyTestNameSpace.MyEnum.Second;
                         return true;
                     default:
@@ -530,19 +527,25 @@ namespace MyTestNameSpace
 
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.First)), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::MyTestNameSpace.MyEnum.First;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Second)), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::MyTestNameSpace.MyEnum.Second;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Third), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Third)), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::MyTestNameSpace.MyEnum.Third;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Fourth), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Fourth)), global::System.StringComparison.OrdinalIgnoreCase):
                     result = global::MyTestNameSpace.MyEnum.Fourth;
                     return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(
+                    name
+#if !NETCOREAPP || NETCOREAPP2_0 || NETCOREAPP1_1 || NETCOREAPP1_0
+
+                    .ToString()
+#endif
+                    , out var numericResult):
                     result = (global::MyTestNameSpace.MyEnum)numericResult;
                     return true;
                 default:
@@ -563,7 +566,7 @@ namespace MyTestNameSpace
             {
                 switch (name)
                 {
-                    case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, "2nd", global::System.StringComparison.Ordinal):
+                    case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan("2nd"), global::System.StringComparison.Ordinal):
                         result = global::MyTestNameSpace.MyEnum.Second;
                         return true;
                     default:
@@ -573,19 +576,25 @@ namespace MyTestNameSpace
 
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.First)), global::System.StringComparison.Ordinal):
                     result = global::MyTestNameSpace.MyEnum.First;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Second)), global::System.StringComparison.Ordinal):
                     result = global::MyTestNameSpace.MyEnum.Second;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Third), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Third)), global::System.StringComparison.Ordinal):
                     result = global::MyTestNameSpace.MyEnum.Third;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Fourth), global::System.StringComparison.Ordinal):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Fourth)), global::System.StringComparison.Ordinal):
                     result = global::MyTestNameSpace.MyEnum.Fourth;
                     return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when int.TryParse(
+                    name
+#if !NETCOREAPP || NETCOREAPP2_0 || NETCOREAPP1_1 || NETCOREAPP1_0
+
+                    .ToString()
+#endif
+                    , out var numericResult):
                     result = (global::MyTestNameSpace.MyEnum)numericResult;
                     return true;
                 default:
@@ -593,7 +602,6 @@ namespace MyTestNameSpace
                     return false;
             }
         }
-#endif
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
