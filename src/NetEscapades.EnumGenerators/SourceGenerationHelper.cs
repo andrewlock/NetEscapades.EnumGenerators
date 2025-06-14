@@ -101,7 +101,7 @@ public static class SourceGenerationHelper
 
         """;
 
-    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate)
+    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool csharp14IsSupported)
     {
         var constantValues = new HashSet<object>();
 
@@ -342,6 +342,22 @@ public static class SourceGenerationHelper
                 ) value;
                         }
                 """);
+
+        // Use c#14 style extension members so can be accessed from root type
+        if (csharp14IsSupported)
+        {
+            sb.Append(
+                """
+
+
+                        // C#14 Extension member syntax
+                        extension(
+                """).Append(fullyQualifiedName).Append(
+                """
+                )
+                        {
+                """);
+        }
 
         sb.Append(
             """
@@ -1456,6 +1472,21 @@ public static class SourceGenerationHelper
 
                         };
                     }
+            """);
+
+        // Close the extension everything block
+        if (csharp14IsSupported)
+        {
+            sb.Append(
+            """
+
+                    }
+            """);
+        }
+
+        sb.Append(
+            """
+
                 }
             #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
             #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

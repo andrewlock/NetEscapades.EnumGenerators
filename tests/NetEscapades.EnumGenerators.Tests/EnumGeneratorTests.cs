@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using NetEscapades.EnumGenerators.Interceptors;
 using VerifyTests;
 using VerifyXunit;
@@ -50,6 +51,26 @@ public abstract class EnumGeneratorTestsBase
             }
             """;
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public Task CanGenerateEnumExtensionsInGlobalNamespace_CSharp14()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.Preview, options: null!, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output, Settings());
