@@ -1,6 +1,15 @@
 Changelog
 --- 
 
+## [v1.0.0-beta14](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta13..v1.0.0-beta14) (2025-06-15)
+
+### Features
+- Expose generated static methods as C#14 static extension members on enums, when building with C#14 (#154)
+
+### Fixes
+- Improve XML documentation (#142) Thanks [@paulomorgado](https://github.com/paulomorgado)!
+- Add support for enums with duplicate values (#143) Thanks [@paulomorgado](https://github.com/paulomorgado)!
+
 ## [v1.0.0-beta13](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta12..v1.0.0-beta13) (2025-05-11)
 
 ### Features

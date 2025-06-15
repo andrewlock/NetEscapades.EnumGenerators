@@ -1,15 +1,14 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta13'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta14'">
       <![CDATA[
 
 ### Features
-- Added `AsUnderlyingType()` and `GetValuesAsUnderlyingType()` (#125) Thanks @TheConstructor!
+- Expose generated static methods as C#14 static extension members on enums, when building with C#14 (#154)
 
 ### Fixes
-- Replaced multiline verbatim strings (`@""`) with raw string literals (#87) Thanks @Guiorgy!
-- Update `GetValues`, `GetNames` and `GetValuesAsUnderlyingType` to match System.Enum order (#134) Thanks @TheConstructor!
-- Directly call `ToString` on unnamed numeric values to reduce overhead (#135) @TheConstructor!
+- Improve XML documentation (#142) Thanks [@paulomorgado](https://github.com/paulomorgado)!
+- Add support for enums with duplicate values (#143) Thanks [@paulomorgado](https://github.com/paulomorgado)!
 
 ]]>
     </PackageReleaseNotes>
