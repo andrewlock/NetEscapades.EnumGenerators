@@ -23,24 +23,30 @@ public class EnumInGenericTypeAnalyzer : DiagnosticAnalyzer
     {
         var enumDeclaration = (EnumDeclarationSyntax)context.Node;
         
-        // Check if enum has [EnumExtensions] attribute
-        bool hasEnumExtensionsAttribute = false;
+        // Check if enum has [EnumExtensions] attribute and capture its location
+        AttributeSyntax? enumExtensionsAttribute = null;
         foreach (var attributeList in enumDeclaration.AttributeLists)
         {
             foreach (var attribute in attributeList.Attributes)
             {
-                var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
-                if (symbolInfo.Symbol is IMethodSymbol method &&
-                    method.ContainingType.ToDisplayString() == Attributes.EnumExtensionsAttribute)
+                // Check attribute name syntactically first
+                var attributeName = attribute.Name.ToString();
+                if (attributeName == "EnumExtensions" || attributeName == "EnumExtensionsAttribute")
                 {
-                    hasEnumExtensionsAttribute = true;
-                    break;
+                    // Verify with semantic model if needed for precision
+                    var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
+                    if (symbolInfo.Symbol is IMethodSymbol method &&
+                        method.ContainingType.ToDisplayString() == Attributes.EnumExtensionsAttribute)
+                    {
+                        enumExtensionsAttribute = attribute;
+                        break;
+                    }
                 }
             }
-            if (hasEnumExtensionsAttribute) break;
+            if (enumExtensionsAttribute is not null) break;
         }
 
-        if (!hasEnumExtensionsAttribute)
+        if (enumExtensionsAttribute is null)
         {
             return;
         }
@@ -53,28 +59,15 @@ public class EnumInGenericTypeAnalyzer : DiagnosticAnalyzer
         }
 
         // Check if nested in generic type
-        if (IsNestedInGenericType(enumSymbol))
+        if (SymbolHelpers.IsNestedInGenericType(enumSymbol))
         {
             var diagnostic = Diagnostic.Create(
                 DiagnosticHelper.EnumInGenericType,
-                enumDeclaration.Identifier.GetLocation(),
+                enumExtensionsAttribute.GetLocation(),
                 enumSymbol.Name);
             
             context.ReportDiagnostic(diagnostic);
         }
     }
 
-    private static bool IsNestedInGenericType(INamedTypeSymbol enumSymbol)
-    {
-        var containingType = enumSymbol.ContainingType;
-        while (containingType is not null)
-        {
-            if (containingType.IsGenericType)
-            {
-                return true;
-            }
-            containingType = containingType.ContainingType;
-        }
-        return false;
-    }
 }

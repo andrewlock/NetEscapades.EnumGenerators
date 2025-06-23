@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -343,5 +344,38 @@ internal static class TestHelpers
         public string[] Sources { get; }
         public string[]? Stages { get; }
 
+    }
+
+    public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(
+        DiagnosticAnalyzer analyzer, 
+        Options options)
+    {
+        var syntaxTrees = options.Sources
+            .Select(x =>
+            {
+                var tree = CSharpSyntaxTree.ParseText(x, path: "Program.cs");
+                var parseOptions = new CSharpParseOptions(options.LanguageVersion)
+                    .WithFeatures(options.Features);
+                return tree.WithRootAndOptions(tree.GetRoot(), parseOptions);
+            });
+
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
+            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+            .Concat([
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
+            ]);
+
+        var compilation = CSharpCompilation.Create(
+            "analyzer-test",
+            syntaxTrees,
+            references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
+        return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync();
     }
 }

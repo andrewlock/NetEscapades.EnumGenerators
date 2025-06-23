@@ -130,7 +130,7 @@ public class EnumGenerator : IIncrementalGenerator
         ct.ThrowIfCancellationRequested();
 
         // Skip enums in generic types - these will be handled by diagnostics provider
-        if (IsNestedInGenericType(enumSymbol))
+        if (SymbolHelpers.IsNestedInGenericType(enumSymbol))
         {
             return null;
         }
@@ -247,17 +247,4 @@ public class EnumGenerator : IIncrementalGenerator
             isDisplayAttributeUsed: displayNames?.Count > 0);
     }
 
-    static bool IsNestedInGenericType(INamedTypeSymbol enumSymbol)
-    {
-        var containingType = enumSymbol.ContainingType;
-        while (containingType is not null)
-        {
-            if (containingType.IsGenericType)
-            {
-                return true;
-            }
-            containingType = containingType.ContainingType;
-        }
-        return false;
-    }
 }

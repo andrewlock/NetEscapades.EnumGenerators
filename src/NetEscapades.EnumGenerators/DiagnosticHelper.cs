@@ -9,7 +9,7 @@ public static class DiagnosticHelper
         id: "NEEG001",
 #pragma warning restore RS2008
         title: "Enum in generic type not supported",
-        messageFormat: "The enum '{0}' is nested inside a generic type, which is not supported for enum extension generation",
+        messageFormat: "The enum '{0}' is nested inside a generic type. [EnumExtension] attribute is not supported.",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
