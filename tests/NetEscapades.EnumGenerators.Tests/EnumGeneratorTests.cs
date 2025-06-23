@@ -583,4 +583,34 @@ public abstract class EnumGeneratorTestsBase
         Assert.Empty(diagnostics);
         return Verifier.Verify(output, Settings());
     }
+
+    [Fact]
+    public Task GeneratesWarningForEnumNestedInGenericType()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            public class GenericContainer<T>
+            {
+                [EnumExtensions]
+                public enum MyEnum
+                {
+                    First,
+                    Second,
+                }
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+
+        Assert.Single(diagnostics);
+        var diagnostic = diagnostics[0];
+        Assert.Equal("NEEG002", diagnostic.Id);
+        Assert.Equal("Enum 'MyEnum' is nested inside a generic type which is not supported", diagnostic.GetMessage());
+        Assert.Equal(Microsoft.CodeAnalysis.DiagnosticSeverity.Warning, diagnostic.Severity);
+        
+        // Should not generate any code
+        Assert.Empty(output);
+        return Task.CompletedTask;
+    }
 }

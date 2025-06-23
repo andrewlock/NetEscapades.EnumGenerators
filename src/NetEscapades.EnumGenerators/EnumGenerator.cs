@@ -8,9 +8,20 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace NetEscapades.EnumGenerators;
 
+internal record struct EnumGenerationResult(EnumToGenerate? EnumToGenerate, Diagnostic? Diagnostic);
+
 [Generator]
 public class EnumGenerator : IIncrementalGenerator
 {
+    public static readonly DiagnosticDescriptor EnumNestedInGenericType = new(
+#pragma warning disable RS2008 // Enable Analyzer Release Tracking
+        id: "NEEG002",
+#pragma warning restore RS2008
+        title: "Enum nested in generic type",
+        messageFormat: "Enum '{0}' is nested inside a generic type which is not supported",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
@@ -22,14 +33,11 @@ public class EnumGenerator : IIncrementalGenerator
                 LanguageVersion: LanguageVersion.Preview or >= (LanguageVersion)1400 // C#14
             });
         
-        IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
+        IncrementalValuesProvider<EnumGenerationResult> enumsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
                 predicate: static (node, _) => node is EnumDeclarationSyntax,
-                transform: GetTypeToGenerate)
-            .WithTrackingName(TrackingNames.InitialExtraction)
-            .Where(static m => m is not null)
-            .Select(static (m, _) => m!.Value)
-            .WithTrackingName(TrackingNames.RemovingNulls);
+                transform: GetEnumGenerationResult)
+            .WithTrackingName(TrackingNames.InitialExtraction);
 
         IncrementalValuesProvider<EnumToGenerate> externalEnums = context
             .SyntaxProvider
@@ -41,10 +49,26 @@ public class EnumGenerator : IIncrementalGenerator
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
 
         context.RegisterSourceOutput(enumsToGenerate.Combine(csharp14IsSupported),
-            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
+            static (spc, result) => ExecuteWithResult(result.Left, result.Right, spc));
 
         context.RegisterSourceOutput(externalEnums.Combine(csharp14IsSupported),
             static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
+    }
+
+    static void ExecuteWithResult(EnumGenerationResult result, bool csharp14IsSupported, SourceProductionContext context)
+    {
+        if (result.Diagnostic is not null)
+        {
+            context.ReportDiagnostic(result.Diagnostic);
+            return;
+        }
+
+        if (result.EnumToGenerate is not null)
+        {
+            var enumToGenerate = result.EnumToGenerate.Value;
+            var (generatedResult, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, csharp14IsSupported);
+            context.AddSource(filename, SourceText.From(generatedResult, Encoding.UTF8));
+        }
     }
 
     static void Execute(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, SourceProductionContext context)
@@ -116,6 +140,37 @@ public class EnumGenerator : IIncrementalGenerator
         return enums is not null
             ? new EquatableArray<EnumToGenerate>(enums.ToArray())
             : null;
+    }
+
+    static EnumGenerationResult GetEnumGenerationResult(GeneratorAttributeSyntaxContext context, CancellationToken ct)
+    {
+        INamedTypeSymbol? enumSymbol = context.TargetSymbol as INamedTypeSymbol;
+        if (enumSymbol is null)
+        {
+            // nothing to do if this type isn't available
+            return new EnumGenerationResult(null, null);
+        }
+
+        ct.ThrowIfCancellationRequested();
+
+        // Check if enum is nested inside a generic type
+        var containingType = enumSymbol.ContainingType;
+        while (containingType is not null)
+        {
+            if (containingType.IsGenericType)
+            {
+                var location = context.TargetNode.GetLocation();
+                var diagnostic = Diagnostic.Create(
+                    EnumNestedInGenericType,
+                    location,
+                    enumSymbol.Name);
+                return new EnumGenerationResult(null, diagnostic);
+            }
+            containingType = containingType.ContainingType;
+        }
+
+        var enumToGenerate = GetTypeToGenerate(context, ct);
+        return new EnumGenerationResult(enumToGenerate, null);
     }
 
     static EnumToGenerate? GetTypeToGenerate(GeneratorAttributeSyntaxContext context, CancellationToken ct)
