@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using NetEscapades.EnumGenerators.Interceptors;
 using VerifyTests;
 using VerifyXunit;
@@ -606,13 +608,45 @@ public abstract class EnumGeneratorTestsBase
             }
             """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+        // Test with analyzer to verify diagnostic
+        var syntaxTree = CSharpSyntaxTree.ParseText(input);
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
+            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+            .Concat([
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
+            ]);
 
-        // Since we now use a separate analyzer, the generator itself won't produce diagnostics
-        // We need to test the analyzer separately or include it in the test framework
-        // For now, we verify that no enum extension source files were generated (only the attribute)
-        Assert.Empty(diagnostics);
-        Assert.Empty(output); // No enum extension should be generated
+        var compilation = CSharpCompilation.Create(
+            "test",
+            [syntaxTree],
+            references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        // Test analyzer produces diagnostic
+        var analyzer = new EnumInGenericTypeAnalyzer();
+        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer));
+        var analyzerDiagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
+
+        Assert.Single(analyzerDiagnostics);
+        Assert.Equal("NEEG001", analyzerDiagnostics[0].Id);
+        Assert.Equal(DiagnosticSeverity.Warning, analyzerDiagnostics[0].Severity);
+        Assert.Contains("MyEnum", analyzerDiagnostics[0].GetMessage());
+        Assert.Contains("generic type", analyzerDiagnostics[0].GetMessage());
+
+        // Test generator produces no enum extension (only attribute)
+        var generator = new EnumGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var generatorDiagnostics);
+
+        Assert.Empty(generatorDiagnostics); // No diagnostics from generator
+        var result = driver.GetRunResult();
+        var generatedSources = result.Results[0].GeneratedSources;
+        Assert.Single(generatedSources); // Only the attribute should be generated
+        Assert.Contains("EnumExtensionsAttribute", generatedSources[0].HintName);
     }
 
     [Fact]
@@ -642,13 +676,45 @@ public abstract class EnumGeneratorTestsBase
             }
             """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+        // Test with analyzer to verify diagnostic
+        var syntaxTree = CSharpSyntaxTree.ParseText(input);
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
+            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+            .Concat([
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
+            ]);
 
-        // Since we now use a separate analyzer, the generator itself won't produce diagnostics
-        // We need to test the analyzer separately or include it in the test framework
-        // For now, we verify that no enum extension source files were generated (only the attribute)
-        Assert.Empty(diagnostics);
-        Assert.Empty(output); // No enum extension should be generated
+        var compilation = CSharpCompilation.Create(
+            "test",
+            [syntaxTree],
+            references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        // Test analyzer produces diagnostic
+        var analyzer = new EnumInGenericTypeAnalyzer();
+        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer));
+        var analyzerDiagnostics = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
+
+        Assert.Single(analyzerDiagnostics);
+        Assert.Equal("NEEG001", analyzerDiagnostics[0].Id);
+        Assert.Equal(DiagnosticSeverity.Warning, analyzerDiagnostics[0].Severity);
+        Assert.Contains("MyEnum", analyzerDiagnostics[0].GetMessage());
+        Assert.Contains("generic type", analyzerDiagnostics[0].GetMessage());
+
+        // Test generator produces no enum extension (only attribute)
+        var generator = new EnumGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var generatorDiagnostics);
+
+        Assert.Empty(generatorDiagnostics); // No diagnostics from generator
+        var result = driver.GetRunResult();
+        var generatedSources = result.Results[0].GeneratedSources;
+        Assert.Single(generatedSources); // Only the attribute should be generated
+        Assert.Contains("EnumExtensionsAttribute", generatedSources[0].HintName);
     }
 
     [Fact]
