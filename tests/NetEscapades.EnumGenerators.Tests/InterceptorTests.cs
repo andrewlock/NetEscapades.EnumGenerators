@@ -788,7 +788,7 @@ public class InterceptorTests
         var (diagnostics, output) =
             TestHelpers.GetGeneratedTrees<Interceptors.TrackingNames>(Generators(), opts);
 
-        diagnostics.Should().ContainSingle(x => x.Id == DiagnosticHelper.CsharpVersionLooLow.Id);
+        diagnostics.Should().ContainSingle(x => x.Id == NetEscapades.EnumGenerators.Interceptors.DiagnosticHelper.CsharpVersionLooLow.Id);
         return Verifier.Verify(output.Select(x=>x.ToString())).ScrubExpectedChanges().UseDirectory("Snapshots");
     }
 

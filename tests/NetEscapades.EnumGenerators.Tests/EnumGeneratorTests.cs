@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -582,5 +583,125 @@ public abstract class EnumGeneratorTestsBase
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public void GeneratesWarningForEnumInGenericType()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                public class GenericClass<T>
+                {
+                    [EnumExtensions]
+                    public enum MyEnum
+                    {
+                        First,
+                        Second,
+                    }
+                }
+            }
+            """;
+
+        // Create a simplified compilation and run the generator
+        var syntaxTree = CSharpSyntaxTree.ParseText(input);
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
+            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+            .Concat([
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
+            ]);
+
+        var compilation = CSharpCompilation.Create(
+            "test",
+            [syntaxTree],
+            references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        var generator = new EnumGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var diagnostics);
+        
+        Assert.Single(diagnostics);
+        Assert.Equal("NEEG002", diagnostics[0].Id);
+        Assert.Equal(DiagnosticSeverity.Warning, diagnostics[0].Severity);
+        Assert.Contains("MyEnum", diagnostics[0].GetMessage());
+        Assert.Contains("generic type", diagnostics[0].GetMessage());
+        
+        // Verify no enum extension source files were generated (only the attribute)
+        var result = driver.GetRunResult();
+        var generatedSources = result.Results[0].GeneratedSources;
+        Assert.Single(generatedSources); // Only the attribute should be generated
+        Assert.Contains("EnumExtensionsAttribute", generatedSources[0].HintName);
+    }
+
+    [Fact]
+    public void GeneratesWarningForEnumInDeeplyNestedGenericType()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                public class OuterClass
+                {
+                    public class GenericClass<T>
+                    {
+                        public class InnerClass
+                        {
+                            [EnumExtensions]
+                            public enum MyEnum
+                            {
+                                First,
+                                Second,
+                            }
+                        }
+                    }
+                }
+            }
+            """;
+
+        // Create a simplified compilation and run the generator
+        var syntaxTree = CSharpSyntaxTree.ParseText(input);
+        var references = AppDomain.CurrentDomain.GetAssemblies()
+            .Where(assembly => !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location))
+            .Select(assembly => MetadataReference.CreateFromFile(assembly.Location))
+            .Concat([
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
+            ]);
+
+        var compilation = CSharpCompilation.Create(
+            "test",
+            [syntaxTree],
+            references,
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+        var generator = new EnumGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var diagnostics);
+        
+        Assert.Single(diagnostics);
+        Assert.Equal("NEEG002", diagnostics[0].Id);
+        Assert.Equal(DiagnosticSeverity.Warning, diagnostics[0].Severity);
+        Assert.Contains("MyEnum", diagnostics[0].GetMessage());
+        Assert.Contains("generic type", diagnostics[0].GetMessage());
+        
+        // Verify no enum extension source files were generated (only the attribute)
+        var result = driver.GetRunResult();
+        var generatedSources = result.Results[0].GeneratedSources;
+        Assert.Single(generatedSources); // Only the attribute should be generated
+        Assert.Contains("EnumExtensionsAttribute", generatedSources[0].HintName);
     }
 }

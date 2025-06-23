@@ -40,8 +40,20 @@ public class EnumGenerator : IIncrementalGenerator
             .SelectMany(static (m, _) => m!.Value)
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
 
+        // Check for enums in generic types and generate diagnostics
+        IncrementalValuesProvider<Diagnostic> diagnostics = context.SyntaxProvider
+            .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
+                predicate: static (node, _) => node is EnumDeclarationSyntax,
+                transform: GetDiagnosticForGenericTypeEnum)
+            .Where(static diagnostic => diagnostic is not null)
+            .Select(static (diagnostic, _) => diagnostic!)
+            .WithTrackingName(TrackingNames.GenericTypeDiagnostics);
+
         context.RegisterSourceOutput(enumsToGenerate.Combine(csharp14IsSupported),
             static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
+
+        context.RegisterSourceOutput(diagnostics,
+            static (spc, diagnostic) => spc.ReportDiagnostic(diagnostic));
 
         context.RegisterSourceOutput(externalEnums.Combine(csharp14IsSupported),
             static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
@@ -129,6 +141,12 @@ public class EnumGenerator : IIncrementalGenerator
 
         ct.ThrowIfCancellationRequested();
 
+        // Skip enums in generic types - these will be handled by diagnostics provider
+        if (IsNestedInGenericType(enumSymbol))
+        {
+            return null;
+        }
+
         var hasFlags = false;
         string? nameSpace = null;
         string? name = null;
@@ -167,6 +185,41 @@ public class EnumGenerator : IIncrementalGenerator
         }
 
         return TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
+    }
+
+    static Diagnostic? GetDiagnosticForGenericTypeEnum(GeneratorAttributeSyntaxContext context, CancellationToken ct)
+    {
+        INamedTypeSymbol? enumSymbol = context.TargetSymbol as INamedTypeSymbol;
+        if (enumSymbol is null)
+        {
+            return null;
+        }
+
+        ct.ThrowIfCancellationRequested();
+
+        if (IsNestedInGenericType(enumSymbol))
+        {
+            return Diagnostic.Create(
+                DiagnosticHelper.EnumInGenericType,
+                context.TargetNode.GetLocation(),
+                enumSymbol.Name);
+        }
+
+        return null;
+    }
+
+    static bool IsNestedInGenericType(INamedTypeSymbol enumSymbol)
+    {
+        var containingType = enumSymbol.ContainingType;
+        while (containingType is not null)
+        {
+            if (containingType.IsGenericType)
+            {
+                return true;
+            }
+            containingType = containingType.ContainingType;
+        }
+        return false;
     }
 
     static EnumToGenerate? TryExtractEnumSymbol(INamedTypeSymbol enumSymbol, string? name, string? nameSpace, bool hasFlags)
