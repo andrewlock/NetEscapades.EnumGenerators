@@ -143,36 +143,49 @@ public class EnumGenerator : IIncrementalGenerator
                 continue;
             }
 
-            if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
-                attributeData.AttributeClass.ToDisplayString() != Attributes.EnumExtensionsAttribute)
-            {
-                continue;
-            }
-
-            foreach (KeyValuePair<string, TypedConstant> namedArgument in attributeData.NamedArguments)
-            {
-                if (namedArgument.Key == "ExtensionClassNamespace"
-                    && namedArgument.Value.Value?.ToString() is { } ns)
-                {
-                    nameSpace = ns;
-                    continue;
-                }
-
-                if (namedArgument.Key == "ExtensionClassName"
-                    && namedArgument.Value.Value?.ToString() is { } n)
-                {
-                    name = n;
-                }
-            }
+            TryGetExtensionAttributeDetails(attributeData, ref nameSpace, ref name);
         }
 
         return TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
     }
 
+    internal static bool TryGetExtensionAttributeDetails(AttributeData attributeData, ref string? nameSpace, ref string? name)
+    {
+        if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
+            attributeData.AttributeClass.ToDisplayString() != Attributes.EnumExtensionsAttribute)
+        {
+            return false;
+        }
+
+        foreach (KeyValuePair<string, TypedConstant> namedArgument in attributeData.NamedArguments)
+        {
+            if (namedArgument.Key == "ExtensionClassNamespace"
+                && namedArgument.Value.Value?.ToString() is { } ns)
+            {
+                nameSpace = ns;
+                continue;
+            }
+
+            if (namedArgument.Key == "ExtensionClassName"
+                && namedArgument.Value.Value?.ToString() is { } n)
+            {
+                name = n;
+            }
+        }
+
+        return true;
+    }
+
+    internal static string GetEnumExtensionNamespace(INamedTypeSymbol enumSymbol)
+        => enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
+
+    internal static string GetEnumExtensionName(INamedTypeSymbol enumSymbol)
+        => enumSymbol.Name + "Extensions";
+
     static EnumToGenerate? TryExtractEnumSymbol(INamedTypeSymbol enumSymbol, string? name, string? nameSpace, bool hasFlags)
     {
-        name ??= enumSymbol.Name + "Extensions";
-        nameSpace ??= enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
+        name ??= GetEnumExtensionName(enumSymbol);
+        nameSpace ??= GetEnumExtensionNamespace(enumSymbol);
 
         string fullyQualifiedName = enumSymbol.ToString();
         string underlyingType = enumSymbol.EnumUnderlyingType?.ToString() ?? "int";

@@ -20,10 +20,8 @@ public static class SourceGenerationHelper
 
         """;
 
-    public const string Attribute =
-        $$"""
-        {{Header}}
-        #if NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES
+    public const string AttributeDefinitions =
+        """
         namespace NetEscapades.EnumGenerators
         {
             /// <summary>
@@ -97,6 +95,13 @@ public static class SourceGenerationHelper
                 public bool IsInterceptable { get; set; } = true;
             }
         }
+        """;
+
+    public const string Attribute =
+        $$"""
+        {{Header}}
+        #if NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES
+        {{AttributeDefinitions}}
         #endif
 
         """;
