@@ -102,7 +102,6 @@ namespace Foo
             };
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -128,7 +127,6 @@ namespace Foo
                 _ => false,
             };
         }
-#endif
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
