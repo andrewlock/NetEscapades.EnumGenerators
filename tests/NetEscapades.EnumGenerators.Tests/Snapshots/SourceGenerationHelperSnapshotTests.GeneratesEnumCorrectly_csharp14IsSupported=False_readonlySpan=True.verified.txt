@@ -105,7 +105,6 @@ namespace Something.Blah
             };
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -132,7 +131,6 @@ namespace Something.Blah
                 _ => false,
             };
         }
-#endif
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -310,7 +308,6 @@ namespace Something.Blah
             }
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
@@ -478,7 +475,6 @@ namespace Something.Blah
                     return false;
             }
         }
-#endif
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
