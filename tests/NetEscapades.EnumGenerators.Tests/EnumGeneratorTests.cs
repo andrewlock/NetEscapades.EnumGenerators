@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using NetEscapades.EnumGenerators.Interceptors;
@@ -582,5 +583,46 @@ public abstract class EnumGeneratorTestsBase
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public void DoesNotGenerateWithoutAttribute()
+    {
+        const string input =
+            """
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(stages: [], input));
+
+        diagnostics.Should().BeEmpty();
+        output.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void DoesNotGenerateInNestedGenericClass()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            public class Nested<T>
+            {
+                [EnumExtensions]
+                public enum MyEnum
+                {
+                    First,
+                    Second,
+                }
+            }
+            """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(stages: [], input));
+
+        diagnostics.Should().BeEmpty();
+        output.Should().BeEmpty();
     }
 }

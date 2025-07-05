@@ -129,6 +129,12 @@ public class EnumGenerator : IIncrementalGenerator
 
         ct.ThrowIfCancellationRequested();
 
+        // Skip enums in generic types as they won't be valid - error will be raised from analyzer
+        if (SymbolHelpers.IsNestedInGenericType(enumSymbol))
+        {
+            return null;
+        }
+
         var hasFlags = false;
         string? nameSpace = null;
         string? name = null;
@@ -253,4 +259,5 @@ public class EnumGenerator : IIncrementalGenerator
             names: members,
             isDisplayAttributeUsed: displayNames?.Count > 0);
     }
+
 }
