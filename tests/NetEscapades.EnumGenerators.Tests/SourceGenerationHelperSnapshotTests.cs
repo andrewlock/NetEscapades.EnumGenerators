@@ -10,9 +10,11 @@ namespace NetEscapades.EnumGenerators.Tests;
 public class SourceGenerationHelperSnapshotTests
 {
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public Task GeneratesEnumCorrectly(bool csharp14IsSupported)
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    public Task GeneratesEnumCorrectly(bool csharp14IsSupported, bool readonlySpan)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -28,12 +30,12 @@ public class SourceGenerationHelperSnapshotTests
             hasFlags: false,
             isDisplayAttributeUsed: false);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(value, new (csharp14IsSupported, readonlySpan)).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
             .UseDirectory("Snapshots")
-            .UseParameters(csharp14IsSupported);
+            .UseParameters(csharp14IsSupported, readonlySpan);
     }
 
     [Theory]
