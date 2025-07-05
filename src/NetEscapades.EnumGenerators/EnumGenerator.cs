@@ -16,10 +16,17 @@ public class EnumGenerator : IIncrementalGenerator
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
             "EnumExtensionsAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
 
-        var csharp14IsSupported = context.CompilationProvider
-            .Select((x,_) => x is CSharpCompilation
+        var options = context.CompilationProvider
+            .Select((x,_) =>
             {
-                LanguageVersion: LanguageVersion.Preview or >= (LanguageVersion)1400 // C#14
+                var csharp14IsSupported = x is CSharpCompilation
+                {
+                    LanguageVersion: LanguageVersion.Preview or >= (LanguageVersion)1400 // C#14
+                };
+
+                var readonlySpanIsAvailable = x.GetTypeByMetadataName("System.ReadOnlySpan`1") is not null;
+
+                return new CompilationOptions(csharp14IsSupported, readonlySpanIsAvailable);
             });
         
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
@@ -40,16 +47,16 @@ public class EnumGenerator : IIncrementalGenerator
             .SelectMany(static (m, _) => m!.Value)
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
 
-        context.RegisterSourceOutput(enumsToGenerate.Combine(csharp14IsSupported),
+        context.RegisterSourceOutput(enumsToGenerate.Combine(options),
             static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
 
-        context.RegisterSourceOutput(externalEnums.Combine(csharp14IsSupported),
+        context.RegisterSourceOutput(externalEnums.Combine(options),
             static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
     }
 
-    static void Execute(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, SourceProductionContext context)
+    static void Execute(in EnumToGenerate enumToGenerate, CompilationOptions options, SourceProductionContext context)
     {
-        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, csharp14IsSupported);
+        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, options);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
@@ -261,3 +268,5 @@ public class EnumGenerator : IIncrementalGenerator
     }
 
 }
+
+public readonly record struct CompilationOptions(bool CSharp14IsSupported, bool ReadOnlySpanIsAvailable);
