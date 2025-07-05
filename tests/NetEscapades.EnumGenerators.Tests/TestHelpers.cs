@@ -149,14 +149,17 @@ internal static class TestHelpers
                                                  .GetRunResult();
 
             AssertRunsEqual(runResult, runResult2, stages);
-            
-            // verify the second run only generated cached source outputs
-            runResult2.Results[0]
-                .TrackedOutputSteps
-                .SelectMany(x => x.Value) // step executions
-                .SelectMany(x => x.Outputs) // execution results
-                .Should()
-                .OnlyContain(x => x.Reason == IncrementalStepRunReason.Cached);
+
+            if (!runResult2.Results[0].TrackedOutputSteps.IsEmpty)
+            {
+                // verify the second run only generated cached source outputs
+                runResult2.Results[0]
+                    .TrackedOutputSteps
+                    .SelectMany(x => x.Value) // step executions
+                    .SelectMany(x => x.Outputs) // execution results
+                    .Should()
+                    .OnlyContain(x => x.Reason == IncrementalStepRunReason.Cached);
+            }
         }
 
         return (runResult, outputCompilation.GetDiagnostics());
@@ -167,6 +170,14 @@ internal static class TestHelpers
         // We're given all the tracking names, but not all the stages have necessarily executed so filter
         Dictionary<string, ImmutableArray<IncrementalGeneratorRunStep>> trackedSteps1 = GetTrackedSteps(runResult1, trackingNames);
         Dictionary<string, ImmutableArray<IncrementalGeneratorRunStep>> trackedSteps2 = GetTrackedSteps(runResult2, trackingNames);
+
+        if (trackingNames.Length == 0)
+        {
+            // If no tracking steps, we have nothing to check
+            trackedSteps1.Should().BeEmpty();
+            trackedSteps2.Should().BeEmpty();
+            return;
+        }
 
         // These should be the same
         trackedSteps1.Should()
@@ -301,6 +312,11 @@ internal static class TestHelpers
         {
         }
 
+        public Options(string[] stages, params string[] sources)
+            : this(LanguageVersion.Default, null, null, sources, stages)
+        {
+        }
+
         public Options(Dictionary<string, string> options, params string[] sources)
             : this(LanguageVersion.Default, options, null, sources, null)
         {
@@ -337,7 +353,7 @@ internal static class TestHelpers
         public AnalyzerConfigOptionsProvider? OptionsProvider =>
             AnalyzerOptions is not null ? new OptionsProvider(new DictionaryAnalyzerOptions(AnalyzerOptions)) : null;
 
-        public LanguageVersion LanguageVersion { get;  }
+        public LanguageVersion LanguageVersion { get; }
         public Dictionary<string, string>? AnalyzerOptions { get; }
         public Dictionary<string, string>? Features { get; }
         public string[] Sources { get; }
