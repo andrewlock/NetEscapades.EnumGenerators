@@ -13,9 +13,6 @@ public class EnumGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
-            "EnumExtensionsAttribute.g.cs", SourceText.From(SourceGenerationHelper.Attribute, Encoding.UTF8)));
-
         var csharp14IsSupported = context.CompilationProvider
             .Select((x,_) => x is CSharpCompilation
             {
