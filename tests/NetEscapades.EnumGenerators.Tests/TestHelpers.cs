@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
@@ -28,6 +29,24 @@ internal static class TestHelpers
         "EnumExtensionsAttribute.g.cs",
         "InterceptableAttribute.g.cs",
     ];
+
+    public static string LoadEmbeddedAttribute()
+        => LoadEmbeddedResource("NetEscapades.EnumGenerators.Tests.EnumExtensionsAttribute.cs");
+
+    private static string LoadEmbeddedResource(string resourceName)
+    {
+        var assembly = typeof(TestHelpers).Assembly;
+        var resourceStream = assembly.GetManifestResourceStream(resourceName);
+        if (resourceStream is null)
+        {
+            var existingResources = assembly.GetManifestResourceNames();
+            throw new ArgumentException($"Could not find embedded resource {resourceName}. Available names: {string.Join(", ", existingResources)}");
+        }
+
+        using var reader = new StreamReader(resourceStream, Encoding.UTF8);
+
+        return reader.ReadToEnd();
+    }
 
     public static IEnumerable<string> WhereNotGeneratedAttribute(this ImmutableArray<SyntaxTree> trees)
         => trees.Where(tree => !GeneratedAttributeFileNames.Contains(Path.GetFileName(tree.FilePath)))

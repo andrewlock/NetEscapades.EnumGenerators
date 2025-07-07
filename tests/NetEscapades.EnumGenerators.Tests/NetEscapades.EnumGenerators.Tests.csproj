@@ -33,4 +33,10 @@
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors\NetEscapades.EnumGenerators.Interceptors.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\src\NetEscapades.EnumGenerators.Attributes\EnumExtensionsAttribute.cs">
+      <Link>EnumExtensionsAttribute.cs</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

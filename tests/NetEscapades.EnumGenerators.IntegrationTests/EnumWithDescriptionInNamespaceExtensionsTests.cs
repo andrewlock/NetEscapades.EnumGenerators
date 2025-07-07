@@ -7,8 +7,6 @@ namespace NetEscapades.EnumGenerators.IntegrationTests;
 namespace NetEscapades.EnumGenerators.NetStandard.IntegrationTests;
 #elif INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests;
-#elif NUGET_ATTRS_INTEGRATION_TESTS
-namespace NetEscapades.EnumGenerators.Nuget.Attributes.IntegrationTests;
 #elif NUGET_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.IntegrationTests;
 #elif NUGET_INTERCEPTOR_TESTS
