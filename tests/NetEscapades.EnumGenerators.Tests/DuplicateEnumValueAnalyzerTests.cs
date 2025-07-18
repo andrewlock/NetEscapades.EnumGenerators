@@ -135,6 +135,26 @@ public class DuplicateEnumValueAnalyzerTests
         await Verifier.VerifyAnalyzerAsync(test);
     }
 
+    [Fact]
+    public async Task ComplexEnumWithMixedDuplicatesShouldDetectAllDuplicates()
+    {
+        var test = GetTestCode(
+            """
+            [EnumExtensions]
+            public enum ComplexEnum
+            {
+                Zero = 0,
+                One = 1,
+                {|NEEG003:AlsoZero|} = 0,  // duplicate of Zero
+                Two = 2,
+                {|NEEG003:AlsoOne|} = 1,   // duplicate of One
+                {|NEEG003:AnotherZero|} = 0, // duplicate of Zero
+                Three = 3,
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
     private static string GetTestCode(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
