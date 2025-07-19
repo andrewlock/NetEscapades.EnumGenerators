@@ -15,8 +15,8 @@ public class DuplicateEnumValueAnalyzer : DiagnosticAnalyzer
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
         id: DiagnosticId,
 #pragma warning restore RS2008
-        title: "Enum member has duplicate value and will be excluded from generated switch statements",
-        messageFormat: "The enum member '{0}' has the same value as a previous member and will be excluded from the generated ToStringFast(), IsDefined(), and other switch statements",
+        title: "Enum has duplicate values and will give inconsistent values for ToStringFast()",
+        messageFormat: "The enum member '{0}' has the same value as a previous member and will return an unexpected value for ToStringFast()",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true);

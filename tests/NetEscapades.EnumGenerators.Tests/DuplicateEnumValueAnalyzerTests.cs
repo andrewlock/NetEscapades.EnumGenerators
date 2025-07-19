@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using NetEscapades.EnumGenerators.Diagnostics;
 using Xunit;
@@ -11,7 +12,6 @@ public class DuplicateEnumValueAnalyzerTests
 {
     private const string DiagnosticId = DuplicateEnumValueAnalyzer.DiagnosticId;
 
-    // No diagnostics expected to show up
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -23,6 +23,7 @@ public class DuplicateEnumValueAnalyzerTests
     public async Task EnumWithoutAttributeShouldNotHaveDiagnostics()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             public enum TestEnum
             {
@@ -37,6 +38,7 @@ public class DuplicateEnumValueAnalyzerTests
     public async Task EnumWithoutDuplicatesShouldNotHaveDiagnostics()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             [EnumExtensions]
             public enum TestEnum
@@ -53,6 +55,7 @@ public class DuplicateEnumValueAnalyzerTests
     public async Task EnumWithDuplicateValuesShouldHaveDiagnosticsForSecondOccurrence()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             [EnumExtensions]
             public enum TestEnum
@@ -68,6 +71,7 @@ public class DuplicateEnumValueAnalyzerTests
     public async Task EnumWithMultipleDuplicateValuesShouldHaveDiagnosticsForAllButFirst()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             [EnumExtensions]
             public enum TestEnum
@@ -86,6 +90,7 @@ public class DuplicateEnumValueAnalyzerTests
     public async Task EnumWithImplicitValuesShouldDetectDuplicates()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             [EnumExtensions]
             public enum TestEnum
@@ -102,6 +107,7 @@ public class DuplicateEnumValueAnalyzerTests
     public async Task EnumWithDifferentTypesButSameValuesShouldDetectDuplicates()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             [EnumExtensions]
             public enum TestEnum : byte
@@ -117,6 +123,7 @@ public class DuplicateEnumValueAnalyzerTests
     public async Task MultipleEnumsWithDuplicatesShouldTrackSeparately()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             [EnumExtensions]
             public enum FirstEnum
@@ -136,20 +143,35 @@ public class DuplicateEnumValueAnalyzerTests
     }
 
     [Fact]
-    public async Task ComplexEnumWithMixedDuplicatesShouldDetectAllDuplicates()
+    public async Task ComplexEnumThatReferencesOthers()
     {
         var test = GetTestCode(
+            /* lang=c# */
             """
             [EnumExtensions]
             public enum ComplexEnum
             {
                 Zero = 0,
                 One = 1,
-                {|NEEG003:AlsoZero|} = 0,  // duplicate of Zero
+                {|NEEG003:AlsoOne|} = One,
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task ComplexEnumThatReferencesCombinationOfOthers()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            [EnumExtensions]
+            public enum ComplexEnum
+            {
+                Zero = 0,
+                One = 1,
                 Two = 2,
-                {|NEEG003:AlsoOne|} = 1,   // duplicate of One
-                {|NEEG003:AnotherZero|} = 0, // duplicate of Zero
-                Three = 3,
+                {|NEEG003:OneAndTwo|} = One | Two,
             }
             """);
         await Verifier.VerifyAnalyzerAsync(test);
