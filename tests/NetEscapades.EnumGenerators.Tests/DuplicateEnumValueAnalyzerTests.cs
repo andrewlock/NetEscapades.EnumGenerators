@@ -171,7 +171,8 @@ public class DuplicateEnumValueAnalyzerTests
                 Zero = 0,
                 One = 1,
                 Two = 2,
-                {|NEEG003:OneAndTwo|} = One | Two,
+                {|NEEG003:ZeroAndOne|} = Zero | One,
+                OneAndTwo = One | Two,
             }
             """);
         await Verifier.VerifyAnalyzerAsync(test);

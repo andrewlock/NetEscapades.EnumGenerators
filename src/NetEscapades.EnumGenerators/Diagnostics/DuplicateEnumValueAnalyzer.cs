@@ -16,7 +16,7 @@ public class DuplicateEnumValueAnalyzer : DiagnosticAnalyzer
         id: DiagnosticId,
 #pragma warning restore RS2008
         title: "Enum has duplicate values and will give inconsistent values for ToStringFast()",
-        messageFormat: "The enum member '{0}' has the same value as a previous member and will return an unexpected value for ToStringFast()",
+        messageFormat: "The enum member '{0}' has the same value as a previous member so will return the '{1}' value for ToStringFast()",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true);
@@ -74,8 +74,8 @@ public class DuplicateEnumValueAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Track which constant values we've seen
-        var seenValues = new HashSet<object>();
+        // Track which constant values we've seen and the first name
+        var seenValues = new Dictionary<object, string>();
         
         // Analyze each enum member
         foreach (var member in enumSymbol.GetMembers().OfType<IFieldSymbol>())
@@ -86,9 +86,10 @@ public class DuplicateEnumValueAnalyzer : DiagnosticAnalyzer
             }
 
             var constantValue = member.ConstantValue;
+            var memberName = member.Name;
             
             // If we've already seen this value, this member will be excluded
-            if (!seenValues.Add(constantValue))
+            if (seenValues.TryGetValue(constantValue, out var previousName))
             {
                 // Find the syntax location for this member
                 var memberLocation = member.Locations.FirstOrDefault();
@@ -97,10 +98,15 @@ public class DuplicateEnumValueAnalyzer : DiagnosticAnalyzer
                     var diagnostic = Diagnostic.Create(
                         Rule,
                         memberLocation,
-                        member.Name);
+                        memberName,
+                        previousName);
                     
                     context.ReportDiagnostic(diagnostic);
                 }
+            }
+            else
+            {
+                seenValues[member.ConstantValue] = memberName;
             }
         }
     }
