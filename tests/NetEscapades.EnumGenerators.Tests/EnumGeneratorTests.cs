@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -195,26 +196,30 @@ public abstract class EnumGeneratorTestsBase
         return Verifier.Verify(output, Settings());
     }
 
-    [Fact]
-    public Task CanGenerateEnumExtensionsWithDisplayName()
+    [Theory]
+    [InlineData(MetadataSource.DisplayAttribute)]
+    [InlineData(MetadataSource.DescriptionAttribute)]
+    [InlineData(MetadataSource.EnumMemberAttribute)]
+    public Task CanGenerateEnumExtensionsWithMetadataName(MetadataSource source)
     {
-        const string input =
-            """
+        var attr = GetAttribute(source);
+
+        var input =
+            $$"""
             using NetEscapades.EnumGenerators;
-            using System.ComponentModel.DataAnnotations;
 
             namespace MyTestNameSpace
             {
-                [EnumExtensions]
+                [EnumExtensions(MetadataSource = MetadataSource.{{source}})]
                 public enum MyEnum
                 {
                     First = 0,
 
-                    [Display(Name = "2nd")]
+                    [{{attr}}"2nd")]
                     Second = 1,
                     Third = 2,
 
-                    [Display(Name = "4th")]
+                    [{{attr}}"4th")]
                     Fourth = 3
                 }
             }
@@ -224,29 +229,35 @@ public abstract class EnumGeneratorTestsBase
         Assert.Empty(diagnostics);
         var settings = Settings();
         settings.UseMethodName("CanGenerateEnumExtensionsWithCustomNames");
+        settings.UseTextForParameters("_");
+        ScrubAttribute(settings, source);
         return Verifier.Verify(output, settings);
     }
 
-    [Fact]
-    public Task CanGenerateEnumExtensionsWithDescription()
+    [Theory]
+    [InlineData(MetadataSource.DisplayAttribute)]
+    [InlineData(MetadataSource.DescriptionAttribute)]
+    [InlineData(MetadataSource.EnumMemberAttribute)]
+    public Task CanGenerateEnumExtensionsWithNoneMetadataName(MetadataSource source)
     {
-        const string input =
-            """
+        var attr = GetAttribute(source);
+
+        var input =
+            $$"""
             using NetEscapades.EnumGenerators;
-            using System.ComponentModel;
 
             namespace MyTestNameSpace
             {
-                [EnumExtensions]
+                [EnumExtensions(MetadataSource = MetadataSource.None)]
                 public enum MyEnum
                 {
                     First = 0,
 
-                    [Description("2nd")]
+                    [{{attr}}"2nd")]
                     Second = 1,
                     Third = 2,
 
-                    [Description("4th")]
+                    [{{attr}}"4th")]
                     Fourth = 3
                 }
             }
@@ -255,33 +266,36 @@ public abstract class EnumGeneratorTestsBase
 
         Assert.Empty(diagnostics);
         var settings = Settings();
-        settings.UseMethodName("CanGenerateEnumExtensionsWithCustomNames");
+        settings.UseTextForParameters("_");
+        ScrubAttribute(settings, source);
         return Verifier.Verify(output, settings);
     }
 
-    [Fact]
-    public Task CanGenerateEnumExtensionsWithDescriptionAndDisplayName()
+    [Theory]
+    [InlineData(MetadataSource.DisplayAttribute)]
+    [InlineData(MetadataSource.DescriptionAttribute)]
+    [InlineData(MetadataSource.EnumMemberAttribute)]
+    public Task CanGenerateEnumExtensionsWithWrongMetadataName(MetadataSource source)
     {
-        const string input =
-            """
+        var wrongSource = GetWrongSource(source);
+        var attr = GetAttribute(source);
+
+        var input =
+            $$"""
             using NetEscapades.EnumGenerators;
-            using System.ComponentModel;
-            using System.ComponentModel.DataAnnotations;
 
             namespace MyTestNameSpace
             {
-                [EnumExtensions]
+                [EnumExtensions(MetadataSource = MetadataSource.{{wrongSource}})]
                 public enum MyEnum
                 {
                     First = 0,
 
-                    [Description("2nd")] // takes precedence
-                    [Display(Name = "Secundo")]
+                    [{{attr}}"2nd")]
                     Second = 1,
                     Third = 2,
 
-                    [Display(Name = "4th")] // takes precedence
-                    [Description("Number 4")]
+                    [{{attr}}"4th")]
                     Fourth = 3
                 }
             }
@@ -290,30 +304,38 @@ public abstract class EnumGeneratorTestsBase
 
         Assert.Empty(diagnostics);
         var settings = Settings();
-        settings.UseMethodName("CanGenerateEnumExtensionsWithCustomNames");
+        settings.UseTextForParameters("_");
+        ScrubAttribute(settings, wrongSource);
         return Verifier.Verify(output, settings);
     }
 
-    [Fact]
-    public Task CanGenerateEnumExtensionsWithSameDisplayName()
+    [Theory]
+    [InlineData(MetadataSource.DisplayAttribute)]
+    [InlineData(MetadataSource.DescriptionAttribute)]
+    [InlineData(MetadataSource.EnumMemberAttribute)]
+    public Task CanGenerateEnumExtensionsWithMetadataName_IgnoringOthers(MetadataSource source)
     {
-        const string input =
-            """
+        var attr = GetAttribute(source);
+        var other = GetWrongAttribute(source);
+
+        var input =
+            $$"""
             using NetEscapades.EnumGenerators;
-            using System.ComponentModel.DataAnnotations;
 
             namespace MyTestNameSpace
             {
-                [EnumExtensions]
+                [EnumExtensions(MetadataSource = MetadataSource.{{source}})]
                 public enum MyEnum
                 {
                     First = 0,
 
-                    [Display(Name = "2nd")]
+                    [{{attr}}"2nd")]
+                    [{{other}}"Secundo")]
                     Second = 1,
                     Third = 2,
 
-                    [Display(Name = "2nd")]
+                    [{{attr}}"4th")]
+                    [{{other}}"Number 4")]
                     Fourth = 3
                 }
             }
@@ -321,7 +343,47 @@ public abstract class EnumGeneratorTestsBase
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output, Settings());
+        var settings = Settings();
+        settings.UseTextForParameters("_");
+        ScrubAttribute(settings, source);
+        return Verifier.Verify(output, settings);
+    }
+
+    [Theory]
+    [InlineData(MetadataSource.DisplayAttribute)]
+    [InlineData(MetadataSource.DescriptionAttribute)]
+    [InlineData(MetadataSource.EnumMemberAttribute)]
+    public Task CanGenerateEnumExtensionsWithSameDisplayName(MetadataSource source)
+    {
+        var attr = GetAttribute(source);
+
+        var input =
+            $$"""
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions(MetadataSource = MetadataSource.{{source}})]
+                public enum MyEnum
+                {
+                    First = 0,
+
+                    [{{attr}}"2nd")]
+                    Second = 1,
+                    Third = 2,
+
+                    [{{attr}}"2nd")]
+                    Fourth = 3
+                }
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+
+        Assert.Empty(diagnostics);
+        var settings = Settings();
+        settings.UseTextForParameters("_");
+        ScrubAttribute(settings, source);
+        return Verifier.Verify(output, settings);
     }
 
     [Theory]
@@ -379,30 +441,36 @@ public abstract class EnumGeneratorTestsBase
         return Verifier.Verify(output, Settings());
     }
 
-    [Fact]
-    public Task HandlesStringsWithQuotesAndSlashesInDescription()
+    [Theory]
+    [InlineData(MetadataSource.DisplayAttribute)]
+    [InlineData(MetadataSource.DescriptionAttribute)]
+    [InlineData(MetadataSource.EnumMemberAttribute)]
+    public Task HandlesStringsWithQuotesAndSlashesInDescription(MetadataSource source)
     {
-        const string input =
-            """"
+        var attr = GetAttribute(source);
+        var input =
+            $$""""
             using NetEscapades.EnumGenerators;
-            using System.ComponentModel;
 
             namespace Test;
 
-            [EnumExtensions]
+            [EnumExtensions(MetadataSource = MetadataSource.{{source}})]
             public enum StringTesting
             {
-               [Description("Quotes \"")]   Quotes,
-               [Description(@"Literal Quotes """)]   LiteralQuotes,
-               [Description("Backslash \\")]   Backslash,
-               [Description(@"LiteralBackslash \")]   BackslashLiteral,
-               [Description("New\nLine")]   NewLine,
+               [{{attr}}"Quotes \"")]   Quotes,
+               [{{attr}}@"Literal Quotes """)]   LiteralQuotes,
+               [{{attr}}"Backslash \\")]   Backslash,
+               [{{attr}}@"LiteralBackslash \")]   BackslashLiteral,
+               [{{attr}}"New\nLine")]   NewLine,
             }
             """";
         var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
 
         Assert.Empty(diagnostics);
-        return Verifier.Verify(output, Settings());
+        var settings = Settings();
+        settings.UseTextForParameters("_");
+        ScrubAttribute(settings, source);
+        return Verifier.Verify(output, settings);
     }
 
     [Fact]
@@ -624,5 +692,46 @@ public abstract class EnumGeneratorTestsBase
 
         diagnostics.Should().BeEmpty();
         output.Should().BeEmpty();
+    }
+
+    private static void ScrubAttribute(VerifySettings settings, MetadataSource source)
+    {
+        var toScrub = source switch
+        {
+            MetadataSource.DisplayAttribute => "System.ComponentModel.DataAnnotations.Display",
+            MetadataSource.DescriptionAttribute => "System.ComponentModel.Description",
+            MetadataSource.EnumMemberAttribute => "System.Runtime.Serialization.EnumMember",
+            _ => null,
+        };
+
+        if (toScrub is null)
+        {
+            return;
+        }
+
+        settings.ScrubLinesWithReplace(original => original?.Replace(toScrub, "Metadata"));
+    }
+
+    private static string GetAttribute(MetadataSource source) =>
+        source switch
+        {
+            MetadataSource.DisplayAttribute => "System.ComponentModel.DataAnnotations.Display(Name = ",
+            MetadataSource.DescriptionAttribute => "System.ComponentModel.Description(",
+            MetadataSource.EnumMemberAttribute => "System.Runtime.Serialization.EnumMember(Value = ",
+            _ => throw new InvalidOperationException("Unknown source type " + source),
+        };
+
+    private static string GetWrongAttribute(MetadataSource source)
+        => GetAttribute(GetWrongSource(source));
+
+    private static MetadataSource GetWrongSource(MetadataSource source)
+    {
+        return source switch
+        {
+            MetadataSource.DisplayAttribute => MetadataSource.EnumMemberAttribute,
+            MetadataSource.DescriptionAttribute => MetadataSource.DisplayAttribute,
+            MetadataSource.EnumMemberAttribute => MetadataSource.DescriptionAttribute,
+            _ => throw new InvalidOperationException("Unknown source type " + source),
+        };
     }
 }

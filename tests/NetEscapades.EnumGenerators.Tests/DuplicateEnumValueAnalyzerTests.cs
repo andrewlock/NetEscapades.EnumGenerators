@@ -194,5 +194,6 @@ public class DuplicateEnumValueAnalyzerTests
         }
 
         {{TestHelpers.LoadEmbeddedAttribute()}}
+        {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
 }

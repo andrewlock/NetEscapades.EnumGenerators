@@ -307,5 +307,6 @@ public class EnumInGenericTypeAnalyzerTests
                  {{testFragment}}
 
              {{TestHelpers.LoadEmbeddedAttribute()}}
+             {{TestHelpers.LoadEmbeddedMetadataSource()}}
              """;
 }

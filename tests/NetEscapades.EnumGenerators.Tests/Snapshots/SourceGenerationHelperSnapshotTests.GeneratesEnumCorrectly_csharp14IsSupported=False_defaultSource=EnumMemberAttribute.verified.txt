@@ -27,20 +27,6 @@ namespace Something.Blah
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
-        /// If the attribute is decorated with a <c>[Display]</c> or <c>[Description]</c>attribute, then
-        /// uses the provided value. Otherwise uses the name of the member, equivalent to
-        /// calling <c>ToString()</c> on <paramref name="value"/>.
-        /// </summary>
-        /// <param name="value">The value to retrieve the string value for</param>
-        /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
-        /// <c>[Display]</c> or <c>[Description]</c>attribute as the string representation of the member.
-        /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
-        /// <returns>The string representation of the value</returns>
-        public static string ToStringFast(this global::Something.Blah.ShortName value, bool useMetadataAttributes)
-            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
-
-        /// <summary>
-        /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
@@ -52,6 +38,20 @@ namespace Something.Blah
                 global::Something.Blah.ShortName.Second => nameof(global::Something.Blah.ShortName.Second),
                 _ => value.AsUnderlyingType().ToString(),
             };
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
+        /// If the member is decorated with the <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute
+        /// then that value is returned. Otherwise returns uses the name of the member,
+        /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
+        ///  <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute as the string representation of the member.
+        /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
+        /// <returns>The string representation of the value</returns>
+        public static string ToStringFast(this global::Something.Blah.ShortName value, bool useMetadataAttributes)
+            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
 
         private static string ToStringFastWithMetadata(this global::Something.Blah.ShortName value)
             => value.ToStringFast();
@@ -84,26 +84,27 @@ namespace Something.Blah
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <returns><see langword="true"/> if a member with the name exists in the enumeration, <see langword="false"/> otherwise</returns>
-        public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
-
-        /// <summary>
-        /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
-        /// or if a member decorated with a <c>[Display]</c> attribute
-        /// with the required name exists.
-        /// </summary>
-        /// <param name="name">The name to check if it's defined</param>
-        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value of metadata attributes,otherwise ignores them</param>
-        /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
-        /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
-        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
-        {
-            return name switch
+        public static bool IsDefined(string name)
+            => name switch
             {
                 nameof(global::Something.Blah.ShortName.First) => true,
                 nameof(global::Something.Blah.ShortName.Second) => true,
-                _ => false,
-            };
-        }
+            _ => false,
+        };
+
+        /// <summary>
+        /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
+        /// or if a member decorated with <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/>
+        /// with the required name exists.
+        /// </summary>
+        /// <param name="name">The name to check if it's defined</param>
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>,
+        /// considers the value of <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> 
+        /// instead of the member name, otherwise ignores them</param>
+        /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
+        /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
+        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
+            => IsDefined(name);
 
 #if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
         /// <summary>
@@ -111,27 +112,25 @@ namespace Something.Blah
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <returns><see langword="true"/> if a member with the name exists in the enumeration, <see langword="false"/> otherwise</returns>
-        public static bool IsDefined(in global::System.ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
+        public static bool IsDefined(in global::System.ReadOnlySpan<char> name)
+            => name switch
+            {
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), global::System.StringComparison.Ordinal) => true,
+                _ => false,
+            };
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
-        /// or optionally if a member decorated with a <c>[Display]</c> attribute
-        /// with the required name exists.
-        /// Slower then the <see cref="IsDefined(string, bool)" /> overload, but doesn't allocate memory./>
+        /// or optionally if a member decorated with <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/>
+        /// exists. Slower then the <see cref="IsDefined(string, bool)" /> overload, but doesn't allocate memory./>
         /// </summary>
         /// <param name="name">The name to check if it's defined</param>
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value of metadata attributes,otherwise ignores them</param>
         /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
         /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
         public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
-        {
-            return name switch
-            {
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), global::System.StringComparison.Ordinal) => true,
-                _ => false,
-            };
-        }
+            => IsDefined(name);
 #endif
 
         /// <summary>
@@ -243,8 +242,9 @@ namespace Something.Blah
         /// If the parse operation fails, contains the default value of the underlying type
         /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
-        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, 
+        /// considers the value included in <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute 
+        /// when parsing, otherwise only considers the member names.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
@@ -266,7 +266,6 @@ namespace Something.Blah
             out global::Something.Blah.ShortName value,
             bool allowMatchingMetadataAttribute)
         {
-
             switch (name)
             {
                 case string s when s.Equals(nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.OrdinalIgnoreCase):
@@ -292,7 +291,6 @@ namespace Something.Blah
             out global::Something.Blah.ShortName value,
             bool allowMatchingMetadataAttribute)
         {
-
             switch (name)
             {
                 case nameof(global::Something.Blah.ShortName.First):
@@ -347,8 +345,8 @@ namespace Something.Blah
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
-        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+        /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         public static global::Something.Blah.ShortName Parse(
@@ -414,8 +412,8 @@ namespace Something.Blah
         /// If the parse operation fails, contains the default value of the underlying type
         /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
-        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+        /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER

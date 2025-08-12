@@ -20,11 +20,24 @@ public static class SourceGenerationHelper
 
         """;
 
-    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool csharp14IsSupported)
+    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, MetadataSource defaultMetadataSource)
     {
+        var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
+        var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
+        var attributeName = metadataSource switch
+        {
+            MetadataSource.DisplayAttribute => Attributes.DisplayAttribute,
+            MetadataSource.DescriptionAttribute => Attributes.DescriptionAttribute,
+            MetadataSource.EnumMemberAttribute => Attributes.EnumMemberAttribute,
+            _ => null,
+        };
+
+        HashSet<string>? metadataNames = null;
+
         var constantValues = new HashSet<object>();
 
-        var sb = new StringBuilder();
+        // The smallest size we will generate is 27,841 characters, so this is pretty much a lower bound
+        var sb = new StringBuilder(32_768); //512 * 8 * 8
         sb.AppendLine(Header);
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {
@@ -75,26 +88,6 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             "/> value.
-                    /// If the attribute is decorated with a <c>[Display]</c> or <c>[Description]</c>attribute, then
-                    /// uses the provided value. Otherwise uses the name of the member, equivalent to
-                    /// calling <c>ToString()</c> on <paramref name="value"/>.
-                    /// </summary>
-                    /// <param name="value">The value to retrieve the string value for</param>
-                    /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
-                    /// <c>[Display]</c> or <c>[Description]</c>attribute as the string representation of the member.
-                    /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
-                    /// <returns>The string representation of the value</returns>
-                    public static string ToStringFast(this 
-            """).Append(fullyQualifiedName).Append(
-            """
-             value, bool useMetadataAttributes)
-                        => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
-
-                    /// <summary>
-                    /// Returns the string representation of the <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            "/> value.
                     /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
                     /// </summary>
                     /// <param name="value">The value to retrieve the string value for</param>
@@ -107,19 +100,19 @@ public static class SourceGenerationHelper
                         {
             """);
 
-        var hasDisplayNames = false;
+        var hasMetadataNames = false;
         constantValues.Clear();
         foreach (var member in enumToGenerate.Names)
         {
             if (constantValues.Add(member.Value.ConstantValue))
             {
-                hasDisplayNames |= member.Value.DisplayName is not null;
-                    sb.Append(
+                hasMetadataNames |= member.Value.GetMetadataName(metadataSource) is not null;
+                sb.Append(
                         """
 
                                         
                         """).Append(fullyQualifiedName).Append('.').Append(member.Key)
-                        .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                    .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
             }
         }
 
@@ -144,70 +137,99 @@ public static class SourceGenerationHelper
                 """);
         }
 
-        sb.Append(
-            """
-
-
-                    private static string ToStringFastWithMetadata(this 
-            """).Append(fullyQualifiedName).Append(
-            """
-             value)
-                        => 
-            """);
-        if (hasDisplayNames)
+        if (isMetadataSourcesEnabled)
         {
             sb.Append(
                 """
-                value switch
-                            {
+
+
+                        /// <summary>
+                        /// Returns the string representation of the <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                "/> value.
+                        /// If the member is decorated with the <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/> attribute
+                        /// then that value is returned. Otherwise returns uses the name of the member,
+                        /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+                        /// </summary>
+                        /// <param name="value">The value to retrieve the string value for</param>
+                        /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
+                        ///  <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/> attribute as the string representation of the member.
+                        /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
+                        /// <returns>The string representation of the value</returns>
+                        public static string ToStringFast(this 
+                """).Append(fullyQualifiedName).Append(
+                """
+                 value, bool useMetadataAttributes)
+                            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+
+                        private static string ToStringFastWithMetadata(this 
+                """).Append(fullyQualifiedName).Append(
+                """
+                 value)
+                            => 
                 """);
-            constantValues.Clear();
-            foreach (var member in enumToGenerate.Names)
+            if (hasMetadataNames)
             {
-                if (constantValues.Add(member.Value.ConstantValue))
+                sb.Append(
+                    """
+                    value switch
+                                {
+                    """);
+                constantValues.Clear();
+                foreach (var member in enumToGenerate.Names)
                 {
+                    if (constantValues.Add(member.Value.ConstantValue))
+                    {
+                        sb.Append(
+                                """
+
+                                                
+                                """).Append(fullyQualifiedName).Append('.').Append(member.Key)
+                            .Append(" => ");
+
+                        if (member.Value.GetMetadataName(metadataSource) is { } dn)
+                        {
+                            sb.Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(',');
+                        }
+                        else
+                        {
+                            sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                        }
+                    }
+                }
+
+                if (enumToGenerate.HasFlags)
+                {
+                    // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
                     sb.Append(
                         """
 
-                                    
-                    """).Append(fullyQualifiedName).Append('.').Append(member.Key)
-                        .Append(" => ");
-
-                    if (member.Value.DisplayName is { } dn)
-                    {
-                        sb.Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(',');
-                    }
-                    else
-                    {
-                        sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
-                    }
+                                        _ => value.ToString(),
+                                    };
+                        """);
                 }
-            }
+                else
+                {
+                    // This should mean, that the value is not named -> generate a numeric string
+                    sb.Append(
+                        """
 
-            if (enumToGenerate.HasFlags)
-            {
-                // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
-                sb.Append(
-                    """
-
-                                    _ => value.ToString(),
-                                };
-                    """);
+                                        _ => value.AsUnderlyingType().ToString(),
+                                    };
+                        """);
+                }
             }
             else
             {
-                // This should mean, that the value is not named -> generate a numeric string
-                sb.Append(
-                    """
-
-                                    _ => value.AsUnderlyingType().ToString(),
-                                };
-                    """);
+                sb.Append("value.ToStringFast();");
             }
-        }
-        else
-        {
-            sb.Append("value.ToStringFast();");
         }
 
         if (enumToGenerate.HasFlags)
@@ -324,62 +346,8 @@ public static class SourceGenerationHelper
                     /// </summary>
                     /// <param name="name">The name to check if it's defined</param>
                     /// <returns><see langword="true"/> if a member with the name exists in the enumeration, <see langword="false"/> otherwise</returns>
-                    public static bool IsDefined(string name) => IsDefined(name, allowMatchingMetadataAttribute: false);
-
-                    /// <summary>
-                    /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
-                    /// or if a member decorated with a <c>[Display]</c> attribute
-                    /// with the required name exists.
-                    /// </summary>
-                    /// <param name="name">The name to check if it's defined</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value of metadata attributes,otherwise ignores them</param>
-                    /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
-                    /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
-                    public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
-                    {
-            """);
-        if (enumToGenerate.IsDisplayAttributeUsed)
-        {
-            sb.Append(
-                """
-
-                            var isDefinedInDisplayAttribute = false;
-                            if (allowMatchingMetadataAttribute)
-                            {
-                                isDefinedInDisplayAttribute = name switch
-                                {
-                """);
-            foreach (var member in enumToGenerate.Names)
-            {
-                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
-                {
-                    sb.Append(
-                        """
-
-                                            
-                        """).Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(" => true,");
-                }
-            }
-
-            sb.Append(
-                """
-
-                                    _ => false,
-                                };
-                            }
-
-                            if (isDefinedInDisplayAttribute)
-                            {
-                                return true;
-                            }
-
-                """);
-        }
-
-        sb.Append(
-            """
-
-                        return name switch
+                    public static bool IsDefined(string name)
+                        => name switch
                         {
             """);
         foreach (var member in enumToGenerate.Names)
@@ -394,10 +362,78 @@ public static class SourceGenerationHelper
         sb.Append(
             """
 
-                            _ => false,
-                        };
-                    }
+                        _ => false,
+                    };
             """);
+
+        if (isMetadataSourcesEnabled)
+        {
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
+                        /// or if a member decorated with <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/>
+                        /// with the required name exists.
+                        /// </summary>
+                        /// <param name="name">The name to check if it's defined</param>
+                        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>,
+                        /// considers the value of <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/> 
+                        /// instead of the member name, otherwise ignores them</param>
+                        /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
+                        /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
+                        public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
+                """);
+            if (!hasMetadataNames)
+            {
+                sb.Append(
+                """
+
+                            => IsDefined(name);
+                """);
+            }
+            else
+            {
+                sb.Append(
+                """
+
+                            => allowMatchingMetadataAttribute ? IsMetadataNameDefined(name) : IsDefined(name);
+
+                        private static bool IsMetadataNameDefined(string name)
+                            => name switch
+                            {
+                """);
+
+                metadataNames ??= [];
+                metadataNames.Clear();
+                foreach (var member in enumToGenerate.Names)
+                {
+                    if(member.Value.GetMetadataName(metadataSource) is { } memberName
+                       && metadataNames.Add(memberName))
+                    {
+                        sb.Append(
+                """
+
+                                
+                """).Append(SymbolDisplay.FormatLiteral(memberName, quote: true)).Append(" => true,");
+                    }
+                }
+
+                sb.Append(
+                """
+
+                                _ => IsDefined(name),
+                            };
+                """);
+            }
+        }
 
         sb.Append(
             """
@@ -409,75 +445,17 @@ public static class SourceGenerationHelper
                     /// </summary>
                     /// <param name="name">The name to check if it's defined</param>
                     /// <returns><see langword="true"/> if a member with the name exists in the enumeration, <see langword="false"/> otherwise</returns>
-                    public static bool IsDefined(in global::System.ReadOnlySpan<char> name) => IsDefined(name, allowMatchingMetadataAttribute: false);
-
-                    /// <summary>
-                    /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
-                    /// or optionally if a member decorated with a <c>[Display]</c> attribute
-                    /// with the required name exists.
-                    /// Slower then the <see cref="IsDefined(string, bool)" /> overload, but doesn't allocate memory./>
-                    /// </summary>
-                    /// <param name="name">The name to check if it's defined</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value of metadata attributes,otherwise ignores them</param>
-                    /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
-                    /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
-                    public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
-                    {
-            """);
-
-        if (enumToGenerate.IsDisplayAttributeUsed)
-        {
-            sb.Append(
-                """
-
-                            var isDefinedInDisplayAttribute = false;
-                            if (allowMatchingMetadataAttribute)
-                            {
-                                isDefinedInDisplayAttribute = name switch
-                                {
-                """);
-            foreach (var member in enumToGenerate.Names)
-            {
-                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
-                {
-                    sb.Append(
-                        """
-
-                                            global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
-                        """)
-                        .Append(SymbolDisplay.FormatLiteral(dn, quote: true))
-                        .Append(", global::System.StringComparison.Ordinal) => true,");
-                }
-            }
-
-            sb.Append(
-                """
-
-                                    _ => false,
-                                };
-                            }
-
-                            if (isDefinedInDisplayAttribute)
-                            {
-                                return true;
-                            }
-
-                """);
-        }
-
-        sb.Append(
-            """
-
-                        return name switch
+                    public static bool IsDefined(in global::System.ReadOnlySpan<char> name)
+                        => name switch
                         {
             """);
         foreach (var member in enumToGenerate.Names)
         {
             sb.Append(
-                """
+                    """
 
-                                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
-                """).Append(fullyQualifiedName).Append('.')
+                                    global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
+                    """).Append(fullyQualifiedName).Append('.')
                 .Append(member.Key)
                 .Append("), global::System.StringComparison.Ordinal) => true,");
         }
@@ -487,13 +465,81 @@ public static class SourceGenerationHelper
 
                             _ => false,
                         };
-                    }
-            #endif
             """);
+
+
+        if (isMetadataSourcesEnabled)
+        {
+
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// Returns a boolean telling whether an enum with the given name exists in the enumeration,
+                        /// or optionally if a member decorated with <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/>
+                        /// exists. Slower then the <see cref="IsDefined(string, bool)" /> overload, but doesn't allocate memory./>
+                        /// </summary>
+                        /// <param name="name">The name to check if it's defined</param>
+                        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value of metadata attributes,otherwise ignores them</param>
+                        /// <returns><see langword="true"/> if a member with the name exists in the enumeration, or a member is decorated
+                        /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
+                        public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
+                """);
+
+            if (!hasMetadataNames)
+            {
+                sb.Append(
+                    """
+
+                                => IsDefined(name);
+                    """);
+            }
+            else
+            {
+                sb.Append(
+                    """
+                                => allowMatchingMetadataAttribute ? IsMetadataNameDefined(in name) : IsDefined(in name);
+
+                            private static bool IsMetadataNameDefined(in global::System.ReadOnlySpan<char> name)
+                                => name switch
+                                {
+                    """);
+
+                metadataNames ??= [];
+                metadataNames.Clear();
+
+                foreach (var member in enumToGenerate.Names)
+                {
+                    if (member.Value.GetMetadataName(metadataSource) is { } memberName
+                        && metadataNames.Add(memberName))
+                    {
+                        sb.Append(
+                            """
+
+                                            global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
+                            """)
+                            .Append(SymbolDisplay.FormatLiteral(memberName, quote: true))
+                            .Append(", global::System.StringComparison.Ordinal) => true,");
+                    }
+                }
+
+                sb.Append(
+                    """
+
+                                    _ => IsDefined(name),
+                                };
+                    """);
+            }
+        }
 
         sb.Append(
             """
 
+            #endif
 
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
@@ -542,34 +588,47 @@ public static class SourceGenerationHelper
                         string? name,
                         bool ignoreCase)
                             => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name);
+            """);
 
-                    /// <summary>
-                    /// Converts the string representation of the name or numeric value of
-                    /// an <see cref="
-            """).Append(fullyQualifiedName).Append(
+        if (isMetadataSourcesEnabled)
+        {
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// Converts the string representation of the name or numeric value of
+                        /// an <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> to the equivalent instance.
+                        /// </summary>
+                        /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
+                        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
+                        /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
+                        /// <returns>An object of type <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> whose
+                        /// value is represented by <paramref name="name"/></returns>
+                        public static 
+                """).Append(fullyQualifiedName).Append(
+                """
+                 Parse(
+                #if NETCOREAPP3_0_OR_GREATER
+                            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+                #endif
+                            string? name,
+                            bool ignoreCase,
+                            bool allowMatchingMetadataAttribute)
+                                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
+                """);
+        }
+
+        sb.Append(
             """
-            " /> to the equivalent instance.
-                    /// </summary>
-                    /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
-                    /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
-                    /// <returns>An object of type <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            " /> whose
-                    /// value is represented by <paramref name="name"/></returns>
-                    public static 
-            """).Append(fullyQualifiedName).Append(
-            """
-             Parse(
-            #if NETCOREAPP3_0_OR_GREATER
-                        [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            #endif
-                        string? name,
-                        bool ignoreCase,
-                        bool allowMatchingMetadataAttribute)
-                            => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
+
 
             #if NETCOREAPP3_0_OR_GREATER
                     [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
@@ -650,48 +709,83 @@ public static class SourceGenerationHelper
                         bool ignoreCase)
                         => TryParse(name, out value, ignoreCase, false);
             """);
+
+        if (isMetadataSourcesEnabled)
+        {
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// Converts the string representation of the name or numeric value of
+                        /// an <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> to the equivalent instance.
+                        /// The return value indicates whether the conversion succeeded.
+                        /// </summary>
+                        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+                        /// <param name="value">When this method returns, contains an object of type
+                        /// <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> whose
+                        /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+                        /// If the parse operation fails, contains the default value of the underlying type
+                        /// of <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " />. This parameter is passed uninitialized.</param>
+                        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, 
+                        /// considers the value included in <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/> attribute 
+                        /// when parsing, otherwise only considers the member names.</param>
+                        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                        public static bool TryParse(
+                #if NETCOREAPP3_0_OR_GREATER
+                            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+                #endif
+                            string? name,
+                            out 
+                """).Append(fullyQualifiedName).Append(
+                """
+                 value,
+                            bool ignoreCase,
+                            bool allowMatchingMetadataAttribute)
+                                => ignoreCase
+                                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
+                                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                """);
+        }
+        else
+        {
+            sb.Append(
+                """
+
+
+                        private static bool TryParse(
+                #if NETCOREAPP3_0_OR_GREATER
+                            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+                #endif
+                            string? name,
+                            out 
+                """).Append(fullyQualifiedName).Append(
+                """
+                 value,
+                            bool ignoreCase,
+                            bool allowMatchingMetadataAttribute)
+                                => ignoreCase
+                                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
+                                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                """);
+        }
+
         sb.Append(
             """
 
-
-                    /// <summary>
-                    /// Converts the string representation of the name or numeric value of
-                    /// an <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            " /> to the equivalent instance.
-                    /// The return value indicates whether the conversion succeeded.
-                    /// </summary>
-                    /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
-                    /// <param name="value">When this method returns, contains an object of type
-                    /// <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            " /> whose
-                    /// value is represented by <paramref name="value"/> if the parse operation succeeds.
-                    /// If the parse operation fails, contains the default value of the underlying type
-                    /// of <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            " />. This parameter is passed uninitialized.</param>
-                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
-                    /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
-                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-                    public static bool TryParse(
-            #if NETCOREAPP3_0_OR_GREATER
-                        [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            #endif
-                        string? name,
-                        out 
-            """).Append(fullyQualifiedName).Append(
-            """
-             value,
-                        bool ignoreCase,
-                        bool allowMatchingMetadataAttribute)
-                            => ignoreCase
-                                ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                                : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
 
                     private static bool TryParseIgnoreCase(
             #if NETCOREAPP3_0_OR_GREATER
@@ -706,8 +800,10 @@ public static class SourceGenerationHelper
                     {
             """);
 
-        if (enumToGenerate.IsDisplayAttributeUsed)
+        if (isMetadataSourcesEnabled && hasMetadataNames)
         {
+            metadataNames ??= [];
+            metadataNames.Clear();
             sb.Append(
                 """
 
@@ -718,13 +814,14 @@ public static class SourceGenerationHelper
                 """);
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
+                if (member.Value.GetMetadataName(metadataSource) is { } metadataName
+                    && metadataNames.Add(metadataName))
                 {
                     sb.Append(
                         """
 
                                             case string s when s.Equals(
-                        """).Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
+                        """).Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
                         """
                         , global::System.StringComparison.OrdinalIgnoreCase):
                                                 value = 
@@ -743,12 +840,12 @@ public static class SourceGenerationHelper
                                         break;
                                 };
                             }
+
                 """);
         }
 
         sb.Append(
             """
-
 
                         switch (name)
                         {
@@ -801,8 +898,10 @@ public static class SourceGenerationHelper
                     {
             """);
 
-        if (enumToGenerate.IsDisplayAttributeUsed)
+        if (isMetadataSourcesEnabled && hasMetadataNames)
         {
+            metadataNames ??= [];
+            metadataNames.Clear();
             sb.Append(
                 """
 
@@ -814,13 +913,14 @@ public static class SourceGenerationHelper
 
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
+                if (member.Value.GetMetadataName(metadataSource) is { } metadataName
+                    && metadataNames.Add(metadataName))
                 {
                     sb.Append(
                         """
 
                                             case 
-                        """).Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
+                        """).Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
                         """
                         :
                                                 value = 
@@ -839,12 +939,12 @@ public static class SourceGenerationHelper
                                         break;
                                 };
                             }
+
                 """);
         }
 
         sb.Append(
             """
-
 
                         switch (name)
                         {
@@ -932,6 +1032,13 @@ public static class SourceGenerationHelper
                         in global::System.ReadOnlySpan<char> name,
                         bool ignoreCase)
                             => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
+            """);
+
+        if (isMetadataSourcesEnabled)
+        {
+            sb.Append(
+            """
+
 
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
@@ -942,8 +1049,11 @@ public static class SourceGenerationHelper
                     /// </summary>
                     /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
                     /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
-                    /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+                    /// <see cref="global::
+            """).Append(attributeName).Append(
+            """
+            "/> attribute when parsing, otherwise only considers the member names.</param>
                     /// <returns>An object of type <see cref="
             """).Append(fullyQualifiedName).Append(
             """
@@ -960,6 +1070,12 @@ public static class SourceGenerationHelper
                         bool ignoreCase,
                         bool allowMatchingMetadataAttribute)
                             => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
+            """);
+        }
+
+        sb.Append(
+            """
+
 
                     /// <summary>
                     /// Converts the span representation of the name or numeric value of
@@ -1032,49 +1148,82 @@ public static class SourceGenerationHelper
                         => TryParse(name, out value, ignoreCase, false);
             """);
 
+        if (isMetadataSourcesEnabled)
+        {
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// Converts the span representation of the name or numeric value of
+                        /// an <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> to the equivalent instance.
+                        /// The return value indicates whether the conversion succeeded.
+                        /// </summary>
+                        /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
+                        /// <param name="result">When this method returns, contains an object of type
+                        /// <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> whose
+                        /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+                        /// If the parse operation fails, contains the default value of the underlying type
+                        /// of <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " />. This parameter is passed uninitialized.</param>
+                        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+                        /// <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/> attribute when parsing, otherwise only considers the member names.</param>
+                        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                        public static bool TryParse(
+                #if NETCOREAPP3_0_OR_GREATER
+                            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+                #endif
+                            in global::System.ReadOnlySpan<char> name,
+                            out 
+                """).Append(fullyQualifiedName).Append(
+                """
+                 result,
+                            bool ignoreCase,
+                            bool allowMatchingMetadataAttribute)
+                                => ignoreCase
+                                    ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
+                                    : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+                """);
+        }
+        else
+        {
+            sb.Append(
+                """
+
+
+                        private static bool TryParse(
+                #if NETCOREAPP3_0_OR_GREATER
+                            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+                #endif
+                            in global::System.ReadOnlySpan<char> name,
+                            out 
+                """).Append(fullyQualifiedName).Append(
+                """
+                 value,
+                            bool ignoreCase,
+                            bool allowMatchingMetadataAttribute)
+                                => ignoreCase
+                                    ? TryParseIgnoreCase(in name, out value, allowMatchingMetadataAttribute)
+                                    : TryParseWithCase(in name, out value, allowMatchingMetadataAttribute);
+                """);
+        }
+
         sb.Append(
             """
 
-
-                    /// <summary>
-                    /// Converts the span representation of the name or numeric value of
-                    /// an <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            " /> to the equivalent instance.
-                    /// The return value indicates whether the conversion succeeded.
-                    /// </summary>
-                    /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
-                    /// <param name="result">When this method returns, contains an object of type
-                    /// <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            " /> whose
-                    /// value is represented by <paramref name="result"/> if the parse operation succeeds.
-                    /// If the parse operation fails, contains the default value of the underlying type
-                    /// of <see cref="
-            """).Append(fullyQualifiedName).Append(
-            """
-            " />. This parameter is passed uninitialized.</param>
-                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
-                    /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
-                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-                    public static bool TryParse(
-            #if NETCOREAPP3_0_OR_GREATER
-                        [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            #endif
-                        in global::System.ReadOnlySpan<char> name,
-                        out 
-            """).Append(fullyQualifiedName).Append(
-            """
-             result,
-                        bool ignoreCase,
-                        bool allowMatchingMetadataAttribute)
-                            => ignoreCase
-                                ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
-                                : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
-
+            
                     private static bool TryParseIgnoreCase(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1088,8 +1237,10 @@ public static class SourceGenerationHelper
                     {
             """);
 
-        if (enumToGenerate.IsDisplayAttributeUsed)
+        if (isMetadataSourcesEnabled && hasMetadataNames)
         {
+            metadataNames ??= [];
+            metadataNames.Clear();
             sb.Append(
                 """
 
@@ -1100,22 +1251,23 @@ public static class SourceGenerationHelper
                 """);
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
+                if (member.Value.GetMetadataName(metadataSource) is { } metadataName
+                    && metadataNames.Add(metadataName))
                 {
                     sb.Append(
-                        """
+                            """
 
-                                            case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
-                        """)
-                        .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
-                        """
-                        , global::System.StringComparison.OrdinalIgnoreCase):
-                                                result = 
-                        """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-                        """
-                        ;
-                                                return true;
-                        """);
+                                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
+                            """)
+                        .Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
+                            """
+                            , global::System.StringComparison.OrdinalIgnoreCase):
+                                                    result = 
+                            """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                            """
+                            ;
+                                                    return true;
+                            """);
                 }
             }
 
@@ -1185,8 +1337,12 @@ public static class SourceGenerationHelper
                     {
             """);
 
-        if (enumToGenerate.IsDisplayAttributeUsed)
+        
+
+        if (isMetadataSourcesEnabled && hasMetadataNames)
         {
+            metadataNames ??= [];
+            metadataNames.Clear();
             sb.Append(
                 """
 
@@ -1195,24 +1351,26 @@ public static class SourceGenerationHelper
                                 switch (name)
                                 {
                 """);
+
             foreach (var member in enumToGenerate.Names)
             {
-                if (member.Value is { DisplayName: { } dn, IsDisplayNameTheFirstPresence: true })
+                if (member.Value.GetMetadataName(metadataSource) is { } metadataName
+                    && metadataNames.Add(metadataName))
                 {
                     sb.Append(
-                        """
+                            """
 
-                                            case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
-                        """)
-                        .Append(SymbolDisplay.FormatLiteral(dn, quote: true)).Append(
-                        """
-                        , global::System.StringComparison.Ordinal):
-                                                result = 
-                        """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
-                        """
-                        ;
-                                                return true;
-                        """);
+                                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
+                            """)
+                        .Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
+                            """
+                            , global::System.StringComparison.Ordinal):
+                                                    result = 
+                            """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                            """
+                            ;
+                                                    return true;
+                            """);
                 }
             }
 

@@ -9,17 +9,26 @@
     {
         /// <summary>
         /// The namespace to generate the extension class.
-        /// If not provided, the namespace of the enum will be used
+        /// If not provided, the namespace of the enum will be used.
         /// </summary>
         public string? ExtensionClassNamespace { get; set; }
 
         /// <summary>
         /// The name to use for the extension class.
-        /// If not provided, the enum name with ""Extensions"" will be used.
-        /// For example for an Enum called StatusCodes, the default name
-        /// will be StatusCodesExtensions
+        /// If not provided, the enum name with an <c>Extensions</c> suffix will be used.
+        /// For example for an Enum called <c>StatusCodes</c>, the default name
+        /// will be <c>StatusCodesExtensions</c>.
         /// </summary>
         public string? ExtensionClassName { get; set; }
+
+        /// <summary>
+        /// The metadata source to use when serializing and deserializing using
+        /// <c>ToStringFast()</c> and <c>TryParse()</c>. If not provided, the
+        /// <see cref="System.Runtime.Serialization.EnumMemberAttribute"/> will be
+        /// used to provide the values. Alternatively, you can disable this feature
+        /// entirely by using <see cref="EnumGenerators.MetadataSource.None"/>.
+        /// </summary>
+        public MetadataSource MetadataSource { get; set; } = MetadataSource.EnumMemberAttribute;
 
         /// <summary>
         /// By default, when used with NetEscapades.EnumGenerators.Interceptors
@@ -48,10 +57,19 @@
         /// <summary>
         /// The name to use for the extension class.
         /// If not provided, the enum name with an <c>Extensions</c> suffix will be used.
-        /// For example for an Enum called StatusCodes, the default name
-        /// will be StatusCodesExtensions.
+        /// For example for an Enum called <c>StatusCodes</c>, the default name
+        /// will be <c>StatusCodesExtensions</c>.
         /// </summary>
         public string? ExtensionClassName { get; set; }
+
+        /// <summary>
+        /// The metadata source to use when serializing and deserializing using
+        /// <c>ToStringFast()</c> and <c>TryParse()</c>. If not provided, the
+        /// <see cref="System.Runtime.Serialization.EnumMemberAttribute"/> will be
+        /// used to provide the values. Alternatively, you can disable this feature
+        /// entirely by using <see cref="EnumGenerators.MetadataSource.None"/>.
+        /// </summary>
+        public MetadataSource MetadataSource { get; set; } = MetadataSource.EnumMemberAttribute;
 
         /// <summary>
         /// By default, when used with NetEscapades.EnumGenerators.Interceptors

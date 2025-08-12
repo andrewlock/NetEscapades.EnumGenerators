@@ -33,6 +33,9 @@ internal static class TestHelpers
     public static string LoadEmbeddedAttribute()
         => LoadEmbeddedResource("NetEscapades.EnumGenerators.Tests.EnumExtensionsAttribute.cs");
 
+    public static string LoadEmbeddedMetadataSource()
+        => LoadEmbeddedResource("NetEscapades.EnumGenerators.Tests.MetadataSource.cs");
+
     private static string LoadEmbeddedResource(string resourceName)
     {
         var assembly = typeof(TestHelpers).Assembly;
@@ -118,7 +121,9 @@ internal static class TestHelpers
                 MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.Interceptors.InterceptorGenerator).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(InterceptableAttribute<>).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.ComponentModel.DescriptionAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DataAnnotations.DisplayAttribute).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(System.Runtime.Serialization.EnumMemberAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.CodeDom.Compiler.GeneratedCodeAttribute).Assembly.Location)
             ]);
 

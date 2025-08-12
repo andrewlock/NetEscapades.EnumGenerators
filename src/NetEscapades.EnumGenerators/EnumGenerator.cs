@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
 
@@ -13,11 +14,16 @@ public class EnumGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        var defaultMetadataSource = context.AnalyzerConfigOptionsProvider
+            .Select(GetDefaultMetadataSource);
+
         var csharp14IsSupported = context.CompilationProvider
             .Select((x,_) => x is CSharpCompilation
             {
                 LanguageVersion: LanguageVersion.Preview or >= (LanguageVersion)1400 // C#14
             });
+
+        var defaults = csharp14IsSupported.Combine(defaultMetadataSource);
         
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
@@ -37,16 +43,35 @@ public class EnumGenerator : IIncrementalGenerator
             .SelectMany(static (m, _) => m!.Value)
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
 
-        context.RegisterSourceOutput(enumsToGenerate.Combine(csharp14IsSupported),
-            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
+        context.RegisterSourceOutput(enumsToGenerate.Combine(defaults),
+            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right.Left, enumToGenerate.Right.Right, spc));
 
-        context.RegisterSourceOutput(externalEnums.Combine(csharp14IsSupported),
-            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right, spc));
+        context.RegisterSourceOutput(externalEnums.Combine(defaults),
+            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right.Left, enumToGenerate.Right.Right, spc));
     }
 
-    static void Execute(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, SourceProductionContext context)
+    private static MetadataSource GetDefaultMetadataSource(AnalyzerConfigOptionsProvider configOptions, CancellationToken ct)
     {
-        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, csharp14IsSupported);
+        const MetadataSource defaultValue = MetadataSource.EnumMemberAttribute;
+        if (configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.MetadataSourcePropertyName}",
+                out var source))
+        {
+            return source switch
+            {
+                nameof(MetadataSource.None) => MetadataSource.None,
+                nameof(MetadataSource.DisplayAttribute) => MetadataSource.DisplayAttribute,
+                nameof(MetadataSource.DescriptionAttribute) => MetadataSource.DescriptionAttribute,
+                nameof(MetadataSource.EnumMemberAttribute) => MetadataSource.EnumMemberAttribute,
+                _ => defaultValue,
+            };
+        }
+
+        return defaultValue;
+    }
+
+    static void Execute(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, MetadataSource source, SourceProductionContext context)
+    {
+        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, csharp14IsSupported, source);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
@@ -74,6 +99,7 @@ public class EnumGenerator : IIncrementalGenerator
             bool hasFlags = false;
             string? name = null;
             string? nameSpace = null;
+            MetadataSource? source = null;
 
             foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
             {
@@ -89,6 +115,12 @@ public class EnumGenerator : IIncrementalGenerator
                 {
                     name = n;
                 }
+
+                if (namedArgument.Key == "MetadataSource"
+                    && namedArgument.Value is { Kind: TypedConstantKind.Enum, Value: { } ms })
+                {
+                    source = (MetadataSource)(int)ms;
+                }
             }
 
             foreach (var attrData in enumSymbol.GetAttributes())
@@ -102,7 +134,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
             }
 
-            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
+            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, source, hasFlags);
             if (enumToGenerate is not null)
             {
                 enums ??= new();
@@ -135,6 +167,7 @@ public class EnumGenerator : IIncrementalGenerator
         var hasFlags = false;
         string? nameSpace = null;
         string? name = null;
+        MetadataSource? metadataSource = null;
 
         foreach (AttributeData attributeData in enumSymbol.GetAttributes())
         {
@@ -146,13 +179,17 @@ public class EnumGenerator : IIncrementalGenerator
                 continue;
             }
 
-            TryGetExtensionAttributeDetails(attributeData, ref nameSpace, ref name);
+            TryGetExtensionAttributeDetails(attributeData, ref nameSpace, ref name, ref metadataSource);
         }
 
-        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, hasFlags);
+        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, metadataSource, hasFlags);
     }
 
-    internal static bool TryGetExtensionAttributeDetails(AttributeData attributeData, ref string? nameSpace, ref string? name)
+    internal static bool TryGetExtensionAttributeDetails(
+        AttributeData attributeData,
+        ref string? nameSpace,
+        ref string? name,
+        ref MetadataSource? source)
     {
         if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
             attributeData.AttributeClass.ToDisplayString() != Attributes.EnumExtensionsAttribute)
@@ -174,6 +211,12 @@ public class EnumGenerator : IIncrementalGenerator
             {
                 name = n;
             }
+
+            if (namedArgument.Key == "MetadataSource"
+                && namedArgument.Value is { Kind: TypedConstantKind.Enum, Value: { } ms })
+            {
+                source = (MetadataSource)(int)ms;
+            }
         }
 
         return true;
@@ -185,7 +228,12 @@ public class EnumGenerator : IIncrementalGenerator
     internal static string GetEnumExtensionName(INamedTypeSymbol enumSymbol)
         => enumSymbol.Name + "Extensions";
 
-    static EnumToGenerate? TryExtractEnumSymbol(INamedTypeSymbol enumSymbol, string? name, string? nameSpace, bool hasFlags)
+    static EnumToGenerate? TryExtractEnumSymbol(
+        INamedTypeSymbol enumSymbol,
+        string? name,
+        string? nameSpace,
+        MetadataSource? metadataSource,
+        bool hasFlags)
     {
         name ??= GetEnumExtensionName(enumSymbol);
         nameSpace ??= GetEnumExtensionNamespace(enumSymbol);
@@ -195,8 +243,6 @@ public class EnumGenerator : IIncrementalGenerator
 
         var enumMembers = enumSymbol.GetMembers();
         var members = new List<(string, EnumValueOption)>(enumMembers.Length);
-        HashSet<string>? displayNames = null;
-        var isDisplayNameTheFirstPresence = false;
 
         foreach (var member in enumMembers)
         {
@@ -206,6 +252,8 @@ public class EnumGenerator : IIncrementalGenerator
             }
 
             string? displayName = null;
+            string? description = null;
+            string? enumMemberValue = null;
             foreach (var attribute in member.GetAttributes())
             {
                 if (attribute.AttributeClass?.Name == "DisplayAttribute" &&
@@ -215,9 +263,7 @@ public class EnumGenerator : IIncrementalGenerator
                     {
                         if (namedArgument.Key == "Name" && namedArgument.Value.Value?.ToString() is { } dn)
                         {
-                            // found display attribute, all done
                             displayName = dn;
-                            goto addDisplayName;
                         }
                     }
                 }
@@ -228,22 +274,24 @@ public class EnumGenerator : IIncrementalGenerator
                 {
                     if (attribute.ConstructorArguments[0].Value?.ToString() is { } dn)
                     {
-                        // found display attribute, all done
-                        // Handle cases where contains a quote or a backslash
-                        displayName = dn;
-                        goto addDisplayName;
+                        description = dn;
+                    }
+                }
+
+                if (attribute.AttributeClass?.Name == "EnumMemberAttribute" &&
+                    attribute.AttributeClass.ToDisplayString() == Attributes.EnumMemberAttribute)
+                {
+                    foreach (var namedArgument in attribute.NamedArguments)
+                    {
+                        if (namedArgument.Key == "Value" && namedArgument.Value.Value?.ToString() is { } dn)
+                        {
+                            enumMemberValue = dn;
+                        }
                     }
                 }
             }
 
-            addDisplayName:
-            if (displayName is not null)
-            {
-                displayNames ??= new();
-                isDisplayNameTheFirstPresence = displayNames.Add(displayName);    
-            }
-            
-            members.Add((member.Name, new EnumValueOption(displayName, isDisplayNameTheFirstPresence, constantValue)));
+            members.Add((member.Name, new EnumValueOption(displayName, description, enumMemberValue, constantValue)));
         }
 
         return new EnumToGenerate(
@@ -254,7 +302,7 @@ public class EnumGenerator : IIncrementalGenerator
             isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
             hasFlags: hasFlags,
             names: members,
-            isDisplayAttributeUsed: displayNames?.Count > 0);
+            metadataSource: metadataSource);
     }
 
 }

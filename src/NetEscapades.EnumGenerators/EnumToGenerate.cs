@@ -11,13 +11,12 @@ public readonly record struct EnumToGenerate
     public readonly bool IsPublic;
     public readonly bool HasFlags;
     public readonly string UnderlyingType;
+    public readonly MetadataSource? MetadataSource; 
 
     /// <summary>
     /// Key is the enum name.
     /// </summary>
     public readonly EquatableArray<(string Key, EnumValueOption Value)> Names;
-
-    public readonly bool IsDisplayAttributeUsed;
 
     public EnumToGenerate(
         string name,
@@ -27,7 +26,7 @@ public readonly record struct EnumToGenerate
         bool isPublic,
         List<(string Key, EnumValueOption Value)> names,
         bool hasFlags,
-        bool isDisplayAttributeUsed)
+        MetadataSource? metadataSource)
     {
         Name = name;
         Namespace = ns;
@@ -36,6 +35,6 @@ public readonly record struct EnumToGenerate
         HasFlags = hasFlags;
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
-        IsDisplayAttributeUsed = isDisplayAttributeUsed;
+        MetadataSource = metadataSource;
     }
 }

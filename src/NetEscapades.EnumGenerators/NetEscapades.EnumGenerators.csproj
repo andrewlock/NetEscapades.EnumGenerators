@@ -22,7 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <ProjectReference Include="..\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,5 +33,6 @@
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\net451" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\net451" Visible="false" />
+    <None Include="NetEscapades.EnumGenerators.props" Pack="true" PackagePath="build" Visible="true" />
   </ItemGroup>
 </Project>

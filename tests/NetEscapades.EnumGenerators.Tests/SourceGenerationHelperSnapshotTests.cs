@@ -9,10 +9,14 @@ namespace NetEscapades.EnumGenerators.Tests;
 [UsesVerify]
 public class SourceGenerationHelperSnapshotTests
 {
+    private const MetadataSource DefaultMetadataSource = MetadataSource.EnumMemberAttribute;
+
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public Task GeneratesEnumCorrectly(bool csharp14IsSupported)
+    [InlineData(true, MetadataSource.EnumMemberAttribute)]
+    [InlineData(false, MetadataSource.EnumMemberAttribute)]
+    [InlineData(true, MetadataSource.None)]
+    [InlineData(false, MetadataSource.None)]
+    public Task GeneratesEnumCorrectly(bool csharp14IsSupported, MetadataSource defaultSource)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -22,18 +26,18 @@ public class SourceGenerationHelperSnapshotTests
             isPublic: true,
             new List<(string Key, EnumValueOption Value)>
             {
-                ("First", new EnumValueOption(null, false, 0)),
-                ("Second", new EnumValueOption(null, false, 1)),
+                ("First", EnumValueOption.CreateWithoutAttributes(0)),
+                ("Second", EnumValueOption.CreateWithoutAttributes(1)),
             },
             hasFlags: false,
-            isDisplayAttributeUsed: false);
+            metadataSource: null);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported, defaultSource).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
             .UseDirectory("Snapshots")
-            .UseParameters(csharp14IsSupported);
+            .UseParameters(csharp14IsSupported, defaultSource);
     }
 
     [Theory]
@@ -49,14 +53,14 @@ public class SourceGenerationHelperSnapshotTests
             isPublic: true,
             new List<(string Key, EnumValueOption Value)>
             {
-                ("First", new EnumValueOption(null, false, 0)),
-                ("Second", new EnumValueOption(null, false, 1)),
-                ("Third", new EnumValueOption(null, false, 0)),
+                ("First", EnumValueOption.CreateWithoutAttributes(0)),
+                ("Second", EnumValueOption.CreateWithoutAttributes(1)),
+                ("Third", EnumValueOption.CreateWithoutAttributes(0)),
             },
             hasFlags: false,
-            isDisplayAttributeUsed: false);
+            null);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported, DefaultMetadataSource).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -77,13 +81,13 @@ public class SourceGenerationHelperSnapshotTests
             isPublic: true,
             new List<(string, EnumValueOption)>
             {
-                ("First", new EnumValueOption(null, false, 0)),
-                ("Second", new EnumValueOption(null, false, 1)),
+                ("First", EnumValueOption.CreateWithoutAttributes(0)),
+                ("Second", EnumValueOption.CreateWithoutAttributes(1)),
             },
             hasFlags: true,
-            isDisplayAttributeUsed: false);
+            metadataSource: null);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported, DefaultMetadataSource).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
