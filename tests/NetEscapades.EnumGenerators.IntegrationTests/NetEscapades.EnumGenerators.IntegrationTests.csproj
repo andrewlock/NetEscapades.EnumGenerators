@@ -5,7 +5,11 @@
     <DefineConstants>$(DefineConstants);INTEGRATION_TESTS</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN;</DefineConstants>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <EnumGenerator_EnumMetadataSource>EnumMemberAttribute</EnumGenerator_EnumMetadataSource>
   </PropertyGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="EnumGenerator_EnumMetadataSource" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />

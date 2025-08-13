@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Xunit;
@@ -375,7 +376,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
         return false;
     }
 
-    private bool TryGetDisplayNameOrDescription(
+    protected virtual bool TryGetDisplayNameOrDescription(
         string? value,
 #if NETCOREAPP3_0_OR_GREATER
         [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out string? displayName)
@@ -395,7 +396,8 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
                 {
                     // Doesn't take order into account, but we don't test with both currently
                     displayName = memberInfo[0].GetCustomAttribute<DisplayAttribute>()?.GetName()
-                        ?? memberInfo[0].GetCustomAttribute<DescriptionAttribute>()?.Description;
+                        ?? memberInfo[0].GetCustomAttribute<DescriptionAttribute>()?.Description
+                        ?? memberInfo[0].GetCustomAttribute<EnumMemberAttribute>()?.Value;
                     if (displayName is null)
                     {
                         return false;
