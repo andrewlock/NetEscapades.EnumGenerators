@@ -23,7 +23,7 @@
 
         /// <summary>
         /// The metadata source to use when serializing and deserializing using
-        /// <c>ToStringFast()</c> and <c>TryParse()</c>. If not provided, the
+        /// <c>ToStringFast()</c> and <c>TryParse()</c>. If not provided
         /// <see cref="System.Runtime.Serialization.EnumMemberAttribute"/> will be
         /// used to provide the values. Alternatively, you can disable this feature
         /// entirely by using <see cref="EnumGenerators.MetadataSource.None"/>.
