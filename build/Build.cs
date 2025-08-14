@@ -101,7 +101,6 @@ class Build : NukeBuild
     Target TestPackage => _ => _
         .DependsOn(Pack)
         .After(Test)
-        .Produces(ArtifactsDirectory)
         .Executes(() =>
         {
             var projectFiles = new[]
