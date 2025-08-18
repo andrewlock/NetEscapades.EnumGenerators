@@ -146,7 +146,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name)
-                => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name);
+                => TryParse(name, out var value, new global::NetEscapades.EnumGenerators.EnumParseOptions()) ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -162,7 +162,12 @@ namespace MyTestNameSpace
 #endif
             string? name,
             bool ignoreCase)
-                => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name);
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -181,7 +186,12 @@ namespace MyTestNameSpace
             string? name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
+                => TryParse(
+                    name,
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        useMetadataAttributes: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
 
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
@@ -207,7 +217,7 @@ namespace MyTestNameSpace
 #endif
             string? name,
             out global::MyTestNameSpace.MyEnum value)
-            => TryParse(name, out value, false, false);
+            => TryParse(name, out value, new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -229,7 +239,10 @@ namespace MyTestNameSpace
             string? name,
             out global::MyTestNameSpace.MyEnum value,
             bool ignoreCase)
-            => TryParse(name, out value, ignoreCase, false);
+            => TryParse(name,
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -255,52 +268,43 @@ namespace MyTestNameSpace
             out global::MyTestNameSpace.MyEnum value,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => ignoreCase
-                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                => TryParse(
+                    name,
+                    out value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        useMetadataAttributes: allowMatchingMetadataAttribute));
 
-        private static bool TryParseIgnoreCase(
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="value">When this method returns, contains an object of type
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
             out global::MyTestNameSpace.MyEnum value,
-            bool allowMatchingMetadataAttribute)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.First), options.ComparisonType):
                     value = global::MyTestNameSpace.MyEnum.First;
                     return true;
-                case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Second), options.ComparisonType):
                     value = global::MyTestNameSpace.MyEnum.Second;
                     return true;
-                case string s when int.TryParse(name, out var val):
-                    value = (global::MyTestNameSpace.MyEnum)val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
-        }
-
-        private static bool TryParseWithCase(
-#if NETCOREAPP3_0_OR_GREATER
-            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name,
-            out global::MyTestNameSpace.MyEnum value,
-            bool allowMatchingMetadataAttribute)
-        {
-            switch (name)
-            {
-                case nameof(global::MyTestNameSpace.MyEnum.First):
-                    value = global::MyTestNameSpace.MyEnum.First;
-                    return true;
-                case nameof(global::MyTestNameSpace.MyEnum.Second):
-                    value = global::MyTestNameSpace.MyEnum.Second;
-                    return true;
-                case string s when int.TryParse(name, out var val):
+                case string s when options.EnableNumberParsing && int.TryParse(name, out var val):
                     value = (global::MyTestNameSpace.MyEnum)val;
                     return true;
                 default:
@@ -322,7 +326,11 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name)
-                => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions())
+                   ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -338,7 +346,12 @@ namespace MyTestNameSpace
 #endif
             in global::System.ReadOnlySpan<char> name,
             bool ignoreCase)
-                => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                   ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -357,7 +370,13 @@ namespace MyTestNameSpace
             in global::System.ReadOnlySpan<char> name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        useMetadataAttributes: allowMatchingMetadataAttribute))
+                   ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
@@ -377,7 +396,10 @@ namespace MyTestNameSpace
 #endif
             in global::System.ReadOnlySpan<char> name,
             out global::MyTestNameSpace.MyEnum value)
-            => TryParse(name, out value, false, false);
+            => TryParse(
+                name, 
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
@@ -399,7 +421,11 @@ namespace MyTestNameSpace
             in global::System.ReadOnlySpan<char> name,
             out global::MyTestNameSpace.MyEnum value,
             bool ignoreCase)
-            => TryParse(name, out value, ignoreCase, false);
+            => TryParse(
+                name, 
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
@@ -424,52 +450,43 @@ namespace MyTestNameSpace
             out global::MyTestNameSpace.MyEnum result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => ignoreCase
-                    ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
-                    : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+                => TryParse(
+                    name, 
+                    out result,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        useMetadataAttributes: allowMatchingMetadataAttribute));
 
-        private static bool TryParseIgnoreCase(
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="result">When this method returns, contains an object of type
+        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
             out global::MyTestNameSpace.MyEnum result,
-            bool allowMatchingMetadataAttribute)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), options.ComparisonType):
                     result = global::MyTestNameSpace.MyEnum.First;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), options.ComparisonType):
                     result = global::MyTestNameSpace.MyEnum.Second;
                     return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                    result = (global::MyTestNameSpace.MyEnum)numericResult;
-                    return true;
-                default:
-                    result = default;
-                    return false;
-            }
-        }
-
-        private static bool TryParseWithCase(
-#if NETCOREAPP3_0_OR_GREATER
-            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in global::System.ReadOnlySpan<char> name,
-            out global::MyTestNameSpace.MyEnum result,
-            bool allowMatchingMetadataAttribute)
-        {
-            switch (name)
-            {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.Ordinal):
-                    result = global::MyTestNameSpace.MyEnum.First;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.Ordinal):
-                    result = global::MyTestNameSpace.MyEnum.Second;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
                     result = (global::MyTestNameSpace.MyEnum)numericResult;
                     return true;
                 default:

@@ -562,7 +562,7 @@ public static class SourceGenerationHelper
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
                         string? name)
-                            => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name);
+                            => TryParse(name, out var value, new global::NetEscapades.EnumGenerators.EnumParseOptions()) ? value : ThrowValueNotFound(name);
 
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
@@ -587,7 +587,12 @@ public static class SourceGenerationHelper
             #endif
                         string? name,
                         bool ignoreCase)
-                            => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name);
+                            => TryParse(
+                                name, 
+                                out var value,
+                                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                               ? value : ThrowValueNotFound(name);
             """);
 
         if (isMetadataSourcesEnabled)
@@ -622,7 +627,12 @@ public static class SourceGenerationHelper
                             string? name,
                             bool ignoreCase,
                             bool allowMatchingMetadataAttribute)
-                                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
+                                => TryParse(
+                                    name,
+                                    out var value,
+                                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                                        useMetadataAttributes: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
                 """);
         }
 
@@ -669,7 +679,7 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              value)
-                        => TryParse(name, out value, false, false);
+                        => TryParse(name, out value, new global::NetEscapades.EnumGenerators.EnumParseOptions());
             """);
         sb.Append(
             """
@@ -707,7 +717,10 @@ public static class SourceGenerationHelper
             """
              value,
                         bool ignoreCase)
-                        => TryParse(name, out value, ignoreCase, false);
+                        => TryParse(name,
+                            out value,
+                            new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
             """);
 
         if (isMetadataSourcesEnabled)
@@ -755,31 +768,12 @@ public static class SourceGenerationHelper
                  value,
                             bool ignoreCase,
                             bool allowMatchingMetadataAttribute)
-                                => ignoreCase
-                                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
-                """);
-        }
-        else
-        {
-            sb.Append(
-                """
-
-
-                        private static bool TryParse(
-                #if NETCOREAPP3_0_OR_GREATER
-                            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-                #endif
-                            string? name,
-                            out 
-                """).Append(fullyQualifiedName).Append(
-                """
-                 value,
-                            bool ignoreCase,
-                            bool allowMatchingMetadataAttribute)
-                                => ignoreCase
-                                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                                => TryParse(
+                                    name,
+                                    out value,
+                                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                                        useMetadataAttributes: allowMatchingMetadataAttribute));
                 """);
         }
 
@@ -787,7 +781,29 @@ public static class SourceGenerationHelper
             """
 
 
-                    private static bool TryParseIgnoreCase(
+                    /// <summary>
+                    /// Converts the string representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// The return value indicates whether the conversion succeeded.
+                    /// </summary>
+                    /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="value">When this method returns, contains an object of type
+                    /// <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+                    /// If the parse operation fails, contains the default value of the underlying type
+                    /// of <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " />. This parameter is passed uninitialized.</param>
+                    /// <param name="options">Options that control how the string value should be parsed.</param>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                    public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -796,7 +812,7 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              value,
-                        bool allowMatchingMetadataAttribute)
+                        global::NetEscapades.EnumGenerators.EnumParseOptions options)
                     {
             """);
 
@@ -807,7 +823,7 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                            if (allowMatchingMetadataAttribute)
+                            if (options.UseMetadataAttributes)
                             {
                                 switch (name)
                                 {
@@ -823,7 +839,7 @@ public static class SourceGenerationHelper
                                             case string s when s.Equals(
                         """).Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
                         """
-                        , global::System.StringComparison.OrdinalIgnoreCase):
+                        , options.ComparisonType):
                                                 value = 
                         """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                         """
@@ -858,7 +874,7 @@ public static class SourceGenerationHelper
                                 case string s when s.Equals(nameof(
                 """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
-                ), global::System.StringComparison.OrdinalIgnoreCase):
+                ), options.ComparisonType):
                                     value = 
                 """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
@@ -870,106 +886,7 @@ public static class SourceGenerationHelper
         sb.Append(
             """
 
-                            case string s when 
-            """).Append(enumToGenerate.UnderlyingType).Append(
-            """
-            .TryParse(name, out var val):
-                                value = (
-            """).Append(fullyQualifiedName).Append(
-            """
-            )val;
-                                return true;
-                            default:
-                                value = default;
-                                return false;
-                        }
-                    }
-
-                    private static bool TryParseWithCase(
-            #if NETCOREAPP3_0_OR_GREATER
-                        [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            #endif
-                        string? name,
-                        out 
-            """).Append(fullyQualifiedName).Append(
-            """
-             value,
-                        bool allowMatchingMetadataAttribute)
-                    {
-            """);
-
-        if (isMetadataSourcesEnabled && hasMetadataNames)
-        {
-            metadataNames ??= [];
-            metadataNames.Clear();
-            sb.Append(
-                """
-
-                            if (allowMatchingMetadataAttribute)
-                            {
-                                switch (name)
-                                {
-                """);
-
-            foreach (var member in enumToGenerate.Names)
-            {
-                if (member.Value.GetMetadataName(metadataSource) is { } metadataName
-                    && metadataNames.Add(metadataName))
-                {
-                    sb.Append(
-                        """
-
-                                            case 
-                        """).Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
-                        """
-                        :
-                                                value = 
-                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
-                        """
-                        ;
-                                                return true;
-                        """);
-                }
-            }
-
-            sb.Append(
-                """
-
-                                    default:
-                                        break;
-                                };
-                            }
-
-                """);
-        }
-
-        sb.Append(
-            """
-
-                        switch (name)
-                        {
-            """);
-        foreach (var member in enumToGenerate.Names)
-        {
-            sb.Append(
-                """
-
-                                case nameof(
-                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
-                """
-                ):
-                                    value = 
-                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
-                """
-                ;
-                                    return true;
-                """);
-        }
-
-        sb.Append(
-            """
-
-                            case string s when 
+                            case string s when options.EnableNumberParsing && 
             """).Append(enumToGenerate.UnderlyingType).Append(
             """
             .TryParse(name, out var val):
@@ -1006,7 +923,11 @@ public static class SourceGenerationHelper
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
                         in global::System.ReadOnlySpan<char> name)
-                            => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
+                            => TryParse(
+                                name, 
+                                out var value,
+                                new global::NetEscapades.EnumGenerators.EnumParseOptions())
+                               ? value : ThrowValueNotFound(name.ToString());
 
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
@@ -1031,7 +952,12 @@ public static class SourceGenerationHelper
             #endif
                         in global::System.ReadOnlySpan<char> name,
                         bool ignoreCase)
-                            => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
+                            => TryParse(
+                                name, 
+                                out var value,
+                                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                               ? value : ThrowValueNotFound(name.ToString());
             """);
 
         if (isMetadataSourcesEnabled)
@@ -1069,7 +995,13 @@ public static class SourceGenerationHelper
                         in global::System.ReadOnlySpan<char> name,
                         bool ignoreCase,
                         bool allowMatchingMetadataAttribute)
-                            => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
+                            => TryParse(
+                                name, 
+                                out var value,
+                                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                                    useMetadataAttributes: allowMatchingMetadataAttribute))
+                               ? value : ThrowValueNotFound(name.ToString());
             """);
         }
 
@@ -1107,7 +1039,10 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              value)
-                        => TryParse(name, out value, false, false);
+                        => TryParse(
+                            name, 
+                            out value,
+                            new global::NetEscapades.EnumGenerators.EnumParseOptions());
             """);
         sb.Append(
             """
@@ -1145,7 +1080,11 @@ public static class SourceGenerationHelper
             """
              value,
                         bool ignoreCase)
-                        => TryParse(name, out value, ignoreCase, false);
+                        => TryParse(
+                            name, 
+                            out value,
+                            new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
             """);
 
         if (isMetadataSourcesEnabled)
@@ -1192,39 +1131,42 @@ public static class SourceGenerationHelper
                  result,
                             bool ignoreCase,
                             bool allowMatchingMetadataAttribute)
-                                => ignoreCase
-                                    ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
-                                    : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
-                """);
-        }
-        else
-        {
-            sb.Append(
-                """
-
-
-                        private static bool TryParse(
-                #if NETCOREAPP3_0_OR_GREATER
-                            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-                #endif
-                            in global::System.ReadOnlySpan<char> name,
-                            out 
-                """).Append(fullyQualifiedName).Append(
-                """
-                 value,
-                            bool ignoreCase,
-                            bool allowMatchingMetadataAttribute)
-                                => ignoreCase
-                                    ? TryParseIgnoreCase(in name, out value, allowMatchingMetadataAttribute)
-                                    : TryParseWithCase(in name, out value, allowMatchingMetadataAttribute);
+                                => TryParse(
+                                    name, 
+                                    out result,
+                                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                                        useMetadataAttributes: allowMatchingMetadataAttribute));
                 """);
         }
 
         sb.Append(
             """
 
-            
-                    private static bool TryParseIgnoreCase(
+
+                    /// <summary>
+                    /// Converts the string representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// The return value indicates whether the conversion succeeded.
+                    /// </summary>
+                    /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="result">When this method returns, contains an object of type
+                    /// <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+                    /// If the parse operation fails, contains the default value of the underlying type
+                    /// of <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " />. This parameter is passed uninitialized.</param>
+                    /// <param name="options">Options that control how the string value should be parsed.</param>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                    public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1233,7 +1175,7 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              result,
-                        bool allowMatchingMetadataAttribute)
+                        global::NetEscapades.EnumGenerators.EnumParseOptions options)
                     {
             """);
 
@@ -1244,7 +1186,7 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                            if (allowMatchingMetadataAttribute)
+                            if (options.UseMetadataAttributes)
                             {
                                 switch (name)
                                 {
@@ -1261,7 +1203,7 @@ public static class SourceGenerationHelper
                             """)
                         .Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
                             """
-                            , global::System.StringComparison.OrdinalIgnoreCase):
+                            , options.ComparisonType):
                                                     result = 
                             """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                             """
@@ -1297,7 +1239,7 @@ public static class SourceGenerationHelper
                 """).Append(fullyQualifiedName).Append('.')
                 .AppendIdentifier(member.Key).Append(
                 """
-                ), global::System.StringComparison.OrdinalIgnoreCase):
+                ), options.ComparisonType):
                                     result = 
                 """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
@@ -1309,110 +1251,7 @@ public static class SourceGenerationHelper
         sb.Append(
             """
 
-                            case global::System.ReadOnlySpan<char> current when 
-            """).Append(enumToGenerate.UnderlyingType).Append(
-            """
-            .TryParse(name, out var numericResult):
-                                result = (
-            """).Append(fullyQualifiedName).Append(
-            """
-            )numericResult;
-                                return true;
-                            default:
-                                result = default;
-                                return false;
-                        }
-                    }
-
-                    private static bool TryParseWithCase(
-            #if NETCOREAPP3_0_OR_GREATER
-                        [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-            #endif
-                        in global::System.ReadOnlySpan<char> name,
-                        out 
-            """).Append(fullyQualifiedName).Append(
-            """
-             result,
-                        bool allowMatchingMetadataAttribute)
-                    {
-            """);
-
-        
-
-        if (isMetadataSourcesEnabled && hasMetadataNames)
-        {
-            metadataNames ??= [];
-            metadataNames.Clear();
-            sb.Append(
-                """
-
-                            if (allowMatchingMetadataAttribute)
-                            {
-                                switch (name)
-                                {
-                """);
-
-            foreach (var member in enumToGenerate.Names)
-            {
-                if (member.Value.GetMetadataName(metadataSource) is { } metadataName
-                    && metadataNames.Add(metadataName))
-                {
-                    sb.Append(
-                            """
-
-                                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, 
-                            """)
-                        .Append(SymbolDisplay.FormatLiteral(metadataName, quote: true)).Append(
-                            """
-                            , global::System.StringComparison.Ordinal):
-                                                    result = 
-                            """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
-                            """
-                            ;
-                                                    return true;
-                            """);
-                }
-            }
-
-            sb.Append(
-                """
-
-                                    default:
-                                        break;
-                                };
-                            }
-
-                """);
-        }
-
-        sb.Append(
-            """
-
-                        switch (name)
-                        {
-            """);
-        foreach (var member in enumToGenerate.Names)
-        {
-            sb.Append(
-                """
-
-                                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
-                """).Append(fullyQualifiedName).Append('.')
-                .AppendIdentifier(member.Key).Append(
-                """
-                ), global::System.StringComparison.Ordinal):
-                                    result = 
-                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
-                """
-                ;
-                                    return true;
-                """);
-        }
-
-        sb.Append(
-            """
-
-                            case global::System.ReadOnlySpan<char> current when 
+                            case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  
             """).Append(enumToGenerate.UnderlyingType).Append(
             """
             .TryParse(name, out var numericResult):
@@ -1429,7 +1268,7 @@ public static class SourceGenerationHelper
             #endif
             """);
 
-        var orderedNames = GetNamesOrderedByValue(in enumToGenerate);
+        var orderedNames = GetNamesOrderedByValue(enumToGenerate);
         sb.Append(
             """
 
@@ -1590,7 +1429,7 @@ public static class SourceGenerationHelper
         return (content, filename);
     }
 
-    private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(in EnumToGenerate enumToGenerate)
+    private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(EnumToGenerate enumToGenerate)
     {
         // We order by underlying value, keeping the order of names with the same value, as they were defined
         return enumToGenerate.Names
