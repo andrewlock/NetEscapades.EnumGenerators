@@ -33,5 +33,6 @@
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\net451" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\net451" Visible="false" />
+    <None Include="NetEscapades.EnumGenerators.props" Pack="true" PackagePath="build" Visible="true" />
   </ItemGroup>
 </Project>

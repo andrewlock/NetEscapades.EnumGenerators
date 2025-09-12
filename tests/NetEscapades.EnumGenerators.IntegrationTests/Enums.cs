@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 [assembly:NetEscapades.EnumGenerators.EnumExtensions<DateTimeKind>()]
 [assembly:NetEscapades.EnumGenerators.EnumExtensions<System.IO.FileShare>()]
@@ -21,7 +22,7 @@ namespace System
     public enum NonInterceptableEnum
     {
         First = 0,
-        [Display(Name = "2nd")] Second = 1,
+        [EnumMember(Value = "2nd")] Second = 1,
         Third = 2,
     }
 }
@@ -41,7 +42,7 @@ namespace Foo
     public enum EnumInFoo
     {
         First = 0,
-        [Display(Name = "2nd")]
+        [EnumMember(Value = "2nd")]
         Second = 1,
         Third = 2,
     }
@@ -72,7 +73,7 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
         Third = 2,
     }
     
-    [EnumExtensions]
+    [EnumExtensions(MetadataSource = MetadataSource.DisplayAttribute)]
     public enum EnumWithDisplayNameInNamespace
     {
         First = 0,
@@ -83,7 +84,7 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
         Third = 2,
     }
 
-    [EnumExtensions]
+    [EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
     public enum EnumWithDescriptionInNamespace
     {
         First = 0,
@@ -94,7 +95,29 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
         Third = 2,
     }
 
-    [EnumExtensions]
+    [EnumExtensions(MetadataSource = MetadataSource.EnumMemberAttribute)]
+    public enum EnumWithEnumMemberInNamespace
+    {
+        First = 0,
+
+        [EnumMember(Value = "2nd")]
+        Second = 1,
+
+        Third = 2,
+    }
+
+    [EnumExtensions(MetadataSource = MetadataSource.None)]
+    public enum EnumWithNoMetadataSources
+    {
+        First = 0,
+
+        [EnumMember(Value = "2nd")]
+        Second = 1,
+
+        Third = 2,
+    }
+
+    [EnumExtensions(MetadataSource = MetadataSource.DisplayAttribute)]
     public enum EnumWithSameDisplayName
     {
         First = 0,
@@ -126,7 +149,7 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
         ThirdAndFourth = Third | Fourth,
     }
 
-    [EnumExtensions]
+    [EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
     public enum StringTesting
     {
         [System.ComponentModel.Description("Quotes \"")]   Quotes,
@@ -142,7 +165,7 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
     {
         First = 0,
 
-        [Display(Name = "2nd")] Second = 1,
+        [EnumMember(Value = "2nd")] Second = 1,
 
         Third = 2,
     }
@@ -160,8 +183,8 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
     [EnumExtensions]
     public enum EnumWithRepeatedValuesWithDisplayNames
     {
-        [Display(Name = "Main")] First = 0,
+        [EnumMember(Value = "Main")] First = 0,
         Second = 1,
-        [Display(Name = "Repeated")] Third = 0, // Repeated value with display name
+        [EnumMember(Value = "Repeated")] Third = 0, // Repeated value with display name
     }
 }

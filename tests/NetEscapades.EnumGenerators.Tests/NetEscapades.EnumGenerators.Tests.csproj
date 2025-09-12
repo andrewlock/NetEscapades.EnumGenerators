@@ -37,6 +37,9 @@
     <EmbeddedResource Include="..\..\src\NetEscapades.EnumGenerators.Attributes\EnumExtensionsAttribute.cs">
       <Link>EnumExtensionsAttribute.cs</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\..\src\NetEscapades.EnumGenerators.Attributes\MetadataSource.cs">
+      <Link>MetadataSource.cs</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

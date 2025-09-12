@@ -48,6 +48,7 @@ public class DuplicateExtensionClassAnalyzer: DiagnosticAnalyzer
                 Location? location = null;
                 string? ns = null;
                 string? name = null;
+                MetadataSource? source = null;
                 foreach (var attributeData in enumSymbol.GetAttributes())
                 {
                     if (ct.IsCancellationRequested)
@@ -55,7 +56,7 @@ public class DuplicateExtensionClassAnalyzer: DiagnosticAnalyzer
                         return;
                     }
 
-                    if (EnumGenerator.TryGetExtensionAttributeDetails(attributeData, ref ns, ref name))
+                    if (EnumGenerator.TryGetExtensionAttributeDetails(attributeData, ref ns, ref name, ref source))
                     {
                         location = attributeData.ApplicationSyntaxReference?.GetSyntax(ct).GetLocation()
                                    ?? enumSymbol.Locations[0];

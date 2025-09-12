@@ -296,5 +296,6 @@ public class DuplicateExtensionClassAnalyzerTests
                  {{testFragment}}
 
              {{TestHelpers.LoadEmbeddedAttribute()}}
+             {{TestHelpers.LoadEmbeddedMetadataSource()}}
              """;
 }

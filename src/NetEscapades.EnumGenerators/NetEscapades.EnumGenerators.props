@@ -1,0 +1,8 @@
+<Project>  
+  <PropertyGroup>
+    <EnumGenerator_EnumMetadataSource Condition="$(EnumGenerator_EnumMetadataSource) == ''">EnumMemberAttribute</EnumGenerator_EnumMetadataSource>
+  </PropertyGroup>
+  <ItemGroup>
+    <CompilerVisibleProperty Include="EnumGenerator_EnumMetadataSource" />
+  </ItemGroup>
+</Project>
