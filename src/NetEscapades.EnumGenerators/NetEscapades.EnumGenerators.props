@@ -1,8 +1,10 @@
 <Project>  
   <PropertyGroup>
     <EnumGenerator_EnumMetadataSource Condition="$(EnumGenerator_EnumMetadataSource) == ''">EnumMemberAttribute</EnumGenerator_EnumMetadataSource>
+    <EnumGenerator_ForceExtensionMembers Condition="$(EnumGenerator_ForceExtensionMembers) == ''">true</EnumGenerator_ForceExtensionMembers>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="EnumGenerator_EnumMetadataSource" />
+    <CompilerVisibleProperty Include="EnumGenerator_ForceExtensionMembers" />
   </ItemGroup>
 </Project>

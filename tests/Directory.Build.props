@@ -11,7 +11,7 @@
 
     <!-- Attempt workaround for https://github.com/dotnet/sdk/issues/37636 -->
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <LangVersion>Preview</LangVersion>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Ignore 2.1.0 advisories -->

@@ -58,8 +58,49 @@ public abstract class EnumGeneratorTestsBase
         return Verifier.Verify(output, Settings());
     }
 
-    [Fact]
+    [Fact(Skip = "CSharp14 is not available as an enum yet and throws at runtime if you cast to it")]
     public Task CanGenerateEnumExtensionsInGlobalNamespace_CSharp14()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, options: null!, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public Task CanGenerateEnumExtensionsInGlobalNamespace_ForceExtensions()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(
+            Generators(), new(LanguageVersion.Preview, options: new() { { "build_property.EnumGenerator_ForceExtensionMembers", "true" } }, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public Task PreviewLangVersionDoesntGenerateExtensionMembers()
     {
         const string input =
             """
