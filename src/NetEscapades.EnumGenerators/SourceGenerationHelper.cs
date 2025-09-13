@@ -20,7 +20,7 @@ public static class SourceGenerationHelper
 
         """;
 
-    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, MetadataSource defaultMetadataSource)
+    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool useExtensionMembers, MetadataSource defaultMetadataSource)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
@@ -285,7 +285,7 @@ public static class SourceGenerationHelper
                 """);
 
         // Use c#14 style extension members so can be accessed from root type
-        if (csharp14IsSupported)
+        if (useExtensionMembers)
         {
             sb.Append(
                 """
@@ -1552,7 +1552,7 @@ public static class SourceGenerationHelper
             """);
 
         // Close the extension everything block
-        if (csharp14IsSupported)
+        if (useExtensionMembers)
         {
             sb.Append(
             """

@@ -20,7 +20,7 @@ public class EnumGenerator : IIncrementalGenerator
         var csharp14IsSupported = context.CompilationProvider
             .Select((x,_) => x is CSharpCompilation
             {
-                LanguageVersion: LanguageVersion.Preview or >= (LanguageVersion)1400 // C#14
+                LanguageVersion: not LanguageVersion.Preview and >= (LanguageVersion)1400 // C#14
             });
 
         var defaults = csharp14IsSupported.Combine(defaultMetadataSource);
@@ -44,19 +44,22 @@ public class EnumGenerator : IIncrementalGenerator
             .WithTrackingName(TrackingNames.InitialExternalExtraction);
 
         context.RegisterSourceOutput(enumsToGenerate.Combine(defaults),
-            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right.Left, enumToGenerate.Right.Right, spc));
+            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left,
+                enumToGenerate.Right.Left || enumToGenerate.Right.Right.Item2, enumToGenerate.Right.Right.Item1, spc));
 
         context.RegisterSourceOutput(externalEnums.Combine(defaults),
-            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left, enumToGenerate.Right.Left, enumToGenerate.Right.Right, spc));
+            static (spc, enumToGenerate) => Execute(in enumToGenerate.Left,
+                enumToGenerate.Right.Left || enumToGenerate.Right.Right.Item2, enumToGenerate.Right.Right.Item1, spc));
     }
 
-    private static MetadataSource GetDefaultMetadataSource(AnalyzerConfigOptionsProvider configOptions, CancellationToken ct)
+    private static Tuple<MetadataSource, bool> GetDefaultMetadataSource(AnalyzerConfigOptionsProvider configOptions, CancellationToken ct)
     {
         const MetadataSource defaultValue = MetadataSource.EnumMemberAttribute;
+        MetadataSource selectedSource;
         if (configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.MetadataSourcePropertyName}",
                 out var source))
         {
-            return source switch
+            selectedSource = source switch
             {
                 nameof(MetadataSource.None) => MetadataSource.None,
                 nameof(MetadataSource.DisplayAttribute) => MetadataSource.DisplayAttribute,
@@ -65,13 +68,21 @@ public class EnumGenerator : IIncrementalGenerator
                 _ => defaultValue,
             };
         }
+        else
+        {
+            selectedSource = defaultValue;
+        }
 
-        return defaultValue;
+        var forceExtensionMembers =
+            configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceExtensionMembers}", out var force)
+            && string.Equals(force, "true", StringComparison.OrdinalIgnoreCase);
+
+        return new(selectedSource, forceExtensionMembers);
     }
 
-    static void Execute(in EnumToGenerate enumToGenerate, bool csharp14IsSupported, MetadataSource source, SourceProductionContext context)
+    static void Execute(in EnumToGenerate enumToGenerate, bool useExtensionMembers, MetadataSource source, SourceProductionContext context)
     {
-        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, csharp14IsSupported, source);
+        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, useExtensionMembers, source);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
