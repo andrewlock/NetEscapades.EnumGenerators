@@ -695,6 +695,33 @@ public abstract class EnumGeneratorTestsBase
     }
 
     [Fact]
+    public Task CanGenerateEnumWithReservedKeywords()
+    {
+        const string input =
+            """
+            using System.ComponentModel;
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
+            public enum EnumWithReservedKeywords
+            {
+                [Description("number")]
+                number,
+                [Description("string")]
+                @string,
+                [Description("date")]
+                date,
+                [Description("class")]
+                @class,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
     public void DoesNotGenerateWithoutAttribute()
     {
         const string input =

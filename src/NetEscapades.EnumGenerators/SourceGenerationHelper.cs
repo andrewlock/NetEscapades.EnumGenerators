@@ -111,8 +111,8 @@ public static class SourceGenerationHelper
                         """
 
                                         
-                        """).Append(fullyQualifiedName).Append('.').Append(member.Key)
-                    .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
+                    .Append(" => nameof(").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append("),");
             }
         }
 
@@ -191,7 +191,7 @@ public static class SourceGenerationHelper
                                 """
 
                                                 
-                                """).Append(fullyQualifiedName).Append('.').Append(member.Key)
+                                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
                             .Append(" => ");
 
                         if (member.Value.GetMetadataName(metadataSource) is { } dn)
@@ -200,7 +200,7 @@ public static class SourceGenerationHelper
                         }
                         else
                         {
-                            sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                            sb.Append("nameof(").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append("),");
                         }
                     }
                 }
@@ -325,7 +325,7 @@ public static class SourceGenerationHelper
                     """
 
                                     
-                    """).Append(fullyQualifiedName).Append('.').Append(member.Key)
+                    """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
                     .Append(" => true,");
             }
         }
@@ -356,7 +356,7 @@ public static class SourceGenerationHelper
                 """
 
                                 nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(") => true,");
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(") => true,");
         }
 
         sb.Append(
@@ -456,7 +456,7 @@ public static class SourceGenerationHelper
 
                                     global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
                     """).Append(fullyQualifiedName).Append('.')
-                .Append(member.Key)
+                .AppendIdentifier(member.Key)
                 .Append("), global::System.StringComparison.Ordinal) => true,");
         }
 
@@ -825,7 +825,7 @@ public static class SourceGenerationHelper
                         """
                         , global::System.StringComparison.OrdinalIgnoreCase):
                                                 value = 
-                        """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                         """
                         ;
                                                 return true;
@@ -856,11 +856,11 @@ public static class SourceGenerationHelper
                 """
 
                                 case string s when s.Equals(nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ), global::System.StringComparison.OrdinalIgnoreCase):
                                     value = 
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -924,7 +924,7 @@ public static class SourceGenerationHelper
                         """
                         :
                                                 value = 
-                        """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                         """
                         ;
                                                 return true;
@@ -955,11 +955,11 @@ public static class SourceGenerationHelper
                 """
 
                                 case nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ):
                                     value = 
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -1263,7 +1263,7 @@ public static class SourceGenerationHelper
                             """
                             , global::System.StringComparison.OrdinalIgnoreCase):
                                                     result = 
-                            """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                            """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                             """
                             ;
                                                     return true;
@@ -1295,11 +1295,11 @@ public static class SourceGenerationHelper
 
                                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
                 """).Append(fullyQualifiedName).Append('.')
-                .Append(member.Key).Append(
+                .AppendIdentifier(member.Key).Append(
                 """
                 ), global::System.StringComparison.OrdinalIgnoreCase):
                                     result = 
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -1366,7 +1366,7 @@ public static class SourceGenerationHelper
                             """
                             , global::System.StringComparison.Ordinal):
                                                     result = 
-                            """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                            """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                             """
                             ;
                                                     return true;
@@ -1398,11 +1398,11 @@ public static class SourceGenerationHelper
 
                                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
                 """).Append(fullyQualifiedName).Append('.')
-                .Append(member.Key).Append(
+                .AppendIdentifier(member.Key).Append(
                 """
                 ), global::System.StringComparison.Ordinal):
                                     result = 
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -1429,7 +1429,7 @@ public static class SourceGenerationHelper
             #endif
             """);
 
-        var orderedNames = GetNamesOrderedByValue(enumToGenerate);
+        var orderedNames = GetNamesOrderedByValue(in enumToGenerate);
         sb.Append(
             """
 
@@ -1461,7 +1461,7 @@ public static class SourceGenerationHelper
                 """
 
                                 
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append(',');
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
         }
 
         sb.Append(
@@ -1502,7 +1502,7 @@ public static class SourceGenerationHelper
                 """
 
                                 (
-                """).Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').Append(member.Key).Append(',');
+                """).Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
         }
 
         sb.Append(
@@ -1541,7 +1541,7 @@ public static class SourceGenerationHelper
                 """
 
                                 nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(member.Key).Append("),");
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append("),");
         }
 
         sb.Append(
@@ -1590,7 +1590,7 @@ public static class SourceGenerationHelper
         return (content, filename);
     }
 
-    private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(EnumToGenerate enumToGenerate)
+    private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(in EnumToGenerate enumToGenerate)
     {
         // We order by underlying value, keeping the order of names with the same value, as they were defined
         return enumToGenerate.Names
@@ -1599,5 +1599,15 @@ public static class SourceGenerationHelper
             .ThenBy(tuple => tuple.pos)
             .Select(tuple => tuple.name)
             .ToList();
+    }
+
+    private static StringBuilder AppendIdentifier(this StringBuilder sb, string identifier)
+    {
+        if (SyntaxFacts.GetKeywordKind(identifier) != SyntaxKind.None)
+        {
+            sb.Append('@');
+        }
+
+        return sb.Append(identifier);
     }
 }

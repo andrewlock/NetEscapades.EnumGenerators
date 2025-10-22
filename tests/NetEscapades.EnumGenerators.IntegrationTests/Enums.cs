@@ -187,4 +187,17 @@ namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.Integration
         Second = 1,
         [EnumMember(Value = "Repeated")] Third = 0, // Repeated value with display name
     }
+
+    [EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
+    public enum EnumWithReservedKeywords
+    {
+        [Description("number")]
+        number,
+        [Description("string")]
+        @string,
+        [Description("date")]
+        date,
+        [Description("class")]
+        @class,
+    }
 }
