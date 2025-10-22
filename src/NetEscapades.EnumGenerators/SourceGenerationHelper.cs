@@ -20,17 +20,6 @@ public static class SourceGenerationHelper
 
         """;
 
-    /// <summary>
-    /// Escapes an identifier if it's a C# keyword by prepending '@'.
-    /// </summary>
-    private static string EscapeIdentifier(string identifier)
-    {
-        // Check if the identifier is a C# keyword
-        return SyntaxFacts.GetKeywordKind(identifier) != SyntaxKind.None
-            ? "@" + identifier
-            : identifier;
-    }
-
     public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool useExtensionMembers, MetadataSource defaultMetadataSource)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
@@ -118,13 +107,12 @@ public static class SourceGenerationHelper
             if (constantValues.Add(member.Value.ConstantValue))
             {
                 hasMetadataNames |= member.Value.GetMetadataName(metadataSource) is not null;
-                var memberName = EscapeIdentifier(member.Key);
                 sb.Append(
                         """
 
                                         
-                        """).Append(fullyQualifiedName).Append('.').Append(memberName)
-                    .Append(" => nameof(").Append(fullyQualifiedName).Append('.').Append(memberName).Append("),");
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
+                    .Append(" => nameof(").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append("),");
             }
         }
 
@@ -199,12 +187,11 @@ public static class SourceGenerationHelper
                 {
                     if (constantValues.Add(member.Value.ConstantValue))
                     {
-                        var memberName = EscapeIdentifier(member.Key);
                         sb.Append(
                                 """
 
                                                 
-                                """).Append(fullyQualifiedName).Append('.').Append(memberName)
+                                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
                             .Append(" => ");
 
                         if (member.Value.GetMetadataName(metadataSource) is { } dn)
@@ -213,7 +200,7 @@ public static class SourceGenerationHelper
                         }
                         else
                         {
-                            sb.Append("nameof(").Append(fullyQualifiedName).Append('.').Append(memberName).Append("),");
+                            sb.Append("nameof(").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append("),");
                         }
                     }
                 }
@@ -334,12 +321,11 @@ public static class SourceGenerationHelper
         {
             if (constantValues.Add(member.Value.ConstantValue))
             {
-                var memberName = EscapeIdentifier(member.Key);
                 sb.Append(
                     """
 
                                     
-                    """).Append(fullyQualifiedName).Append('.').Append(memberName)
+                    """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
                     .Append(" => true,");
             }
         }
@@ -366,12 +352,11 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in enumToGenerate.Names)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(") => true,");
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(") => true,");
         }
 
         sb.Append(
@@ -466,13 +451,12 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in enumToGenerate.Names)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                     """
 
                                     global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
                     """).Append(fullyQualifiedName).Append('.')
-                .Append(memberName)
+                .AppendIdentifier(member.Key)
                 .Append("), global::System.StringComparison.Ordinal) => true,");
         }
 
@@ -833,7 +817,6 @@ public static class SourceGenerationHelper
                 if (member.Value.GetMetadataName(metadataSource) is { } metadataName
                     && metadataNames.Add(metadataName))
                 {
-                    var memberName = EscapeIdentifier(member.Key);
                     sb.Append(
                         """
 
@@ -842,7 +825,7 @@ public static class SourceGenerationHelper
                         """
                         , global::System.StringComparison.OrdinalIgnoreCase):
                                                 value = 
-                        """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                         """
                         ;
                                                 return true;
@@ -869,16 +852,15 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in enumToGenerate.Names)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 case string s when s.Equals(nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ), global::System.StringComparison.OrdinalIgnoreCase):
                                     value = 
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -934,7 +916,6 @@ public static class SourceGenerationHelper
                 if (member.Value.GetMetadataName(metadataSource) is { } metadataName
                     && metadataNames.Add(metadataName))
                 {
-                    var memberName = EscapeIdentifier(member.Key);
                     sb.Append(
                         """
 
@@ -943,7 +924,7 @@ public static class SourceGenerationHelper
                         """
                         :
                                                 value = 
-                        """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                         """
                         ;
                                                 return true;
@@ -970,16 +951,15 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in enumToGenerate.Names)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 case nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ):
                                     value = 
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -1274,7 +1254,6 @@ public static class SourceGenerationHelper
                 if (member.Value.GetMetadataName(metadataSource) is { } metadataName
                     && metadataNames.Add(metadataName))
                 {
-                    var memberName = EscapeIdentifier(member.Key);
                     sb.Append(
                             """
 
@@ -1284,7 +1263,7 @@ public static class SourceGenerationHelper
                             """
                             , global::System.StringComparison.OrdinalIgnoreCase):
                                                     result = 
-                            """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                            """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                             """
                             ;
                                                     return true;
@@ -1311,17 +1290,16 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in enumToGenerate.Names)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
                 """).Append(fullyQualifiedName).Append('.')
-                .Append(memberName).Append(
+                .AppendIdentifier(member.Key).Append(
                 """
                 ), global::System.StringComparison.OrdinalIgnoreCase):
                                     result = 
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -1379,7 +1357,6 @@ public static class SourceGenerationHelper
                 if (member.Value.GetMetadataName(metadataSource) is { } metadataName
                     && metadataNames.Add(metadataName))
                 {
-                    var memberName = EscapeIdentifier(member.Key);
                     sb.Append(
                             """
 
@@ -1389,7 +1366,7 @@ public static class SourceGenerationHelper
                             """
                             , global::System.StringComparison.Ordinal):
                                                     result = 
-                            """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                            """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                             """
                             ;
                                                     return true;
@@ -1416,17 +1393,16 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in enumToGenerate.Names)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(
                 """).Append(fullyQualifiedName).Append('.')
-                .Append(memberName).Append(
+                .AppendIdentifier(member.Key).Append(
                 """
                 ), global::System.StringComparison.Ordinal):
                                     result = 
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(
                 """
                 ;
                                     return true;
@@ -1453,7 +1429,7 @@ public static class SourceGenerationHelper
             #endif
             """);
 
-        var orderedNames = GetNamesOrderedByValue(enumToGenerate);
+        var orderedNames = GetNamesOrderedByValue(in enumToGenerate);
         sb.Append(
             """
 
@@ -1481,12 +1457,11 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in orderedNames)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append(',');
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
         }
 
         sb.Append(
@@ -1523,12 +1498,11 @@ public static class SourceGenerationHelper
             """);
         foreach (var member in orderedNames)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 (
-                """).Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').Append(memberName).Append(',');
+                """).Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
         }
 
         sb.Append(
@@ -1563,12 +1537,11 @@ public static class SourceGenerationHelper
 
         foreach (var member in orderedNames)
         {
-            var memberName = EscapeIdentifier(member.Key);
             sb.Append(
                 """
 
                                 nameof(
-                """).Append(fullyQualifiedName).Append('.').Append(memberName).Append("),");
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append("),");
         }
 
         sb.Append(
@@ -1617,7 +1590,7 @@ public static class SourceGenerationHelper
         return (content, filename);
     }
 
-    private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(EnumToGenerate enumToGenerate)
+    private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(in EnumToGenerate enumToGenerate)
     {
         // We order by underlying value, keeping the order of names with the same value, as they were defined
         return enumToGenerate.Names
@@ -1626,5 +1599,15 @@ public static class SourceGenerationHelper
             .ThenBy(tuple => tuple.pos)
             .Select(tuple => tuple.name)
             .ToList();
+    }
+
+    private static StringBuilder AppendIdentifier(this StringBuilder sb, string identifier)
+    {
+        if (SyntaxFacts.GetKeywordKind(identifier) != SyntaxKind.None)
+        {
+            sb.Append('@');
+        }
+
+        return sb.Append(identifier);
     }
 }
