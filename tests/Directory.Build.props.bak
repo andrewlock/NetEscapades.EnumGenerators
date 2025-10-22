@@ -6,7 +6,7 @@
     <ArtifactsPath>$(MSBuildThisFileDirectory)../artifacts</ArtifactsPath>
     <SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
     <NoWarn>NU1901;NU1902;NU1903;NU1904</NoWarn>
-    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
     <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">net48;netcoreapp2.1;netcoreapp3.1;$(TargetFrameworks)</TargetFrameworks>
 
     <!-- Attempt workaround for https://github.com/dotnet/sdk/issues/37636 -->
