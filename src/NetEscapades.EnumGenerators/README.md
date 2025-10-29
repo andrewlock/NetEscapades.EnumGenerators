@@ -82,7 +82,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta14" 
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta15" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
@@ -275,7 +275,28 @@ public static bool HasFlagFast(this MyEnum value, MyEnum flag)
     => flag == 0 ? true : (value & flag) == flag;
 ```
 
-Note that if you provide a `[Display]` or `[Description]` attribute, the value you provide for this attribute can be used by methods like `ToStringFast()` and `TryParse()` by passing the argument `allowMatchingMetadataAttribute: true`. Adding both attributes to an enum member is not supported, though conventionally the "first" attribute will be used.
+Note that if you provide a `[EnumMember]` attribute, the value you provide for this attribute can be used by methods like `ToStringFast()` and `TryParse()` by passing the argument `useMetadataAttributes: true`. Alternatively, you can use the `[Display]` or `[Description]` attributes, and set  the `MetadataSource` property on the `[EnumExtensions]` attribute e.g.
+
+```csharp
+[EnumExtensions(MetadataSource = MetadataSource.DisplayAttribute)]
+public enum EnumWithDisplayNameInNamespace
+{
+    First = 0,
+    [Display(Name = "2nd")]
+    Second = 1,
+    Third = 2,
+}
+```
+
+Alternatively, you can use `MetadataSource.None` to choose none of the metadata attributes. In this case, the overloads that take a `useMetadataAttributes` parameter will not be emitted.
+
+You can set the default metadata source to use for a whole project by setting the EnumGenerator_EnumMetadataSource property in your project:
+
+```xml
+<PropertyGroup>
+  <EnumGenerator_EnumMetadataSource>EnumMemberAttribute</EnumGenerator_EnumMetadataSource>
+</PropertyGroup>
+```
 
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
 
@@ -364,7 +385,7 @@ The `[EnumExtensions]` attribute is decorated with the `[Conditional]` attribute
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta14" PrivateAssets="all" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta15" PrivateAssets="all" />
   <!--              ☝ You must not exclude the runtime assets in this case -->
 
 </Project>

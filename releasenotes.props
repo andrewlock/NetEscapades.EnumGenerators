@@ -1,15 +1,21 @@
 <Project>
   <PropertyGroup>
-    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta14'">
+    <PackageReleaseNotes Condition="'$(PackageVersion)' == '1.0.0-beta15'">
       <![CDATA[
 
+### Breaking Changes:
+
+- Embedding marker attributes in the target dll using `NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES` is no longer supported (#160)
+- Only one source of metadata for enum member descriptions may be selected, `[Description]`, `[Display]`, or `[EnumMember]` (the default) (#163)
+
 ### Features
-- Expose generated static methods as C#14 static extension members on enums, when building with C#14 (#154)
+- Add analyzer warning when generated extension class would clash with other generated extension class (Dianostic NEEG001) (#158)
+- Add analyzer warning that you can't generate extensions for enum nested in a generic class (Dianostic NEEG002) (#159)
+- Add analyzer info when enum contains duplicate case labels that may give unexpected results from `ToStringFast()`  (Dianostic NEEG003) (#162)
 
 ### Fixes
-- Improve XML documentation (#142) Thanks [@paulomorgado](https://github.com/paulomorgado)!
-- Add support for enums with duplicate values (#143) Thanks [@paulomorgado](https://github.com/paulomorgado)!
-
+- Don't generate C#14 extension members when using `LangVersion.Preview` unless MSBuild property `EnumGenerator_ForceExtensionMembers` is set (#165)
+- Fix code generation for enum members that use C# reserved member names (#168)
 ]]>
     </PackageReleaseNotes>
      <PackageReleaseNotes>$(PackageReleaseNotes)

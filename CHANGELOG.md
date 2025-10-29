@@ -1,6 +1,22 @@
 Changelog
 --- 
 
+## [v1.0.0-beta15](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta14..v1.0.0-beta15) (2025-10-29)
+
+### Breaking Changes:
+
+- Embedding marker attributes in the target dll using `NETESCAPADES_ENUMGENERATORS_EMBED_ATTRIBUTES` is no longer supported (#160)
+- Only one source of metadata for enum member descriptions may be selected, `[Description]`, `[Display]`, or `[EnumMember]` (the default) (#163)
+
+### Features
+- Add analyzer warning when generated extension class would clash with other generated extension class (Dianostic NEEG001) (#158)
+- Add analyzer warning that you can't generate extensions for enum nested in a generic class (Dianostic NEEG002) (#159)
+- Add analyzer info when enum contains duplicate case labels that may give unexpected results from `ToStringFast()`  (Dianostic NEEG003) (#162)
+
+### Fixes
+- Don't generate C#14 extension members when using `LangVersion.Preview` unless MSBuild property `EnumGenerator_ForceExtensionMembers` is set (#165)
+- Fix code generation for enum members that use C# reserved member names (#168)
+
 ## [v1.0.0-beta14](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta13..v1.0.0-beta14) (2025-06-15)
 
 ### Features
