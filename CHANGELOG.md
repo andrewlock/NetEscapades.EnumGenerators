@@ -1,6 +1,11 @@
 Changelog
 --- 
 
+## [v1.0.0-beta16](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta15..v1.0.0-beta16) (2025-11-04)
+
+### Fixes
+- Fix incorrect default value of `EnumGenerator_ForceExtensionMembers` incorrectly generating C#14 extension members (#172) Thanks [@sindrekroknes](sindrekroknes)
+
 ## [v1.0.0-beta15](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta14..v1.0.0-beta15) (2025-10-29)
 
 ### Breaking Changes:

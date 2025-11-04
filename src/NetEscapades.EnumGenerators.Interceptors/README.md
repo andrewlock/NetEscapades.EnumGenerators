@@ -55,7 +55,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="1.0.0-beta15" 
+  <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="1.0.0-beta16" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
