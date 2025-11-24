@@ -7,6 +7,11 @@ namespace NetEscapades.EnumGenerators;
 /// </summary>
 public readonly struct EnumParseOptions
 {
+    private const StringComparison DefaultComparisonType = StringComparison.Ordinal;
+    
+    private readonly StringComparison? _comparisonType;
+    private readonly bool _blockNumberParsing;
+
     /// <summary>
     /// Create an instance of <see cref="global::NetEscapades.EnumGenerators.EnumParseOptions"/>
     /// </summary>
@@ -16,13 +21,13 @@ public readonly struct EnumParseOptions
     /// <param name="enableNumberParsing">Sets a value defining whether numbers should be parsed as a fallback when
     /// other parsing fails.</param>
     public EnumParseOptions(
-        StringComparison comparisonType = StringComparison.Ordinal,
+        StringComparison comparisonType = DefaultComparisonType,
         bool useMetadataAttributes = false,
         bool enableNumberParsing = true)
     {
-        ComparisonType = comparisonType;
-        EnableNumberParsing = enableNumberParsing;
+        _comparisonType = comparisonType;
         UseMetadataAttributes = useMetadataAttributes;
+        _blockNumberParsing = !enableNumberParsing;
     }
 
     /// <summary>
@@ -32,7 +37,7 @@ public readonly struct EnumParseOptions
     /// By default, it's set to <see cref="global::System.StringComparison.Ordinal"/>, and a case-sensitive
     /// comparison will be used.
     /// </remarks>
-    public StringComparison ComparisonType { get; }
+    public StringComparison ComparisonType => _comparisonType ?? DefaultComparisonType;
 
     /// <summary>
     /// Gets or sets whether the value of any metadata value attributes
@@ -52,5 +57,5 @@ public readonly struct EnumParseOptions
     /// <remarks>
     /// By default, it's set to <see langword="true"/>, and numbers will be parsed as well as names.
     /// </remarks>
-    public bool EnableNumberParsing { get; }
+    public bool EnableNumberParsing => !_blockNumberParsing;
 }

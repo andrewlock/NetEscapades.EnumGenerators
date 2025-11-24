@@ -93,6 +93,10 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
 
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseOptionWithSameResultAsIndividualTest(string name) => GeneratesTryParseTest(name, new EnumParseOptions(), ignoreCase: false, allowMatchingMetadataAttribute: false);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
     public void GeneratesTryParseNumberParsingDisabled(string name) => GeneratesTryParseTest(name, new EnumParseOptions(enableNumberParsing: false));
 
 #if READONLYSPAN
@@ -288,6 +292,16 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     {
         var isValid = TryParse(name, out var result, options);
         ValidateTryParse(name, options, out bool expectedValidity, out T expectedResult);
+
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+
+    private void GeneratesTryParseTest(string name, EnumParseOptions options, bool ignoreCase, bool allowMatchingMetadataAttribute)
+    {
+        var isValid = TryParse(name, out var result, options);
+        var expectedValidity = TryParse(name, out var expectedResult, ignoreCase, allowMatchingMetadataAttribute);
 
         _ = new AssertionScope();
         isValid.Should().Be(expectedValidity);
