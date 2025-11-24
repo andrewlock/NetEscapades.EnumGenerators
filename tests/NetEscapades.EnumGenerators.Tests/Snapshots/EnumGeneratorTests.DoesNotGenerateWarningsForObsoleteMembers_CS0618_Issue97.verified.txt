@@ -190,6 +190,25 @@
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         useMetadataAttributes: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
 
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::MyEnum" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns>An object of type <see cref="global::MyEnum" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::MyEnum Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name,
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                => TryParse(
+                    name,
+                    out var value,
+                    options) ? value : ThrowValueNotFound(name);
+
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
 #endif
@@ -375,6 +394,34 @@
                         useMetadataAttributes: allowMatchingMetadataAttribute))
                    ? value : ThrowValueNotFound(name.ToString());
 
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::MyEnum" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns>An object of type <see cref="global::MyEnum" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::MyEnum Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in global::System.ReadOnlySpan<char> name,
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                => TryParse(
+                    name,
+                    out var value,
+                    options) ? value : ThrowValueNotFound(name);
+
+#if NETCOREAPP3_0_OR_GREATER
+        [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
+#endif
+        private static global::MyEnum ThrowValueNotFound(in global::System.ReadOnlySpan<char> name)
+#if NET6_0_OR_GREATER
+            => throw new global::System.ArgumentException($"Requested value '{name}' was not found.");
+#else
+            => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
+#endif
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::MyEnum" /> to the equivalent instance.

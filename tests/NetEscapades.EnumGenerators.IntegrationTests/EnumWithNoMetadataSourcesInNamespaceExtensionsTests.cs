@@ -61,11 +61,24 @@ public class EnumWithNoMetadataSourcesInNamespaceExtensionsTests : ExtensionTest
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithNoMetadataSources parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
+    protected override bool TryParse(string name, out EnumWithNoMetadataSources parsed, EnumParseOptions parseOptions)
+        => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithNoMetadataSources parsed, EnumParseOptions parseOptions)
+        => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override EnumWithNoMetadataSources Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithNoMetadataSourcesExtensions.Parse(name, ignoreCase);
 #if READONLYSPAN
     protected override EnumWithNoMetadataSources Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithNoMetadataSourcesExtensions.Parse(name, ignoreCase);
+#endif
+    protected override EnumWithNoMetadataSources Parse(string name, EnumParseOptions parseOptions)
+        => EnumWithNoMetadataSourcesExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override EnumWithNoMetadataSources Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => EnumWithNoMetadataSourcesExtensions.Parse(name, parseOptions);
 #endif
 
     protected override bool TryGetDisplayNameOrDescription(

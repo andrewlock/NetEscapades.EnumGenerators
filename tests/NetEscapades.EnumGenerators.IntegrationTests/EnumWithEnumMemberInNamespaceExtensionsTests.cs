@@ -59,10 +59,23 @@ public class EnumWithEnumMemberInNamespaceExtensionsTests : ExtensionTests<EnumW
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithEnumMemberInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithEnumMemberInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override bool TryParse(string name, out EnumWithEnumMemberInNamespace parsed, EnumParseOptions parseOptions)
+        => EnumWithEnumMemberInNamespaceExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithEnumMemberInNamespace parsed, EnumParseOptions parseOptions)
+        => EnumWithEnumMemberInNamespaceExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override EnumWithEnumMemberInNamespace Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumWithEnumMemberInNamespaceExtensions.Parse(name, ignoreCase);
+        => EnumWithEnumMemberInNamespaceExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override EnumWithEnumMemberInNamespace Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumWithEnumMemberInNamespaceExtensions.Parse(name, ignoreCase);
+        => EnumWithEnumMemberInNamespaceExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override EnumWithEnumMemberInNamespace Parse(string name, EnumParseOptions parseOptions)
+        => EnumWithEnumMemberInNamespaceExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override EnumWithEnumMemberInNamespace Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => EnumWithEnumMemberInNamespaceExtensions.Parse(name, parseOptions);
 #endif
 }

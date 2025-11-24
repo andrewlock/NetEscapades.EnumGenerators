@@ -13,11 +13,15 @@ public readonly struct EnumParseOptions
     /// <param name="comparisonType">Sets the <see cref="global::System.StringComparison"/> to use during parsing.</param>
     /// <param name="useMetadataAttributes">Sets whether the value of any metadata value attributes
     /// values applied to an enum should be used as the parse value for an enum.</param>
+    /// <param name="enableNumberParsing">Sets a value defining whether numbers should be parsed as a fallback when
+    /// other parsing fails.</param>
     public EnumParseOptions(
         StringComparison comparisonType = StringComparison.Ordinal,
-        bool useMetadataAttributes = false)
+        bool useMetadataAttributes = false,
+        bool enableNumberParsing = true)
     {
         ComparisonType = comparisonType;
+        EnableNumberParsing = enableNumberParsing;
         UseMetadataAttributes = useMetadataAttributes;
     }
 
@@ -40,4 +44,13 @@ public readonly struct EnumParseOptions
     /// <see cref="global::NetEscapades.EnumGenerators.MetadataSource"/> for the enum.
     /// </remarks>
     public bool UseMetadataAttributes { get; }
+
+    /// <summary>
+    /// Gets or sets a value defining whether numbers should be parsed as a fallback when
+    /// other parsing fails. 
+    /// </summary>
+    /// <remarks>
+    /// By default, it's set to <see langword="true"/>, and numbers will be parsed as well as names.
+    /// </remarks>
+    public bool EnableNumberParsing { get; }
 }

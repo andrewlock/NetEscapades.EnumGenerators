@@ -46,12 +46,21 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
 #if READONLYSPAN
     protected abstract bool TryParse(in ReadOnlySpan<char> name, out T parsed, bool ignoreCase, bool allowMatchingMetadataAttribute);
 #endif
+    protected abstract bool TryParse(string name, out T parsed, EnumParseOptions parseOptions);
+#if READONLYSPAN
+    protected abstract bool TryParse(in ReadOnlySpan<char> name, out T parsed, EnumParseOptions parseOptions);
+#endif
 
     protected abstract T Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected abstract T Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute);
 #endif
 
+    protected abstract T Parse(string name, EnumParseOptions parseOptions);
+#if READONLYSPAN
+    protected abstract T Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions);
+#endif
+    
     [Theory]
     [MemberData(nameof(GetValidEnumValues))]
     public void GeneratesToStringFast(T value) => GeneratesToStringFastTest(value);
@@ -78,6 +87,14 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     [MemberData(nameof(GetValuesToParse))]
     public void GeneratesTryParse(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: false);
 
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseUsingParseOptions(string name) => GeneratesTryParseTest(name, new EnumParseOptions());
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseNumberParsingDisabled(string name) => GeneratesTryParseTest(name, new EnumParseOptions(enableNumberParsing: false));
+
 #if READONLYSPAN
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
@@ -86,6 +103,21 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
     public void GeneratesTryParseIgnoreCaseAsAspan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
+    
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseUsingSpanUsingParseOptions(string name)
+        => GeneratesTryParseTest(name.AsSpan(), new EnumParseOptions());
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseIgnoreCaseAsAspanUsingParseOptions(string name)
+        => GeneratesTryParseTest(name.AsSpan(), new EnumParseOptions(StringComparison.OrdinalIgnoreCase));
+    
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesTryParseNumberParsingDisabledAsSpan(string name)
+        => GeneratesTryParseTest(name.AsSpan(), new EnumParseOptions(enableNumberParsing: false));
 #endif
 
     [Theory]
@@ -119,33 +151,63 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
 #if READONLYSPAN
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
-    public void GeneratesTryParseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
+    public void GeneratesParseAsSpan(string name) => GeneratesParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: false);
+    
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesParseAsSpanUsingParseOptions(string name) => GeneratesParseTest(name.AsSpan(), new EnumParseOptions());
+
 #endif
 
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
-    public void GeneratesTryParseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: true);
+    public void GeneratesParseallowMatchingMetadataAttribute(string name) => GeneratesParseTest(name, ignoreCase: false, allowMatchingMetadataAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesParseallowMatchingMetadataAttributeUsingParseOptions(string name) => GeneratesParseTest(name, new EnumParseOptions(useMetadataAttributes: true));
 
 #if READONLYSPAN
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
-    public void GeneratesTryParseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: true);
+    public void GeneratesParseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesParseTest(name.AsSpan(), ignoreCase: false, allowMatchingMetadataAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesParseallowMatchingMetadataAttributeAsSpanUsingParseOptions(string name)
+        => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(useMetadataAttributes: true));
 #endif
 
 #if READONLYSPAN
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
+    public void GeneratesParseIgnoreCaseAsSpan(string name) => GeneratesParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: false);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesParseIgnoreCaseAsSpanUsingParseOptions(string name)
+        => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(StringComparison.OrdinalIgnoreCase));
 #endif
 
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttribute(string name) => GeneratesTryParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: true);
+    public void GeneratesParseIgnoreCaseallowMatchingMetadataAttribute(string name) => GeneratesParseTest(name, ignoreCase: true, allowMatchingMetadataAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesParseIgnoreCaseallowMatchingMetadataAttributeUsingParseOptions(string name)
+        => GeneratesParseTest(name, new EnumParseOptions(StringComparison.OrdinalIgnoreCase, useMetadataAttributes: true));
 
 #if READONLYSPAN
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
-    public void GeneratesTryParseIgnoreCaseallowMatchingMetadataAttributeAsSpan(string name) => GeneratesTryParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: true);
+    public void GeneratesParseIgnoreCaseallowMatchingMetadataAttributeAsSpan(string name)
+        => GeneratesParseTest(name.AsSpan(), ignoreCase: true, allowMatchingMetadataAttribute: true);
+
+    [Theory]
+    [MemberData(nameof(GetValuesToParse))]
+    public void GeneratesParseIgnoreCaseallowMatchingMetadataAttributeAsSpanUsingParseOptions(string name)
+        => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(StringComparison.OrdinalIgnoreCase, useMetadataAttributes: true));
 #endif
 
     private void GeneratesToStringFastTest(T value)
@@ -222,11 +284,31 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
         result.Should().Be(expectedResult);
     }
 
+    private void GeneratesTryParseTest(string name, EnumParseOptions options)
+    {
+        var isValid = TryParse(name, out var result, options);
+        ValidateTryParse(name, options, out bool expectedValidity, out T expectedResult);
+
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+
 #if READONLYSPAN
     private void GeneratesTryParseTest(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
     {
         var isValid = TryParse(name, out var result, ignoreCase, allowMatchingMetadataAttribute);
         ValidateTryParse(name.ToString(), ignoreCase, allowMatchingMetadataAttribute, out bool expectedValidity, out T expectedResult);
+
+        _ = new AssertionScope();
+        isValid.Should().Be(expectedValidity);
+        result.Should().Be(expectedResult);
+    }
+
+    private void GeneratesTryParseTest(in ReadOnlySpan<char> name, EnumParseOptions options)
+    {
+        var isValid = TryParse(name, out var result, options);
+        ValidateTryParse(name.ToString(), options, out bool expectedValidity, out T expectedResult);
 
         _ = new AssertionScope();
         isValid.Should().Be(expectedValidity);
@@ -239,6 +321,30 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
         if (allowMatchingMetadataAttribute)
         {
             expectedValidity = TryGetEnumByDisplayNameOrDescription(name, ignoreCase, out expectedResult);
+            if (!expectedValidity)
+            {
+                expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
+            }
+        }
+        else
+        {
+            expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
+        }
+    }
+
+    private void ValidateTryParse(string name, EnumParseOptions options, out bool expectedValidity, out T expectedResult)
+    {
+        var ignoreCase = options.ComparisonType == StringComparison.OrdinalIgnoreCase;
+        if (!options.EnableNumberParsing && int.TryParse(name, out _))
+        {
+            expectedValidity = false;
+            expectedResult = default;
+            return;
+        }
+
+        if (options.UseMetadataAttributes)
+        {
+            expectedValidity = TryGetEnumByDisplayNameOrDescription(name, options.ComparisonType, out expectedResult);
             if (!expectedValidity)
             {
                 expectedValidity = Enum.TryParse(name, ignoreCase, out expectedResult);
@@ -264,6 +370,33 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
         }
         
         ValidateParse(name, ignoreCase, allowMatchingMetadataAttribute, out Exception? expectedException, out T expectedResult);
+
+        _ = new AssertionScope();
+        if (expectedException is null)
+        {
+            ex.Should().Be(expectedException);
+        }
+        else
+        {
+            ex.Should().BeNull();
+            result.Should().Be(expectedResult);
+        }
+    }
+
+    private void GeneratesParseTest(string name, EnumParseOptions options)
+    {
+        Exception? ex = null;
+        T? result = null;
+        try
+        {
+            result = Parse(name, options);
+        }
+        catch (Exception e)
+        {
+            ex = e;
+        }
+        
+        ValidateParse(name, options, out Exception? expectedException, out T expectedResult);
 
         _ = new AssertionScope();
         if (expectedException is null)
@@ -304,30 +437,64 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
             result.Should().Be(expectedResult);
         }
     }
+    private void GeneratesParseTest(in ReadOnlySpan<char> name, EnumParseOptions options)
+    {
+        Exception? ex = null;
+        T? result = null;
+        try
+        {
+            result = Parse(name, options);
+        }
+        catch (Exception e)
+        {
+            ex = e;
+        }
+        
+        ValidateParse(name.ToString(), options, out Exception? expectedException, out T expectedResult);
+
+        _ = new AssertionScope();
+        if (expectedException is null)
+        {
+            ex.Should().Be(expectedException);
+        }
+        else
+        {
+            ex.Should().BeNull();
+            result.Should().Be(expectedResult);
+        }
+    }
 #endif
 
     private void ValidateParse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute, out Exception? expectedException, out T expectedResult)
     {
         expectedException = null;
-        if (allowMatchingMetadataAttribute)
+        if (allowMatchingMetadataAttribute && TryGetEnumByDisplayNameOrDescription(name, ignoreCase, out expectedResult))
         {
-            var expectedValidity = TryGetEnumByDisplayNameOrDescription(name, ignoreCase, out expectedResult);
-            if (!expectedValidity)
-            {
-                try
-                {
-                    expectedResult = (T)Enum.Parse(typeof(T), name, ignoreCase);
-                }
-                catch (Exception ex)
-                {
-                    expectedException = ex;
-                }
-            }
+            return;
         }
-        else
+
+        try
         {
             expectedResult = (T)Enum.Parse(typeof(T), name, ignoreCase);
         }
+        catch (Exception ex)
+        {
+            expectedException = ex;
+            expectedResult = default;
+        }
+    }
+
+    private void ValidateParse(string name, EnumParseOptions options, out Exception? expectedException, out T expectedResult)
+    {
+        var ignoreCase = options.ComparisonType == StringComparison.OrdinalIgnoreCase;
+        if (!options.EnableNumberParsing && int.TryParse(name, out _))
+        {
+            expectedException = new ArgumentException();
+            expectedResult = default;
+            return;
+        }
+
+        ValidateParse(name, ignoreCase, options.UseMetadataAttributes, out expectedException, out expectedResult);
     }
 
     private void GeneratesAsUnderlyingTypeTest(T value, TUnderlying underlyingValue)
@@ -359,10 +526,13 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     }
 
     private bool TryGetEnumByDisplayNameOrDescription(string name, bool ignoreCase, out T enumValue)
+        => TryGetEnumByDisplayNameOrDescription(name,
+            ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal, out enumValue);
+
+    private bool TryGetEnumByDisplayNameOrDescription(string name, StringComparison stringComparisonOptions, out T enumValue)
     {
         enumValue = default;
 
-        var stringComparisonOptions = ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var enumValues = (T[])Enum.GetValues(typeof(T));
         foreach (var value in enumValues)
         {

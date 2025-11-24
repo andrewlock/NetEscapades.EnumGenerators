@@ -58,16 +58,29 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #endif
     protected override bool TryParse(string name, out FlagsEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
+        => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out FlagsEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase);
+        => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override bool TryParse(string name, out FlagsEnum parsed, EnumParseOptions parseOptions)
+        => FlagsEnumExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out FlagsEnum parsed, EnumParseOptions parseOptions)
+        => FlagsEnumExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override FlagsEnum Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FlagsEnumExtensions.Parse(name, ignoreCase);
+        => FlagsEnumExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override FlagsEnum Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FlagsEnumExtensions.Parse(name, ignoreCase);
+        => FlagsEnumExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override FlagsEnum Parse(string name, EnumParseOptions parseOptions)
+        => FlagsEnumExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override FlagsEnum Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => FlagsEnumExtensions.Parse(name, parseOptions);
 #endif
 
     public static IEnumerable<object[]> AllFlags()
