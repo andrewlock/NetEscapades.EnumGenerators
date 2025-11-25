@@ -51,12 +51,12 @@ namespace System
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
-        /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/> uses the value provided in the
         ///  <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute as the string representation of the member.
         /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
         /// <returns>The string representation of the value</returns>
-        public static string ToStringFast(this global::System.StringComparison value, bool useMetadataAttributes)
-            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+        public static string ToStringFast(this global::System.StringComparison value, bool allowMatchingMetadataAttribute)
+            => allowMatchingMetadataAttribute ? value.ToStringFastWithMetadata() : value.ToStringFast();
 
         private static string ToStringFastWithMetadata(this global::System.StringComparison value)
             => value.ToStringFast();
@@ -207,7 +207,7 @@ namespace System
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -308,7 +308,7 @@ namespace System
                     out value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute));
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -422,7 +422,7 @@ namespace System
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute))
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
                    ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
@@ -530,7 +530,7 @@ namespace System
                     out result,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute));
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -696,12 +696,12 @@ namespace System
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
-        /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/> uses the value provided in the
         ///  <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute as the string representation of the member.
         /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
         /// <returns>The string representation of the value</returns>
-        public static string ToStringFast(this global::System.DateTimeKind value, bool useMetadataAttributes)
-            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+        public static string ToStringFast(this global::System.DateTimeKind value, bool allowMatchingMetadataAttribute)
+            => allowMatchingMetadataAttribute ? value.ToStringFastWithMetadata() : value.ToStringFast();
 
         private static string ToStringFastWithMetadata(this global::System.DateTimeKind value)
             => value.ToStringFast();
@@ -843,7 +843,7 @@ namespace System
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -944,7 +944,7 @@ namespace System
                     out value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute));
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -1049,7 +1049,7 @@ namespace System
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute))
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
                    ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
@@ -1157,7 +1157,7 @@ namespace System
                     out result,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
-                        useMetadataAttributes: allowMatchingMetadataAttribute));
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of

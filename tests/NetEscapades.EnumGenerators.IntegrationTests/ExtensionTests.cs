@@ -169,7 +169,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
 
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
-    public void GeneratesParseallowMatchingMetadataAttributeUsingParseOptions(string name) => GeneratesParseTest(name, new EnumParseOptions(useMetadataAttributes: true));
+    public void GeneratesParseallowMatchingMetadataAttributeUsingParseOptions(string name) => GeneratesParseTest(name, new EnumParseOptions(allowMatchingMetadataAttribute: true));
 
 #if READONLYSPAN
     [Theory]
@@ -179,7 +179,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
     public void GeneratesParseallowMatchingMetadataAttributeAsSpanUsingParseOptions(string name)
-        => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(useMetadataAttributes: true));
+        => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(allowMatchingMetadataAttribute: true));
 #endif
 
 #if READONLYSPAN
@@ -200,7 +200,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
     public void GeneratesParseIgnoreCaseallowMatchingMetadataAttributeUsingParseOptions(string name)
-        => GeneratesParseTest(name, new EnumParseOptions(StringComparison.OrdinalIgnoreCase, useMetadataAttributes: true));
+        => GeneratesParseTest(name, new EnumParseOptions(StringComparison.OrdinalIgnoreCase, allowMatchingMetadataAttribute: true));
 
 #if READONLYSPAN
     [Theory]
@@ -211,7 +211,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     [Theory]
     [MemberData(nameof(GetValuesToParse))]
     public void GeneratesParseIgnoreCaseallowMatchingMetadataAttributeAsSpanUsingParseOptions(string name)
-        => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(StringComparison.OrdinalIgnoreCase, useMetadataAttributes: true));
+        => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(StringComparison.OrdinalIgnoreCase, allowMatchingMetadataAttribute: true));
 #endif
 
     private void GeneratesToStringFastTest(T value)
@@ -356,7 +356,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
             return;
         }
 
-        if (options.UseMetadataAttributes)
+        if (options.AllowMatchingMetadataAttribute)
         {
             expectedValidity = TryGetEnumByDisplayNameOrDescription(name, options.ComparisonType, out expectedResult);
             if (!expectedValidity)
@@ -508,7 +508,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
             return;
         }
 
-        ValidateParse(name, ignoreCase, options.UseMetadataAttributes, out expectedException, out expectedResult);
+        ValidateParse(name, ignoreCase, options.AllowMatchingMetadataAttribute, out expectedException, out expectedResult);
     }
 
     private void GeneratesAsUnderlyingTypeTest(T value, TUnderlying underlyingValue)

@@ -10,7 +10,7 @@ public class EnumParseOptionsTests
     public void Default()
     {
         EnumParseOptions options = default;
-        options.UseMetadataAttributes.Should().BeFalse();
+        options.AllowMatchingMetadataAttribute.Should().BeFalse();
         options.EnableNumberParsing.Should().BeTrue();
         options.ComparisonType.Should().Be(StringComparison.Ordinal);
     }
@@ -19,7 +19,7 @@ public class EnumParseOptionsTests
     public void DefaultConstructor()
     {
         var options = new EnumParseOptions();
-        options.UseMetadataAttributes.Should().BeFalse();
+        options.AllowMatchingMetadataAttribute.Should().BeFalse();
         options.EnableNumberParsing.Should().BeTrue();
         options.ComparisonType.Should().Be(StringComparison.Ordinal);
     }
@@ -28,7 +28,7 @@ public class EnumParseOptionsTests
     public void SingleValue()
     {
         var options = new EnumParseOptions(comparisonType: StringComparison.OrdinalIgnoreCase);
-        options.UseMetadataAttributes.Should().BeFalse();
+        options.AllowMatchingMetadataAttribute.Should().BeFalse();
         options.EnableNumberParsing.Should().BeTrue();
         options.ComparisonType.Should().Be(StringComparison.OrdinalIgnoreCase);
     }
