@@ -156,7 +156,7 @@ public static class SourceGenerationHelper
                         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
                         /// </summary>
                         /// <param name="value">The value to retrieve the string value for</param>
-                        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/> uses the value provided in the
+                        /// <param name="useMetadataAttributes">If <see langword="true"/> uses the value provided in the
                         ///  <see cref="global::
                 """).Append(attributeName).Append(
                 """
@@ -166,8 +166,8 @@ public static class SourceGenerationHelper
                         public static string ToStringFast(this 
                 """).Append(fullyQualifiedName).Append(
                 """
-                 value, bool allowMatchingMetadataAttribute)
-                            => allowMatchingMetadataAttribute ? value.ToStringFastWithMetadata() : value.ToStringFast();
+                 value, bool useMetadataAttributes)
+                            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
 
                         private static string ToStringFastWithMetadata(this 
                 """).Append(fullyQualifiedName).Append(
