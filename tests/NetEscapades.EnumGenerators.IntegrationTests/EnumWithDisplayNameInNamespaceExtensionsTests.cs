@@ -59,10 +59,23 @@ public class EnumWithDisplayNameInNamespaceExtensionsTests : ExtensionTests<Enum
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithDisplayNameInNamespace parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override bool TryParse(string name, out EnumWithDisplayNameInNamespace parsed, EnumParseOptions parseOptions)
+        => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithDisplayNameInNamespace parsed, EnumParseOptions parseOptions)
+        => EnumWithDisplayNameInNamespaceExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override EnumWithDisplayNameInNamespace Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumWithDisplayNameInNamespaceExtensions.Parse(name, ignoreCase);
+        => EnumWithDisplayNameInNamespaceExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override EnumWithDisplayNameInNamespace Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumWithDisplayNameInNamespaceExtensions.Parse(name, ignoreCase);
+        => EnumWithDisplayNameInNamespaceExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override EnumWithDisplayNameInNamespace Parse(string name, EnumParseOptions parseOptions)
+        => EnumWithDisplayNameInNamespaceExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override EnumWithDisplayNameInNamespace Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => EnumWithDisplayNameInNamespaceExtensions.Parse(name, parseOptions);
 #endif
 }

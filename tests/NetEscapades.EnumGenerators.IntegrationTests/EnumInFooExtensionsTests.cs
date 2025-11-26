@@ -55,16 +55,28 @@ public class EnumInFooExtensionsTests : ExtensionTests<EnumInFoo, int, EnumInFoo
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => EnumInFooExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #endif
     protected override bool TryParse(string name, out EnumInFoo parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFooExtensions.TryParse(name, out parsed, ignoreCase);
+        => EnumInFooExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumInFoo parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFooExtensions.TryParse(name, out parsed, ignoreCase);
+        => EnumInFooExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override bool TryParse(string name, out EnumInFoo parsed, EnumParseOptions parseOptions)
+        => EnumInFooExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out EnumInFoo parsed, EnumParseOptions parseOptions)
+        => EnumInFooExtensions.TryParse(name, out parsed, parseOptions);
 #endif
 
     protected override EnumInFoo Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFooExtensions.Parse(name, ignoreCase);
+        => EnumInFooExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override EnumInFoo Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFooExtensions.Parse(name, ignoreCase);
+        => EnumInFooExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override EnumInFoo Parse(string name, EnumParseOptions parseOptions)
+        => EnumInFooExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override EnumInFoo Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => EnumInFooExtensions.Parse(name, parseOptions);
 #endif
 }

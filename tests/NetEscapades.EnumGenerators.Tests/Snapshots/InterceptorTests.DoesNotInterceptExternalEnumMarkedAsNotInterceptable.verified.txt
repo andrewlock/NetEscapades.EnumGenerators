@@ -162,7 +162,7 @@ namespace System
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name)
-                => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name);
+                => TryParse(name, out var value, new global::NetEscapades.EnumGenerators.EnumParseOptions()) ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -178,7 +178,12 @@ namespace System
 #endif
             string? name,
             bool ignoreCase)
-                => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name);
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -197,7 +202,31 @@ namespace System
             string? name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
+                => TryParse(
+                    name,
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
+
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.StringComparison" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns>An object of type <see cref="global::System.StringComparison" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::System.StringComparison Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name,
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                => TryParse(
+                    name,
+                    out var value,
+                    options) ? value : ThrowValueNotFound(name);
 
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
@@ -223,7 +252,7 @@ namespace System
 #endif
             string? name,
             out global::System.StringComparison value)
-            => TryParse(name, out value, false, false);
+            => TryParse(name, out value, new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -245,7 +274,10 @@ namespace System
             string? name,
             out global::System.StringComparison value,
             bool ignoreCase)
-            => TryParse(name, out value, ignoreCase, false);
+            => TryParse(name,
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -271,76 +303,55 @@ namespace System
             out global::System.StringComparison value,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => ignoreCase
-                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                => TryParse(
+                    name,
+                    out value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
-        private static bool TryParseIgnoreCase(
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.StringComparison" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="value">When this method returns, contains an object of type
+        /// <see cref="global::System.StringComparison" /> whose
+        /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::System.StringComparison" />. This parameter is passed uninitialized.</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
             out global::System.StringComparison value,
-            bool allowMatchingMetadataAttribute)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case string s when s.Equals(nameof(global::System.StringComparison.CurrentCulture), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.StringComparison.CurrentCulture), options.ComparisonType):
                     value = global::System.StringComparison.CurrentCulture;
                     return true;
-                case string s when s.Equals(nameof(global::System.StringComparison.CurrentCultureIgnoreCase), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.StringComparison.CurrentCultureIgnoreCase), options.ComparisonType):
                     value = global::System.StringComparison.CurrentCultureIgnoreCase;
                     return true;
-                case string s when s.Equals(nameof(global::System.StringComparison.InvariantCulture), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.StringComparison.InvariantCulture), options.ComparisonType):
                     value = global::System.StringComparison.InvariantCulture;
                     return true;
-                case string s when s.Equals(nameof(global::System.StringComparison.InvariantCultureIgnoreCase), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.StringComparison.InvariantCultureIgnoreCase), options.ComparisonType):
                     value = global::System.StringComparison.InvariantCultureIgnoreCase;
                     return true;
-                case string s when s.Equals(nameof(global::System.StringComparison.Ordinal), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.StringComparison.Ordinal), options.ComparisonType):
                     value = global::System.StringComparison.Ordinal;
                     return true;
-                case string s when s.Equals(nameof(global::System.StringComparison.OrdinalIgnoreCase), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.StringComparison.OrdinalIgnoreCase), options.ComparisonType):
                     value = global::System.StringComparison.OrdinalIgnoreCase;
                     return true;
-                case string s when int.TryParse(name, out var val):
-                    value = (global::System.StringComparison)val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
-        }
-
-        private static bool TryParseWithCase(
-#if NETCOREAPP3_0_OR_GREATER
-            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name,
-            out global::System.StringComparison value,
-            bool allowMatchingMetadataAttribute)
-        {
-            switch (name)
-            {
-                case nameof(global::System.StringComparison.CurrentCulture):
-                    value = global::System.StringComparison.CurrentCulture;
-                    return true;
-                case nameof(global::System.StringComparison.CurrentCultureIgnoreCase):
-                    value = global::System.StringComparison.CurrentCultureIgnoreCase;
-                    return true;
-                case nameof(global::System.StringComparison.InvariantCulture):
-                    value = global::System.StringComparison.InvariantCulture;
-                    return true;
-                case nameof(global::System.StringComparison.InvariantCultureIgnoreCase):
-                    value = global::System.StringComparison.InvariantCultureIgnoreCase;
-                    return true;
-                case nameof(global::System.StringComparison.Ordinal):
-                    value = global::System.StringComparison.Ordinal;
-                    return true;
-                case nameof(global::System.StringComparison.OrdinalIgnoreCase):
-                    value = global::System.StringComparison.OrdinalIgnoreCase;
-                    return true;
-                case string s when int.TryParse(name, out var val):
+                case string s when options.EnableNumberParsing && int.TryParse(name, out var val):
                     value = (global::System.StringComparison)val;
                     return true;
                 default:
@@ -362,7 +373,11 @@ namespace System
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name)
-                => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions())
+                   ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -378,7 +393,12 @@ namespace System
 #endif
             in global::System.ReadOnlySpan<char> name,
             bool ignoreCase)
-                => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                   ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -397,8 +417,42 @@ namespace System
             in global::System.ReadOnlySpan<char> name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
+                   ? value : ThrowValueNotFound(name.ToString());
 
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.StringComparison" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns>An object of type <see cref="global::System.StringComparison" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::System.StringComparison Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in global::System.ReadOnlySpan<char> name,
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                => TryParse(
+                    name,
+                    out var value,
+                    options) ? value : ThrowValueNotFound(name);
+
+#if NETCOREAPP3_0_OR_GREATER
+        [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
+#endif
+        private static global::System.StringComparison ThrowValueNotFound(in global::System.ReadOnlySpan<char> name)
+#if NET6_0_OR_GREATER
+            => throw new global::System.ArgumentException($"Requested value '{name}' was not found.");
+#else
+            => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
+#endif
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::System.StringComparison" /> to the equivalent instance.
@@ -417,7 +471,10 @@ namespace System
 #endif
             in global::System.ReadOnlySpan<char> name,
             out global::System.StringComparison value)
-            => TryParse(name, out value, false, false);
+            => TryParse(
+                name, 
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
@@ -439,7 +496,11 @@ namespace System
             in global::System.ReadOnlySpan<char> name,
             out global::System.StringComparison value,
             bool ignoreCase)
-            => TryParse(name, out value, ignoreCase, false);
+            => TryParse(
+                name, 
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
@@ -464,76 +525,55 @@ namespace System
             out global::System.StringComparison result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => ignoreCase
-                    ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
-                    : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+                => TryParse(
+                    name, 
+                    out result,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
-        private static bool TryParseIgnoreCase(
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.StringComparison" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="result">When this method returns, contains an object of type
+        /// <see cref="global::System.StringComparison" /> whose
+        /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::System.StringComparison" />. This parameter is passed uninitialized.</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
             out global::System.StringComparison result,
-            bool allowMatchingMetadataAttribute)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.CurrentCulture), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.CurrentCulture), options.ComparisonType):
                     result = global::System.StringComparison.CurrentCulture;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.CurrentCultureIgnoreCase), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.CurrentCultureIgnoreCase), options.ComparisonType):
                     result = global::System.StringComparison.CurrentCultureIgnoreCase;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.InvariantCulture), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.InvariantCulture), options.ComparisonType):
                     result = global::System.StringComparison.InvariantCulture;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.InvariantCultureIgnoreCase), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.InvariantCultureIgnoreCase), options.ComparisonType):
                     result = global::System.StringComparison.InvariantCultureIgnoreCase;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.Ordinal), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.Ordinal), options.ComparisonType):
                     result = global::System.StringComparison.Ordinal;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.OrdinalIgnoreCase), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.OrdinalIgnoreCase), options.ComparisonType):
                     result = global::System.StringComparison.OrdinalIgnoreCase;
                     return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                    result = (global::System.StringComparison)numericResult;
-                    return true;
-                default:
-                    result = default;
-                    return false;
-            }
-        }
-
-        private static bool TryParseWithCase(
-#if NETCOREAPP3_0_OR_GREATER
-            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in global::System.ReadOnlySpan<char> name,
-            out global::System.StringComparison result,
-            bool allowMatchingMetadataAttribute)
-        {
-            switch (name)
-            {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.CurrentCulture), global::System.StringComparison.Ordinal):
-                    result = global::System.StringComparison.CurrentCulture;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.CurrentCultureIgnoreCase), global::System.StringComparison.Ordinal):
-                    result = global::System.StringComparison.CurrentCultureIgnoreCase;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.InvariantCulture), global::System.StringComparison.Ordinal):
-                    result = global::System.StringComparison.InvariantCulture;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.InvariantCultureIgnoreCase), global::System.StringComparison.Ordinal):
-                    result = global::System.StringComparison.InvariantCultureIgnoreCase;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.Ordinal), global::System.StringComparison.Ordinal):
-                    result = global::System.StringComparison.Ordinal;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.OrdinalIgnoreCase), global::System.StringComparison.Ordinal):
-                    result = global::System.StringComparison.OrdinalIgnoreCase;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
                     result = (global::System.StringComparison)numericResult;
                     return true;
                 default:
@@ -758,7 +798,7 @@ namespace System
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name)
-                => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name);
+                => TryParse(name, out var value, new global::NetEscapades.EnumGenerators.EnumParseOptions()) ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -774,7 +814,12 @@ namespace System
 #endif
             string? name,
             bool ignoreCase)
-                => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name);
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -793,7 +838,31 @@ namespace System
             string? name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name);
+                => TryParse(
+                    name,
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
+
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.DateTimeKind" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns>An object of type <see cref="global::System.DateTimeKind" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::System.DateTimeKind Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            string? name,
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                => TryParse(
+                    name,
+                    out var value,
+                    options) ? value : ThrowValueNotFound(name);
 
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
@@ -819,7 +888,7 @@ namespace System
 #endif
             string? name,
             out global::System.DateTimeKind value)
-            => TryParse(name, out value, false, false);
+            => TryParse(name, out value, new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -841,7 +910,10 @@ namespace System
             string? name,
             out global::System.DateTimeKind value,
             bool ignoreCase)
-            => TryParse(name, out value, ignoreCase, false);
+            => TryParse(name,
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -867,58 +939,46 @@ namespace System
             out global::System.DateTimeKind value,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => ignoreCase
-                    ? TryParseIgnoreCase(name, out value, allowMatchingMetadataAttribute)
-                    : TryParseWithCase(name, out value, allowMatchingMetadataAttribute);
+                => TryParse(
+                    name,
+                    out value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
-        private static bool TryParseIgnoreCase(
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.DateTimeKind" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="value">When this method returns, contains an object of type
+        /// <see cref="global::System.DateTimeKind" /> whose
+        /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::System.DateTimeKind" />. This parameter is passed uninitialized.</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
             out global::System.DateTimeKind value,
-            bool allowMatchingMetadataAttribute)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case string s when s.Equals(nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.DateTimeKind.Unspecified), options.ComparisonType):
                     value = global::System.DateTimeKind.Unspecified;
                     return true;
-                case string s when s.Equals(nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.DateTimeKind.Utc), options.ComparisonType):
                     value = global::System.DateTimeKind.Utc;
                     return true;
-                case string s when s.Equals(nameof(global::System.DateTimeKind.Local), global::System.StringComparison.OrdinalIgnoreCase):
+                case string s when s.Equals(nameof(global::System.DateTimeKind.Local), options.ComparisonType):
                     value = global::System.DateTimeKind.Local;
                     return true;
-                case string s when int.TryParse(name, out var val):
-                    value = (global::System.DateTimeKind)val;
-                    return true;
-                default:
-                    value = default;
-                    return false;
-            }
-        }
-
-        private static bool TryParseWithCase(
-#if NETCOREAPP3_0_OR_GREATER
-            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            string? name,
-            out global::System.DateTimeKind value,
-            bool allowMatchingMetadataAttribute)
-        {
-            switch (name)
-            {
-                case nameof(global::System.DateTimeKind.Unspecified):
-                    value = global::System.DateTimeKind.Unspecified;
-                    return true;
-                case nameof(global::System.DateTimeKind.Utc):
-                    value = global::System.DateTimeKind.Utc;
-                    return true;
-                case nameof(global::System.DateTimeKind.Local):
-                    value = global::System.DateTimeKind.Local;
-                    return true;
-                case string s when int.TryParse(name, out var val):
+                case string s when options.EnableNumberParsing && int.TryParse(name, out var val):
                     value = (global::System.DateTimeKind)val;
                     return true;
                 default:
@@ -940,7 +1000,11 @@ namespace System
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name)
-                => TryParse(name, out var value, false, false) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions())
+                   ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -956,7 +1020,12 @@ namespace System
 #endif
             in global::System.ReadOnlySpan<char> name,
             bool ignoreCase)
-                => TryParse(name, out var value, ignoreCase, false) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
+                   ? value : ThrowValueNotFound(name.ToString());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -975,8 +1044,42 @@ namespace System
             in global::System.ReadOnlySpan<char> name,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => TryParse(name, out var value, ignoreCase, allowMatchingMetadataAttribute) ? value : ThrowValueNotFound(name.ToString());
+                => TryParse(
+                    name, 
+                    out var value,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
+                   ? value : ThrowValueNotFound(name.ToString());
 
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.DateTimeKind" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns>An object of type <see cref="global::System.DateTimeKind" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::System.DateTimeKind Parse(
+#if NETCOREAPP3_0_OR_GREATER
+            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+#endif
+            in global::System.ReadOnlySpan<char> name,
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                => TryParse(
+                    name,
+                    out var value,
+                    options) ? value : ThrowValueNotFound(name);
+
+#if NETCOREAPP3_0_OR_GREATER
+        [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
+#endif
+        private static global::System.DateTimeKind ThrowValueNotFound(in global::System.ReadOnlySpan<char> name)
+#if NET6_0_OR_GREATER
+            => throw new global::System.ArgumentException($"Requested value '{name}' was not found.");
+#else
+            => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
+#endif
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::System.DateTimeKind" /> to the equivalent instance.
@@ -995,7 +1098,10 @@ namespace System
 #endif
             in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind value)
-            => TryParse(name, out value, false, false);
+            => TryParse(
+                name, 
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
@@ -1017,7 +1123,11 @@ namespace System
             in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind value,
             bool ignoreCase)
-            => TryParse(name, out value, ignoreCase, false);
+            => TryParse(
+                name, 
+                out value,
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                    ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
         /// <summary>
         /// Converts the span representation of the name or numeric value of
@@ -1042,58 +1152,46 @@ namespace System
             out global::System.DateTimeKind result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
-                => ignoreCase
-                    ? TryParseIgnoreCase(in name, out result, allowMatchingMetadataAttribute)
-                    : TryParseWithCase(in name, out result, allowMatchingMetadataAttribute);
+                => TryParse(
+                    name, 
+                    out result,
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                        ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
+                        allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
-        private static bool TryParseIgnoreCase(
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::System.DateTimeKind" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="result">When this method returns, contains an object of type
+        /// <see cref="global::System.DateTimeKind" /> whose
+        /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::System.DateTimeKind" />. This parameter is passed uninitialized.</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
             out global::System.DateTimeKind result,
-            bool allowMatchingMetadataAttribute)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), options.ComparisonType):
                     result = global::System.DateTimeKind.Unspecified;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), options.ComparisonType):
                     result = global::System.DateTimeKind.Utc;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.OrdinalIgnoreCase):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), options.ComparisonType):
                     result = global::System.DateTimeKind.Local;
                     return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
-                    result = (global::System.DateTimeKind)numericResult;
-                    return true;
-                default:
-                    result = default;
-                    return false;
-            }
-        }
-
-        private static bool TryParseWithCase(
-#if NETCOREAPP3_0_OR_GREATER
-            [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
-#endif
-            in global::System.ReadOnlySpan<char> name,
-            out global::System.DateTimeKind result,
-            bool allowMatchingMetadataAttribute)
-        {
-            switch (name)
-            {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Unspecified), global::System.StringComparison.Ordinal):
-                    result = global::System.DateTimeKind.Unspecified;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Utc), global::System.StringComparison.Ordinal):
-                    result = global::System.DateTimeKind.Utc;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), global::System.StringComparison.Ordinal):
-                    result = global::System.DateTimeKind.Local;
-                    return true;
-                case global::System.ReadOnlySpan<char> current when int.TryParse(name, out var numericResult):
+                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
                     result = (global::System.DateTimeKind)numericResult;
                     return true;
                 default:

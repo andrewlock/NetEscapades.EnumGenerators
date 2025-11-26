@@ -1,4 +1,5 @@
 using System;
+using NetEscapades.EnumGenerators;
 using Xunit;
 
 #if INTEGRATION_TESTS
@@ -54,15 +55,28 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum, long, LongEnumEx
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => LongEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #endif
     protected override bool TryParse(string name, out LongEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
+        => LongEnumExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out LongEnum parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => LongEnumExtensions.TryParse(name, out parsed, ignoreCase);
+        => LongEnumExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override bool TryParse(string name, out LongEnum parsed, EnumParseOptions parseOptions)
+        => LongEnumExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out LongEnum parsed, EnumParseOptions parseOptions)
+        => LongEnumExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override LongEnum Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => LongEnumExtensions.Parse(name, ignoreCase);
+        => LongEnumExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override LongEnum Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => LongEnumExtensions.Parse(name, ignoreCase);
+        => LongEnumExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override LongEnum Parse(string name, EnumParseOptions parseOptions)
+        => LongEnumExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override LongEnum Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => LongEnumExtensions.Parse(name, parseOptions);
 #endif
 }

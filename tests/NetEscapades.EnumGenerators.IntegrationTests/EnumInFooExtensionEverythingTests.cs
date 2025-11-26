@@ -31,16 +31,28 @@ public class EnumInFooExtensionEverythingTests : EnumInFooExtensionsTests
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => EnumInFoo.IsDefined(name, allowMatchingMetadataAttribute);
 #endif
     protected override bool TryParse(string name, out EnumInFoo parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFoo.TryParse(name, out parsed, ignoreCase);
+        => EnumInFoo.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumInFoo parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFoo.TryParse(name, out parsed, ignoreCase);
+        => EnumInFoo.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override bool TryParse(string name, out EnumInFoo parsed, EnumParseOptions parseOptions)
+        => EnumInFoo.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out EnumInFoo parsed, EnumParseOptions parseOptions)
+        => EnumInFoo.TryParse(name, out parsed, parseOptions);
 #endif
 
     protected override EnumInFoo Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFoo.Parse(name, ignoreCase);
+        => EnumInFoo.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override EnumInFoo Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumInFoo.Parse(name, ignoreCase);
+        => EnumInFoo.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override EnumInFoo Parse(string name, EnumParseOptions parseOptions)
+        => EnumInFoo.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override EnumInFoo Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => EnumInFoo.Parse(name, parseOptions);
 #endif
 }

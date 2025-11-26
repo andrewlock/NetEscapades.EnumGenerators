@@ -59,17 +59,31 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare, int, E
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => FileShareExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #endif
     protected override bool TryParse(string name, out FileShare parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FileShareExtensions.TryParse(name, out parsed, ignoreCase);
+        => FileShareExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out FileShare parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FileShareExtensions.TryParse(name, out parsed, ignoreCase);
+        => FileShareExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override bool TryParse(string name, out FileShare parsed, EnumParseOptions parseOptions)
+        => FileShareExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out FileShare parsed, EnumParseOptions parseOptions)
+        => FileShareExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override FileShare Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FileShareExtensions.Parse(name, ignoreCase);
+        => FileShareExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override FileShare Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => FileShareExtensions.Parse(name, ignoreCase);
+        => FileShareExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override FileShare Parse(string name, EnumParseOptions parseOptions)
+        => FileShareExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override FileShare Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => FileShareExtensions.Parse(name, parseOptions);
+#endif
+
 
     public static IEnumerable<object[]> AllFlags()
     {

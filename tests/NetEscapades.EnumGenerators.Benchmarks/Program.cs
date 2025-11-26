@@ -260,6 +260,15 @@ public class TryParseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseOptions()
+    {
+        return TestEnumExtensions.TryParse("Second", out TestEnum result, new EnumParseOptions())
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum EnumTryParseDisplayNameWithReflection()
     {
         return EnumHelper<TestEnum>.TryParseByDisplayName("2nd", ignoreCase: false, out TestEnum result) ? result : default;
@@ -270,6 +279,14 @@ public class TryParseBenchmark
     public TestEnum ExtensionsTryParseDisplayName()
     {
         return TestEnumExtensions.TryParse("2nd", out TestEnum result, ignoreCase: false, allowMatchingMetadataAttribute: true)
+            ? result
+            : default;
+    }
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseDisplayNameOptions()
+    {
+        return TestEnumExtensions.TryParse("2nd", out TestEnum result, new EnumParseOptions(allowMatchingMetadataAttribute: true))
             ? result
             : default;
     }
@@ -363,6 +380,15 @@ public class TryParseIgnoreCaseBenchmark
 
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCaseOptions()
+    {
+        return TestEnumExtensions.TryParse("second", out TestEnum result, new EnumParseOptions(comparisonType: StringComparison.OrdinalIgnoreCase))
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum EnumTryParseIgnoreCaseDisplayNameWithReflection()
     {
         return EnumHelper<TestEnum>.TryParseByDisplayName("2ND", ignoreCase: true, out TestEnum result) ? result : default;
@@ -373,6 +399,15 @@ public class TryParseIgnoreCaseBenchmark
     public TestEnum ExtensionsTryParseIgnoreCaseDisplayName()
     {
         return TestEnumExtensions.TryParse("2ND", out TestEnum result, ignoreCase: true, allowMatchingMetadataAttribute: true)
+            ? result
+            : default;
+    }
+
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public TestEnum ExtensionsTryParseIgnoreCaseDisplayNameOptions()
+    {
+        return TestEnumExtensions.TryParse("2ND", out TestEnum result,  new EnumParseOptions(comparisonType: StringComparison.OrdinalIgnoreCase, allowMatchingMetadataAttribute: true))
             ? result
             : default;
     }

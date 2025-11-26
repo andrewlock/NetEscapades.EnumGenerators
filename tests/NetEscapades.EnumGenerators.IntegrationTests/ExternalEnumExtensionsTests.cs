@@ -57,15 +57,28 @@ public class ExternalEnumExtensionsTests : ExtensionTests<DateTimeKind, int, Ext
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => DateTimeKindExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #endif
     protected override bool TryParse(string name, out DateTimeKind parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => DateTimeKindExtensions.TryParse(name, out parsed, ignoreCase);
+        => DateTimeKindExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out DateTimeKind parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => DateTimeKindExtensions.TryParse(name, out parsed, ignoreCase);
+        => DateTimeKindExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override bool TryParse(string name, out DateTimeKind parsed, EnumParseOptions parseOptions)
+        => DateTimeKindExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out DateTimeKind parsed, EnumParseOptions parseOptions)
+        => DateTimeKindExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override DateTimeKind Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => DateTimeKindExtensions.Parse(name, ignoreCase);
+        => DateTimeKindExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override DateTimeKind Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => DateTimeKindExtensions.Parse(name, ignoreCase);
+        => DateTimeKindExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override DateTimeKind Parse(string name, EnumParseOptions parseOptions)
+        => DateTimeKindExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override DateTimeKind Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => DateTimeKindExtensions.Parse(name, parseOptions);
 #endif
 }

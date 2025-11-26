@@ -56,10 +56,23 @@ public class EnumWithReservedKeywordsExtensionsTests : ExtensionTests<EnumWithRe
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithReservedKeywords parsed, bool ignoreCase, bool allowMatchingMetadataAttribute)
         => EnumWithReservedKeywordsExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
+    protected override bool TryParse(string name, out EnumWithReservedKeywords parsed, EnumParseOptions parseOptions)
+        => EnumWithReservedKeywordsExtensions.TryParse(name, out parsed, parseOptions);
+#if READONLYSPAN
+    protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithReservedKeywords parsed, EnumParseOptions parseOptions)
+        => EnumWithReservedKeywordsExtensions.TryParse(name, out parsed, parseOptions);
+#endif
+
     protected override EnumWithReservedKeywords Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumWithReservedKeywordsExtensions.Parse(name, ignoreCase);
+        => EnumWithReservedKeywordsExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override EnumWithReservedKeywords Parse(in ReadOnlySpan<char> name, bool ignoreCase, bool allowMatchingMetadataAttribute)
-        => EnumWithReservedKeywordsExtensions.Parse(name, ignoreCase);
+        => EnumWithReservedKeywordsExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
+#endif
+    protected override EnumWithReservedKeywords Parse(string name, EnumParseOptions parseOptions)
+        => EnumWithReservedKeywordsExtensions.Parse(name, parseOptions);
+#if READONLYSPAN
+    protected override EnumWithReservedKeywords Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
+        => EnumWithReservedKeywordsExtensions.Parse(name, parseOptions);
 #endif
 }
