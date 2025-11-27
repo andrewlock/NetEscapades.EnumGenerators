@@ -167,17 +167,21 @@ public static class SourceGenerationHelper
                 """).Append(fullyQualifiedName).Append(
                 """
                  value, bool useMetadataAttributes)
-                            => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
-
-                        private static string ToStringFastWithMetadata(this 
-                """).Append(fullyQualifiedName).Append(
-                """
-                 value)
-                            => 
                 """);
+
             if (hasMetadataNames)
             {
                 sb.Append(
+                    """
+
+                                => useMetadataAttributes ? value.ToStringFastWithMetadata() : value.ToStringFast();
+
+                            private static string ToStringFastWithMetadata(this 
+                    """).Append(fullyQualifiedName).Append(
+                    """
+                     value)
+                                => 
+                    """).Append(
                     """
                     value switch
                                 {
@@ -228,7 +232,11 @@ public static class SourceGenerationHelper
             }
             else
             {
-                sb.Append("value.ToStringFast();");
+                sb.Append(
+                    """
+
+                                => value.ToStringFast();
+                    """);
             }
         }
 
