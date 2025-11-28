@@ -50,6 +50,7 @@ public class EnumWithNoMetadataSourcesInNamespaceExtensionsTests : ExtensionTest
     // Can't call the "withMetadata" versions of all these
     protected override string ToStringFast(EnumWithNoMetadataSources value) => value.ToStringFast();
     protected override string ToStringFast(EnumWithNoMetadataSources value, bool withMetadata) => value.ToStringFast();
+    protected override string ToStringFast(EnumWithNoMetadataSources value, SerializationOptions options) => value.ToStringFast(options);
     protected override bool IsDefined(EnumWithNoMetadataSources value) => EnumWithNoMetadataSourcesExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithNoMetadataSourcesExtensions.IsDefined(name);
 #if READONLYSPAN

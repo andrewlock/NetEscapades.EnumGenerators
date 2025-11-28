@@ -36,6 +36,7 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     protected abstract TUnderlying[] GetValuesAsUnderlyingType();
     protected abstract string ToStringFast(T value);
     protected abstract string ToStringFast(T value, bool withMetadata);
+    protected abstract string ToStringFast(T value, SerializationOptions options);
     protected abstract TUnderlying AsUnderlyingValue(T value);
     protected abstract bool IsDefined(T value);
     protected abstract bool IsDefined(string name, bool allowMatchingMetadataAttribute = false);
@@ -63,11 +64,27 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     
     [Theory]
     [MemberData(nameof(GetValidEnumValues))]
-    public void GeneratesToStringFast(T value) => GeneratesToStringFastTest(value);
+    public void GeneratesToStringFast(T value) => GeneratesToStringFastTest(value, SerializationTransform.None);
 
     [Theory]
     [MemberData(nameof(GetValidEnumValues))]
-    public void GeneratesToStringFastWithMetadata(T value) => GeneratesToStringFastWithMetadataTest(value);
+    public void GeneratesToStringFastLowerInvariant(T value) => GeneratesToStringFastTest(value, SerializationTransform.LowerInvariant);
+
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesToStringFastUpperInvariant(T value) => GeneratesToStringFastTest(value, SerializationTransform.UpperInvariant);
+
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesToStringFastWithMetadata(T value) => GeneratesToStringFastWithMetadataTest(value, SerializationTransform.None);
+
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesToStringFastWithMetadataLowerInvariant(T value) => GeneratesToStringFastWithMetadataTest(value, SerializationTransform.LowerInvariant);
+
+    [Theory]
+    [MemberData(nameof(GetValidEnumValues))]
+    public void GeneratesToStringFastWithMetadataUpperInvariant(T value) => GeneratesToStringFastWithMetadataTest(value, SerializationTransform.UpperInvariant);
 
     [Theory]
     [MemberData(nameof(GetValidEnumValues))]
@@ -214,26 +231,54 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
         => GeneratesParseTest(name.AsSpan(), new EnumParseOptions(StringComparison.OrdinalIgnoreCase, allowMatchingMetadataAttribute: true));
 #endif
 
-    private void GeneratesToStringFastTest(T value)
+    private void GeneratesToStringFastTest(T value, SerializationTransform transform)
     {
-        var serialized = ToStringFast(value);
-        var expectedValue = value.ToString();
+        var serialized = ToStringFast(value, new SerializationOptions(transform: transform));
+
+        var rawValue = value.ToString();
+        var expectedValue = transform switch
+        {
+            SerializationTransform.LowerInvariant => rawValue?.ToLowerInvariant(),
+            SerializationTransform.UpperInvariant => rawValue?.ToUpperInvariant(),
+            _ => rawValue,
+        };
 
         serialized.Should().Be(expectedValue);
 
-        var serializedAltPath = ToStringFast(value, withMetadata: false);
-        serializedAltPath.Should().Be(expectedValue);
+        if (transform == SerializationTransform.None)
+        {
+            {
+                var serializedAltPath = ToStringFast(value, withMetadata: false);
+                serializedAltPath.Should().Be(expectedValue);
+            }
+            {
+                var serializedAltPath = ToStringFast(value);
+                serializedAltPath.Should().Be(expectedValue);
+            }
+        }
     }
 
-    private void GeneratesToStringFastWithMetadataTest(T value)
+    private void GeneratesToStringFastWithMetadataTest(T value, SerializationTransform transform)
     {
-        var serialized = ToStringFast(value, withMetadata: true);
+        var serialized = ToStringFast(value, new SerializationOptions(true, transform));
         var valueAsString = value.ToString();
 
         TryGetDisplayNameOrDescription(valueAsString, out var displayName);
-        var expectedValue = displayName is null ? valueAsString : displayName;
-        
+        var rawValue = displayName ?? valueAsString;
+        var expectedValue = transform switch
+        {
+            SerializationTransform.LowerInvariant => rawValue?.ToLowerInvariant(),
+            SerializationTransform.UpperInvariant => rawValue?.ToUpperInvariant(),
+            _ => rawValue,
+        };
+
         serialized.Should().Be(expectedValue);
+
+        if (transform == SerializationTransform.None)
+        {
+            var serializedAltPath = ToStringFast(value, withMetadata: true);
+            serializedAltPath.Should().Be(expectedValue);
+        }
     }
 
     private void GeneratesIsDefinedTest(T value)

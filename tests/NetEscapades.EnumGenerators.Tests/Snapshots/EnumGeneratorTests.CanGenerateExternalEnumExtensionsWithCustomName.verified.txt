@@ -42,6 +42,39 @@ namespace System
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::System.DateTimeKind"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="options">The options to use when serializing the enum</param>
+        /// <returns>The string representation of the value, using the provided options.</returns>
+        public static string ToStringFast(this global::System.DateTimeKind value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+            => options.Transform switch
+               {
+                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                   _ => value.ToStringFast(),
+               };
+
+        private static string ToStringFastLowerInvariant(this global::System.DateTimeKind value)
+            => value switch
+            {
+                global::System.DateTimeKind.Unspecified => "unspecified",
+                global::System.DateTimeKind.Utc => "utc",
+                global::System.DateTimeKind.Local => "local",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        private static string ToStringFastUpperInvariant(this global::System.DateTimeKind value)
+            => value switch
+            {
+                global::System.DateTimeKind.Unspecified => "UNSPECIFIED",
+                global::System.DateTimeKind.Utc => "UTC",
+                global::System.DateTimeKind.Local => "LOCAL",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::System.DateTimeKind"/> value.
         /// If the member is decorated with the <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute
         /// then that value is returned. Otherwise returns uses the name of the member,
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.

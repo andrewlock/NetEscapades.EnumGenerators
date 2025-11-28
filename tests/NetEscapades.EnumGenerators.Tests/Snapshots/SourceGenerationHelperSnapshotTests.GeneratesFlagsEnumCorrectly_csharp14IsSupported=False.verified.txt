@@ -41,6 +41,37 @@ namespace Something.Blah
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="options">The options to use when serializing the enum</param>
+        /// <returns>The string representation of the value, using the provided options.</returns>
+        public static string ToStringFast(this global::Something.Blah.ShortName value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+            => options.Transform switch
+               {
+                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                   _ => value.ToStringFast(),
+               };
+
+        private static string ToStringFastLowerInvariant(this global::Something.Blah.ShortName value)
+            => value switch
+            {
+                global::Something.Blah.ShortName.First => "first",
+                global::Something.Blah.ShortName.Second => "second",
+                _ => value.ToString().ToLowerInvariant(),
+            };
+
+        private static string ToStringFastUpperInvariant(this global::Something.Blah.ShortName value)
+            => value switch
+            {
+                global::Something.Blah.ShortName.First => "FIRST",
+                global::Something.Blah.ShortName.Second => "SECOND",
+                _ => value.ToString().ToUpperInvariant(),
+            };
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
         /// If the member is decorated with the <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute
         /// then that value is returned. Otherwise returns uses the name of the member,
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
