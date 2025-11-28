@@ -6,7 +6,7 @@ namespace NetEscapades.EnumGenerators;
 public enum SerializationTransform
 {
     /// <summary>
-    /// Don't apply a transform to the ToStringFast() result.
+    /// Don't apply a transform to the <c>ToStringFast()</c> result.
     /// </summary>
     None,
 
