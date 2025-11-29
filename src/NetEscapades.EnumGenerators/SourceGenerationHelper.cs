@@ -1214,7 +1214,7 @@ public static class SourceGenerationHelper
                                 name, 
                                 out var value,
                                 new global::NetEscapades.EnumGenerators.EnumParseOptions())
-                               ? value : ThrowValueNotFound(name.ToString());
+                               ? value : ThrowValueNotFound(name);
 
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
@@ -1244,7 +1244,7 @@ public static class SourceGenerationHelper
                                 out var value,
                                 new global::NetEscapades.EnumGenerators.EnumParseOptions(
                                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
-                               ? value : ThrowValueNotFound(name.ToString());
+                               ? value : ThrowValueNotFound(name);
             """);
 
         if (isMetadataSourcesEnabled)
@@ -1288,7 +1288,7 @@ public static class SourceGenerationHelper
                                 new global::NetEscapades.EnumGenerators.EnumParseOptions(
                                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                                     allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
-                               ? value : ThrowValueNotFound(name.ToString());
+                               ? value : ThrowValueNotFound(name);
             """);
         }
 
