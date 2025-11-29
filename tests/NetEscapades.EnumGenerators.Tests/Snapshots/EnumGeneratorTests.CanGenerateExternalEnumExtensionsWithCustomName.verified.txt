@@ -139,7 +139,7 @@ namespace System
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -368,7 +368,7 @@ namespace System
             }
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::System.DateTimeKind" /> to the equivalent instance.
