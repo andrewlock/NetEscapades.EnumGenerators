@@ -698,15 +698,13 @@
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::EnumWithReservedKeywords" /></returns>
         public static global::EnumWithReservedKeywords[] GetValues()
-        {
-            return new[]
+            => new[]
             {
                 global::EnumWithReservedKeywords.number,
                 global::EnumWithReservedKeywords.@string,
                 global::EnumWithReservedKeywords.date,
                 global::EnumWithReservedKeywords.@class,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -716,15 +714,13 @@
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::EnumWithReservedKeywords" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
+            => new[]
             {
                 (int) global::EnumWithReservedKeywords.number,
                 (int) global::EnumWithReservedKeywords.@string,
                 (int) global::EnumWithReservedKeywords.date,
                 (int) global::EnumWithReservedKeywords.@class,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -734,15 +730,13 @@
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::EnumWithReservedKeywords" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
+            => new[]
             {
                 nameof(global::EnumWithReservedKeywords.number),
                 nameof(global::EnumWithReservedKeywords.@string),
                 nameof(global::EnumWithReservedKeywords.date),
                 nameof(global::EnumWithReservedKeywords.@class),
             };
-        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

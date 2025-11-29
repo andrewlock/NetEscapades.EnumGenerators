@@ -590,14 +590,12 @@ namespace A.B
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::System.DateTimeKind" /></returns>
         public static global::System.DateTimeKind[] GetValues()
-        {
-            return new[]
+            => new[]
             {
                 global::System.DateTimeKind.Unspecified,
                 global::System.DateTimeKind.Utc,
                 global::System.DateTimeKind.Local,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -607,14 +605,12 @@ namespace A.B
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::System.DateTimeKind" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
+            => new[]
             {
                 (int) global::System.DateTimeKind.Unspecified,
                 (int) global::System.DateTimeKind.Utc,
                 (int) global::System.DateTimeKind.Local,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -624,14 +620,12 @@ namespace A.B
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::System.DateTimeKind" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
+            => new[]
             {
                 nameof(global::System.DateTimeKind.Unspecified),
                 nameof(global::System.DateTimeKind.Utc),
                 nameof(global::System.DateTimeKind.Local),
             };
-        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

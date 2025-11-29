@@ -638,8 +638,7 @@ namespace System.IO
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::System.IO.FileShare" /></returns>
         public static global::System.IO.FileShare[] GetValues()
-        {
-            return new[]
+            => new[]
             {
                 global::System.IO.FileShare.None,
                 global::System.IO.FileShare.Read,
@@ -648,7 +647,6 @@ namespace System.IO
                 global::System.IO.FileShare.Delete,
                 global::System.IO.FileShare.Inheritable,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -658,8 +656,7 @@ namespace System.IO
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::System.IO.FileShare" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
+            => new[]
             {
                 (int) global::System.IO.FileShare.None,
                 (int) global::System.IO.FileShare.Read,
@@ -668,7 +665,6 @@ namespace System.IO
                 (int) global::System.IO.FileShare.Delete,
                 (int) global::System.IO.FileShare.Inheritable,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -678,8 +674,7 @@ namespace System.IO
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::System.IO.FileShare" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
+            => new[]
             {
                 nameof(global::System.IO.FileShare.None),
                 nameof(global::System.IO.FileShare.Read),
@@ -688,7 +683,6 @@ namespace System.IO
                 nameof(global::System.IO.FileShare.Delete),
                 nameof(global::System.IO.FileShare.Inheritable),
             };
-        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

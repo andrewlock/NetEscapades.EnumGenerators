@@ -676,15 +676,13 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
         public static global::MyTestNameSpace.MyEnum[] GetValues()
-        {
-            return new[]
+            => new[]
             {
                 global::MyTestNameSpace.MyEnum.First,
                 global::MyTestNameSpace.MyEnum.Second,
                 global::MyTestNameSpace.MyEnum.Third,
                 global::MyTestNameSpace.MyEnum.Fourth,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -694,15 +692,13 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
+            => new[]
             {
                 (int) global::MyTestNameSpace.MyEnum.First,
                 (int) global::MyTestNameSpace.MyEnum.Second,
                 (int) global::MyTestNameSpace.MyEnum.Third,
                 (int) global::MyTestNameSpace.MyEnum.Fourth,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -712,15 +708,13 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
+            => new[]
             {
                 nameof(global::MyTestNameSpace.MyEnum.First),
                 nameof(global::MyTestNameSpace.MyEnum.Second),
                 nameof(global::MyTestNameSpace.MyEnum.Third),
                 nameof(global::MyTestNameSpace.MyEnum.Fourth),
             };
-        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

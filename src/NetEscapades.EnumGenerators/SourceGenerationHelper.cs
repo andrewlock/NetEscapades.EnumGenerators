@@ -20,7 +20,10 @@ public static class SourceGenerationHelper
 
         """;
 
-    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate, bool useExtensionMembers, MetadataSource defaultMetadataSource)
+    public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate,
+        bool useExtensionMembers,
+        bool useCollectionExpressions,
+        MetadataSource defaultMetadataSource)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
@@ -1617,10 +1620,11 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
             [] GetValues()
-                    {
-                        return new[]
-                        {
+                        =>
             """);
+
+        AddArrayOpener(sb, useCollectionExpressions);
+
         foreach (var member in orderedNames)
         {
             sb.Append(
@@ -1630,12 +1634,7 @@ public static class SourceGenerationHelper
                 """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
         }
 
-        sb.Append(
-            """
-
-                        };
-                    }
-            """);
+        AddArrayCloser(sb, useCollectionExpressions);
 
         sb.Append(
             """
@@ -1658,10 +1657,11 @@ public static class SourceGenerationHelper
             """).Append(enumToGenerate.UnderlyingType).Append(
             """
             [] GetValuesAsUnderlyingType()
-                    {
-                        return new[]
-                        {
+                        =>
             """);
+
+        AddArrayOpener(sb, useCollectionExpressions);
+
         foreach (var member in orderedNames)
         {
             sb.Append(
@@ -1671,12 +1671,7 @@ public static class SourceGenerationHelper
                 """).Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
         }
 
-        sb.Append(
-            """
-
-                        };
-                    }
-            """);
+        AddArrayCloser(sb, useCollectionExpressions);
 
         sb.Append(
             """
@@ -1696,10 +1691,10 @@ public static class SourceGenerationHelper
             """
             " /></returns>
                     public static string[] GetNames()
-                    {
-                        return new[]
-                        {
+                        =>
             """);
+
+        AddArrayOpener(sb, useCollectionExpressions);
 
         foreach (var member in orderedNames)
         {
@@ -1710,12 +1705,7 @@ public static class SourceGenerationHelper
                 """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append("),");
         }
 
-        sb.Append(
-            """
-
-                        };
-                    }
-            """);
+        AddArrayCloser(sb, useCollectionExpressions);
 
         // Close the extension everything block
         if (useExtensionMembers)
@@ -1754,6 +1744,48 @@ public static class SourceGenerationHelper
             .Replace(' ', '_')
             .ToString();
         return (content, filename);
+
+        static void AddArrayOpener(StringBuilder sb, bool useCollectionExpressions)
+        {
+            if (useCollectionExpressions)
+            {
+
+                sb.Append(
+                    """
+
+                                [
+                    """);
+            }
+            else
+            {
+                sb.Append(
+                    """
+                     new[]
+                                {
+                    """);
+            }
+        }
+
+        static void AddArrayCloser(StringBuilder sb, bool useCollectionExpressions)
+        {
+            if (useCollectionExpressions)
+            {
+
+                sb.Append(
+                    """
+
+                                ];
+                    """);
+            }
+            else
+            {
+                sb.Append(
+                    """
+
+                                };
+                    """);
+            }
+        }
     }
 
     private static List<(string Key, EnumValueOption Value)> GetNamesOrderedByValue(EnumToGenerate enumToGenerate)
