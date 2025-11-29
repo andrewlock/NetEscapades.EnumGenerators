@@ -37,7 +37,7 @@ namespace A.B
                 global::System.DateTimeKind.Unspecified => nameof(global::System.DateTimeKind.Unspecified),
                 global::System.DateTimeKind.Utc => nameof(global::System.DateTimeKind.Utc),
                 global::System.DateTimeKind.Local => nameof(global::System.DateTimeKind.Local),
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace A.B
                 global::System.DateTimeKind.Unspecified => "unspecified",
                 global::System.DateTimeKind.Utc => "utc",
                 global::System.DateTimeKind.Local => "local",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastUpperInvariant(this global::System.DateTimeKind value)
@@ -70,7 +70,7 @@ namespace A.B
                 global::System.DateTimeKind.Unspecified => "UNSPECIFIED",
                 global::System.DateTimeKind.Utc => "UTC",
                 global::System.DateTimeKind.Local => "LOCAL",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -385,7 +385,7 @@ namespace A.B
                     name, 
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions())
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -406,7 +406,7 @@ namespace A.B
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -431,7 +431,7 @@ namespace A.B
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of

@@ -38,7 +38,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.First => nameof(global::MyTestNameSpace.MyEnum.First),
                 global::MyTestNameSpace.MyEnum.Second => nameof(global::MyTestNameSpace.MyEnum.Second),
                 global::MyTestNameSpace.MyEnum.Third => nameof(global::MyTestNameSpace.MyEnum.Third),
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.First => "first",
                 global::MyTestNameSpace.MyEnum.Second => "second",
                 global::MyTestNameSpace.MyEnum.Third => "third",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastUpperInvariant(this global::MyTestNameSpace.MyEnum value)
@@ -71,7 +71,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.First => "FIRST",
                 global::MyTestNameSpace.MyEnum.Second => "SECOND",
                 global::MyTestNameSpace.MyEnum.Third => "THIRD",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace MyTestNameSpace
                     name, 
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions())
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -407,7 +407,7 @@ namespace MyTestNameSpace
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -432,7 +432,7 @@ namespace MyTestNameSpace
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -1037,7 +1037,7 @@ namespace MyTestNameSpace
                     name, 
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions())
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -1058,7 +1058,7 @@ namespace MyTestNameSpace
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -1083,7 +1083,7 @@ namespace MyTestNameSpace
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of

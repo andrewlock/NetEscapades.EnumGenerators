@@ -36,7 +36,7 @@ namespace Something.Blah
             {
                 global::Something.Blah.ShortName.First => nameof(global::Something.Blah.ShortName.First),
                 global::Something.Blah.ShortName.Second => nameof(global::Something.Blah.ShortName.Second),
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Something.Blah
             {
                 global::Something.Blah.ShortName.First => "first",
                 global::Something.Blah.ShortName.Second => "second",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastUpperInvariant(this global::Something.Blah.ShortName value)
@@ -67,7 +67,7 @@ namespace Something.Blah
             {
                 global::Something.Blah.ShortName.First => "FIRST",
                 global::Something.Blah.ShortName.Second => "SECOND",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace Something.Blah
                     name, 
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions())
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -397,7 +397,7 @@ namespace Something.Blah
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -422,7 +422,7 @@ namespace Something.Blah
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of

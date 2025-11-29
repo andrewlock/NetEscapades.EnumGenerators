@@ -396,7 +396,7 @@
                     name, 
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions())
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -417,7 +417,7 @@
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -442,7 +442,7 @@
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of

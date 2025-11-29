@@ -39,7 +39,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => nameof(global::Test.StringTesting.Backslash),
                 global::Test.StringTesting.BackslashLiteral => nameof(global::Test.StringTesting.BackslashLiteral),
                 global::Test.StringTesting.NewLine => nameof(global::Test.StringTesting.NewLine),
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => "backslash",
                 global::Test.StringTesting.BackslashLiteral => "backslashliteral",
                 global::Test.StringTesting.NewLine => "newline",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastUpperInvariant(this global::Test.StringTesting value)
@@ -83,7 +83,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => "BACKSLASH",
                 global::Test.StringTesting.BackslashLiteral => "BACKSLASHLITERAL",
                 global::Test.StringTesting.NewLine => "NEWLINE",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => "Backslash \\",
                 global::Test.StringTesting.BackslashLiteral => "LiteralBackslash \\",
                 global::Test.StringTesting.NewLine => "New\nLine",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastWithMetadataLowerInvariant(this global::Test.StringTesting value)
@@ -119,7 +119,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => "backslash \\",
                 global::Test.StringTesting.BackslashLiteral => "literalbackslash \\",
                 global::Test.StringTesting.NewLine => "new\nline",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastWithMetadataUpperInvariant(this global::Test.StringTesting value)
@@ -130,7 +130,7 @@ namespace Test
                 global::Test.StringTesting.Backslash => "BACKSLASH \\",
                 global::Test.StringTesting.BackslashLiteral => "LITERALBACKSLASH \\",
                 global::Test.StringTesting.NewLine => "NEW\nLINE",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -488,7 +488,7 @@ namespace Test
                     name, 
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions())
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -509,7 +509,7 @@ namespace Test
                     out var value,
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -534,7 +534,7 @@ namespace Test
                     new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
-                   ? value : ThrowValueNotFound(name.ToString());
+                   ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
