@@ -38,7 +38,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.Second => nameof(global::MyTestNameSpace.MyEnum.Second),
                 global::MyTestNameSpace.MyEnum.Third => nameof(global::MyTestNameSpace.MyEnum.Third),
                 global::MyTestNameSpace.MyEnum.Fourth => nameof(global::MyTestNameSpace.MyEnum.Fourth),
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.Second => "second",
                 global::MyTestNameSpace.MyEnum.Third => "third",
                 global::MyTestNameSpace.MyEnum.Fourth => "fourth",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastUpperInvariant(this global::MyTestNameSpace.MyEnum value)
@@ -80,7 +80,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.Second => "SECOND",
                 global::MyTestNameSpace.MyEnum.Third => "THIRD",
                 global::MyTestNameSpace.MyEnum.Fourth => "FOURTH",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.Second => "2nd",
                 global::MyTestNameSpace.MyEnum.Third => nameof(global::MyTestNameSpace.MyEnum.Third),
                 global::MyTestNameSpace.MyEnum.Fourth => "4th",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastWithMetadataLowerInvariant(this global::MyTestNameSpace.MyEnum value)
@@ -114,7 +114,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.Second => "2nd",
                 global::MyTestNameSpace.MyEnum.Third => "third",
                 global::MyTestNameSpace.MyEnum.Fourth => "4th",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastWithMetadataUpperInvariant(this global::MyTestNameSpace.MyEnum value)
@@ -124,7 +124,7 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.MyEnum.Second => "2ND",
                 global::MyTestNameSpace.MyEnum.Third => "THIRD",
                 global::MyTestNameSpace.MyEnum.Fourth => "4TH",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>

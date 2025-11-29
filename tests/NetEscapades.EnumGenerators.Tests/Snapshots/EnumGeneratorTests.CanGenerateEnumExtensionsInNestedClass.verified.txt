@@ -36,7 +36,7 @@ namespace MyTestNameSpace
             {
                 global::MyTestNameSpace.InnerClass.MyEnum.First => nameof(global::MyTestNameSpace.InnerClass.MyEnum.First),
                 global::MyTestNameSpace.InnerClass.MyEnum.Second => nameof(global::MyTestNameSpace.InnerClass.MyEnum.Second),
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace MyTestNameSpace
             {
                 global::MyTestNameSpace.InnerClass.MyEnum.First => "first",
                 global::MyTestNameSpace.InnerClass.MyEnum.Second => "second",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         private static string ToStringFastUpperInvariant(this global::MyTestNameSpace.InnerClass.MyEnum value)
@@ -67,7 +67,7 @@ namespace MyTestNameSpace
             {
                 global::MyTestNameSpace.InnerClass.MyEnum.First => "FIRST",
                 global::MyTestNameSpace.InnerClass.MyEnum.Second => "SECOND",
-                _ => value.AsUnderlyingType().ToString(),
+                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>

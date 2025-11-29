@@ -132,7 +132,7 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                                _ => value.AsUnderlyingType().ToString(),
+                                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
                             };
                 """);
         }
@@ -234,7 +234,7 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                                _ => value.AsUnderlyingType().ToString(),
+                                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
                             };
                 """);
         }
@@ -283,7 +283,7 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                                _ => value.AsUnderlyingType().ToString(),
+                                _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
                             };
                 """);
         }
@@ -373,7 +373,7 @@ public static class SourceGenerationHelper
                     sb.Append(
                         """
 
-                                        _ => value.AsUnderlyingType().ToString(),
+                                        _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
                                     };
                         """);
                 }
@@ -422,7 +422,7 @@ public static class SourceGenerationHelper
                     sb.Append(
                         """
 
-                                        _ => value.AsUnderlyingType().ToString(),
+                                        _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
                                     };
                         """);
                 }
@@ -471,7 +471,7 @@ public static class SourceGenerationHelper
                     sb.Append(
                         """
 
-                                        _ => value.AsUnderlyingType().ToString(),
+                                        _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
                                     };
                         """);
                 }
