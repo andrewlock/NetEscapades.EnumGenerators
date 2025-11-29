@@ -45,7 +45,7 @@ public class SourceGenerationHelperSnapshotTests
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
             .UseDirectory("Snapshots")
-            .UseParameters(csharp14IsSupported, defaultSource, useCollectionExpressions);
+            .UseTextForParameters($"{csharp14IsSupported}_{defaultSource}_{useCollectionExpressions}");
     }
 
     [Theory]
