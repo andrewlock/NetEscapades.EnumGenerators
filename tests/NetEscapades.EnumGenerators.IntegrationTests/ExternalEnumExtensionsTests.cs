@@ -51,6 +51,7 @@ public class ExternalEnumExtensionsTests : ExtensionTests<DateTimeKind, int, Ext
 
     protected override string ToStringFast(DateTimeKind value) => value.ToStringFast();
     protected override string ToStringFast(DateTimeKind value, bool withMetadata) => value.ToStringFast(withMetadata);
+    protected override string ToStringFast(DateTimeKind value, SerializationOptions options) => value.ToStringFast(options);
     protected override bool IsDefined(DateTimeKind value) => DateTimeKindExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => DateTimeKindExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN

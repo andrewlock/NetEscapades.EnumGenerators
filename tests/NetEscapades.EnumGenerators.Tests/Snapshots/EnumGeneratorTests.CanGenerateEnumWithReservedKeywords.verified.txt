@@ -41,6 +41,48 @@
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::EnumWithReservedKeywords"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="options">The options to use when serializing the enum</param>
+        /// <returns>The string representation of the value, using the provided options.</returns>
+        public static string ToStringFast(this global::EnumWithReservedKeywords value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+            => options.UseMetadataAttributes
+                ? options.Transform switch
+                {
+                    global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastWithMetadataLowerInvariant(),
+                    global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastWithMetadataUpperInvariant(),
+                    _ => value.ToStringFastWithMetadata(),
+                }
+                : options.Transform switch
+                {
+                    global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                    global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                    _ => value.ToStringFast(),
+                };
+
+        private static string ToStringFastLowerInvariant(this global::EnumWithReservedKeywords value)
+            => value switch
+            {
+                global::EnumWithReservedKeywords.number => "number",
+                global::EnumWithReservedKeywords.@string => "string",
+                global::EnumWithReservedKeywords.date => "date",
+                global::EnumWithReservedKeywords.@class => "class",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        private static string ToStringFastUpperInvariant(this global::EnumWithReservedKeywords value)
+            => value switch
+            {
+                global::EnumWithReservedKeywords.number => "NUMBER",
+                global::EnumWithReservedKeywords.@string => "STRING",
+                global::EnumWithReservedKeywords.date => "DATE",
+                global::EnumWithReservedKeywords.@class => "CLASS",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::EnumWithReservedKeywords"/> value.
         /// If the member is decorated with the <see cref="global::System.ComponentModel.DescriptionAttribute"/> attribute
         /// then that value is returned. Otherwise returns uses the name of the member,
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
@@ -60,6 +102,26 @@
                 global::EnumWithReservedKeywords.@string => "string",
                 global::EnumWithReservedKeywords.date => "date",
                 global::EnumWithReservedKeywords.@class => "class",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        private static string ToStringFastWithMetadataLowerInvariant(this global::EnumWithReservedKeywords value)
+            => value switch
+            {
+                global::EnumWithReservedKeywords.number => "number",
+                global::EnumWithReservedKeywords.@string => "string",
+                global::EnumWithReservedKeywords.date => "date",
+                global::EnumWithReservedKeywords.@class => "class",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        private static string ToStringFastWithMetadataUpperInvariant(this global::EnumWithReservedKeywords value)
+            => value switch
+            {
+                global::EnumWithReservedKeywords.number => "NUMBER",
+                global::EnumWithReservedKeywords.@string => "STRING",
+                global::EnumWithReservedKeywords.date => "DATE",
+                global::EnumWithReservedKeywords.@class => "CLASS",
                 _ => value.AsUnderlyingType().ToString(),
             };
 

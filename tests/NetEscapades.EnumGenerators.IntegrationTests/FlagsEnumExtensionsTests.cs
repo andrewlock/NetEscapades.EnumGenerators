@@ -52,6 +52,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override string ToStringFast(FlagsEnum value, bool withMetadata) => value.ToStringFast(withMetadata);
+    protected override string ToStringFast(FlagsEnum value, SerializationOptions options) => value.ToStringFast(options);
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN

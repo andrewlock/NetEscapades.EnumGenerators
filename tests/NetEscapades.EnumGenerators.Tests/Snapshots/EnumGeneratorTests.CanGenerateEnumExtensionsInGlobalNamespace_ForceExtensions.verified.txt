@@ -39,6 +39,37 @@
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::MyEnum"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="options">The options to use when serializing the enum</param>
+        /// <returns>The string representation of the value, using the provided options.</returns>
+        public static string ToStringFast(this global::MyEnum value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+            => options.Transform switch
+               {
+                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                   _ => value.ToStringFast(),
+               };
+
+        private static string ToStringFastLowerInvariant(this global::MyEnum value)
+            => value switch
+            {
+                global::MyEnum.First => "first",
+                global::MyEnum.Second => "second",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        private static string ToStringFastUpperInvariant(this global::MyEnum value)
+            => value switch
+            {
+                global::MyEnum.First => "FIRST",
+                global::MyEnum.Second => "SECOND",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::MyEnum"/> value.
         /// If the member is decorated with the <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute
         /// then that value is returned. Otherwise returns uses the name of the member,
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.

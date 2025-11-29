@@ -45,6 +45,7 @@ public class EnumWithReservedKeywordsExtensionsTests : ExtensionTests<EnumWithRe
 
     protected override string ToStringFast(EnumWithReservedKeywords value) => value.ToStringFast();
     protected override string ToStringFast(EnumWithReservedKeywords value, bool withMetadata) => value.ToStringFast(withMetadata);
+    protected override string ToStringFast(EnumWithReservedKeywords value, SerializationOptions options) => value.ToStringFast(options);
     protected override bool IsDefined(EnumWithReservedKeywords value) => EnumWithReservedKeywordsExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithReservedKeywordsExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #if READONLYSPAN

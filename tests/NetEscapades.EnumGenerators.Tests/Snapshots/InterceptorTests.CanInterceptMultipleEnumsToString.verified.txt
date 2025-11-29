@@ -43,6 +43,39 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="options">The options to use when serializing the enum</param>
+        /// <returns>The string representation of the value, using the provided options.</returns>
+        public static string ToStringFast(this global::MyTestNameSpace.MyEnum value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+            => options.Transform switch
+               {
+                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                   _ => value.ToStringFast(),
+               };
+
+        private static string ToStringFastLowerInvariant(this global::MyTestNameSpace.MyEnum value)
+            => value switch
+            {
+                global::MyTestNameSpace.MyEnum.First => "first",
+                global::MyTestNameSpace.MyEnum.Second => "second",
+                global::MyTestNameSpace.MyEnum.Third => "third",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        private static string ToStringFastUpperInvariant(this global::MyTestNameSpace.MyEnum value)
+            => value switch
+            {
+                global::MyTestNameSpace.MyEnum.First => "FIRST",
+                global::MyTestNameSpace.MyEnum.Second => "SECOND",
+                global::MyTestNameSpace.MyEnum.Third => "THIRD",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
         /// If the member is decorated with the <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute
         /// then that value is returned. Otherwise returns uses the name of the member,
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
@@ -644,6 +677,39 @@ namespace MyTestNameSpace
                 global::MyTestNameSpace.AnotherEnum.First => nameof(global::MyTestNameSpace.AnotherEnum.First),
                 global::MyTestNameSpace.AnotherEnum.Second => nameof(global::MyTestNameSpace.AnotherEnum.Second),
                 global::MyTestNameSpace.AnotherEnum.Third => nameof(global::MyTestNameSpace.AnotherEnum.Third),
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        /// <summary>
+        /// Returns the string representation of the <see cref="global::MyTestNameSpace.AnotherEnum"/> value.
+        /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The value to retrieve the string value for</param>
+        /// <param name="options">The options to use when serializing the enum</param>
+        /// <returns>The string representation of the value, using the provided options.</returns>
+        public static string ToStringFast(this global::MyTestNameSpace.AnotherEnum value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+            => options.Transform switch
+               {
+                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                   _ => value.ToStringFast(),
+               };
+
+        private static string ToStringFastLowerInvariant(this global::MyTestNameSpace.AnotherEnum value)
+            => value switch
+            {
+                global::MyTestNameSpace.AnotherEnum.First => "first",
+                global::MyTestNameSpace.AnotherEnum.Second => "second",
+                global::MyTestNameSpace.AnotherEnum.Third => "third",
+                _ => value.AsUnderlyingType().ToString(),
+            };
+
+        private static string ToStringFastUpperInvariant(this global::MyTestNameSpace.AnotherEnum value)
+            => value switch
+            {
+                global::MyTestNameSpace.AnotherEnum.First => "FIRST",
+                global::MyTestNameSpace.AnotherEnum.Second => "SECOND",
+                global::MyTestNameSpace.AnotherEnum.Third => "THIRD",
                 _ => value.AsUnderlyingType().ToString(),
             };
 

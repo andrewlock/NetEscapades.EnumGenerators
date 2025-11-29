@@ -48,6 +48,7 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     protected override string ToStringFast(EnumWithSameDisplayName value) => value.ToStringFast();
     protected override string ToStringFast(EnumWithSameDisplayName value, bool withMetadata) => value.ToStringFast(withMetadata);
+    protected override string ToStringFast(EnumWithSameDisplayName value, SerializationOptions options) => value.ToStringFast(options);
     protected override bool IsDefined(EnumWithSameDisplayName value) => EnumWithSameDisplayNameExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithSameDisplayNameExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #if READONLYSPAN

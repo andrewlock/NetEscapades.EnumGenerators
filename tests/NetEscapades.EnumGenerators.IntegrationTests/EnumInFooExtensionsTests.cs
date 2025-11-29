@@ -49,6 +49,7 @@ public class EnumInFooExtensionsTests : ExtensionTests<EnumInFoo, int, EnumInFoo
 
     protected override string ToStringFast(EnumInFoo value) => value.ToStringFast();
     protected override string ToStringFast(EnumInFoo value, bool withMetadata) => value.ToStringFast(withMetadata);
+    protected override string ToStringFast(EnumInFoo value, SerializationOptions options) => value.ToStringFast(options);
     protected override bool IsDefined(EnumInFoo value) => EnumInFooExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInFooExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #if READONLYSPAN

@@ -53,6 +53,7 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare, int, E
 
     protected override string ToStringFast(FileShare value) => value.ToStringFast();
     protected override string ToStringFast(FileShare value, bool withMetadata) => value.ToStringFast(withMetadata);
+    protected override string ToStringFast(FileShare value, SerializationOptions options) => value.ToStringFast(options);
     protected override bool IsDefined(FileShare value) => FileShareExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FileShareExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN

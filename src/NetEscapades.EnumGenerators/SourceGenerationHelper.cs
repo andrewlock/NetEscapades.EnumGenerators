@@ -137,6 +137,157 @@ public static class SourceGenerationHelper
                 """);
         }
 
+        sb.Append(
+            """
+
+
+                    /// <summary>
+                    /// Returns the string representation of the <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            "/> value.
+                    /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
+                    /// </summary>
+                    /// <param name="value">The value to retrieve the string value for</param>
+                    /// <param name="options">The options to use when serializing the enum</param>
+                    /// <returns>The string representation of the value, using the provided options.</returns>
+                    public static string ToStringFast(this 
+            """).Append(fullyQualifiedName).Append(
+            """
+             value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+            """);
+
+        if (isMetadataSourcesEnabled && hasMetadataNames)
+        {
+            sb.Append(
+                """
+
+                            => options.UseMetadataAttributes
+                                ? options.Transform switch
+                                {
+                                    global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastWithMetadataLowerInvariant(),
+                                    global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastWithMetadataUpperInvariant(),
+                                    _ => value.ToStringFastWithMetadata(),
+                                }
+                                : options.Transform switch
+                                {
+                                    global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                                    global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                                    _ => value.ToStringFast(),
+                                };
+                """);
+        }
+        else
+        {
+            sb.Append(
+                """
+
+                            => options.Transform switch
+                               {
+                                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                                   _ => value.ToStringFast(),
+                               };
+                """);
+        }
+        sb.Append(
+            """
+
+
+                    private static string ToStringFastLowerInvariant(this 
+            """).Append(fullyQualifiedName).Append(
+            """
+             value)
+                        => value switch
+                        {
+            """);
+
+        constantValues.Clear();
+        foreach (var member in enumToGenerate.Names)
+        {
+            if (constantValues.Add(member.Value.ConstantValue))
+            {
+                sb.Append(
+                        """
+
+                                        
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
+                    .Append(" => ")
+                    .Append(SymbolDisplay.FormatLiteral(member.Key.ToLowerInvariant(), quote: true))
+                    .Append(',');
+            }
+        }
+
+        if (enumToGenerate.HasFlags)
+        {
+            // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+            sb.Append(
+                """
+
+                                _ => value.ToString().ToLowerInvariant(),
+                            };
+                """);
+        }
+        else
+        {
+            // This should mean, that the value is not named -> generate a numeric string
+            sb.Append(
+                """
+
+                                _ => value.AsUnderlyingType().ToString(),
+                            };
+                """);
+        }
+
+        sb.Append(
+            """
+
+
+                    private static string ToStringFastUpperInvariant(this 
+            """).Append(fullyQualifiedName).Append(
+            """
+             value)
+                        => value switch
+                        {
+            """);
+
+        constantValues.Clear();
+        foreach (var member in enumToGenerate.Names)
+        {
+            if (constantValues.Add(member.Value.ConstantValue))
+            {
+                sb.Append(
+                        """
+
+                                        
+                        """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
+                    .Append(" => ")
+                    .Append(SymbolDisplay.FormatLiteral(member.Key.ToUpperInvariant(), quote: true))
+                    .Append(',');
+            }
+        }
+
+        if (enumToGenerate.HasFlags)
+        {
+            // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+            sb.Append(
+                """
+
+                                _ => value.ToString().ToUpperInvariant(),
+                            };
+                """);
+        }
+        else
+        {
+            // This should mean, that the value is not named -> generate a numeric string
+            sb.Append(
+                """
+
+                                _ => value.AsUnderlyingType().ToString(),
+                            };
+                """);
+        }
+
         if (isMetadataSourcesEnabled)
         {
             sb.Append(
@@ -180,10 +331,7 @@ public static class SourceGenerationHelper
                     """).Append(fullyQualifiedName).Append(
                     """
                      value)
-                                => 
-                    """).Append(
-                    """
-                    value switch
+                                => value switch
                                 {
                     """);
                 constantValues.Clear();
@@ -216,6 +364,104 @@ public static class SourceGenerationHelper
                         """
 
                                         _ => value.ToString(),
+                                    };
+                        """);
+                }
+                else
+                {
+                    // This should mean, that the value is not named -> generate a numeric string
+                    sb.Append(
+                        """
+
+                                        _ => value.AsUnderlyingType().ToString(),
+                                    };
+                        """);
+                }
+
+                sb.Append(
+                    """
+
+
+                            private static string ToStringFastWithMetadataLowerInvariant(this 
+                    """).Append(fullyQualifiedName).Append(
+                    """
+                     value)
+                                => value switch
+                                {
+                    """);
+                constantValues.Clear();
+                foreach (var member in enumToGenerate.Names)
+                {
+                    if (constantValues.Add(member.Value.ConstantValue))
+                    {
+                        var nameToUse = member.Value.GetMetadataName(metadataSource) ?? member.Key; 
+                        sb.Append(
+                                """
+
+                                                
+                                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
+                            .Append(" => ")
+                            .Append(SymbolDisplay.FormatLiteral(nameToUse.ToLowerInvariant(), quote: true))
+                            .Append(',');
+                    }
+                }
+
+                if (enumToGenerate.HasFlags)
+                {
+                    // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+                    sb.Append(
+                        """
+
+                                        _ => value.ToString().ToLowerInvariant(),
+                                    };
+                        """);
+                }
+                else
+                {
+                    // This should mean that the value is not named -> generate a numeric string
+                    sb.Append(
+                        """
+
+                                        _ => value.AsUnderlyingType().ToString(),
+                                    };
+                        """);
+                }
+
+                sb.Append(
+                    """
+
+
+                            private static string ToStringFastWithMetadataUpperInvariant(this 
+                    """).Append(fullyQualifiedName).Append(
+                    """
+                     value)
+                                => value switch
+                                {
+                    """);
+                constantValues.Clear();
+                foreach (var member in enumToGenerate.Names)
+                {
+                    if (constantValues.Add(member.Value.ConstantValue))
+                    {
+                        var nameToUse = member.Value.GetMetadataName(metadataSource) ?? member.Key; 
+                        sb.Append(
+                                """
+
+                                                
+                                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key)
+                            .Append(" => ")
+                            .Append(SymbolDisplay.FormatLiteral(nameToUse.ToUpperInvariant(), quote: true))
+                            .Append(',');
+                    }
+                }
+
+                if (enumToGenerate.HasFlags)
+                {
+                    // We currently don't handle ToString of custom flag-combinations, so lets fall back to the default
+                    sb.Append(
+                        """
+
+                                        _ => value.ToString().ToUpperInvariant(),
                                     };
                         """);
                 }
