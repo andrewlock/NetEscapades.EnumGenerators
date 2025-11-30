@@ -15,15 +15,12 @@ public class EnumGenerator : IIncrementalGenerator
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var defaultMetadataSource = context.AnalyzerConfigOptionsProvider
-            .Select(GetDefaultMetadataSource);
+            .Select(GetDefaultConfigurations);
 
-        var csharp14IsSupported = context.CompilationProvider
-            .Select((x,_) => x is CSharpCompilation
-            {
-                LanguageVersion: not LanguageVersion.Preview and >= (LanguageVersion)1400 // C#14
-            });
+        var csharpVersion = context.CompilationProvider
+            .Select((x, _) => (x as CSharpCompilation)?.LanguageVersion);
 
-        var defaults = csharp14IsSupported.Combine(defaultMetadataSource);
+        var defaults = csharpVersion.Combine(defaultMetadataSource);
         
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
@@ -45,14 +42,14 @@ public class EnumGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(enumsToGenerate.Combine(defaults),
             static (spc, enumToGenerate) => Execute(in enumToGenerate.Left,
-                enumToGenerate.Right.Left || enumToGenerate.Right.Right.Item2, enumToGenerate.Right.Right.Item1, spc));
+                enumToGenerate.Right.Left, enumToGenerate.Right.Right, spc));
 
         context.RegisterSourceOutput(externalEnums.Combine(defaults),
             static (spc, enumToGenerate) => Execute(in enumToGenerate.Left,
-                enumToGenerate.Right.Left || enumToGenerate.Right.Right.Item2, enumToGenerate.Right.Right.Item1, spc));
+                enumToGenerate.Right.Left, enumToGenerate.Right.Right, spc));
     }
 
-    private static Tuple<MetadataSource, bool> GetDefaultMetadataSource(AnalyzerConfigOptionsProvider configOptions, CancellationToken ct)
+    private static Tuple<MetadataSource, bool> GetDefaultConfigurations(AnalyzerConfigOptionsProvider configOptions, CancellationToken ct)
     {
         const MetadataSource defaultValue = MetadataSource.EnumMemberAttribute;
         MetadataSource selectedSource;
@@ -80,9 +77,19 @@ public class EnumGenerator : IIncrementalGenerator
         return new(selectedSource, forceExtensionMembers);
     }
 
-    static void Execute(in EnumToGenerate enumToGenerate, bool useExtensionMembers, MetadataSource source, SourceProductionContext context)
+    static void Execute(
+        in EnumToGenerate enumToGenerate,
+        LanguageVersion? langVersion,
+        Tuple<MetadataSource, bool> defaultValues,
+        SourceProductionContext context)
     {
-        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(in enumToGenerate, useExtensionMembers, source);
+        var useExtensionMembers = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1400; // C#14
+        var useCollectionExpressions = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1200; // C#12
+        var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(
+            enumToGenerate: in enumToGenerate,
+            useExtensionMembers: useExtensionMembers || defaultValues.Item2, //ForceExtensionMembers
+            useCollectionExpressions: useCollectionExpressions,
+            defaultMetadataSource: defaultValues.Item1);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 

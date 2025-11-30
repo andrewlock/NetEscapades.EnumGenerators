@@ -136,7 +136,7 @@
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -361,7 +361,7 @@
             }
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::MyEnum" /> to the equivalent instance.
@@ -580,13 +580,11 @@
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::MyEnum" /></returns>
         public static global::MyEnum[] GetValues()
-        {
-            return new[]
+            => new[]
             {
                 global::MyEnum.First,
                 global::MyEnum.Second,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -596,13 +594,11 @@
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::MyEnum" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
+            => new[]
             {
                 (int) global::MyEnum.First,
                 (int) global::MyEnum.Second,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -612,13 +608,11 @@
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::MyEnum" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
+            => new[]
             {
                 nameof(global::MyEnum.First),
                 nameof(global::MyEnum.Second),
             };
-        }
         }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums

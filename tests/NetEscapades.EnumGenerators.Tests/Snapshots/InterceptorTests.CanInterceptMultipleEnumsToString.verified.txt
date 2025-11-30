@@ -140,7 +140,7 @@ namespace MyTestNameSpace
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -369,7 +369,7 @@ namespace MyTestNameSpace
             }
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
@@ -591,14 +591,12 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
         public static global::MyTestNameSpace.MyEnum[] GetValues()
-        {
-            return new[]
-            {
+            =>
+            [
                 global::MyTestNameSpace.MyEnum.First,
                 global::MyTestNameSpace.MyEnum.Second,
                 global::MyTestNameSpace.MyEnum.Third,
-            };
-        }
+            ];
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -608,14 +606,12 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
-            {
+            =>
+            [
                 (int) global::MyTestNameSpace.MyEnum.First,
                 (int) global::MyTestNameSpace.MyEnum.Second,
                 (int) global::MyTestNameSpace.MyEnum.Third,
-            };
-        }
+            ];
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -625,14 +621,12 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
-            {
+            =>
+            [
                 nameof(global::MyTestNameSpace.MyEnum.First),
                 nameof(global::MyTestNameSpace.MyEnum.Second),
                 nameof(global::MyTestNameSpace.MyEnum.Third),
-            };
-        }
+            ];
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
@@ -779,7 +773,7 @@ namespace MyTestNameSpace
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -1008,7 +1002,7 @@ namespace MyTestNameSpace
             }
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::MyTestNameSpace.AnotherEnum" /> to the equivalent instance.
@@ -1230,14 +1224,12 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::MyTestNameSpace.AnotherEnum" /></returns>
         public static global::MyTestNameSpace.AnotherEnum[] GetValues()
-        {
-            return new[]
-            {
+            =>
+            [
                 global::MyTestNameSpace.AnotherEnum.First,
                 global::MyTestNameSpace.AnotherEnum.Second,
                 global::MyTestNameSpace.AnotherEnum.Third,
-            };
-        }
+            ];
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -1247,14 +1239,12 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::MyTestNameSpace.AnotherEnum" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
-            {
+            =>
+            [
                 (int) global::MyTestNameSpace.AnotherEnum.First,
                 (int) global::MyTestNameSpace.AnotherEnum.Second,
                 (int) global::MyTestNameSpace.AnotherEnum.Third,
-            };
-        }
+            ];
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -1264,14 +1254,12 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::MyTestNameSpace.AnotherEnum" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
-            {
+            =>
+            [
                 nameof(global::MyTestNameSpace.AnotherEnum.First),
                 nameof(global::MyTestNameSpace.AnotherEnum.Second),
                 nameof(global::MyTestNameSpace.AnotherEnum.Third),
-            };
-        }
+            ];
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

@@ -80,6 +80,10 @@ namespace Something.Blah
             return (int) value;
         }
 
+        // C#14 Extension member syntax
+        extension(global::Something.Blah.ShortName)
+        {
+
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
@@ -106,7 +110,7 @@ namespace Something.Blah
             _ => false,
         };
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -264,7 +268,7 @@ namespace Something.Blah
             }
         }
 
-#if NETCOREAPP && !NETCOREAPP2_0 && !NETCOREAPP1_1 && !NETCOREAPP1_0
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
@@ -428,13 +432,11 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static global::Something.Blah.ShortName[] GetValues()
-        {
-            return new[]
+            => new[]
             {
                 global::Something.Blah.ShortName.First,
                 global::Something.Blah.ShortName.Second,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -444,13 +446,11 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-        {
-            return new[]
+            => new[]
             {
                 (int) global::Something.Blah.ShortName.First,
                 (int) global::Something.Blah.ShortName.Second,
             };
-        }
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -460,8 +460,7 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static string[] GetNames()
-        {
-            return new[]
+            => new[]
             {
                 nameof(global::Something.Blah.ShortName.First),
                 nameof(global::Something.Blah.ShortName.Second),
