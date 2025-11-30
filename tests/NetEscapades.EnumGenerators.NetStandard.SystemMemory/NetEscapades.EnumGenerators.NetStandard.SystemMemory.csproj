@@ -22,4 +22,6 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
   </ItemGroup>
+
+  <Import Project="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.targets" />
 </Project>
