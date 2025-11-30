@@ -601,12 +601,12 @@
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::MyEnum" /></returns>
         public static global::MyEnum[] GetValues()
-            => new[]
-            {
+            =>
+            [
                 global::MyEnum.First,
                 global::MyEnum.Second,
                 global::MyEnum.Third,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -616,12 +616,12 @@
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::MyEnum" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-            => new[]
-            {
+            =>
+            [
                 (int) global::MyEnum.First,
                 (int) global::MyEnum.Second,
                 (int) global::MyEnum.Third,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -631,12 +631,12 @@
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::MyEnum" /></returns>
         public static string[] GetNames()
-            => new[]
-            {
+            =>
+            [
                 nameof(global::MyEnum.First),
                 nameof(global::MyEnum.Second),
                 nameof(global::MyEnum.Third),
-            };
+            ];
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

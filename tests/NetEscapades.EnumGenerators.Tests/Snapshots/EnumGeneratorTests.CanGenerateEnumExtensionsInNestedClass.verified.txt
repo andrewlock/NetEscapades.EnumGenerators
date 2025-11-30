@@ -578,11 +578,11 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::MyTestNameSpace.InnerClass.MyEnum" /></returns>
         public static global::MyTestNameSpace.InnerClass.MyEnum[] GetValues()
-            => new[]
-            {
+            =>
+            [
                 global::MyTestNameSpace.InnerClass.MyEnum.First,
                 global::MyTestNameSpace.InnerClass.MyEnum.Second,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -592,11 +592,11 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::MyTestNameSpace.InnerClass.MyEnum" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-            => new[]
-            {
+            =>
+            [
                 (int) global::MyTestNameSpace.InnerClass.MyEnum.First,
                 (int) global::MyTestNameSpace.InnerClass.MyEnum.Second,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -606,11 +606,11 @@ namespace MyTestNameSpace
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::MyTestNameSpace.InnerClass.MyEnum" /></returns>
         public static string[] GetNames()
-            => new[]
-            {
+            =>
+            [
                 nameof(global::MyTestNameSpace.InnerClass.MyEnum.First),
                 nameof(global::MyTestNameSpace.InnerClass.MyEnum.Second),
-            };
+            ];
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

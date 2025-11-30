@@ -627,15 +627,15 @@ namespace System
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::System.StringComparison" /></returns>
         public static global::System.StringComparison[] GetValues()
-            => new[]
-            {
+            =>
+            [
                 global::System.StringComparison.CurrentCulture,
                 global::System.StringComparison.CurrentCultureIgnoreCase,
                 global::System.StringComparison.InvariantCulture,
                 global::System.StringComparison.InvariantCultureIgnoreCase,
                 global::System.StringComparison.Ordinal,
                 global::System.StringComparison.OrdinalIgnoreCase,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -645,15 +645,15 @@ namespace System
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::System.StringComparison" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-            => new[]
-            {
+            =>
+            [
                 (int) global::System.StringComparison.CurrentCulture,
                 (int) global::System.StringComparison.CurrentCultureIgnoreCase,
                 (int) global::System.StringComparison.InvariantCulture,
                 (int) global::System.StringComparison.InvariantCultureIgnoreCase,
                 (int) global::System.StringComparison.Ordinal,
                 (int) global::System.StringComparison.OrdinalIgnoreCase,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -663,15 +663,15 @@ namespace System
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::System.StringComparison" /></returns>
         public static string[] GetNames()
-            => new[]
-            {
+            =>
+            [
                 nameof(global::System.StringComparison.CurrentCulture),
                 nameof(global::System.StringComparison.CurrentCultureIgnoreCase),
                 nameof(global::System.StringComparison.InvariantCulture),
                 nameof(global::System.StringComparison.InvariantCultureIgnoreCase),
                 nameof(global::System.StringComparison.Ordinal),
                 nameof(global::System.StringComparison.OrdinalIgnoreCase),
-            };
+            ];
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

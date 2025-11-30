@@ -566,10 +566,10 @@ namespace Foo
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::Foo.TestEnum" /></returns>
         public static global::Foo.TestEnum[] GetValues()
-            => new[]
-            {
+            =>
+            [
                 global::Foo.TestEnum.Value1,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -579,10 +579,10 @@ namespace Foo
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::Foo.TestEnum" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-            => new[]
-            {
+            =>
+            [
                 (int) global::Foo.TestEnum.Value1,
-            };
+            ];
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -592,10 +592,10 @@ namespace Foo
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::Foo.TestEnum" /></returns>
         public static string[] GetNames()
-            => new[]
-            {
+            =>
+            [
                 nameof(global::Foo.TestEnum.Value1),
-            };
+            ];
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
