@@ -53,6 +53,8 @@ namespace Foo
 namespace NetEscapades.EnumGenerators.IntegrationTests
 #elif NETSTANDARD_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.NetStandard.IntegrationTests
+#elif NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.NetStandard.SystemMemory.IntegrationTests
 #elif INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests
 #elif NUGET_INTEGRATION_TESTS

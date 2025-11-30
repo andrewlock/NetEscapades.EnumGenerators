@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.props" />
+  
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\Enums.cs" Link="%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Memory" Version="4.6.3" />
+  </ItemGroup>
+</Project>
