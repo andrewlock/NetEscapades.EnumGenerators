@@ -58,7 +58,7 @@ public abstract class EnumGeneratorTestsBase
         return Verifier.Verify(output, Settings());
     }
 
-    [Fact(Skip = "CSharp14 is not available as an enum yet and throws at runtime if you cast to it")]
+    [Fact]
     public Task CanGenerateEnumExtensionsInGlobalNamespace_CSharp14()
     {
         const string input =
@@ -72,7 +72,7 @@ public abstract class EnumGeneratorTestsBase
                 Second,
             }
             """;
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, options: null!, input));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp14, options: null!, input));
 
         Assert.Empty(diagnostics);
         return Verifier.Verify(output, Settings());
