@@ -589,7 +589,9 @@ namespace Foo
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Foo.MyEnum.Third), options.ComparisonType):
                     result = global::Foo.MyEnum.Third;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::Foo.MyEnum)numericResult;
                     return true;
                 default:
@@ -1239,7 +1241,9 @@ namespace Bar
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Bar.MyEnum.Third), options.ComparisonType):
                     result = global::Bar.MyEnum.Third;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::Bar.MyEnum)numericResult;
                     return true;
                 default:

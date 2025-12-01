@@ -564,7 +564,9 @@ namespace MyTestNameSpace
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), options.ComparisonType):
                     result = global::MyTestNameSpace.MyEnum.Second;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::MyTestNameSpace.MyEnum)numericResult;
                     return true;
                 default:

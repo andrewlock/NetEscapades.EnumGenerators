@@ -80,10 +80,6 @@ namespace Something.Blah
             return (int) value;
         }
 
-        // C#14 Extension member syntax
-        extension(global::Something.Blah.ShortName)
-        {
-
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
@@ -414,7 +410,9 @@ namespace Something.Blah
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), options.ComparisonType):
                     result = global::Something.Blah.ShortName.Second;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::Something.Blah.ShortName)numericResult;
                     return true;
                 default:
@@ -465,7 +463,6 @@ namespace Something.Blah
                 nameof(global::Something.Blah.ShortName.First),
                 nameof(global::Something.Blah.ShortName.Second),
             ];
-        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

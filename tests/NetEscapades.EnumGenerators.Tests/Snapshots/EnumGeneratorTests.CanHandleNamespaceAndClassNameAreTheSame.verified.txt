@@ -552,7 +552,9 @@ namespace Foo
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Foo.TestEnum.Value1), options.ComparisonType):
                     result = global::Foo.TestEnum.Value1;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::Foo.TestEnum)numericResult;
                     return true;
                 default:

@@ -17,7 +17,8 @@ public class SourceGenerationHelperSnapshotTests
         bool csharp14IsSupported,
         [CombinatorialValues(MetadataSource.None, MetadataSource.EnumMemberAttribute)]
         MetadataSource defaultSource,
-        bool useCollectionExpressions)
+        bool useCollectionExpressions,
+        bool useSystemMemory)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -37,17 +38,17 @@ public class SourceGenerationHelperSnapshotTests
             value, 
             csharp14IsSupported,
             useCollectionExpressions: useCollectionExpressions,
-            defaultSource).Content;
+            defaultSource,
+            useSystemMemory: useSystemMemory).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
             .UseDirectory("Snapshots")
-            .UseTextForParameters($"{csharp14IsSupported}_{defaultSource}_{useCollectionExpressions}");
+            .UseTextForParameters($"{csharp14IsSupported}_{defaultSource}_{useCollectionExpressions}_{useSystemMemory}");
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [CombinatorialData]
     public Task GeneratesEnumWithRepeatedValuesCorrectly(bool csharp14IsSupported)
     {
         var value = new EnumToGenerate(
@@ -66,7 +67,7 @@ public class SourceGenerationHelperSnapshotTests
             null);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported,
-            useCollectionExpressions: false, DefaultMetadataSource).Content;
+            useCollectionExpressions: false, DefaultMetadataSource, useSystemMemory: false).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -75,8 +76,7 @@ public class SourceGenerationHelperSnapshotTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [CombinatorialData]
     public Task GeneratesFlagsEnumCorrectly(bool csharp14IsSupported)
     {
         var value = new EnumToGenerate(
@@ -94,7 +94,7 @@ public class SourceGenerationHelperSnapshotTests
             metadataSource: null);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported,
-            useCollectionExpressions: false, DefaultMetadataSource).Content;
+            useCollectionExpressions: false, DefaultMetadataSource, useSystemMemory: false).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()

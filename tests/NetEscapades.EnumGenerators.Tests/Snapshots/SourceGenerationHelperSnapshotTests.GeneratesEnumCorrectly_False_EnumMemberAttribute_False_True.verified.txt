@@ -134,7 +134,6 @@ namespace Something.Blah
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -159,7 +158,6 @@ namespace Something.Blah
         /// with a <c>[Display]</c> attribute with the name, <see langword="false"/> otherwise</returns>
         public static bool IsDefined(in global::System.ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
-#endif
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -359,7 +357,6 @@ namespace Something.Blah
             }
         }
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
@@ -560,7 +557,12 @@ namespace Something.Blah
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), options.ComparisonType):
                     result = global::Something.Blah.ShortName.Second;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#else
+                // TryParse with ReadOnlySpan<char> is not available ,so we have to call ToString()
+                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name.ToString(), out var numericResult):
+#endif
                     result = (global::Something.Blah.ShortName)numericResult;
                     return true;
                 default:
@@ -568,7 +570,6 @@ namespace Something.Blah
                     return false;
             }
         }
-#endif
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
@@ -578,11 +579,11 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static global::Something.Blah.ShortName[] GetValues()
-            =>
-            [
+            => new[]
+            {
                 global::Something.Blah.ShortName.First,
                 global::Something.Blah.ShortName.Second,
-            ];
+            };
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -592,11 +593,11 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-            =>
-            [
+            => new[]
+            {
                 (int) global::Something.Blah.ShortName.First,
                 (int) global::Something.Blah.ShortName.Second,
-            ];
+            };
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -606,11 +607,11 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static string[] GetNames()
-            =>
-            [
+            => new[]
+            {
                 nameof(global::Something.Blah.ShortName.First),
                 nameof(global::Something.Blah.ShortName.Second),
-            ];
+            };
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

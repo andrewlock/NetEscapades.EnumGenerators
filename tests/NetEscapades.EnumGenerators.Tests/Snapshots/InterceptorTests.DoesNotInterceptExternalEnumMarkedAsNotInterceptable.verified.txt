@@ -613,7 +613,9 @@ namespace System
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.StringComparison.OrdinalIgnoreCase), options.ComparisonType):
                     result = global::System.StringComparison.OrdinalIgnoreCase;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::System.StringComparison)numericResult;
                     return true;
                 default:
@@ -1260,7 +1262,9 @@ namespace System
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::System.DateTimeKind.Local), options.ComparisonType):
                     result = global::System.DateTimeKind.Local;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::System.DateTimeKind)numericResult;
                     return true;
                 default:

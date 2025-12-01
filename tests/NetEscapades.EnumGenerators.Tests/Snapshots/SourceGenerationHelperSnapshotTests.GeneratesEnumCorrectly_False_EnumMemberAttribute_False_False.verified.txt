@@ -23,7 +23,7 @@ namespace Something.Blah
         /// The number of members in the enum.
         /// This is a non-distinct count of defined names.
         /// </summary>
-        public const int Length = 3;
+        public const int Length = 2;
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
@@ -117,7 +117,6 @@ namespace Something.Blah
             {
                 nameof(global::Something.Blah.ShortName.First) => true,
                 nameof(global::Something.Blah.ShortName.Second) => true,
-                nameof(global::Something.Blah.ShortName.Third) => true,
             _ => false,
         };
 
@@ -146,7 +145,6 @@ namespace Something.Blah
             {
                 global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.Ordinal) => true,
                 global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Third), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 
@@ -351,9 +349,6 @@ namespace Something.Blah
                     return true;
                 case string s when s.Equals(nameof(global::Something.Blah.ShortName.Second), options.ComparisonType):
                     value = global::Something.Blah.ShortName.Second;
-                    return true;
-                case string s when s.Equals(nameof(global::Something.Blah.ShortName.Third), options.ComparisonType):
-                    value = global::Something.Blah.ShortName.Third;
                     return true;
                 case string s when options.EnableNumberParsing && int.TryParse(name, out var val):
                     value = (global::Something.Blah.ShortName)val;
@@ -565,9 +560,6 @@ namespace Something.Blah
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), options.ComparisonType):
                     result = global::Something.Blah.ShortName.Second;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Third), options.ComparisonType):
-                    result = global::Something.Blah.ShortName.Third;
-                    return true;
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
 #endif
@@ -591,7 +583,6 @@ namespace Something.Blah
             => new[]
             {
                 global::Something.Blah.ShortName.First,
-                global::Something.Blah.ShortName.Third,
                 global::Something.Blah.ShortName.Second,
             };
 
@@ -606,7 +597,6 @@ namespace Something.Blah
             => new[]
             {
                 (int) global::Something.Blah.ShortName.First,
-                (int) global::Something.Blah.ShortName.Third,
                 (int) global::Something.Blah.ShortName.Second,
             };
 
@@ -621,7 +611,6 @@ namespace Something.Blah
             => new[]
             {
                 nameof(global::Something.Blah.ShortName.First),
-                nameof(global::Something.Blah.ShortName.Third),
                 nameof(global::Something.Blah.ShortName.Second),
             };
     }
