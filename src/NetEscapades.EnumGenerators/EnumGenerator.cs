@@ -49,7 +49,8 @@ public class EnumGenerator : IIncrementalGenerator
                 enumToGenerate.Right.Left, enumToGenerate.Right.Right, spc));
     }
 
-    private static Tuple<MetadataSource, bool> GetDefaultConfigurations(AnalyzerConfigOptionsProvider configOptions, CancellationToken ct)
+    private static (MetadataSource Source, bool ForceExtensionMembers, bool UseSystemMemory) 
+        GetDefaultConfigurations(AnalyzerConfigOptionsProvider configOptions, CancellationToken ct)
     {
         const MetadataSource defaultValue = MetadataSource.EnumMemberAttribute;
         MetadataSource selectedSource;
@@ -74,22 +75,27 @@ public class EnumGenerator : IIncrementalGenerator
             configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceExtensionMembers}", out var force)
             && string.Equals(force, "true", StringComparison.OrdinalIgnoreCase);
 
-        return new(selectedSource, forceExtensionMembers);
+        var useSystemMemory =
+            configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.UseSystemMemory}", out var useIt)
+            && string.Equals(useIt, "true", StringComparison.OrdinalIgnoreCase);
+
+        return new(selectedSource, forceExtensionMembers, useSystemMemory);
     }
 
     static void Execute(
         in EnumToGenerate enumToGenerate,
         LanguageVersion? langVersion,
-        Tuple<MetadataSource, bool> defaultValues,
+        (MetadataSource Source, bool ForceExtensionMembers, bool UseSystemMemory) defaultValues,
         SourceProductionContext context)
     {
         var useExtensionMembers = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1400; // C#14
         var useCollectionExpressions = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1200; // C#12
         var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(
             enumToGenerate: in enumToGenerate,
-            useExtensionMembers: useExtensionMembers || defaultValues.Item2, //ForceExtensionMembers
+            useExtensionMembers: useExtensionMembers || defaultValues.ForceExtensionMembers, //ForceExtensionMembers
             useCollectionExpressions: useCollectionExpressions,
-            defaultMetadataSource: defaultValues.Item1);
+            defaultMetadataSource: defaultValues.Source,
+            useSystemMemory: defaultValues.UseSystemMemory);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
