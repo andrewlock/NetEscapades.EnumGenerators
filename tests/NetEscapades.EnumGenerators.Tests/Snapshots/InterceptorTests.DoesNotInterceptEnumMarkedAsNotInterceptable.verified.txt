@@ -98,6 +98,10 @@ namespace MyTestNameSpace
             return (int) value;
         }
 
+        // C#14 Extension member syntax
+        extension(global::MyTestNameSpace.MyEnum)
+        {
+
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
@@ -627,6 +631,7 @@ namespace MyTestNameSpace
                 nameof(global::MyTestNameSpace.MyEnum.Second),
                 nameof(global::MyTestNameSpace.MyEnum.Third),
             ];
+        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
@@ -742,6 +747,10 @@ namespace MyTestNameSpace
         {
             return (int) value;
         }
+
+        // C#14 Extension member syntax
+        extension(global::MyTestNameSpace.AnotherEnum)
+        {
 
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
@@ -1272,6 +1281,7 @@ namespace MyTestNameSpace
                 nameof(global::MyTestNameSpace.AnotherEnum.Second),
                 nameof(global::MyTestNameSpace.AnotherEnum.Third),
             ];
+        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
