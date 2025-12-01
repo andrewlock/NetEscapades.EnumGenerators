@@ -12,15 +12,12 @@ public class SourceGenerationHelperSnapshotTests
     private const MetadataSource DefaultMetadataSource = MetadataSource.EnumMemberAttribute;
 
     [Theory]
-    [InlineData(true, MetadataSource.EnumMemberAttribute, false)]
-    [InlineData(false, MetadataSource.EnumMemberAttribute, false)]
-    [InlineData(true, MetadataSource.None, false)]
-    [InlineData(false, MetadataSource.None, false)]
-    [InlineData(true, MetadataSource.EnumMemberAttribute, true)]
-    [InlineData(false, MetadataSource.EnumMemberAttribute, true)]
-    [InlineData(true, MetadataSource.None, true)]
-    [InlineData(false, MetadataSource.None, true)]
-    public Task GeneratesEnumCorrectly(bool csharp14IsSupported, MetadataSource defaultSource, bool useCollectionExpressions)
+    [CombinatorialData]
+    public Task GeneratesEnumCorrectly(
+        bool csharp14IsSupported,
+        [CombinatorialValues(MetadataSource.None, MetadataSource.EnumMemberAttribute)]
+        MetadataSource defaultSource,
+        bool useCollectionExpressions)
     {
         var value = new EnumToGenerate(
             "ShortName",

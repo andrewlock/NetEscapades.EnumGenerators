@@ -100,6 +100,10 @@ namespace MyTestNameSpace
             return (int) value;
         }
 
+        // C#14 Extension member syntax
+        extension(global::MyTestNameSpace.MyEnum)
+        {
+
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
@@ -641,6 +645,7 @@ namespace MyTestNameSpace
                 nameof(global::MyTestNameSpace.MyEnum.Third),
                 nameof(global::MyTestNameSpace.MyEnum.Fourth),
             ];
+        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

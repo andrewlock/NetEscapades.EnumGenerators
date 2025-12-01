@@ -107,6 +107,10 @@ namespace System
             return (int) value;
         }
 
+        // C#14 Extension member syntax
+        extension(global::System.StringComparison)
+        {
+
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
@@ -672,6 +676,7 @@ namespace System
                 nameof(global::System.StringComparison.Ordinal),
                 nameof(global::System.StringComparison.OrdinalIgnoreCase),
             ];
+        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
