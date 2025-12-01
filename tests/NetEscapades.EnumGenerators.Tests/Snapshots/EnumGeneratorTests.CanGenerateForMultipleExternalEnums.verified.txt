@@ -583,6 +583,7 @@ namespace System
 #else
             => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
 #endif
+
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::System.ConsoleColor" /> to the equivalent instance.
@@ -1301,6 +1302,7 @@ namespace System
 #else
             => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
 #endif
+
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::System.DateTimeKind" /> to the equivalent instance.
