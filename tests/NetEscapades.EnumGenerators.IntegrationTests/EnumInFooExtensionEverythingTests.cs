@@ -6,12 +6,16 @@ using Xunit;
 namespace NetEscapades.EnumGenerators.IntegrationTests;
 #elif NETSTANDARD_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.NetStandard.IntegrationTests;
+#elif NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.NetStandard.SystemMemory.IntegrationTests;
 #elif INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests;
 #elif NUGET_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.IntegrationTests;
 #elif NUGET_INTERCEPTOR_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
+#elif NUGET_SYSTEMMEMORY_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.SystemMemory.IntegrationTests;
 #else
 #error Unknown integration tests
 #endif

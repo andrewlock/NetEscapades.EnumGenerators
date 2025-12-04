@@ -549,6 +549,7 @@
 #else
             => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
 #endif
+
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::EnumWithReservedKeywords" /> to the equivalent instance.
@@ -684,7 +685,9 @@
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::EnumWithReservedKeywords.@class), options.ComparisonType):
                     result = global::EnumWithReservedKeywords.@class;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#endif
                     result = (global::EnumWithReservedKeywords)numericResult;
                     return true;
                 default:

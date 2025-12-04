@@ -108,6 +108,7 @@ class Build : NukeBuild
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_IntegrationTests.Path,
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_Interceptors_IntegrationTests.Path,
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_NetStandard_Interceptors_IntegrationTests.Path,
+                Solution.tests.NetEscapades_EnumGenerators_Nuget_NetStandard_SystemMemory_IntegrationTests.Path,
             };
 
             if (!string.IsNullOrEmpty(PackagesDirectory))

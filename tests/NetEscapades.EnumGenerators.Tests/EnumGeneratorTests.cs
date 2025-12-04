@@ -120,6 +120,27 @@ public abstract class EnumGeneratorTestsBase
     }
 
     [Fact]
+    public Task CanGenerateEnumExtensionsInGlobalNamespace_UseSystemMemory()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(
+            Generators(), new(options: new() { { "build_property.EnumGenerator_UseSystemMemory", "true" } }, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
     public Task CanGenerateEnumExtensionsInChildNamespace()
     {
         const string input =

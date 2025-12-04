@@ -23,7 +23,8 @@ public static class SourceGenerationHelper
     public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate,
         bool useExtensionMembers,
         bool useCollectionExpressions,
-        MetadataSource defaultMetadataSource)
+        MetadataSource defaultMetadataSource,
+        bool useSystemMemory)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
@@ -692,11 +693,25 @@ public static class SourceGenerationHelper
             }
         }
 
+        
         sb.Append(
             """
 
 
-            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            """);
+
+        if (!useSystemMemory)
+        {
+            sb.Append(
+                """
+
+                #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+                """);
+        }
+
+        sb.Append(
+            """
+
                     /// <summary>
                     /// Returns a boolean telling whether an enum with the given name exists in the enumeration
                     /// </summary>
@@ -796,7 +811,20 @@ public static class SourceGenerationHelper
         sb.Append(
             """
 
-            #endif
+            """);
+
+        if (!useSystemMemory)
+        {
+            sb.Append(
+                """
+
+                #endif
+                """);
+        }
+
+        sb.Append(
+            """
+
 
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
@@ -1190,8 +1218,26 @@ public static class SourceGenerationHelper
                                 return false;
                         }
                     }
+            """);
 
-            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        sb.Append(
+            """
+
+
+            """);
+
+        if (!useSystemMemory)
+        {
+            sb.Append(
+                """
+
+                #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+                """);
+        }
+
+        sb.Append( 
+            """
+
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1205,6 +1251,12 @@ public static class SourceGenerationHelper
             """
             " /> whose
                     /// value is represented by <paramref name="name"/></returns>
+            """);
+
+        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse", useSystemMemory);
+
+        sb.Append(
+            """
                     public static 
             """).Append(fullyQualifiedName).Append(
             """
@@ -1233,6 +1285,12 @@ public static class SourceGenerationHelper
             """
             " /> whose
                     /// value is represented by <paramref name="name"/></returns>
+            """);
+
+        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse", useSystemMemory);
+
+        sb.Append(
+            """
                     public static 
             """).Append(fullyQualifiedName).Append(
             """
@@ -1275,6 +1333,12 @@ public static class SourceGenerationHelper
             """
             " /> whose
                     /// value is represented by <paramref name="name"/></returns>
+            """);
+
+        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse", useSystemMemory);
+
+        sb.Append(
+            """
                     public static 
             """).Append(fullyQualifiedName).Append(
             """
@@ -1313,6 +1377,12 @@ public static class SourceGenerationHelper
             """
             " /> whose
                     /// value is represented by <paramref name="name"/></returns>
+            """);
+
+        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse", useSystemMemory, isCorrectApi: true);
+
+        sb.Append(
+            """
                     public static 
             """).Append(fullyQualifiedName).Append(
             """
@@ -1339,6 +1409,7 @@ public static class SourceGenerationHelper
             #else
                         => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
             #endif
+
                     /// <summary>
                     /// Converts the span representation of the name or numeric value of
                     /// an <see cref="
@@ -1360,6 +1431,12 @@ public static class SourceGenerationHelper
             """
             " />. This parameter is passed uninitialized.</param>
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+            """);
+
+        AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse", useSystemMemory);
+
+        sb.Append(
+            """
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1400,6 +1477,12 @@ public static class SourceGenerationHelper
             " />. This parameter is passed uninitialized.</param>
                     /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+            """);
+
+        AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse", useSystemMemory);
+
+        sb.Append(
+            """
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1450,6 +1533,12 @@ public static class SourceGenerationHelper
                 """
                 "/> attribute when parsing, otherwise only considers the member names.</param>
                         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                """);
+
+            AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse", useSystemMemory);
+
+            sb.Append(
+                """
                         public static bool TryParse(
                 #if NETCOREAPP3_0_OR_GREATER
                             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1496,6 +1585,12 @@ public static class SourceGenerationHelper
             " />. This parameter is passed uninitialized.</param>
                     /// <param name="options">Options that control how the string value should be parsed.</param>
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+            """);
+
+        AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse", useSystemMemory, isCorrectApi: true);
+
+        sb.Append(
+            """
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1578,13 +1673,34 @@ public static class SourceGenerationHelper
                 """);
         }
 
+        
         sb.Append(
             """
 
+            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                             case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  
             """).Append(enumToGenerate.UnderlyingType).Append(
             """
             .TryParse(name, out var numericResult):
+            """);
+
+        if (useSystemMemory)
+        {
+            sb.Append(
+                """
+
+                #else
+                                // TryParse with ReadOnlySpan<char> is not available ,so we have to call ToString()
+                                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  
+                """).Append(enumToGenerate.UnderlyingType).Append(
+                """
+                .TryParse(name.ToString(), out var numericResult):
+                """);
+        }
+        sb.Append(
+            """
+
+            #endif
                                 result = (
             """).Append(fullyQualifiedName).Append(
             """
@@ -1595,8 +1711,16 @@ public static class SourceGenerationHelper
                                 return false;
                         }
                     }
-            #endif
             """);
+
+        if (!useSystemMemory)
+        {
+            sb.Append(
+                """
+
+                #endif
+                """);
+        }
 
         var orderedNames = GetNamesOrderedByValue(enumToGenerate);
         sb.Append(
@@ -1783,6 +1907,51 @@ public static class SourceGenerationHelper
                     """
 
                                 };
+                    """);
+            }
+        }
+
+        static void AddSystemMemoryWarning(StringBuilder sb, string fullyQualifiedName, string methodName, bool useSystemMemory, bool isCorrectApi = false)
+        {
+            if (!useSystemMemory)
+            {
+                sb.Append(
+                    """
+
+
+                    """);
+                return;
+            }
+
+            sb.Append(
+                """
+
+                        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+                        /// is not explicitly defined in <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> when attempting to pare as a number.
+                        /// To avoid this allocation, only call this overload when you know the value will exist.
+                        /// Alternatively
+                """);
+            if (isCorrectApi)
+            {
+                sb.Append(
+                    """
+                    , disable number parsing in the <paramref name="options" />.</remarks>
+
+                    """);
+            }
+            else
+            {
+                sb.Append(
+                    """
+                    , call the <see cref="
+                    """).Append(methodName).Append(
+                    """
+                    (in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+                            /// overload, and disable number parsing.</remarks>
+
                     """);
             }
         }
