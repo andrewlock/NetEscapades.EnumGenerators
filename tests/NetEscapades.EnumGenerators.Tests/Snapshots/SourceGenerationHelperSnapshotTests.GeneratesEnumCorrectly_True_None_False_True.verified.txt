@@ -274,7 +274,7 @@ namespace Something.Blah
         /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to pare as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
@@ -298,7 +298,7 @@ namespace Something.Blah
         /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to pare as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
@@ -324,9 +324,9 @@ namespace Something.Blah
         /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to pare as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, disable number parsing in the <paramref name="options" />.</remarks>
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
         public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -361,7 +361,7 @@ namespace Something.Blah
         /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to pare as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
@@ -390,7 +390,7 @@ namespace Something.Blah
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to pare as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
@@ -421,9 +421,9 @@ namespace Something.Blah
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to pare as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, disable number parsing in the <paramref name="options" />.</remarks>
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]

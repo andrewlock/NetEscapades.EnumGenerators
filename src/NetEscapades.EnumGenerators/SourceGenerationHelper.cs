@@ -1930,7 +1930,7 @@ public static class SourceGenerationHelper
                         /// is not explicitly defined in <see cref="
                 """).Append(fullyQualifiedName).Append(
                 """
-                " /> when attempting to pare as a number.
+                " /> when attempting to parse as a number.
                         /// To avoid this allocation, only call this overload when you know the value will exist.
                         /// Alternatively
                 """);
@@ -1938,7 +1938,7 @@ public static class SourceGenerationHelper
             {
                 sb.Append(
                     """
-                    , disable number parsing in the <paramref name="options" />.</remarks>
+                    , disable number parsing in the <paramref name="options" /> parameter.</remarks>
 
                     """);
             }
