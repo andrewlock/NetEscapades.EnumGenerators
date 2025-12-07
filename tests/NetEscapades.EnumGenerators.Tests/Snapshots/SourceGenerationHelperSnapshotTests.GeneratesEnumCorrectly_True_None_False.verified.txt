@@ -80,6 +80,10 @@ namespace Something.Blah
             return (int) value;
         }
 
+        // C#14 Extension member syntax
+        extension(global::Something.Blah.ShortName)
+        {
+
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
@@ -106,7 +110,7 @@ namespace Something.Blah
             _ => false,
         };
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -115,8 +119,8 @@ namespace Something.Blah
         public static bool IsDefined(in global::System.ReadOnlySpan<char> name)
             => name switch
             {
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.First), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.First)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Second)), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 #endif
@@ -264,7 +268,7 @@ namespace Something.Blah
             }
         }
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
@@ -272,6 +276,13 @@ namespace Something.Blah
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -291,6 +302,13 @@ namespace Something.Blah
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -312,6 +330,12 @@ namespace Something.Blah
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+#endif
         public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -345,6 +369,13 @@ namespace Something.Blah
         /// If the parse operation fails, contains the default value of the underlying type
         /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -369,6 +400,13 @@ namespace Something.Blah
         /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -395,6 +433,12 @@ namespace Something.Blah
         /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -405,14 +449,17 @@ namespace Something.Blah
         {
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.First), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.First)), options.ComparisonType):
                     result = global::Something.Blah.ShortName.First;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::Something.Blah.ShortName.Second), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Second)), options.ComparisonType):
                     result = global::Something.Blah.ShortName.Second;
                     return true;
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#else
+                // TryParse with ReadOnlySpan<char> is not available, so we have to call ToString()
+                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name.ToString(), out var numericResult):
 #endif
                     result = (global::Something.Blah.ShortName)numericResult;
                     return true;
@@ -431,11 +478,11 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the values defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static global::Something.Blah.ShortName[] GetValues()
-            =>
-            [
+            => new[]
+            {
                 global::Something.Blah.ShortName.First,
                 global::Something.Blah.ShortName.Second,
-            ];
+            };
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
@@ -445,11 +492,11 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the underlying-values defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-            =>
-            [
+            => new[]
+            {
                 (int) global::Something.Blah.ShortName.First,
                 (int) global::Something.Blah.ShortName.Second,
-            ];
+            };
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
@@ -459,11 +506,12 @@ namespace Something.Blah
         /// </summary>
         /// <returns>An array of the names of the members defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static string[] GetNames()
-            =>
-            [
+            => new[]
+            {
                 nameof(global::Something.Blah.ShortName.First),
                 nameof(global::Something.Blah.ShortName.Second),
-            ];
+            };
+        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

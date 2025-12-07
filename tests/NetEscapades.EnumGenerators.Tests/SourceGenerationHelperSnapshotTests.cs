@@ -17,8 +17,7 @@ public class SourceGenerationHelperSnapshotTests
         bool csharp14IsSupported,
         [CombinatorialValues(MetadataSource.None, MetadataSource.EnumMemberAttribute)]
         MetadataSource defaultSource,
-        bool useCollectionExpressions,
-        bool useSystemMemory)
+        bool useCollectionExpressions)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -38,13 +37,12 @@ public class SourceGenerationHelperSnapshotTests
             value, 
             csharp14IsSupported,
             useCollectionExpressions: useCollectionExpressions,
-            defaultSource,
-            useSystemMemory: useSystemMemory).Content;
+            defaultSource).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
             .UseDirectory("Snapshots")
-            .UseTextForParameters($"{csharp14IsSupported}_{defaultSource}_{useCollectionExpressions}_{useSystemMemory}");
+            .UseTextForParameters($"{csharp14IsSupported}_{defaultSource}_{useCollectionExpressions}");
     }
 
     [Theory]
@@ -67,7 +65,7 @@ public class SourceGenerationHelperSnapshotTests
             null);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported,
-            useCollectionExpressions: false, DefaultMetadataSource, useSystemMemory: false).Content;
+            useCollectionExpressions: false, DefaultMetadataSource).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -94,7 +92,7 @@ public class SourceGenerationHelperSnapshotTests
             metadataSource: null);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported,
-            useCollectionExpressions: false, DefaultMetadataSource, useSystemMemory: false).Content;
+            useCollectionExpressions: false, DefaultMetadataSource).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
