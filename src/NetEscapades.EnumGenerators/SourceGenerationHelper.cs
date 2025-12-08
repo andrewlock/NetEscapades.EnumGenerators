@@ -1627,7 +1627,6 @@ public static class SourceGenerationHelper
                 """);
         }
 
-        
         sb.Append(
             """
 

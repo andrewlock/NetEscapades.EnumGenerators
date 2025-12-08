@@ -4,7 +4,6 @@
     <EnumGenerator_ForceExtensionMembers Condition="$(EnumGenerator_ForceExtensionMembers) == ''">false</EnumGenerator_ForceExtensionMembers>
   </PropertyGroup>
   <ItemGroup>
-    <CompilerVisibleProperty Include="EnumGenerator_UseSystemMemory" />
     <CompilerVisibleProperty Include="EnumGenerator_EnumMetadataSource" />
     <CompilerVisibleProperty Include="EnumGenerator_ForceExtensionMembers" />
   </ItemGroup>
