@@ -696,7 +696,7 @@ public static class SourceGenerationHelper
             """
 
 
-            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Returns a boolean telling whether an enum with the given name exists in the enumeration
                     /// </summary>
@@ -1191,7 +1191,7 @@ public static class SourceGenerationHelper
                         }
                     }
 
-            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1849,7 +1849,7 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+                #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
                         /// is not explicitly defined in <see cref="
                 """).Append(fullyQualifiedName).Append(

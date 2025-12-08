@@ -4,7 +4,7 @@
       <EnumGenerator_UseSystemMemory Condition="'@(PackageReference->AnyHaveMetadataValue(`Identity`, `System.Memory`))' == 'True'">true</EnumGenerator_UseSystemMemory>
     </PropertyGroup>
     <PropertyGroup>
-      <DefineConstants Condition="'$(EnumGenerator_UseSystemMemory)' == 'true'">$(DefineConstants);NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY</DefineConstants>
+      <DefineConstants Condition="'$(EnumGenerator_UseSystemMemory)' == 'true'">$(DefineConstants);NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY</DefineConstants>
     </PropertyGroup>
   </Target>
 </Project>

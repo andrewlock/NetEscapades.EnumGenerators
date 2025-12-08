@@ -193,7 +193,7 @@
                 _ => IsDefined(name),
             };
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -456,7 +456,7 @@
             }
         }
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::EnumWithReservedKeywords" /> to the equivalent instance.
@@ -464,7 +464,7 @@
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <returns>An object of type <see cref="global::EnumWithReservedKeywords" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
@@ -490,7 +490,7 @@
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns>An object of type <see cref="global::EnumWithReservedKeywords" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
@@ -520,7 +520,7 @@
         /// <see cref="global::System.ComponentModel.DescriptionAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns>An object of type <see cref="global::EnumWithReservedKeywords" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
@@ -550,7 +550,7 @@
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::EnumWithReservedKeywords" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
@@ -589,7 +589,7 @@
         /// If the parse operation fails, contains the default value of the underlying type
         /// of <see cref="global::EnumWithReservedKeywords" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
@@ -620,7 +620,7 @@
         /// of <see cref="global::EnumWithReservedKeywords" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
@@ -655,7 +655,7 @@
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::System.ComponentModel.DescriptionAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
@@ -690,7 +690,7 @@
         /// of <see cref="global::EnumWithReservedKeywords" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMBGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::EnumWithReservedKeywords" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
