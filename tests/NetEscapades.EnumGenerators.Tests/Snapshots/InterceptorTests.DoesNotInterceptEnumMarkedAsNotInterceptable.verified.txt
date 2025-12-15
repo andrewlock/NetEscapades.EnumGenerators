@@ -144,7 +144,7 @@ namespace MyTestNameSpace
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -153,9 +153,9 @@ namespace MyTestNameSpace
         public static bool IsDefined(in global::System.ReadOnlySpan<char> name)
             => name switch
             {
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Third), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.First)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Second)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Third)), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 
@@ -373,7 +373,7 @@ namespace MyTestNameSpace
             }
         }
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
@@ -381,6 +381,13 @@ namespace MyTestNameSpace
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::MyTestNameSpace.MyEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -400,6 +407,13 @@ namespace MyTestNameSpace
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::MyTestNameSpace.MyEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -423,6 +437,13 @@ namespace MyTestNameSpace
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::MyTestNameSpace.MyEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -446,6 +467,12 @@ namespace MyTestNameSpace
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+#endif
         public static global::MyTestNameSpace.MyEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -466,6 +493,7 @@ namespace MyTestNameSpace
 #else
             => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
 #endif
+
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
@@ -478,6 +506,13 @@ namespace MyTestNameSpace
         /// If the parse operation fails, contains the default value of the underlying type
         /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -502,6 +537,13 @@ namespace MyTestNameSpace
         /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -530,6 +572,13 @@ namespace MyTestNameSpace
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -558,6 +607,12 @@ namespace MyTestNameSpace
         /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -568,16 +623,21 @@ namespace MyTestNameSpace
         {
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.First), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.First)), options.ComparisonType):
                     result = global::MyTestNameSpace.MyEnum.First;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Second), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Second)), options.ComparisonType):
                     result = global::MyTestNameSpace.MyEnum.Second;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.MyEnum.Third), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Third)), options.ComparisonType):
                     result = global::MyTestNameSpace.MyEnum.Third;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#else
+                // TryParse with ReadOnlySpan<char> is not available, so we have to call ToString()
+                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name.ToString(), out var numericResult):
+#endif
                     result = (global::MyTestNameSpace.MyEnum)numericResult;
                     return true;
                 default:
@@ -794,7 +854,7 @@ namespace MyTestNameSpace
         public static bool IsDefined(string name, bool allowMatchingMetadataAttribute)
             => IsDefined(name);
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration
         /// </summary>
@@ -803,9 +863,9 @@ namespace MyTestNameSpace
         public static bool IsDefined(in global::System.ReadOnlySpan<char> name)
             => name switch
             {
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.AnotherEnum.First), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.AnotherEnum.Second), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.AnotherEnum.Third), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.AnotherEnum.First)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.AnotherEnum.Second)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.AnotherEnum.Third)), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 
@@ -1023,7 +1083,7 @@ namespace MyTestNameSpace
             }
         }
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::MyTestNameSpace.AnotherEnum" /> to the equivalent instance.
@@ -1031,6 +1091,13 @@ namespace MyTestNameSpace
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::MyTestNameSpace.AnotherEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1050,6 +1117,13 @@ namespace MyTestNameSpace
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::MyTestNameSpace.AnotherEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1073,6 +1147,13 @@ namespace MyTestNameSpace
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static global::MyTestNameSpace.AnotherEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1096,6 +1177,12 @@ namespace MyTestNameSpace
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::MyTestNameSpace.AnotherEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+#endif
         public static global::MyTestNameSpace.AnotherEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1116,6 +1203,7 @@ namespace MyTestNameSpace
 #else
             => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
 #endif
+
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::MyTestNameSpace.AnotherEnum" /> to the equivalent instance.
@@ -1128,6 +1216,13 @@ namespace MyTestNameSpace
         /// If the parse operation fails, contains the default value of the underlying type
         /// of <see cref="global::MyTestNameSpace.AnotherEnum" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1152,6 +1247,13 @@ namespace MyTestNameSpace
         /// of <see cref="global::MyTestNameSpace.AnotherEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1180,6 +1282,13 @@ namespace MyTestNameSpace
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// overload, and disable number parsing.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1208,6 +1317,12 @@ namespace MyTestNameSpace
         /// of <see cref="global::MyTestNameSpace.AnotherEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
+        /// is not explicitly defined in <see cref="global::MyTestNameSpace.AnotherEnum" /> when attempting to parse as a number.
+        /// To avoid this allocation, only call this overload when you know the value will exist.
+        /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+#endif
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1218,16 +1333,21 @@ namespace MyTestNameSpace
         {
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.AnotherEnum.First), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.AnotherEnum.First)), options.ComparisonType):
                     result = global::MyTestNameSpace.AnotherEnum.First;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.AnotherEnum.Second), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.AnotherEnum.Second)), options.ComparisonType):
                     result = global::MyTestNameSpace.AnotherEnum.Second;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, nameof(global::MyTestNameSpace.AnotherEnum.Third), options.ComparisonType):
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.AnotherEnum.Third)), options.ComparisonType):
                     result = global::MyTestNameSpace.AnotherEnum.Third;
                     return true;
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
+#else
+                // TryParse with ReadOnlySpan<char> is not available, so we have to call ToString()
+                case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name.ToString(), out var numericResult):
+#endif
                     result = (global::MyTestNameSpace.AnotherEnum)numericResult;
                     return true;
                 default:

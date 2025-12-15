@@ -322,5 +322,4 @@ public class EnumGenerator : IIncrementalGenerator
             names: members,
             metadataSource: metadataSource);
     }
-
 }

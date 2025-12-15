@@ -46,8 +46,7 @@ public class SourceGenerationHelperSnapshotTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [CombinatorialData]
     public Task GeneratesEnumWithRepeatedValuesCorrectly(bool csharp14IsSupported)
     {
         var value = new EnumToGenerate(
@@ -75,8 +74,7 @@ public class SourceGenerationHelperSnapshotTests
     }
 
     [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [CombinatorialData]
     public Task GeneratesFlagsEnumCorrectly(bool csharp14IsSupported)
     {
         var value = new EnumToGenerate(

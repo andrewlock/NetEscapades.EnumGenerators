@@ -34,5 +34,6 @@
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\net451" Visible="false" />
     <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\net451" Visible="false" />
     <None Include="NetEscapades.EnumGenerators.props" Pack="true" PackagePath="build" Visible="true" />
+    <None Include="NetEscapades.EnumGenerators.targets" Pack="true" PackagePath="build" Visible="true" />
   </ItemGroup>
 </Project>
