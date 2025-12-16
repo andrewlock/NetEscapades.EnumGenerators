@@ -1,8 +1,9 @@
 using System.Threading.Tasks;
 using NetEscapades.EnumGenerators.Diagnostics;
 using Xunit;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<
+using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
     NetEscapades.EnumGenerators.Diagnostics.ToStringAnalyzer,
+    NetEscapades.EnumGenerators.Diagnostics.ToStringCodeFixProvider,
     Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
@@ -24,17 +25,11 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            public enum TestEnum
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value = TestEnum.First;
+                    var value = TestEnumWithoutAttribute.First;
                     var str = value.ToString();
                 }
             }
@@ -66,13 +61,6 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            [EnumExtensions]
-            public enum TestEnum
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public void TestMethod()
@@ -91,13 +79,6 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            [EnumExtensions]
-            public enum TestEnum
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public void TestMethod()
@@ -116,13 +97,6 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            [EnumExtensions]
-            public enum TestEnum
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public void TestMethod()
@@ -132,7 +106,20 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = value.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -141,13 +128,6 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            [EnumExtensions]
-            public enum TestEnum
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public void TestMethod()
@@ -160,7 +140,22 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value1 = TestEnum.First;
+                    var str1 = value1.ToStringFast();
+                    
+                    var value2 = TestEnum.Second;
+                    var str2 = value2.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -169,13 +164,6 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            [EnumExtensions]
-            public enum TestEnum
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public void TestMethod()
@@ -185,7 +173,20 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = "Value: " + value.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -194,24 +195,11 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            [EnumExtensions]
-            public enum TestEnumWithAttribute
-            {
-                First,
-                Second,
-            }
-
-            public enum TestEnumWithoutAttribute
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value1 = TestEnumWithAttribute.First;
+                    var value1 = TestEnum.First;
                     var str1 = value1.{|NEEG004:ToString|}();
                     
                     var value2 = TestEnumWithoutAttribute.First;
@@ -219,7 +207,23 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value1 = TestEnum.First;
+                    var str1 = value1.ToStringFast();
+                    
+                    var value2 = TestEnumWithoutAttribute.First;
+                    var str2 = value2.ToString(); // Should not flag
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -228,13 +232,6 @@ public class ToStringAnalyzerTests
         var test = GetTestCode(
             /* lang=c# */
             """
-            [EnumExtensions]
-            public enum TestEnum
-            {
-                First,
-                Second,
-            }
-
             public class TestClass
             {
                 public string TestMethod()
@@ -244,7 +241,19 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public string TestMethod()
+                {
+                    var value = TestEnum.First;
+                    return value.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -261,10 +270,17 @@ public class ToStringAnalyzerTests
             }
 
             [EnumExtensions(ExtensionClassNamespace = "MyNamespace")]
-            public enum TestEnum2
+            public enum TestEnum3
             {
                 First,
                 Second,
+            }
+
+            // these are generated but it's fine
+            public static class extensions
+            {
+                public static string ToStringFast(this TestEnum1 val) => "Test";
+                public static string ToStringFast(this TestEnum3 val) => "Test";
             }
 
             public class TestClass
@@ -274,12 +290,48 @@ public class ToStringAnalyzerTests
                     var value1 = TestEnum1.First;
                     var str1 = value1.{|NEEG004:ToString|}();
                     
-                    var value2 = TestEnum2.First;
+                    var value2 = TestEnum3.First;
                     var str2 = value2.{|NEEG004:ToString|}();
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            [EnumExtensions(ExtensionClassName = "MyExtensions")]
+            public enum TestEnum1
+            {
+                First,
+                Second,
+            }
+
+            [EnumExtensions(ExtensionClassNamespace = "MyNamespace")]
+            public enum TestEnum3
+            {
+                First,
+                Second,
+            }
+            
+            // these are generated but it's fine
+            public static class extensions
+            {
+                public static string ToStringFast(this TestEnum1 val) => "Test";
+                public static string ToStringFast(this TestEnum3 val) => "Test";
+            }
+
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value1 = TestEnum1.First;
+                    var str1 = value1.ToStringFast();
+                    
+                    var value2 = TestEnum3.First;
+                    var str2 = value2.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     private static string GetTestCode(string testCode) => $$"""
@@ -295,6 +347,40 @@ public class ToStringAnalyzerTests
         namespace ConsoleApplication1
         {
             {{testCode}}
+
+            [EnumExtensions]
+            public enum TestEnum
+            {
+                First,
+                Second,
+            }
+
+            [EnumExtensions]
+            public enum TestEnum2
+            {
+                First,
+                Second,
+            }
+
+            public enum TestEnumWithoutAttribute
+            {
+                First,
+                Second,
+            }
+
+            // This code would be generated, just hacked in here for simplicity
+            public static class TestExtensions
+            {
+                public static string ToStringFast(this TestEnum val)
+                {
+                    return "Test";
+                }
+
+                public static string ToStringFast(this TestEnum2 val)
+                {
+                    return "Test";
+                }
+            }
         }
 
         {{TestHelpers.LoadEmbeddedAttribute()}}
