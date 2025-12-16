@@ -59,7 +59,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Check if there are no arguments (we only care about parameterless ToString())
+        // Check if there are too many arguments)
         if (invocation.ArgumentList.Arguments.Count > 0)
         {
             return;

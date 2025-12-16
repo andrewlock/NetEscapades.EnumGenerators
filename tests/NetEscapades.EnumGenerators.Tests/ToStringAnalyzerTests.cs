@@ -73,10 +73,55 @@ public class ToStringAnalyzerTests
         await Verifier.VerifyAnalyzerAsync(test);
     }
 
-    [Fact]
-    public async Task ToStringWithParametersShouldNotHaveDiagnostics()
+    [Theory]
+    [InlineData("\"val\"")]
+    [InlineData("\"x\"")]
+    [InlineData("\"X\"")]
+    [InlineData("\"d\"")]
+    [InlineData("\"D\"")]
+    [InlineData("format: \"x\"")]
+    [InlineData("format: \"X\"")]
+    [InlineData("format: \"d\"")]
+    [InlineData("format: \"D\"")]
+    public async Task ToStringWithIncompatibleParametersShouldNotHaveDiagnostics(string param)
     {
         var test = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = value.ToString({{param}});
+                }
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Theory]
+    [InlineData("null")]
+    [InlineData("\"\"")]
+    [InlineData("\"G\"")]
+    [InlineData("\"g\"")]
+    [InlineData("format: \"g\"")]
+    [InlineData("format: \"G\"")]
+    public async Task ToStringWithParametersShouldNotHaveDiagnostics(string param)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = value.ToString({{param}});
+                }
+            }
+            """);
+        var fix = GetTestCode(
             /* lang=c# */
             """
             public class TestClass
@@ -84,11 +129,11 @@ public class ToStringAnalyzerTests
                 public void TestMethod()
                 {
                     var value = TestEnum.First;
-                    var str = value.ToString("G");
+                    var str = value.ToStringFast();
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
