@@ -15,7 +15,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         id: DiagnosticId,
 #pragma warning restore RS2008
         title: "Use ToStringFast() instead of ToString()",
-        messageFormat: "Use ToStringFast() instead of ToString() for better performance on enum '{0}' marked with [EnumExtensions]",
+        messageFormat: "Use ToStringFast() instead of ToString() for better performance on enum '{0}'",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true);
@@ -27,13 +27,26 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
     {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
-        context.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+        context.RegisterCompilationStartAction(ctx =>
+        {
+            var enumExtensionsAttr =
+                ctx.Compilation.GetTypeByMetadataName(Attributes.EnumExtensionsAttribute);
+
+            if (enumExtensionsAttr is null)
+            {
+                return;
+            }
+
+            ctx.RegisterSyntaxNodeAction(
+                c => AnalyzeInvocation(c, enumExtensionsAttr),
+                SyntaxKind.InvocationExpression);
+        });
     }
 
-    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context)
+    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr)
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
-        
+
         // Check if this is a member access expression (e.g., value.ToString())
         if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
         {
@@ -79,7 +92,9 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         bool hasEnumExtensionsAttribute = false;
         foreach (var attributeData in receiverType.GetAttributes())
         {
-            if (attributeData.AttributeClass?.ToDisplayString() == Attributes.EnumExtensionsAttribute)
+            if (SymbolEqualityComparer.Default.Equals(
+                    attributeData.AttributeClass,
+                    enumExtensionsAttr))
             {
                 hasEnumExtensionsAttribute = true;
                 break;
@@ -96,7 +111,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             Rule,
             memberAccess.Name.GetLocation(),
             receiverType.Name);
-        
+
         context.ReportDiagnostic(diagnostic);
     }
 }

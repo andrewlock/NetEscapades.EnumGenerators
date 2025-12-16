@@ -1,8 +1,5 @@
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -46,7 +43,7 @@ public class ToStringCodeFixProvider : CodeFixProvider
                 title: Title,
                 createChangedDocument: c => ReplaceToStringWithToStringFast(context.Document, identifierName, c),
                 equivalenceKey: Title),
-            diagnostic);
+            context.Diagnostics);
     }
 
     private static async Task<Document> ReplaceToStringWithToStringFast(
