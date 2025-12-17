@@ -478,7 +478,7 @@ public class ToStringAnalyzerTests
     }
 
     [Fact]
-    public async Task ToStringOnFileShareExternalEnumShouldHaveDiagnostic()
+    public async Task ToStringOnFileShareExternalEnumShouldNotHaveDiagnostic()
     {
         var test = GetTestCodeWithExternalEnum(
             /* lang=c# */
@@ -488,23 +488,11 @@ public class ToStringAnalyzerTests
                 public void TestMethod()
                 {
                     var value = System.IO.FileShare.Read;
-                    var str = value.{|NEEG004:ToString|}();
+                    var str = value.ToString();
                 }
             }
             """);
-        var fix = GetTestCodeWithExternalEnum(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = System.IO.FileShare.Read;
-                    var str = value.ToStringFast();
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await Verifier.VerifyAnalyzerAsync(test);
     }
 
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
@@ -518,7 +506,6 @@ public class ToStringAnalyzerTests
         using NetEscapades.EnumGenerators;
 
         [assembly: EnumExtensions<System.DateTimeKind>()]
-        [assembly: EnumExtensions<System.IO.FileShare>()]
 
         namespace ConsoleApplication1
         {
@@ -528,11 +515,6 @@ public class ToStringAnalyzerTests
             public static class ExternalEnumExtensions
             {
                 public static string ToStringFast(this System.DateTimeKind val)
-                {
-                    return "Test";
-                }
-
-                public static string ToStringFast(this System.IO.FileShare val)
                 {
                     return "Test";
                 }

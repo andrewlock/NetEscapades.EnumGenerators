@@ -17,6 +17,7 @@ public class AnalyzerTests
         _ = EnumInSystem.First.ToString("x"); // no error
         _ = EnumInSystem.First.ToString(format: "g");
         _ = EnumInSystem.First.ToString(format: null); // no error
+        _ = DateTimeKind.Local.ToString();
 #pragma warning restore NEEG004
     }
 }

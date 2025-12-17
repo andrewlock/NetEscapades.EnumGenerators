@@ -48,9 +48,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
                 {
                     if (attribute.AttributeClass is { IsGenericType: true } attrClass &&
                         SymbolEqualityComparer.Default.Equals(attrClass.ConstructedFrom, externalEnumExtensionsAttr) &&
-                        attrClass.TypeArguments.Length == 1 &&
-                        attrClass.TypeArguments[0] is INamedTypeSymbol enumType &&
-                        enumType.TypeKind == TypeKind.Enum)
+                        attrClass.TypeArguments is [INamedTypeSymbol { TypeKind: TypeKind.Enum } enumType])
                     {
                         externalEnumTypes.Add(enumType);
                     }
