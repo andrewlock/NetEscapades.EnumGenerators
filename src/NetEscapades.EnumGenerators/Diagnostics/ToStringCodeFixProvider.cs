@@ -57,12 +57,36 @@ public class ToStringCodeFixProvider : CodeFixProvider
             return document;
         }
 
+        // Find the invocation expression to replace arguments as well
+        var invocationExpression = identifierName.Parent?.Parent as InvocationExpressionSyntax;
+        if (invocationExpression is null)
+        {
+            return document;
+        }
+
         // Create the new identifier with "ToStringFast"
         var newIdentifier = SyntaxFactory.IdentifierName("ToStringFast")
             .WithTriviaFrom(identifierName);
 
-        // Replace the old identifier with the new one
-        var newRoot = root.ReplaceNode(identifierName, newIdentifier);
+        // Create new member access with the new identifier
+        var memberAccess = identifierName.Parent as MemberAccessExpressionSyntax;
+        if (memberAccess is null)
+        {
+            return document;
+        }
+
+        var newMemberAccess = memberAccess.WithName(newIdentifier);
+
+        // Create new invocation with empty argument list
+        var newArgumentList = SyntaxFactory.ArgumentList()
+            .WithTrailingTrivia(invocationExpression.ArgumentList.GetTrailingTrivia());
+
+        var newInvocation = invocationExpression
+            .WithExpression(newMemberAccess)
+            .WithArgumentList(newArgumentList);
+
+        // Replace the old invocation with the new one
+        var newRoot = root.ReplaceNode(invocationExpression, newInvocation);
 
         return document.WithSyntaxRoot(newRoot);
     }

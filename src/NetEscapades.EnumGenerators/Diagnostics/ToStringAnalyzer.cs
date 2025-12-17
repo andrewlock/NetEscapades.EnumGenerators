@@ -59,12 +59,6 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Check if there are too many arguments)
-        if (invocation.ArgumentList.Arguments.Count > 0)
-        {
-            return;
-        }
-
         // Get the symbol information for the invocation
         var symbolInfo = context.SemanticModel.GetSymbolInfo(invocation);
         if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
@@ -73,12 +67,44 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         }
 
         // Verify this is the ToString() method from System.Object or System.Enum
+        // We handle format specifiers, so accept ToString() with 0 or 1 parameters
         if (methodSymbol.Name != "ToString" ||
-            methodSymbol.Parameters.Length != 0 ||
+            methodSymbol.Parameters.Length > 1 ||
             (methodSymbol.ContainingType.SpecialType != SpecialType.System_Object &&
              methodSymbol.ContainingType.SpecialType != SpecialType.System_Enum))
         {
             return;
+        }
+
+        // If there's a format parameter, check if it's compatible with ToStringFast()
+        // ToStringFast() is equivalent to ToString() with no args or ToString("G")/ToString("g")/ToString("")
+        if (invocation.ArgumentList.Arguments.Count > 0)
+        {
+            var argument = invocation.ArgumentList.Arguments[0];
+            var constantValue = context.SemanticModel.GetConstantValue(argument.Expression);
+            
+            // If we can't determine the value at compile time, don't suggest replacement
+            if (!constantValue.HasValue)
+            {
+                return;
+            }
+
+            // Check if the format string is compatible with ToStringFast()
+            // Only "", "G", and "g" are compatible
+            if (constantValue.Value is string formatString)
+            {
+                if (!string.IsNullOrEmpty(formatString) && 
+                    !string.Equals(formatString, "G", StringComparison.Ordinal) &&
+                    !string.Equals(formatString, "g", StringComparison.Ordinal))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                // If it's not a string (e.g., it's an IFormatProvider), don't suggest replacement
+                return;
+            }
         }
 
         // Get the type of the receiver (the thing before .ToString())

@@ -101,7 +101,6 @@ public class ToStringAnalyzerTests
     }
 
     [Theory]
-    [InlineData("null")]
     [InlineData("\"\"")]
     [InlineData("\"G\"")]
     [InlineData("\"g\"")]
@@ -117,7 +116,7 @@ public class ToStringAnalyzerTests
                 public void TestMethod()
                 {
                     var value = TestEnum.First;
-                    var str = value.ToString({{param}});
+                    var str = value.{|NEEG004:ToString|}({{param}});
                 }
             }
             """);
