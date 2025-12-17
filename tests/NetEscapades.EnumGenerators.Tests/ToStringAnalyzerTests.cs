@@ -498,31 +498,27 @@ public class ToStringAnalyzerTests
     [Fact]
     public async Task EnumInStringInterpolationShouldHaveDiagnostic()
     {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
+        var test = GetTestCode(@"
             public class TestClass
             {
                 public void TestMethod()
                 {
                     var value = TestEnum.First;
-                    var str = $"{|NEEG004:value|}";
+                    var str = $""{{{|NEEG004:value|}}}"";
                 }
             }
-            """);
+            ");
 
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
+        var fix = GetTestCode(@"
             public class TestClass
             {
                 public void TestMethod()
                 {
                     var value = TestEnum.First;
-                    var str = $"{value.ToStringFast()}";
+                    var str = $""{value.ToStringFast()}"";
                 }
             }
-            """);
+            ");
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 

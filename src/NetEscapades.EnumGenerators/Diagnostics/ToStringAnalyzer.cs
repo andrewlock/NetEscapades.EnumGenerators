@@ -175,22 +175,10 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
     {
         var interpolation = (InterpolationSyntax)context.Node;
 
-        // DEBUG: Report that we entered this method
-        var debugDiag = Diagnostic.Create(
-            Rule,
-            interpolation.GetLocation(),
-            "ENTERED ANALYZER");
-        context.ReportDiagnostic(debugDiag);
-
         // Get the expression inside the interpolation
         var expression = interpolation.Expression;
         if (expression is null)
         {
-            var nullDiag = Diagnostic.Create(
-                Rule,
-                interpolation.GetLocation(),
-                "EXPRESSION IS NULL");
-            context.ReportDiagnostic(nullDiag);
             return;
         }
 
@@ -216,30 +204,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             expressionType = context.SemanticModel.GetTypeInfo(expression).Type;
         }
         
-        // DEBUG: Always report to see what's happening
-        var typeInfo = expressionType != null ? $"{expressionType.Name}|Kind={expressionType.TypeKind}" : "NULL";
-        var diagnostic = Diagnostic.Create(
-            Rule,
-            expression.GetLocation(),
-            $"Type={typeInfo}");
-        context.ReportDiagnostic(diagnostic);
-        
-        if (expressionType is null)
-        {
-            return;
-        }
-        
-        // DEBUG: Report if it's an enum
-        if (expressionType.TypeKind == TypeKind.Enum)
-        {
-            var diagnostic2 = Diagnostic.Create(
-                Rule,
-                expression.GetLocation(),
-                expressionType.Name + " [ENUM FOUND]");
-            context.ReportDiagnostic(diagnostic2);
-        }
-        
-        if (expressionType.TypeKind != TypeKind.Enum)
+        if (expressionType is null || expressionType.TypeKind != TypeKind.Enum)
         {
             return;
         }
@@ -286,11 +251,11 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         }
 
         // Report the diagnostic on the expression itself
-        var diagnostic3 = Diagnostic.Create(
+        var diagnostic = Diagnostic.Create(
             Rule,
             expression.GetLocation(),
             expressionType.Name);
 
-        context.ReportDiagnostic(diagnostic3);
+        context.ReportDiagnostic(diagnostic);
     }
 }
