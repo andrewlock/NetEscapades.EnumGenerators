@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -58,6 +59,10 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             ctx.RegisterSyntaxNodeAction(
                 c => AnalyzeInvocation(c, enumExtensionsAttr, externalEnumTypes),
                 SyntaxKind.InvocationExpression);
+            
+            ctx.RegisterSyntaxNodeAction(
+                c => AnalyzeInterpolation(c, enumExtensionsAttr, externalEnumTypes),
+                SyntaxKind.Interpolation);
         });
     }
 
@@ -164,5 +169,128 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             receiverType.Name);
 
         context.ReportDiagnostic(diagnostic);
+    }
+
+    private static void AnalyzeInterpolation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, HashSet<INamedTypeSymbol> externalEnumTypes)
+    {
+        var interpolation = (InterpolationSyntax)context.Node;
+
+        // DEBUG: Report that we entered this method
+        var debugDiag = Diagnostic.Create(
+            Rule,
+            interpolation.GetLocation(),
+            "ENTERED ANALYZER");
+        context.ReportDiagnostic(debugDiag);
+
+        // Get the expression inside the interpolation
+        var expression = interpolation.Expression;
+        if (expression is null)
+        {
+            var nullDiag = Diagnostic.Create(
+                Rule,
+                interpolation.GetLocation(),
+                "EXPRESSION IS NULL");
+            context.ReportDiagnostic(nullDiag);
+            return;
+        }
+
+        // Get the type of the expression using GetSymbolInfo first, then fall back to GetTypeInfo
+        var symbolInfo = context.SemanticModel.GetSymbolInfo(expression);
+        ITypeSymbol? expressionType = null;
+        
+        if (symbolInfo.Symbol is ILocalSymbol localSymbol)
+        {
+            expressionType = localSymbol.Type;
+        }
+        else if (symbolInfo.Symbol is IFieldSymbol fieldSymbol)
+        {
+            expressionType = fieldSymbol.Type;
+        }
+        else if (symbolInfo.Symbol is IPropertySymbol propertySymbol)
+        {
+            expressionType = propertySymbol.Type;
+        }
+        else
+        {
+            // Fall back to GetTypeInfo
+            expressionType = context.SemanticModel.GetTypeInfo(expression).Type;
+        }
+        
+        // DEBUG: Always report to see what's happening
+        var typeInfo = expressionType != null ? $"{expressionType.Name}|Kind={expressionType.TypeKind}" : "NULL";
+        var diagnostic = Diagnostic.Create(
+            Rule,
+            expression.GetLocation(),
+            $"Type={typeInfo}");
+        context.ReportDiagnostic(diagnostic);
+        
+        if (expressionType is null)
+        {
+            return;
+        }
+        
+        // DEBUG: Report if it's an enum
+        if (expressionType.TypeKind == TypeKind.Enum)
+        {
+            var diagnostic2 = Diagnostic.Create(
+                Rule,
+                expression.GetLocation(),
+                expressionType.Name + " [ENUM FOUND]");
+            context.ReportDiagnostic(diagnostic2);
+        }
+        
+        if (expressionType.TypeKind != TypeKind.Enum)
+        {
+            return;
+        }
+
+        // Check if there's a format clause (e.g., :g, :G, :x)
+        if (interpolation.FormatClause is not null)
+        {
+            var formatString = interpolation.FormatClause.FormatStringToken.Text;
+            
+            // Check if the format string is compatible with ToStringFast()
+            // Only "", "g", and "G" are compatible (empty is when there's no format clause)
+            if (!string.IsNullOrEmpty(formatString) && 
+                !string.Equals(formatString, "G", StringComparison.Ordinal) &&
+                !string.Equals(formatString, "g", StringComparison.Ordinal))
+            {
+                return;
+            }
+        }
+
+        // Check if the enum has the [EnumExtensions] attribute or is referenced in EnumExtensions<T>
+        bool hasEnumExtensionsAttribute = false;
+        
+        // First check if the enum itself has the attribute
+        foreach (var attributeData in expressionType.GetAttributes())
+        {
+            if (SymbolEqualityComparer.Default.Equals(
+                    attributeData.AttributeClass,
+                    enumExtensionsAttr))
+            {
+                hasEnumExtensionsAttribute = true;
+                break;
+            }
+        }
+
+        // If not, check if it's in the external enum types (EnumExtensions<T>)
+        if (!hasEnumExtensionsAttribute && expressionType is INamedTypeSymbol namedType)
+        {
+            hasEnumExtensionsAttribute = externalEnumTypes.Contains(namedType);
+        }
+
+        if (!hasEnumExtensionsAttribute)
+        {
+            return;
+        }
+
+        // Report the diagnostic on the expression itself
+        var diagnostic3 = Diagnostic.Create(
+            Rule,
+            expression.GetLocation(),
+            expressionType.Name);
+
+        context.ReportDiagnostic(diagnostic3);
     }
 }
