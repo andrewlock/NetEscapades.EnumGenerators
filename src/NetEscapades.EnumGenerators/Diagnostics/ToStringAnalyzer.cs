@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -31,19 +32,38 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         {
             var enumExtensionsAttr =
                 ctx.Compilation.GetTypeByMetadataName(Attributes.EnumExtensionsAttribute);
+            var externalEnumExtensionsAttr =
+                ctx.Compilation.GetTypeByMetadataName(Attributes.ExternalEnumExtensionsAttribute);
 
             if (enumExtensionsAttr is null)
             {
                 return;
             }
 
+            // Collect all enum types that have EnumExtensions<T> attributes
+            var externalEnumTypes = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+            if (externalEnumExtensionsAttr is not null)
+            {
+                foreach (var attribute in ctx.Compilation.Assembly.GetAttributes())
+                {
+                    if (attribute.AttributeClass is { IsGenericType: true } attrClass &&
+                        SymbolEqualityComparer.Default.Equals(attrClass.ConstructedFrom, externalEnumExtensionsAttr) &&
+                        attrClass.TypeArguments.Length == 1 &&
+                        attrClass.TypeArguments[0] is INamedTypeSymbol enumType &&
+                        enumType.TypeKind == TypeKind.Enum)
+                    {
+                        externalEnumTypes.Add(enumType);
+                    }
+                }
+            }
+
             ctx.RegisterSyntaxNodeAction(
-                c => AnalyzeInvocation(c, enumExtensionsAttr),
+                c => AnalyzeInvocation(c, enumExtensionsAttr, externalEnumTypes),
                 SyntaxKind.InvocationExpression);
         });
     }
 
-    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr)
+    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, HashSet<INamedTypeSymbol> externalEnumTypes)
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
@@ -113,8 +133,10 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Check if the enum has the [EnumExtensions] attribute
+        // Check if the enum has the [EnumExtensions] attribute or is referenced in EnumExtensions<T>
         bool hasEnumExtensionsAttribute = false;
+        
+        // First check if the enum itself has the attribute
         foreach (var attributeData in receiverType.GetAttributes())
         {
             if (SymbolEqualityComparer.Default.Equals(
@@ -124,6 +146,12 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
                 hasEnumExtensionsAttribute = true;
                 break;
             }
+        }
+
+        // If not, check if it's in the external enum types (EnumExtensions<T>)
+        if (!hasEnumExtensionsAttribute && receiverType is INamedTypeSymbol namedType)
+        {
+            hasEnumExtensionsAttribute = externalEnumTypes.Contains(namedType);
         }
 
         if (!hasEnumExtensionsAttribute)

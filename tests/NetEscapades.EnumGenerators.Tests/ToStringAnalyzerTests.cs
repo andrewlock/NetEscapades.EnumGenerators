@@ -399,6 +399,150 @@ public class ToStringAnalyzerTests
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
+    [Fact]
+    public async Task ToStringOnExternalEnumWithEnumExtensionsAttributeShouldHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = value.{|NEEG004:ToString|}();
+                }
+            }
+            """);
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = value.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ToStringOnExternalEnumWithFormatShouldHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = value.{|NEEG004:ToString|}("G");
+                }
+            }
+            """);
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = value.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ToStringOnExternalEnumWithIncompatibleFormatShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = value.ToString("D");
+                }
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task ToStringOnFileShareExternalEnumShouldHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.IO.FileShare.Read;
+                    var str = value.{|NEEG004:ToString|}();
+                }
+            }
+            """);
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.IO.FileShare.Read;
+                    var str = value.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
+        using System;
+        using System.Collections.Generic;
+        using System.Linq;
+        using System.Text;
+        using System.Threading;
+        using System.Threading.Tasks;
+        using System.Diagnostics;
+        using NetEscapades.EnumGenerators;
+
+        [assembly: EnumExtensions<System.DateTimeKind>()]
+        [assembly: EnumExtensions<System.IO.FileShare>()]
+
+        namespace ConsoleApplication1
+        {
+            {{testCode}}
+
+            // This code would be generated, just hacked in here for simplicity
+            public static class ExternalEnumExtensions
+            {
+                public static string ToStringFast(this System.DateTimeKind val)
+                {
+                    return "Test";
+                }
+
+                public static string ToStringFast(this System.IO.FileShare val)
+                {
+                    return "Test";
+                }
+            }
+        }
+
+        {{TestHelpers.LoadEmbeddedAttribute()}}
+        {{TestHelpers.LoadEmbeddedMetadataSource()}}
+        """;
+
     private static string GetTestCode(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
