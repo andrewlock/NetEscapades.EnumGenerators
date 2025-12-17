@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
+#pragma warning disable NEEG003
+
 [assembly:NetEscapades.EnumGenerators.EnumExtensions<DateTimeKind>()]
 [assembly:NetEscapades.EnumGenerators.EnumExtensions<System.IO.FileShare>()]
 
