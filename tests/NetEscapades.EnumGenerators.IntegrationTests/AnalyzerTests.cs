@@ -13,6 +13,10 @@ public class AnalyzerTests
         var test = EnumInSystem.First;
         _ = test.ToString();
         _ = EnumInSystem.First.ToString();
+        _ = EnumInSystem.First.ToString("G");
+        _ = EnumInSystem.First.ToString("x"); // no error
+        _ = EnumInSystem.First.ToString(format: "g");
+        _ = EnumInSystem.First.ToString(format: null); // no error
 #pragma warning restore NEEG004
     }
 }

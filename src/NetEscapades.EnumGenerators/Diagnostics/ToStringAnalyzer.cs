@@ -53,6 +53,12 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        // Check if there are too many arguments)
+        if (invocation.ArgumentList.Arguments.Count > 1)
+        {
+            return;
+        }
+
         // Check if the method name is "ToString"
         if (memberAccess.Name.Identifier.Text != "ToString")
         {
@@ -84,25 +90,18 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             var constantValue = context.SemanticModel.GetConstantValue(argument.Expression);
             
             // If we can't determine the value at compile time, don't suggest replacement
-            if (!constantValue.HasValue)
+            // If it's not a string (e.g., it's an IFormatProvider), don't suggest replacement
+            if (!constantValue.HasValue || constantValue.Value is not string formatString)
             {
                 return;
             }
 
             // Check if the format string is compatible with ToStringFast()
             // Only "", "G", and "g" are compatible
-            if (constantValue.Value is string formatString)
+            if (!string.IsNullOrEmpty(formatString) && 
+                !string.Equals(formatString, "G", StringComparison.Ordinal) &&
+                !string.Equals(formatString, "g", StringComparison.Ordinal))
             {
-                if (!string.IsNullOrEmpty(formatString) && 
-                    !string.Equals(formatString, "G", StringComparison.Ordinal) &&
-                    !string.Equals(formatString, "g", StringComparison.Ordinal))
-                {
-                    return;
-                }
-            }
-            else
-            {
-                // If it's not a string (e.g., it's an IFormatProvider), don't suggest replacement
                 return;
             }
         }

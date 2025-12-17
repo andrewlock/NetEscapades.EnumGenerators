@@ -10,8 +10,6 @@ namespace NetEscapades.EnumGenerators.Tests;
 
 public class ToStringAnalyzerTests
 {
-    private const string DiagnosticId = ToStringAnalyzer.DiagnosticId;
-
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -101,12 +99,35 @@ public class ToStringAnalyzerTests
     }
 
     [Theory]
+    [InlineData("format")]
+    [InlineData("format: format")]
+    [InlineData("format: null")]
+    public async Task ToStringWithDynamicParametersOrNullShouldNotHaveDiagnostics(string value)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var format = "g";
+                    var str = value.ToString({{value}});
+                }
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Theory]
     [InlineData("\"\"")]
     [InlineData("\"G\"")]
     [InlineData("\"g\"")]
+    [InlineData("format: \"\"")]
     [InlineData("format: \"g\"")]
     [InlineData("format: \"G\"")]
-    public async Task ToStringWithParametersShouldNotHaveDiagnostics(string param)
+    public async Task ToStringWithParametersShouldHaveDiagnostics(string param)
     {
         var test = GetTestCode(
             /* lang=c# */
