@@ -597,6 +597,40 @@ public class ToStringAnalyzerTests
     }
 
     [Theory]
+    [InlineData(",10", "")]
+    [InlineData(",10", ":g")]
+    [InlineData(",-10", ":G")]
+    public async Task EnumInStringInterpolationWithAlignmentShouldPreserveAlignment(string alignment, string format)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = $"{{|NEEG004:value|}{{{alignment}}}{{{format}}}}";
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = $"{value.ToStringFast(){{alignment}}}";
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Theory]
     [InlineData("x")]
     [InlineData("X")]
     [InlineData("d")]

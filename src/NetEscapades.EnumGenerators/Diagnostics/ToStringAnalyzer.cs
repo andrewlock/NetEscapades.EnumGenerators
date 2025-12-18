@@ -165,6 +165,8 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             ILocalSymbol localSymbol => localSymbol.Type,
             IFieldSymbol fieldSymbol => fieldSymbol.Type,
             IPropertySymbol propertySymbol => propertySymbol.Type,
+            IParameterSymbol parameterSymbol => parameterSymbol.Type,
+            IMethodSymbol methodSymbol => methodSymbol.ReturnType,
             _ => context.SemanticModel.GetTypeInfo(expression).Type
         };
 

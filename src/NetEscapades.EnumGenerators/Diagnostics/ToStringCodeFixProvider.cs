@@ -131,6 +131,11 @@ public class ToStringCodeFixProvider : CodeFixProvider
             .WithLeadingTrivia(interpolation.GetLeadingTrivia())
             .WithTrailingTrivia(interpolation.GetTrailingTrivia());
 
+        if (interpolation.AlignmentClause is { } alignment)
+        {
+            newInterpolation = newInterpolation.WithAlignmentClause(alignment);
+        }
+
         // Replace the old interpolation with the new one
         var newRoot = root.ReplaceNode(interpolation, newInterpolation);
 
