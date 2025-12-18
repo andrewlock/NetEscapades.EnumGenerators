@@ -779,6 +779,39 @@ public class ToStringAnalyzerTests
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
+    [Fact]
+    public async Task ExternalEnumInStringInterpolationWithMethodCall()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var str = $"{{|NEEG004:GetValue()|}:g}";
+                }
+
+                private System.DateTimeKind GetValue() => System.DateTimeKind.Local;
+            }
+            """);
+
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var str = $"{GetValue().ToStringFast()}";
+                }
+            
+                private System.DateTimeKind GetValue() => System.DateTimeKind.Local;
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
