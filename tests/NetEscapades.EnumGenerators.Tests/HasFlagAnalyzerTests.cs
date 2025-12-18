@@ -296,7 +296,7 @@ public class HasFlagAnalyzerTests
                 First,
                 Second,
             }
-            
+
             // these are generated but it's fine
             public static class extensions
             {
