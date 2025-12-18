@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
@@ -58,6 +59,10 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             ctx.RegisterSyntaxNodeAction(
                 c => AnalyzeInvocation(c, enumExtensionsAttr, externalEnumTypes),
                 SyntaxKind.InvocationExpression);
+            
+            ctx.RegisterSyntaxNodeAction(
+                c => AnalyzeInterpolation(c, enumExtensionsAttr, externalEnumTypes),
+                SyntaxKind.Interpolation);
         });
     }
 
@@ -131,28 +136,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Check if the enum has the [EnumExtensions] attribute or is referenced in EnumExtensions<T>
-        bool hasEnumExtensionsAttribute = false;
-        
-        // First check if the enum itself has the attribute
-        foreach (var attributeData in receiverType.GetAttributes())
-        {
-            if (SymbolEqualityComparer.Default.Equals(
-                    attributeData.AttributeClass,
-                    enumExtensionsAttr))
-            {
-                hasEnumExtensionsAttribute = true;
-                break;
-            }
-        }
-
-        // If not, check if it's in the external enum types (EnumExtensions<T>)
-        if (!hasEnumExtensionsAttribute && receiverType is INamedTypeSymbol namedType)
-        {
-            hasEnumExtensionsAttribute = externalEnumTypes.Contains(namedType);
-        }
-
-        if (!hasEnumExtensionsAttribute)
+        if (!IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes))
         {
             return;
         }
@@ -165,4 +149,81 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
 
         context.ReportDiagnostic(diagnostic);
     }
+
+    private static void AnalyzeInterpolation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, HashSet<INamedTypeSymbol> externalEnumTypes)
+    {
+        var interpolation = (InterpolationSyntax)context.Node;
+
+        // Get the expression inside the interpolation
+        var expression = interpolation.Expression;
+
+        // Get the type of the expression using GetSymbolInfo first, then fall back to GetTypeInfo
+        var symbolInfo = context.SemanticModel.GetSymbolInfo(expression);
+
+        var expressionType = symbolInfo.Symbol switch
+        {
+            ILocalSymbol localSymbol => localSymbol.Type,
+            IFieldSymbol fieldSymbol => fieldSymbol.Type,
+            IPropertySymbol propertySymbol => propertySymbol.Type,
+            IParameterSymbol parameterSymbol => parameterSymbol.Type,
+            IMethodSymbol methodSymbol => methodSymbol.ReturnType,
+            _ => context.SemanticModel.GetTypeInfo(expression).Type
+        };
+
+        if (expressionType is null || expressionType.TypeKind != TypeKind.Enum)
+        {
+            return;
+        }
+
+        // Check if there's a format clause (e.g., :g, :G, :x)
+        if (interpolation.FormatClause is not null)
+        {
+            var formatString = interpolation.FormatClause.FormatStringToken.Text;
+            
+            // Check if the format string is compatible with ToStringFast()
+            // Only "", "g", and "G" are compatible (empty is when there's no format clause)
+            if (!string.IsNullOrEmpty(formatString) && 
+                !string.Equals(formatString, "G", StringComparison.Ordinal) &&
+                !string.Equals(formatString, "g", StringComparison.Ordinal))
+            {
+                return;
+            }
+        }
+
+        if (!IsEnumWithExtensions(expressionType, enumExtensionsAttr, externalEnumTypes))
+        {
+            return;
+        }
+
+        // Report the diagnostic on the expression itself
+        var diagnostic = Diagnostic.Create(
+            Rule,
+            expression.GetLocation(),
+            expressionType.Name);
+
+        context.ReportDiagnostic(diagnostic);
+    }
+
+    private static bool IsEnumWithExtensions(
+        ITypeSymbol receiverType,
+        INamedTypeSymbol enumExtensionsAttr,
+        HashSet<INamedTypeSymbol> externalEnumTypes)
+    {
+        // Check if the enum has the [EnumExtensions] attribute or is referenced in EnumExtensions<T>
+        // First check if the enum itself has the attribute
+        foreach (var attributeData in receiverType.GetAttributes())
+        {
+            if (SymbolEqualityComparer.Default.Equals(
+                    attributeData.AttributeClass,
+                    enumExtensionsAttr))
+            {
+                return true;
+            }
+        }
+
+        // If not, check if it's in the external enum types (EnumExtensions<T>)
+        return receiverType is INamedTypeSymbol namedType
+               && externalEnumTypes.Contains(namedType);
+    }
+
 }

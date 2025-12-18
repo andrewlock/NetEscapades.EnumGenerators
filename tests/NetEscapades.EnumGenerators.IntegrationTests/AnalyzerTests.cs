@@ -18,6 +18,10 @@ public class AnalyzerTests
         _ = EnumInSystem.First.ToString(format: "g");
         _ = EnumInSystem.First.ToString(format: null); // no error
         _ = DateTimeKind.Local.ToString();
+        _ = $"Some value: {test} <-";
+        _ = $"Some value: {test:G} <-";
+        _ = $"Some value: {EnumInSystem.First} <-";
+        _ = $"Some value: {EnumInSystem.First:G} <-";
 #pragma warning restore NEEG004
     }
 }

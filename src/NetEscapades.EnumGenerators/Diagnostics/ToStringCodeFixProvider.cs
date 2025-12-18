@@ -30,20 +30,32 @@ public class ToStringCodeFixProvider : CodeFixProvider
         var diagnostic = context.Diagnostics.First();
         var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-        // Find the ToString identifier
-        var identifierNode = root.FindToken(diagnosticSpan.Start).Parent;
-        if (identifierNode is not IdentifierNameSyntax identifierName)
-        {
-            return;
-        }
+        // Find the node at the diagnostic location
+        var node = root.FindNode(diagnosticSpan);
 
-        // Register a code action that will invoke the fix
-        context.RegisterCodeFix(
-            CodeAction.Create(
-                title: Title,
-                createChangedDocument: c => ReplaceToStringWithToStringFast(context.Document, identifierName, c),
-                equivalenceKey: Title),
-            context.Diagnostics);
+        // Check if this is an interpolation case
+        if (node.Parent is InterpolationSyntax interpolation)
+        {
+            // Register a code action for interpolation replacement
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: Title,
+                    createChangedDocument: c =>
+                        ReplaceInterpolationWithToStringFast(context.Document, interpolation, c),
+                    equivalenceKey: Title),
+                context.Diagnostics);
+        }
+        // Check if this is a ToString invocation (original case)
+        else if (node is IdentifierNameSyntax identifierName)
+        {
+            // Register a code action for ToString() replacement
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: Title,
+                    createChangedDocument: c => ReplaceToStringWithToStringFast(context.Document, identifierName, c),
+                    equivalenceKey: Title),
+                context.Diagnostics);
+        }
     }
 
     private static async Task<Document> ReplaceToStringWithToStringFast(
@@ -87,6 +99,45 @@ public class ToStringCodeFixProvider : CodeFixProvider
 
         // Replace the old invocation with the new one
         var newRoot = root.ReplaceNode(invocationExpression, newInvocation);
+
+        return document.WithSyntaxRoot(newRoot);
+    }
+
+    private static async Task<Document> ReplaceInterpolationWithToStringFast(
+        Document document,
+        InterpolationSyntax interpolation,
+        CancellationToken cancellationToken)
+    {
+        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        if (root is null)
+        {
+            return document;
+        }
+
+        // Create a member access expression: expression.ToStringFast()
+        var expression = interpolation.Expression;
+        var toStringFastMemberAccess = SyntaxFactory.MemberAccessExpression(
+            SyntaxKind.SimpleMemberAccessExpression,
+            expression,
+            SyntaxFactory.IdentifierName("ToStringFast"));
+
+        // Create an invocation expression: expression.ToStringFast()
+        var toStringFastInvocation = SyntaxFactory.InvocationExpression(
+            toStringFastMemberAccess,
+            SyntaxFactory.ArgumentList());
+
+        // Create a new interpolation with the invocation and no format clause
+        var newInterpolation = SyntaxFactory.Interpolation(toStringFastInvocation)
+            .WithLeadingTrivia(interpolation.GetLeadingTrivia())
+            .WithTrailingTrivia(interpolation.GetTrailingTrivia());
+
+        if (interpolation.AlignmentClause is { } alignment)
+        {
+            newInterpolation = newInterpolation.WithAlignmentClause(alignment);
+        }
+
+        // Replace the old interpolation with the new one
+        var newRoot = root.ReplaceNode(interpolation, newInterpolation);
 
         return document.WithSyntaxRoot(newRoot);
     }

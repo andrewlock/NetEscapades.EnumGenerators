@@ -495,6 +495,323 @@ public class ToStringAnalyzerTests
         await Verifier.VerifyAnalyzerAsync(test);
     }
 
+    [Fact]
+    public async Task EnumInStringInterpolationShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+
+                        public class TestClass
+                        {
+                            public void TestMethod()
+                            {
+                                var value = TestEnum.First;
+                                var str = $"{{|NEEG004:value|}}";
+                            }
+                        }
+                        
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+
+                        public class TestClass
+                        {
+                            public void TestMethod()
+                            {
+                                var value = TestEnum.First;
+                                var str = $"{value.ToStringFast()}";
+                            }
+                        }
+                        
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task EnumInStringInterpolationWithMultipleExpressionsShouldHaveDiagnostics()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    var str = $"Value1: {{|NEEG004:value1|}}, Value2: {{|NEEG004:value2|}}";
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    var str = $"Value1: {value1.ToStringFast()}, Value2: {value2.ToStringFast()}";
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Theory]
+    [InlineData("g")]
+    [InlineData("G")]
+    public async Task EnumInStringInterpolationWithCompatibleFormatShouldHaveDiagnostic(string format)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = $"{{|NEEG004:value|}:{{{format}}}}";
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = $"{value.ToStringFast()}";
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Theory]
+    [InlineData(",10", "")]
+    [InlineData(",10", ":g")]
+    [InlineData(",-10", ":G")]
+    public async Task EnumInStringInterpolationWithAlignmentShouldPreserveAlignment(string alignment, string format)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = $"{{|NEEG004:value|}{{{alignment}}}{{{format}}}}";
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = $"{value.ToStringFast(){{alignment}}}";
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Theory]
+    [InlineData("x")]
+    [InlineData("X")]
+    [InlineData("d")]
+    [InlineData("D")]
+    public async Task EnumInStringInterpolationWithIncompatibleFormatShouldNotHaveDiagnostic(string format)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = $"{value:{{format}}}";
+                }
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task EnumDirectAccessInStringInterpolationShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var str = $"SomeValue: {{|NEEG004:TestEnum.First|}}";
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var str = $"SomeValue: {TestEnum.First.ToStringFast()}";
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NonEnumInStringInterpolationShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = 42;
+                    var str = $"{value}";
+                }
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task EnumWithoutAttributeInStringInterpolationShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnumWithoutAttribute.First;
+                    var str = $"{value}";
+                }
+            }
+            """);
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task ExternalEnumInStringInterpolationShouldHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = $"{{|NEEG004:value|}}";
+                }
+            }
+            """);
+
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = $"{value.ToStringFast()}";
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ExternalEnumInStringInterpolationWithFormatShouldHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = $"{{|NEEG004:value|}:g}";
+                }
+            }
+            """);
+
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.DateTimeKind.Local;
+                    var str = $"{value.ToStringFast()}";
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ExternalEnumInStringInterpolationWithMethodCall()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var str = $"{{|NEEG004:GetValue()|}:g}";
+                }
+
+                private System.DateTimeKind GetValue() => System.DateTimeKind.Local;
+            }
+            """);
+
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var str = $"{GetValue().ToStringFast()}";
+                }
+            
+                private System.DateTimeKind GetValue() => System.DateTimeKind.Local;
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
