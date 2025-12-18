@@ -507,7 +507,7 @@ public class ToStringAnalyzerTests
                             public void TestMethod()
                             {
                                 var value = TestEnum.First;
-                                var str = $"{{{|NEEG004:value|}}}";
+                                var str = $"{{|NEEG004:value|}}";
                             }
                         }
                         
@@ -542,7 +542,7 @@ public class ToStringAnalyzerTests
                 {
                     var value1 = TestEnum.First;
                     var value2 = TestEnum.Second;
-                    var str = $"Value1: {|NEEG004:value1|}, Value2: {|NEEG004:value2|}";
+                    var str = $"Value1: {{|NEEG004:value1|}}, Value2: {{|NEEG004:value2|}}";
                 }
             }
             """);
@@ -570,13 +570,13 @@ public class ToStringAnalyzerTests
     {
         var test = GetTestCode(
             /* lang=c# */
-            $$"""
+            $$$"""
             public class TestClass
             {
                 public void TestMethod()
                 {
                     var value = TestEnum.First;
-                    var str = $"{|NEEG004:value|}:{{format}}";
+                    var str = $"{{|NEEG004:value|}:{{{format}}}}";
                 }
             }
             """);
@@ -628,7 +628,7 @@ public class ToStringAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var str = $"SomeValue: {|NEEG004:TestEnum.First|}";
+                    var str = $"SomeValue: {{|NEEG004:TestEnum.First|}}";
                 }
             }
             """);
@@ -694,7 +694,7 @@ public class ToStringAnalyzerTests
                 public void TestMethod()
                 {
                     var value = System.DateTimeKind.Local;
-                    var str = $"{|NEEG004:value|}";
+                    var str = $"{{|NEEG004:value|}}";
                 }
             }
             """);
@@ -725,7 +725,7 @@ public class ToStringAnalyzerTests
                 public void TestMethod()
                 {
                     var value = System.DateTimeKind.Local;
-                    var str = $"{|NEEG004:value|}:g";
+                    var str = $"{{|NEEG004:value|}:g}";
                 }
             }
             """);

@@ -32,26 +32,27 @@ public class ToStringCodeFixProvider : CodeFixProvider
 
         // Find the node at the diagnostic location
         var node = root.FindNode(diagnosticSpan);
-        
+
+        // Check if this is an interpolation case
+        if (node.Parent is InterpolationSyntax interpolation)
+        {
+            // Register a code action for interpolation replacement
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: Title,
+                    createChangedDocument: c =>
+                        ReplaceInterpolationWithToStringFast(context.Document, interpolation, c),
+                    equivalenceKey: Title),
+                context.Diagnostics);
+        }
         // Check if this is a ToString invocation (original case)
-        if (node is IdentifierNameSyntax identifierName)
+        else if (node is IdentifierNameSyntax identifierName)
         {
             // Register a code action for ToString() replacement
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
                     createChangedDocument: c => ReplaceToStringWithToStringFast(context.Document, identifierName, c),
-                    equivalenceKey: Title),
-                context.Diagnostics);
-        }
-        // Check if this is an interpolation case
-        else if (node.Parent is InterpolationSyntax interpolation)
-        {
-            // Register a code action for interpolation replacement
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: Title,
-                    createChangedDocument: c => ReplaceInterpolationWithToStringFast(context.Document, interpolation, c),
                     equivalenceKey: Title),
                 context.Diagnostics);
         }
