@@ -498,27 +498,35 @@ public class ToStringAnalyzerTests
     [Fact]
     public async Task EnumInStringInterpolationShouldHaveDiagnostic()
     {
-        var test = GetTestCode(@"
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = TestEnum.First;
-                    var str = $""{{{|NEEG004:value|}}}"";
-                }
-            }
-            ");
+        var test = GetTestCode(
+            /* lang=c# */
+            """
 
-        var fix = GetTestCode(@"
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = TestEnum.First;
-                    var str = $""{value.ToStringFast()}"";
-                }
-            }
-            ");
+                        public class TestClass
+                        {
+                            public void TestMethod()
+                            {
+                                var value = TestEnum.First;
+                                var str = $"{{{|NEEG004:value|}}}";
+                            }
+                        }
+                        
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+
+                        public class TestClass
+                        {
+                            public void TestMethod()
+                            {
+                                var value = TestEnum.First;
+                                var str = $"{value.ToStringFast()}";
+                            }
+                        }
+                        
+            """);
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
@@ -620,7 +628,7 @@ public class ToStringAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var str = $"{|NEEG004:TestEnum.First|}";
+                    var str = $"SomeValue: {|NEEG004:TestEnum.First|}";
                 }
             }
             """);
@@ -632,7 +640,7 @@ public class ToStringAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var str = $"{TestEnum.First.ToStringFast()}";
+                    var str = $"SomeValue: {TestEnum.First.ToStringFast()}";
                 }
             }
             """);
