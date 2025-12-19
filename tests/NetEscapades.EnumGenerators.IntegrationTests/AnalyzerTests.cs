@@ -1,6 +1,25 @@
 using System;
-using NetEscapades.EnumGenerators.IntegrationTests;
 using Xunit;
+
+#if INTEGRATION_TESTS
+using NetEscapades.EnumGenerators.IntegrationTests;
+#elif NETSTANDARD_INTEGRATION_TESTS
+using NetEscapades.EnumGenerators.NetStandard.IntegrationTests;
+#elif NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS
+using NetEscapades.EnumGenerators.NetStandard.SystemMemory.IntegrationTests;
+#elif INTERCEPTOR_TESTS
+using NetEscapades.EnumGenerators.Interceptors.IntegrationTests;
+#elif NUGET_INTEGRATION_TESTS
+using NetEscapades.EnumGenerators.Nuget.IntegrationTests;
+#elif NUGET_INTERCEPTOR_TESTS
+using NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
+#elif NUGET_NETSTANDARD_INTERCEPTOR_TESTS
+using NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests;
+#elif NUGET_SYSTEMMEMORY_INTEGRATION_TESTS
+using NetEscapades.EnumGenerators.Nuget.SystemMemory.IntegrationTests;
+#else
+#error Unknown integration tests
+#endif
 
 namespace NetEscapades.EnumGenerators.Benchmarks;
 

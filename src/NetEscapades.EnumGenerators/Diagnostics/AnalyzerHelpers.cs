@@ -1,17 +1,15 @@
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace NetEscapades.EnumGenerators.Diagnostics;
 
-public class AnalyzerHelpers
+public static class AnalyzerHelpers
 {
-    public static (INamedTypeSymbol? enumExtensionsAttr, HashSet<INamedTypeSymbol>? externalEnumTypes) GetEnumExtensionAttributes(
-        CompilationStartAnalysisContext ctx)
+    public static (INamedTypeSymbol? enumExtensionsAttr, HashSet<INamedTypeSymbol>? externalEnumTypes) GetEnumExtensionAttributes(Compilation compilation)
     {
         var enumExtensionsAttr =
-            ctx.Compilation.GetTypeByMetadataName(Attributes.EnumExtensionsAttribute);
+            compilation.GetTypeByMetadataName(Attributes.EnumExtensionsAttribute);
         var externalEnumExtensionsAttr =
-            ctx.Compilation.GetTypeByMetadataName(Attributes.ExternalEnumExtensionsAttribute);
+            compilation.GetTypeByMetadataName(Attributes.ExternalEnumExtensionsAttribute);
 
         if (enumExtensionsAttr is null)
         {
@@ -22,7 +20,7 @@ public class AnalyzerHelpers
         var externalEnumTypes = new HashSet<INamedTypeSymbol>(SymbolEqualityComparer.Default);
         if (externalEnumExtensionsAttr is not null)
         {
-            foreach (var attribute in ctx.Compilation.Assembly.GetAttributes())
+            foreach (var attribute in compilation.Assembly.GetAttributes())
             {
                 if (attribute.AttributeClass is { IsGenericType: true } attrClass &&
                     SymbolEqualityComparer.Default.Equals(attrClass.ConstructedFrom, externalEnumExtensionsAttr) &&
