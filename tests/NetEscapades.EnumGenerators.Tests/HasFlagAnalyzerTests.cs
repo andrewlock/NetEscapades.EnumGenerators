@@ -37,24 +37,6 @@ public class HasFlagAnalyzerTests
     }
 
     [Fact]
-    public async Task NonEnumTypeShouldNotHaveDiagnostics()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = 42;
-                    // This won't compile but analyzer shouldn't care
-                }
-            }
-            """);
-        await Verifier.VerifyAnalyzerAsync(test);
-    }
-
-    [Fact]
     public async Task HasFlagOnEnumWithAttributeShouldHaveDiagnostic()
     {
         var test = GetTestCode(

@@ -1,4 +1,5 @@
 using System;
+using NetEscapades.EnumGenerators.IntegrationTests;
 using Xunit;
 
 namespace NetEscapades.EnumGenerators.Benchmarks;
@@ -23,5 +24,15 @@ public class AnalyzerTests
         _ = $"Some value: {EnumInSystem.First} <-";
         _ = $"Some value: {EnumInSystem.First:G} <-";
 #pragma warning restore NEEG004
+    }
+
+    [Fact]
+    public void Neeg005Testing()
+    {
+#pragma warning disable NEEG005
+        var test = FlagsEnum.First;
+        _ = test.HasFlag(FlagsEnum.Second);
+        _ = $"Some value: {test.HasFlag(FlagsEnum.Second)} <-";
+#pragma warning restore NEEG005
     }
 }
