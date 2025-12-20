@@ -111,8 +111,8 @@ public class HasFlagAnalyzerTests
               using System.Text;
               using System.Threading;
               using System.Threading.Tasks;
-              using System.Diagnostics;
-              using NetEscapades.EnumGenerators;{{(addUsing ? Environment.NewLine + "using Some.Other.Namespace;" : "")}}
+              using System.Diagnostics;{{(addUsing ? Environment.NewLine + "using Some.Other.Namespace;" : "")}}
+              using NetEscapades.EnumGenerators;
 
               namespace ConsoleApplication1
               {
@@ -640,6 +640,7 @@ public class HasFlagAnalyzerTests
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
+        using System.IO;
         using System.Linq;
         using System.Text;
         using System.Threading;
@@ -653,8 +654,12 @@ public class HasFlagAnalyzerTests
         {
             {{testCode}}
 
+        }
+        
+        namespace System.IO
+        {
             // This code would be generated, just hacked in here for simplicity
-            public static class ExternalEnumExtensions
+            public static class FileShareExtensions
             {
                 public static bool HasFlagFast(this System.IO.FileShare val, System.IO.FileShare flag)
                 {
@@ -697,7 +702,7 @@ public class HasFlagAnalyzerTests
             }
 
             // This code would be generated, just hacked in here for simplicity
-            public static class FlagsExtensions
+            public static class FlagsEnumExtensions
             {
                 public static bool HasFlagFast(this FlagsEnum val, FlagsEnum flag)
                 {
