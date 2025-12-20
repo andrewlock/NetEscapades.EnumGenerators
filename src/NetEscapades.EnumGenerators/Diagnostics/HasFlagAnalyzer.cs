@@ -41,7 +41,7 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
         });
     }
 
-    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, HashSet<INamedTypeSymbol> externalEnumTypes)
+    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, ExternalEnumDictionary externalEnumTypes)
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
@@ -85,16 +85,20 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes))
+        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionNamespace, out var extensionClass))
         {
             return;
         }
 
         // Report the diagnostic
         var diagnostic = Diagnostic.Create(
-            Rule,
-            memberAccess.Name.GetLocation(),
-            receiverType.Name);
+            descriptor: Rule,
+            location: memberAccess.Name.GetLocation(),
+            messageArgs: receiverType.Name,
+            properties: ImmutableDictionary.CreateRange<string, string?>([
+                new(nameof(EnumExtensionsAttribute.ExtensionClassNamespace), extensionNamespace),
+                new(nameof(EnumExtensionsAttribute.ExtensionClassName), extensionClass),
+            ]));
 
         context.ReportDiagnostic(diagnostic);
     }
