@@ -45,7 +45,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         });
     }
 
-    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, HashSet<INamedTypeSymbol> externalEnumTypes)
+    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, ExternalEnumDictionary externalEnumTypes)
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
@@ -115,21 +115,25 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes))
+        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionNamespace, out var extensionClass))
         {
             return;
         }
 
         // Report the diagnostic
         var diagnostic = Diagnostic.Create(
-            Rule,
-            memberAccess.Name.GetLocation(),
-            receiverType.Name);
+            descriptor: Rule,
+            location: memberAccess.Name.GetLocation(),
+            messageArgs: receiverType.Name,
+            properties: ImmutableDictionary.CreateRange<string, string?>([
+                new(nameof(EnumExtensionsAttribute.ExtensionClassNamespace), extensionNamespace),
+                new(nameof(EnumExtensionsAttribute.ExtensionClassName), extensionClass),
+            ]));
 
         context.ReportDiagnostic(diagnostic);
     }
 
-    private static void AnalyzeInterpolation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, HashSet<INamedTypeSymbol> externalEnumTypes)
+    private static void AnalyzeInterpolation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, ExternalEnumDictionary externalEnumTypes)
     {
         var interpolation = (InterpolationSyntax)context.Node;
 
@@ -169,16 +173,20 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        if (!AnalyzerHelpers.IsEnumWithExtensions(expressionType, enumExtensionsAttr, externalEnumTypes))
+        if (!AnalyzerHelpers.IsEnumWithExtensions(expressionType, enumExtensionsAttr, externalEnumTypes, out var extensionNamespace, out var extensionClass))
         {
             return;
         }
 
         // Report the diagnostic on the expression itself
         var diagnostic = Diagnostic.Create(
-            Rule,
-            expression.GetLocation(),
-            expressionType.Name);
+            descriptor: Rule,
+            location: expression.GetLocation(),
+            messageArgs: expressionType.Name,
+            properties: ImmutableDictionary.CreateRange<string, string?>([
+                new(nameof(EnumExtensionsAttribute.ExtensionClassNamespace), extensionNamespace),
+                new(nameof(EnumExtensionsAttribute.ExtensionClassName), extensionClass),
+            ]));
 
         context.ReportDiagnostic(diagnostic);
     }

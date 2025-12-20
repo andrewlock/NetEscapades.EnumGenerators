@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using NetEscapades.EnumGenerators.Diagnostics;
 using Xunit;
@@ -67,6 +68,86 @@ public class HasFlagAnalyzerTests
             }
             """);
         await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact(Skip = "Doesn't yet pass")]
+    public async Task HasFlagOnEnumWithExtensionClassInOtherNamespaceAddsUsing()
+    {
+        var test = TestCode(addUsing: false,
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    var flag = FlagsEnum.Second;
+                    var hasFlag = value.{|NEEG005:HasFlag|}(flag);
+                }
+            }
+            """);
+
+        var fix = TestCode(addUsing: true,
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    var flag = FlagsEnum.Second;
+                    var hasFlag = value.HasFlagFast(flag);
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+
+
+        static string TestCode(bool addUsing, string testCode) =>
+            $$"""
+              using System;
+              using System.Collections.Generic;
+              using System.Linq;
+              using System.Text;
+              using System.Threading;
+              using System.Threading.Tasks;
+              using System.Diagnostics;{{(addUsing ? Environment.NewLine + "using Some.Other.Namespace;" : "")}}
+              using NetEscapades.EnumGenerators;
+
+              namespace ConsoleApplication1
+              {
+                  using Some.Namespace;
+
+                  {{testCode}}
+              }
+
+              namespace Some.Namespace
+              {
+                  [EnumExtensions(ExtensionClassNamespace = "Some.Other.Namespace")]
+                  [System.Flags]
+                  public enum FlagsEnum
+                  {
+                      First = 1,
+                      Second = 2,
+                      Third = 4,
+                  }
+              }
+
+              namespace Some.Other.Namespace
+              {
+                  // This code would be generated, just hacked in here for simplicity
+                  public static class FlagsEnumExtensions
+                  {
+                      public static bool HasFlagFast(this Some.Namespace.FlagsEnum val, Some.Namespace.FlagsEnum flag)
+                      {
+                          return (val & flag) == flag;
+                      }
+                  }
+              }
+
+              {{TestHelpers.LoadEmbeddedAttribute()}}
+              {{TestHelpers.LoadEmbeddedMetadataSource()}}
+              """;
     }
 
     [Fact]
@@ -559,6 +640,7 @@ public class HasFlagAnalyzerTests
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
+        using System.IO;
         using System.Linq;
         using System.Text;
         using System.Threading;
@@ -572,8 +654,12 @@ public class HasFlagAnalyzerTests
         {
             {{testCode}}
 
+        }
+        
+        namespace System.IO
+        {
             // This code would be generated, just hacked in here for simplicity
-            public static class ExternalEnumExtensions
+            public static class FileShareExtensions
             {
                 public static bool HasFlagFast(this System.IO.FileShare val, System.IO.FileShare flag)
                 {
@@ -616,7 +702,7 @@ public class HasFlagAnalyzerTests
             }
 
             // This code would be generated, just hacked in here for simplicity
-            public static class FlagsExtensions
+            public static class FlagsEnumExtensions
             {
                 public static bool HasFlagFast(this FlagsEnum val, FlagsEnum flag)
                 {

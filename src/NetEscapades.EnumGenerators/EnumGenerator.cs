@@ -240,10 +240,10 @@ public class EnumGenerator : IIncrementalGenerator
         return true;
     }
 
-    internal static string GetEnumExtensionNamespace(INamedTypeSymbol enumSymbol)
+    internal static string GetEnumExtensionNamespace(ITypeSymbol enumSymbol)
         => enumSymbol.ContainingNamespace.IsGlobalNamespace ? string.Empty : enumSymbol.ContainingNamespace.ToString();
 
-    internal static string GetEnumExtensionName(INamedTypeSymbol enumSymbol)
+    internal static string GetEnumExtensionName(ITypeSymbol enumSymbol)
         => enumSymbol.Name + "Extensions";
 
     static EnumToGenerate? TryExtractEnumSymbol(
