@@ -23,6 +23,12 @@ namespace NetEscapades.EnumGenerators.Nuget.SystemMemory.IntegrationTests;
 #error Unknown integration tests
 #endif
 
+#pragma warning disable NEEG001
+#pragma warning disable NEEG002
+#pragma warning disable NEEG003
+#pragma warning disable NEEG004
+#pragma warning disable NEEG005
+
 public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare, int, ExternalFileShareExtensionsTests>, ITestData<FileShare>
 {
     public TheoryData<FileShare> ValidEnumValues() => new()

@@ -22,6 +22,13 @@ namespace NetEscapades.EnumGenerators.Nuget.SystemMemory.IntegrationTests;
 #error Unknown integration tests
 #endif
 
+
+#pragma warning disable NEEG001
+#pragma warning disable NEEG002
+#pragma warning disable NEEG003
+#pragma warning disable NEEG004
+#pragma warning disable NEEG005
+
 public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnumExtensionsTests>, ITestData<FlagsEnum>
 {
     public TheoryData<FlagsEnum> ValidEnumValues() => new()
