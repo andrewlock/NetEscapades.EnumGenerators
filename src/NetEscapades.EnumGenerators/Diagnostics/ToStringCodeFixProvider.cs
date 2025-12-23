@@ -18,8 +18,6 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
     public sealed override ImmutableArray<string> FixableDiagnosticIds
         => ImmutableArray.Create(ToStringAnalyzer.DiagnosticId);
 
-    // We can't use the batch fixer because it causes multiple iterations
-
     public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         if (!context.Diagnostics.IsDefaultOrEmpty)
@@ -50,6 +48,9 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
         {
             return document;
         }
+        
+        var generator = editor.Generator;
+        var semanticModel = editor.SemanticModel;
 
         foreach (var diagnostic in diagnostics)
         {
@@ -62,9 +63,6 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
             // Find the node at the diagnostic location
             var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
 
-            var generator = editor.Generator;
-            var semanticModel = editor.SemanticModel;
-
             var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
             if (type is null)
             {
@@ -76,7 +74,7 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
             {
                 var newInvocation = generator.InvocationExpression(
                         generator.MemberAccessExpression(generator.TypeExpression(type), "ToStringFast"),
-                        [interpolation.Expression]) // this parameter
+                        interpolation.Expression) // this parameter
                     .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
 
                 // Create a new interpolation with the invocation and no format clause
@@ -98,7 +96,7 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
             {
                 var newInvocation = generator.InvocationExpression(
                         generator.MemberAccessExpression(generator.TypeExpression(type), "ToStringFast"),
-                        [memberAccess.Expression]) // this parameter
+                        memberAccess.Expression) // this parameter
                     .WithTriviaFrom(invocation)
                     .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
 

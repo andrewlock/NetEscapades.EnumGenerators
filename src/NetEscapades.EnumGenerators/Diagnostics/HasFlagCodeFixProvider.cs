@@ -17,8 +17,6 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
     public sealed override ImmutableArray<string> FixableDiagnosticIds
         => ImmutableArray.Create(HasFlagAnalyzer.DiagnosticId);
 
-    // We can't use the batch fixer because it causes multiple iterations
-
     public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         if (!context.Diagnostics.IsDefaultOrEmpty)
@@ -50,6 +48,9 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
             return document;
         }
 
+        var generator = editor.Generator;
+        var semanticModel = editor.SemanticModel;
+
         foreach (var diagnostic in diagnostics)
         {
             if (!diagnostic.Properties.TryGetValue(AnalyzerHelpers.ExtensionTypeNameProperty, out var extensionTypeName)
@@ -67,9 +68,6 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
             {
                 continue;
             }
-
-            var generator = editor.Generator;
-            var semanticModel = editor.SemanticModel;
 
             var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
             if (type is null)
