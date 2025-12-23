@@ -54,4 +54,25 @@ public class AnalyzerTests
         _ = $"Some value: {test.HasFlag(FlagsEnum.Second)} <-";
 #pragma warning restore NEEG005
     }
+
+    [Fact]
+    public void Neeg006Testing()
+    {
+#pragma warning disable NEEG006
+        var test = FlagsEnum.First;
+        _ = Enum.IsDefined(typeof(FlagsEnum), FlagsEnum.Second);
+        _ = Enum.IsDefined(typeof(FlagsEnum), test);
+        _ = FlagsEnum.IsDefined(typeof(FlagsEnum), (FlagsEnum)23);
+        _ = $"Some value: {Enum.IsDefined(typeof(FlagsEnum), test)} <-";
+
+#if NET5_0_OR_GREATER
+        _ = Enum.IsDefined<FlagsEnum>((FlagsEnum)23);
+        _ = Enum.IsDefined((FlagsEnum)23);
+        _ = Enum.IsDefined(test);
+        _ = FlagsEnum.IsDefined((FlagsEnum)23);
+        _ = FlagsEnum.IsDefined(test);
+        _ = $"Some value: {Enum.IsDefined((FlagsEnum)23)} <-";
+#endif
+#pragma warning restore NEEG006
+    }
 }

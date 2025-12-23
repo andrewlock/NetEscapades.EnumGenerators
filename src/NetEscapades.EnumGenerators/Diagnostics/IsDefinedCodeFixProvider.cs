@@ -9,23 +9,23 @@ using Microsoft.CodeAnalysis.Simplification;
 
 namespace NetEscapades.EnumGenerators.Diagnostics;
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(HasFlagCodeFixProvider)), Shared]
-public class HasFlagCodeFixProvider : CodeFixProviderBase
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(IsDefinedCodeFixProvider)), Shared]
+public class IsDefinedCodeFixProvider : CodeFixProviderBase
 {
-    private const string Title = "Replace with HasFlagFast()";
+    private const string Title = "Replace with generated IsDefined()";
 
     public sealed override ImmutableArray<string> FixableDiagnosticIds
-        => ImmutableArray.Create(HasFlagAnalyzer.DiagnosticId);
+        => ImmutableArray.Create(IsDefinedAnalyzer.DiagnosticId);
 
     public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         if (!context.Diagnostics.IsDefaultOrEmpty)
         {
-            // Register a code action for HasFlag() replacement
+            // Register a code action for IsDefined() replacement
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
-                    createChangedDocument: c => ReplaceHasFlagWithHasFlagFast(context.Document, context.Diagnostics, c),
+                    createChangedDocument: c => ReplaceIsDefinedWithGenerated(context.Document, context.Diagnostics, c),
                     equivalenceKey: Title),
                 context.Diagnostics);
         }
@@ -34,14 +34,13 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
     }
 
     protected sealed override Task<Document> FixAllAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
-        => ReplaceHasFlagWithHasFlagFast(document, diagnostics, cancellationToken);
+        => ReplaceIsDefinedWithGenerated(document, diagnostics, cancellationToken);
 
-    private static async Task<Document> ReplaceHasFlagWithHasFlagFast(
+    private static async Task<Document> ReplaceIsDefinedWithGenerated(
         Document document,
         ImmutableArray<Diagnostic> diagnostics,
         CancellationToken cancellationToken)
     {
-        // Create the new identifier with "HasFlagFast"
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
         if (editor is null)
         {
@@ -60,32 +59,56 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
                 continue;
             }
 
-            // Find the node at the diagnostic location
+            // Find the invocation node at the diagnostic location
             var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
-
-            if (node is not IdentifierNameSyntax identifierName
-                || identifierName.Parent is not MemberAccessExpressionSyntax memberAccess
-                || memberAccess.Parent is not InvocationExpressionSyntax invocation)
+            if (node is not InvocationExpressionSyntax invocation)
             {
                 continue;
             }
 
+            // Get the symbol to determine which pattern we're dealing with
+            var symbolInfo = semanticModel.GetSymbolInfo(invocation);
+            if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
+            {
+                continue;
+            }
+
+            ArgumentSyntax? valueArgument = null;
+
+            // Determine which argument is the value to check
+            if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
+            {
+                // Pattern: Enum.IsDefined<TEnum>(value)
+                if (invocation.ArgumentList.Arguments.Count >= 1)
+                {
+                    valueArgument = invocation.ArgumentList.Arguments[0];
+                }
+            }
+            else if (methodSymbol.Parameters.Length == 2
+                     && invocation.ArgumentList.Arguments.Count == 2)
+            {
+                // Pattern: Enum.IsDefined(typeof(TEnum), value)
+                valueArgument = invocation.ArgumentList.Arguments[1];
+            }
+
+            if (valueArgument is null)
+            {
+                continue;
+            }
+            
             var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
             if (type is null)
             {
                 continue;
             }
 
+            // Create new invocation: ExtensionsClass.IsDefined(value)
             var newInvocation = generator.InvocationExpression(
-                    generator.MemberAccessExpression(generator.TypeExpression(type), "HasFlagFast"),
-                    [
-                        memberAccess.Expression, // this parameter 
-                        ..invocation.ArgumentList.Arguments,
-                    ])
+                    generator.MemberAccessExpression(generator.TypeExpression(type), "IsDefined"),
+                    valueArgument.Expression)
                 .WithTriviaFrom(invocation)
                 .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
 
-            // Create new member access with the new identifier
             editor.ReplaceNode(invocation, newInvocation);
         }
 
