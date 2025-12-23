@@ -67,8 +67,6 @@ public class IsDefinedAnalyzerTests
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
-
-
     [Fact]
     public async Task IsDefinedWithEnumUsingDirectiveOnEnumWithAttributeShouldHaveDiagnostic()
     {
@@ -103,8 +101,6 @@ public class IsDefinedAnalyzerTests
             """);
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
-
-
 
     [Fact]
     public async Task MultipleIsDefinedCallsShouldHaveMultipleDiagnostics()
@@ -275,8 +271,6 @@ public class IsDefinedAnalyzerTests
             """);
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
-
-
 
     [Fact]
     public async Task IsDefinedOnNonExtensionExternalEnumShouldNotHaveDiagnostic()
