@@ -54,6 +54,7 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
 
         foreach (var diagnostic in diagnostics)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!diagnostic.Properties.TryGetValue(AnalyzerHelpers.ExtensionTypeNameProperty, out var extensionTypeName)
                 || extensionTypeName is null)
             {

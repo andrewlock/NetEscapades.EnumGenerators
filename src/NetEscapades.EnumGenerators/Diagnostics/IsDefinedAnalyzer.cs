@@ -45,6 +45,14 @@ public class IsDefinedAnalyzer : DiagnosticAnalyzer
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
+        if (invocation.ArgumentList.Arguments.Count is 0 or > 2
+            || invocation.Expression is not MemberAccessExpressionSyntax memberAccess
+            || memberAccess.Name.Identifier.Text != nameof(Enum.IsDefined))
+        {
+            // can't be the one we want
+            return;
+        }
+
         // Get the symbol information for the invocation
         var symbolInfo = context.SemanticModel.GetSymbolInfo(invocation);
         if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
@@ -53,53 +61,35 @@ public class IsDefinedAnalyzer : DiagnosticAnalyzer
         }
 
         // Verify this is the IsDefined() method from System.Enum
-        if (methodSymbol.Name != "IsDefined" ||
+        if (methodSymbol.Name != nameof(Enum.IsDefined) ||
             methodSymbol.ContainingType.SpecialType != SpecialType.System_Enum)
         {
             return;
         }
 
         ITypeSymbol? enumType = null;
-        ArgumentSyntax? valueArgument = null;
 
         // Handle two patterns:
         // 1. Enum.IsDefined(typeof(TEnum), value) - has 2 parameters
         // 2. Enum.IsDefined<TEnum>(value) - has 1 parameter, is generic
-        if (methodSymbol.IsGenericMethod && methodSymbol.TypeArguments.Length == 1)
+        if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
         {
             // Pattern: Enum.IsDefined<TEnum>(value)
-            if (methodSymbol.Parameters.Length != 1)
+            if (invocation.ArgumentList.Arguments.Count != 1)
             {
                 return;
             }
 
             enumType = methodSymbol.TypeArguments[0];
-            if (invocation.ArgumentList.Arguments.Count >= 1)
-            {
-                valueArgument = invocation.ArgumentList.Arguments[0];
-            }
         }
-        else if (methodSymbol.Parameters.Length == 2)
+        else if (methodSymbol.Parameters.Length == 2
+                 && invocation.ArgumentList.Arguments is [{ Expression: TypeOfExpressionSyntax typeOfExpression }, _])
         {
             // Pattern: Enum.IsDefined(typeof(TEnum), value)
-            if (invocation.ArgumentList.Arguments.Count != 2)
-            {
-                return;
-            }
-
-            var firstArg = invocation.ArgumentList.Arguments[0];
-            
-            // Check if first argument is typeof(TEnum)
-            if (firstArg.Expression is TypeOfExpressionSyntax typeOfExpression)
-            {
-                var typeInfo = context.SemanticModel.GetTypeInfo(typeOfExpression.Type);
-                enumType = typeInfo.Type;
-            }
-            
-            valueArgument = invocation.ArgumentList.Arguments[1];
+            enumType = context.SemanticModel.GetTypeInfo(typeOfExpression.Type).Type;
         }
 
-        if (enumType is null || valueArgument is null || enumType.TypeKind != TypeKind.Enum)
+        if (enumType is null  || enumType.TypeKind != TypeKind.Enum)
         {
             return;
         }

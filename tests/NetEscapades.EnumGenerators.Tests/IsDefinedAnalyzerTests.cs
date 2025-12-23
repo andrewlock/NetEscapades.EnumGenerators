@@ -1,7 +1,12 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
-using NetEscapades.EnumGenerators.Diagnostics;
+using Microsoft.CodeAnalysis.Testing;
 using Xunit;
+using Test = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixTest<
+    NetEscapades.EnumGenerators.Diagnostics.IsDefinedAnalyzer, 
+    NetEscapades.EnumGenerators.Diagnostics.IsDefinedCodeFixProvider, 
+    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
     NetEscapades.EnumGenerators.Diagnostics.IsDefinedAnalyzer,
     NetEscapades.EnumGenerators.Diagnostics.IsDefinedCodeFixProvider,
@@ -29,7 +34,7 @@ public class IsDefinedAnalyzerTests
                 public void TestMethod()
                 {
                     var value = TestEnumWithoutAttribute.First;
-                    var isDefined = System.Enum.IsDefined(typeof(TestEnumWithoutAttribute), value);
+                    var isDefined = Enum.IsDefined(typeof(TestEnumWithoutAttribute), value);
                 }
             }
             """);
@@ -37,44 +42,11 @@ public class IsDefinedAnalyzerTests
     }
 
     [Fact]
-    public async Task IsDefinedWithTypeOfOnEnumWithAttributeShouldHaveDiagnostic()
+    public async Task IsDefinedOnEnumWithExtensionsShouldHaveDiagnostic()
     {
         var test = GetTestCode(
             /* lang=c# */
             """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = MyEnum.First;
-                    var isDefined = {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value)|};
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = MyEnum.First;
-                    var isDefined = MyEnumExtensions.IsDefined(value);
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
-    public async Task IsDefinedWithEnumUsingDirectiveOnEnumWithAttributeShouldHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            using System;
-
             public class TestClass
             {
                 public void TestMethod()
@@ -88,6 +60,39 @@ public class IsDefinedAnalyzerTests
         var fix = GetTestCode(
             /* lang=c# */
             """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var isDefined = MyEnumExtensions.IsDefined(value);
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task IsDefinedGenericOnEnumWithExtensionsShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            using System;
+
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var isDefined = {|NEEG006:Enum.IsDefined<MyEnum>(value)|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
             using System;
 
             public class TestClass
@@ -99,7 +104,9 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+
+        // force using .NET 6+ runtime so that can test with generic
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -273,6 +280,36 @@ public class IsDefinedAnalyzerTests
     }
 
     [Fact]
+    public async Task IsDefinedGenericOnExternalEnumWithEnumExtensionsAttributeShouldHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.IO.FileShare.Read;
+                    var isDefined = {|NEEG006:System.Enum.IsDefined<System.IO.FileShare>(value)|};
+                }
+            }
+            """);
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = System.IO.FileShare.Read;
+                    var isDefined = FileShareExtensions.IsDefined(value);
+                }
+            }
+            """);
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+    }
+
+    [Fact]
     public async Task IsDefinedOnNonExtensionExternalEnumShouldNotHaveDiagnostic()
     {
         var test = GetTestCodeWithExternalEnum(
@@ -349,39 +386,6 @@ public class IsDefinedAnalyzerTests
     }
 
     [Fact]
-    public async Task IsDefinedInComplexBooleanExpression()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value1 = MyEnum.First;
-                    var value2 = MyEnum.Second;
-                    var result = {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value1)|} && {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value2)|};
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value1 = MyEnum.First;
-                    var value2 = MyEnum.Second;
-                    var result = MyEnumExtensions.IsDefined(value1) && MyEnumExtensions.IsDefined(value2);
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
     public async Task IsDefinedOnFieldShouldHaveDiagnostic()
     {
         var test = GetTestCode(
@@ -415,39 +419,6 @@ public class IsDefinedAnalyzerTests
     }
 
     [Fact]
-    public async Task IsDefinedOnPropertyShouldHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public MyEnum Value { get; set; } = MyEnum.First;
-                
-                public void TestMethod()
-                {
-                    var isDefined = {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), Value)|};
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public MyEnum Value { get; set; } = MyEnum.First;
-                
-                public void TestMethod()
-                {
-                    var isDefined = MyEnumExtensions.IsDefined(Value);
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
     public async Task IsDefinedOnMethodReturnValueShouldHaveDiagnostic()
     {
         var test = GetTestCode(
@@ -457,7 +428,7 @@ public class IsDefinedAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var isDefined = {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), GetValue())|};
+                    var isDefined = {|NEEG006:Enum.IsDefined<MyEnum>(GetValue())|};
                 }
                 
                 private MyEnum GetValue() => MyEnum.First;
@@ -477,7 +448,7 @@ public class IsDefinedAnalyzerTests
                 private MyEnum GetValue() => MyEnum.First;
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -491,9 +462,9 @@ public class IsDefinedAnalyzerTests
                 public bool TestMethod()
                 {
                     var value = MyEnum.First;
-                    var isDefined1 = {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), GetValue())|};
-                    var isDefined2 = {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value)|};
-                    return {|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value)|};
+                    var isDefined1 = {|NEEG006:Enum.IsDefined(typeof(MyEnum), GetValue())|};
+                    var isDefined2 = {|NEEG006:Enum.IsDefined<MyEnum>(value)|};
+                    return {|NEEG006:Enum.IsDefined(typeof(MyEnum), value)|};
                 }
 
                 public MyEnum GetValue() => MyEnum.First;
@@ -516,7 +487,7 @@ public class IsDefinedAnalyzerTests
                 public MyEnum GetValue() => MyEnum.First;
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
 
 
         static string TestCode(bool addUsing, string testCode) =>
@@ -570,6 +541,18 @@ public class IsDefinedAnalyzerTests
               """;
     }
 
+    private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
+    {
+        var test = new Test
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
+        };
+
+        return test.RunAsync(CancellationToken.None);
+    }
+
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
@@ -611,6 +594,7 @@ public class IsDefinedAnalyzerTests
         """;
 
     private static string GetTestCode(string testCode) => $$"""
+        using System;
         using System.Collections.Generic;
         using System.Linq;
         using System.Text;
@@ -640,16 +624,7 @@ public class IsDefinedAnalyzerTests
             // This code would be generated, just hacked in here for simplicity
             public static class MyEnumExtensions
             {
-                public static bool IsDefined(MyEnum value)
-                {
-                    return value switch
-                    {
-                        MyEnum.First => true,
-                        MyEnum.Second => true,
-                        MyEnum.Third => true,
-                        _ => false,
-                    };
-                }
+                public static bool IsDefined(MyEnum value) => true;
             }
         }
 

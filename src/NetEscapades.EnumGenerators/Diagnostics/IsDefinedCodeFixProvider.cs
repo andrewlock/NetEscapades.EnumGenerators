@@ -52,6 +52,7 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
 
         foreach (var diagnostic in diagnostics)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!diagnostic.Properties.TryGetValue(AnalyzerHelpers.ExtensionTypeNameProperty, out var extensionTypeName)
                 || extensionTypeName is null)
             {
@@ -60,14 +61,7 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
 
             // Find the invocation node at the diagnostic location
             var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
-
             if (node is not InvocationExpressionSyntax invocation)
-            {
-                continue;
-            }
-
-            var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
-            if (type is null)
             {
                 continue;
             }
@@ -82,7 +76,7 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
             ArgumentSyntax? valueArgument = null;
 
             // Determine which argument is the value to check
-            if (methodSymbol.IsGenericMethod && methodSymbol.TypeArguments.Length == 1)
+            if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
             {
                 // Pattern: Enum.IsDefined<TEnum>(value)
                 if (invocation.ArgumentList.Arguments.Count >= 1)
@@ -90,16 +84,20 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
                     valueArgument = invocation.ArgumentList.Arguments[0];
                 }
             }
-            else if (methodSymbol.Parameters.Length == 2)
+            else if (methodSymbol.Parameters.Length == 2
+                     && invocation.ArgumentList.Arguments.Count == 2)
             {
                 // Pattern: Enum.IsDefined(typeof(TEnum), value)
-                if (invocation.ArgumentList.Arguments.Count == 2)
-                {
-                    valueArgument = invocation.ArgumentList.Arguments[1];
-                }
+                valueArgument = invocation.ArgumentList.Arguments[1];
             }
 
             if (valueArgument is null)
+            {
+                continue;
+            }
+            
+            var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
+            if (type is null)
             {
                 continue;
             }
@@ -107,7 +105,7 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
             // Create new invocation: ExtensionsClass.IsDefined(value)
             var newInvocation = generator.InvocationExpression(
                     generator.MemberAccessExpression(generator.TypeExpression(type), "IsDefined"),
-                    [valueArgument.Expression])
+                    valueArgument.Expression)
                 .WithTriviaFrom(invocation)
                 .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
 
