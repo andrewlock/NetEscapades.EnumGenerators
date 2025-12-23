@@ -89,7 +89,7 @@ public class IsDefinedAnalyzer : DiagnosticAnalyzer
             enumType = context.SemanticModel.GetTypeInfo(typeOfExpression.Type).Type;
         }
 
-        if (enumType is null  || enumType.TypeKind != TypeKind.Enum)
+        if (enumType is null || enumType.TypeKind != TypeKind.Enum)
         {
             return;
         }
