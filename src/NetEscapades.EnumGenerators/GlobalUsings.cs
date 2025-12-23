@@ -1,1 +1,1 @@
-global using ExternalEnumDictionary = System.Collections.Generic.Dictionary<Microsoft.CodeAnalysis.INamedTypeSymbol, (string Namespace, string Class)>;
+global using ExternalEnumDictionary = System.Collections.Generic.Dictionary<Microsoft.CodeAnalysis.INamedTypeSymbol, string>;

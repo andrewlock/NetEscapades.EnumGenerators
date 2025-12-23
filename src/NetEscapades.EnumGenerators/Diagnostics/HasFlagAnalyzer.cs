@@ -85,7 +85,7 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionNamespace, out var extensionClass))
+        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionType))
         {
             return;
         }
@@ -96,8 +96,7 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
             location: memberAccess.Name.GetLocation(),
             messageArgs: receiverType.Name,
             properties: ImmutableDictionary.CreateRange<string, string?>([
-                new(nameof(EnumExtensionsAttribute.ExtensionClassNamespace), extensionNamespace),
-                new(nameof(EnumExtensionsAttribute.ExtensionClassName), extensionClass),
+                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
             ]));
 
         context.ReportDiagnostic(diagnostic);

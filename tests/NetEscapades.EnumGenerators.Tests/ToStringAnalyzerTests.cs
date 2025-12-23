@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using NetEscapades.EnumGenerators.Diagnostics;
 using Xunit;
@@ -315,84 +316,6 @@ public class ToStringAnalyzerTests
                 {
                     var value = TestEnum.First;
                     return value.ToStringFast();
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
-    public async Task ToStringWithDifferentExtensionAttributeArguments()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            [EnumExtensions(ExtensionClassName = "MyExtensions")]
-            public enum TestEnum1
-            {
-                First,
-                Second,
-            }
-
-            [EnumExtensions(ExtensionClassNamespace = "MyNamespace")]
-            public enum TestEnum3
-            {
-                First,
-                Second,
-            }
-
-            // these are generated but it's fine
-            public static class extensions
-            {
-                public static string ToStringFast(this TestEnum1 val) => "Test";
-                public static string ToStringFast(this TestEnum3 val) => "Test";
-            }
-
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value1 = TestEnum1.First;
-                    var str1 = value1.{|NEEG004:ToString|}();
-                    
-                    var value2 = TestEnum3.First;
-                    var str2 = value2.{|NEEG004:ToString|}();
-                }
-            }
-            """);
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            [EnumExtensions(ExtensionClassName = "MyExtensions")]
-            public enum TestEnum1
-            {
-                First,
-                Second,
-            }
-
-            [EnumExtensions(ExtensionClassNamespace = "MyNamespace")]
-            public enum TestEnum3
-            {
-                First,
-                Second,
-            }
-            
-            // these are generated but it's fine
-            public static class extensions
-            {
-                public static string ToStringFast(this TestEnum1 val) => "Test";
-                public static string ToStringFast(this TestEnum3 val) => "Test";
-            }
-
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value1 = TestEnum1.First;
-                    var str1 = value1.ToStringFast();
-                    
-                    var value2 = TestEnum3.First;
-                    var str2 = value2.ToStringFast();
                 }
             }
             """);
@@ -812,6 +735,45 @@ public class ToStringAnalyzerTests
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
+    [Fact]
+    public async Task EnumInDifferentNamespaceAddsTheRequiredUsingDirectives()
+    {
+        var test = GetTestCodeWithDifferentNamespace(addUsing: false,
+            /* lang=c# */
+            $$$"""
+               public class TestClass
+               {
+                   public string TestMethod()
+                   {
+                       var value1 = TestEnum.First;
+                       var value2 = TestEnum.Second;
+                       var str1 = $"Value1: {{|NEEG004:value1|}}, Value2: {{|NEEG004:value2|}}";
+                       var str2 = $"SomeValue: {{|NEEG004:TestEnum.First|}}";
+                       var str3 = value2.{|NEEG004:ToString|}("g");
+                       return value1.{|NEEG004:ToString|}();
+                   }
+               }
+               """);
+
+        var fix = GetTestCodeWithDifferentNamespace(addUsing: true,
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public string TestMethod()
+                {
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    var str1 = $"Value1: {value1.ToStringFast()}, Value2: {value2.ToStringFast()}";
+                    var str2 = $"SomeValue: {TestEnum.First.ToStringFast()}";
+                    var str3 = value2.ToStringFast();
+                    return value1.ToStringFast();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+    
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
@@ -827,9 +789,12 @@ public class ToStringAnalyzerTests
         namespace ConsoleApplication1
         {
             {{testCode}}
+        }
 
+        namespace System
+        {
             // This code would be generated, just hacked in here for simplicity
-            public static class ExternalEnumExtensions
+            public static class DateTimeKindExtensions
             {
                 public static string ToStringFast(this System.DateTimeKind val)
                 {
@@ -837,7 +802,7 @@ public class ToStringAnalyzerTests
                 }
             }
         }
-
+        
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
@@ -863,7 +828,7 @@ public class ToStringAnalyzerTests
                 Second,
             }
 
-            [EnumExtensions]
+            [EnumExtensions(ExtensionClassNamespace = "Some.Other.Namespace", ExtensionClassName = "MyTestExtensions")]
             public enum TestEnum2
             {
                 First,
@@ -877,14 +842,59 @@ public class ToStringAnalyzerTests
             }
 
             // This code would be generated, just hacked in here for simplicity
-            public static class TestExtensions
+            public static class TestEnumExtensions
             {
                 public static string ToStringFast(this TestEnum val)
                 {
                     return "Test";
                 }
+            }
+        }
 
-                public static string ToStringFast(this TestEnum2 val)
+        namespace Some.Other.Namespace
+        {
+            // This code would be generated, just hacked in here for simplicity
+            public static class MyTestExtensions
+            {
+                public static string ToStringFast(this ConsoleApplication1.TestEnum2 val)
+                {
+                    return "Test";
+                }
+            }
+        }
+
+        {{TestHelpers.LoadEmbeddedAttribute()}}
+        {{TestHelpers.LoadEmbeddedMetadataSource()}}
+        """;
+
+    private static string GetTestCodeWithDifferentNamespace(bool addUsing, string testCode) => $$"""
+        using System;
+        using System.Collections.Generic;
+        using System.Linq;
+        using System.Text;
+        using System.Threading;
+        using System.Threading.Tasks;
+        using System.Diagnostics;
+        using NetEscapades.EnumGenerators;{{(addUsing ? Environment.NewLine + "using Some.Other.Namespace;" : "")}}
+
+        namespace ConsoleApplication1
+        {
+            {{testCode}}
+
+            [EnumExtensions(ExtensionClassNamespace = "Some.Other.Namespace", ExtensionClassName = "MyTestExtensions")]
+            public enum TestEnum
+            {
+                First,
+                Second,
+            }
+        }
+
+        namespace Some.Other.Namespace
+        {
+            // This code would be generated, just hacked in here for simplicity
+            public static class MyTestExtensions
+            {
+                public static string ToStringFast(this ConsoleApplication1.TestEnum val)
                 {
                     return "Test";
                 }

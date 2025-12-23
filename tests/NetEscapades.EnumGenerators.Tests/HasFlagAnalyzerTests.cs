@@ -70,7 +70,7 @@ public class HasFlagAnalyzerTests
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
-    [Fact(Skip = "Doesn't yet pass")]
+    [Fact]
     public async Task HasFlagOnEnumWithExtensionClassInOtherNamespaceAddsUsing()
     {
         var test = TestCode(addUsing: false,
@@ -78,12 +78,17 @@ public class HasFlagAnalyzerTests
             """
             public class TestClass
             {
-                public void TestMethod()
+                public bool TestMethod()
                 {
                     var value = FlagsEnum.First;
                     var flag = FlagsEnum.Second;
-                    var hasFlag = value.{|NEEG005:HasFlag|}(flag);
+                    var hasFlag1 = GetValue().{|NEEG005:HasFlag|}(flag);
+                    var hasFlag2 = value.{|NEEG005:HasFlag|}(flag);
+                    var str1 = $"Value1: {value.{|NEEG005:HasFlag|}(flag)}";
+                    return value.{|NEEG005:HasFlag|}(flag);
                 }
+
+                public FlagsEnum GetValue() => FlagsEnum.First;
             }
             """);
 
@@ -92,12 +97,17 @@ public class HasFlagAnalyzerTests
             """
             public class TestClass
             {
-                public void TestMethod()
+                public bool TestMethod()
                 {
                     var value = FlagsEnum.First;
                     var flag = FlagsEnum.Second;
-                    var hasFlag = value.HasFlagFast(flag);
+                    var hasFlag1 = GetValue().HasFlagFast(flag);
+                    var hasFlag2 = value.HasFlagFast(flag);
+                    var str1 = $"Value1: {value.HasFlagFast(flag)}";
+                    return value.HasFlagFast(flag);
                 }
+
+                public FlagsEnum GetValue() => FlagsEnum.First;
             }
             """);
         await Verifier.VerifyCodeFixAsync(test, fix);
@@ -111,19 +121,18 @@ public class HasFlagAnalyzerTests
               using System.Text;
               using System.Threading;
               using System.Threading.Tasks;
-              using System.Diagnostics;{{(addUsing ? Environment.NewLine + "using Some.Other.Namespace;" : "")}}
-              using NetEscapades.EnumGenerators;
+              using System.Diagnostics;
+              using Some.Namespace;
+              using NetEscapades.EnumGenerators;{{(addUsing ? Environment.NewLine + "using Some.Other.Namespace;" : "")}}
 
               namespace ConsoleApplication1
               {
-                  using Some.Namespace;
-
                   {{testCode}}
               }
 
               namespace Some.Namespace
               {
-                  [EnumExtensions(ExtensionClassNamespace = "Some.Other.Namespace")]
+                  [EnumExtensions(ExtensionClassNamespace = "Some.Other.Namespace", ExtensionClassName = "MyTestExtensions")]
                   [System.Flags]
                   public enum FlagsEnum
                   {
@@ -136,7 +145,7 @@ public class HasFlagAnalyzerTests
               namespace Some.Other.Namespace
               {
                   // This code would be generated, just hacked in here for simplicity
-                  public static class FlagsEnumExtensions
+                  public static class MyTestExtensions
                   {
                       public static bool HasFlagFast(this Some.Namespace.FlagsEnum val, Some.Namespace.FlagsEnum flag)
                       {
@@ -296,88 +305,6 @@ public class HasFlagAnalyzerTests
                     var value = FlagsEnum.First;
                     var flag = FlagsEnum.Second;
                     return value.HasFlagFast(flag);
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
-    public async Task HasFlagWithDifferentExtensionAttributeArguments()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            [EnumExtensions(ExtensionClassName = "MyExtensions")]
-            public enum FlagsEnum1
-            {
-                First,
-                Second,
-            }
-
-            [EnumExtensions(ExtensionClassNamespace = "MyNamespace")]
-            public enum FlagsEnum2
-            {
-                First,
-                Second,
-            }
-
-            // these are generated but it's fine
-            public static class extensions
-            {
-                public static bool HasFlagFast(this FlagsEnum1 val, FlagsEnum1 flag) => true;
-                public static bool HasFlagFast(this FlagsEnum2 val, FlagsEnum2 flag) => true;
-            }
-
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value1 = FlagsEnum1.First;
-                    var flag1 = FlagsEnum1.Second;
-                    var hasFlag1 = value1.{|NEEG005:HasFlag|}(flag1);
-                    
-                    var value2 = FlagsEnum2.First;
-                    var flag2 = FlagsEnum2.Second;
-                    var hasFlag2 = value2.{|NEEG005:HasFlag|}(flag2);
-                }
-            }
-            """);
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            [EnumExtensions(ExtensionClassName = "MyExtensions")]
-            public enum FlagsEnum1
-            {
-                First,
-                Second,
-            }
-
-            [EnumExtensions(ExtensionClassNamespace = "MyNamespace")]
-            public enum FlagsEnum2
-            {
-                First,
-                Second,
-            }
-
-            // these are generated but it's fine
-            public static class extensions
-            {
-                public static bool HasFlagFast(this FlagsEnum1 val, FlagsEnum1 flag) => true;
-                public static bool HasFlagFast(this FlagsEnum2 val, FlagsEnum2 flag) => true;
-            }
-
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value1 = FlagsEnum1.First;
-                    var flag1 = FlagsEnum1.Second;
-                    var hasFlag1 = value1.HasFlagFast(flag1);
-                    
-                    var value2 = FlagsEnum2.First;
-                    var flag2 = FlagsEnum2.Second;
-                    var hasFlag2 = value2.HasFlagFast(flag2);
                 }
             }
             """);
