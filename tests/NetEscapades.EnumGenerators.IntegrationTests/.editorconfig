@@ -6,3 +6,4 @@ dotnet_diagnostic.NEEG002.severity = error
 dotnet_diagnostic.NEEG003.severity = error
 dotnet_diagnostic.NEEG004.severity = error
 dotnet_diagnostic.NEEG005.severity = error
+dotnet_diagnostic.NEEG006.severity = error

@@ -29,7 +29,7 @@ public class EnumInFooExtensionEverythingTests : EnumInFooExtensionsTests
 
     protected override string ToStringFast(EnumInFoo value) => value.ToStringFast();
     protected override string ToStringFast(EnumInFoo value, bool withMetadata) => value.ToStringFast(withMetadata);
-    protected override bool IsDefined(EnumInFoo value) => EnumInFoo.IsDefined(value);
+    protected override bool IsDefined(EnumInFoo value) => EnumInFooExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInFoo.IsDefined(name, allowMatchingMetadataAttribute);
 #if READONLYSPAN
     protected override bool IsDefined(in ReadOnlySpan<char> name, bool allowMatchingMetadataAttribute) => EnumInFoo.IsDefined(name, allowMatchingMetadataAttribute);
