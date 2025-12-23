@@ -3,76 +3,93 @@ using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Editing;
+using Microsoft.CodeAnalysis.Simplification;
 
 namespace NetEscapades.EnumGenerators.Diagnostics;
 
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(HasFlagCodeFixProvider)), Shared]
-public class HasFlagCodeFixProvider : CodeFixProvider
+public class HasFlagCodeFixProvider : CodeFixProviderBase
 {
     private const string Title = "Replace with HasFlagFast()";
 
     public sealed override ImmutableArray<string> FixableDiagnosticIds
         => ImmutableArray.Create(HasFlagAnalyzer.DiagnosticId);
 
-    public sealed override FixAllProvider GetFixAllProvider()
-        => WellKnownFixAllProviders.BatchFixer;
+    // We can't use the batch fixer because it causes multiple iterations
 
-    public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
+    public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
     {
-        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-        if (root is null)
-        {
-            return;
-        }
-
-        var diagnostic = context.Diagnostics.First();
-        var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-        // Find the node at the diagnostic location
-        var node = root.FindNode(diagnosticSpan);
-
-        // Check if this is a HasFlag invocation
-        if (node is IdentifierNameSyntax identifierName)
+        if (!context.Diagnostics.IsDefaultOrEmpty)
         {
             // Register a code action for HasFlag() replacement
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
-                    createChangedDocument: c => ReplaceHasFlagWithHasFlagFast(context.Document, identifierName, c),
+                    createChangedDocument: c => ReplaceHasFlagWithHasFlagFast(context.Document, context.Diagnostics, c),
                     equivalenceKey: Title),
                 context.Diagnostics);
         }
+
+        return Task.CompletedTask;
     }
+
+    protected sealed override Task<Document> FixAllAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        => ReplaceHasFlagWithHasFlagFast(document, diagnostics, cancellationToken);
 
     private static async Task<Document> ReplaceHasFlagWithHasFlagFast(
         Document document,
-        IdentifierNameSyntax identifierName,
+        ImmutableArray<Diagnostic> diagnostics,
         CancellationToken cancellationToken)
     {
-        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-        if (root is null)
-        {
-            return document;
-        }
-
         // Create the new identifier with "HasFlagFast"
-        var newIdentifier = SyntaxFactory.IdentifierName("HasFlagFast")
-            .WithTriviaFrom(identifierName);
-
-        // Create new member access with the new identifier
-        var memberAccess = identifierName.Parent as MemberAccessExpressionSyntax;
-        if (memberAccess is null)
+        var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+        if (editor is null)
         {
             return document;
         }
 
-        var newMemberAccess = memberAccess.WithName(newIdentifier);
+        foreach (var diagnostic in diagnostics)
+        {
+            if (!diagnostic.Properties.TryGetValue(AnalyzerHelpers.ExtensionTypeNameProperty, out var extensionTypeName)
+                || extensionTypeName is null)
+            {
+                continue;
+            }
 
-        // Replace the old member access with the new one
-        var newRoot = root.ReplaceNode(memberAccess, newMemberAccess);
+            // Find the node at the diagnostic location
+            var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
 
-        return document.WithSyntaxRoot(newRoot);
+            if (node is not IdentifierNameSyntax identifierName
+                || identifierName.Parent is not MemberAccessExpressionSyntax memberAccess
+                || memberAccess.Parent is not InvocationExpressionSyntax invocation)
+            {
+                continue;
+            }
+
+            var generator = editor.Generator;
+            var semanticModel = editor.SemanticModel;
+
+            var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
+            if (type is null)
+            {
+                continue;
+            }
+
+            var newInvocation = generator.InvocationExpression(
+                    generator.MemberAccessExpression(generator.TypeExpression(type), "HasFlagFast"),
+                    [
+                        memberAccess.Expression, // this parameter 
+                        ..invocation.ArgumentList.Arguments,
+                    ])
+                .WithTriviaFrom(invocation)
+                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+
+            // Create new member access with the new identifier
+            editor.ReplaceNode(invocation, newInvocation);
+        }
+
+        return editor.GetChangedDocument();
     }
 }

@@ -5,6 +5,7 @@ namespace NetEscapades.EnumGenerators.Diagnostics;
 
 public static class AnalyzerHelpers
 {
+    public const string ExtensionTypeNameProperty = nameof(ExtensionTypeNameProperty);
     public static (INamedTypeSymbol? enumExtensionsAttr, ExternalEnumDictionary? externalEnumTypes) GetEnumExtensionAttributes(Compilation compilation)
     {
         var enumExtensionsAttr =
@@ -40,8 +41,7 @@ public static class AnalyzerHelpers
         ITypeSymbol receiverType,
         INamedTypeSymbol enumExtensionsAttr,
         ExternalEnumDictionary externalEnumTypes,
-        [NotNullWhen(true)] out string? extensionNamespace,
-        [NotNullWhen(true)] out string? extensionClass)
+        [NotNullWhen(true)] out string? extensionType)
     {
         // Check if the enum has the [EnumExtensions] attribute or is referenced in EnumExtensions<T>
         // First check if the enum itself has the attribute
@@ -51,26 +51,23 @@ public static class AnalyzerHelpers
                     attributeData.AttributeClass,
                     enumExtensionsAttr))
             {
-                (extensionNamespace, extensionClass) = ExtractExtensionClassDetails(receiverType, attributeData);
+                extensionType = ExtractExtensionClassDetails(receiverType, attributeData);
                 return true;
             }
         }
 
         // If not, check if it's in the external enum types (EnumExtensions<T>)
         if(receiverType is INamedTypeSymbol namedType
-               && externalEnumTypes.TryGetValue(namedType, out var details))
+               && externalEnumTypes.TryGetValue(namedType, out extensionType))
         {
-            extensionNamespace = details.Namespace;
-            extensionClass = details.Class;
             return true;
         }
 
-        extensionNamespace = null;
-        extensionClass = null;
+        extensionType = null;
         return false;
     }
 
-    private static (string Namespace, string Class) ExtractExtensionClassDetails(
+    private static string ExtractExtensionClassDetails(
         ITypeSymbol receiverType,
         AttributeData attributeData)
     {
@@ -97,7 +94,7 @@ public static class AnalyzerHelpers
             }
         }
 
-        return (Namespace: nameSpace ?? EnumGenerator.GetEnumExtensionNamespace(receiverType),
-            Class: className ?? EnumGenerator.GetEnumExtensionName(receiverType));
+        return
+            $"{nameSpace ?? EnumGenerator.GetEnumExtensionNamespace(receiverType)}.{className ?? EnumGenerator.GetEnumExtensionName(receiverType)}";
     }
 }

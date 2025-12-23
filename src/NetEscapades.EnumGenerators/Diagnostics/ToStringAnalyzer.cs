@@ -115,7 +115,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionNamespace, out var extensionClass))
+        if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionType))
         {
             return;
         }
@@ -126,8 +126,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             location: memberAccess.Name.GetLocation(),
             messageArgs: receiverType.Name,
             properties: ImmutableDictionary.CreateRange<string, string?>([
-                new(nameof(EnumExtensionsAttribute.ExtensionClassNamespace), extensionNamespace),
-                new(nameof(EnumExtensionsAttribute.ExtensionClassName), extensionClass),
+                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
             ]));
 
         context.ReportDiagnostic(diagnostic);
@@ -173,7 +172,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             }
         }
 
-        if (!AnalyzerHelpers.IsEnumWithExtensions(expressionType, enumExtensionsAttr, externalEnumTypes, out var extensionNamespace, out var extensionClass))
+        if (!AnalyzerHelpers.IsEnumWithExtensions(expressionType, enumExtensionsAttr, externalEnumTypes, out var extensionType))
         {
             return;
         }
@@ -184,8 +183,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             location: expression.GetLocation(),
             messageArgs: expressionType.Name,
             properties: ImmutableDictionary.CreateRange<string, string?>([
-                new(nameof(EnumExtensionsAttribute.ExtensionClassNamespace), extensionNamespace),
-                new(nameof(EnumExtensionsAttribute.ExtensionClassName), extensionClass),
+                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
             ]));
 
         context.ReportDiagnostic(diagnostic);
