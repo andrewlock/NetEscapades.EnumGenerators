@@ -74,8 +74,6 @@ public class TryParseAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        ITypeSymbol? enumType = null;
-
         // Handle generic patterns only, value may be string or ReadOnlySpan<char>
         // 1. Enum.TryParse<TEnum>(value, out result) - has 2 parameters
         // 2. Enum.TryParse<TEnum>(value, ignoreCase, out result) - has 3 parameters
@@ -86,9 +84,9 @@ public class TryParseAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        enumType = methodSymbol.TypeArguments[0];
+        var enumType = methodSymbol.TypeArguments[0];
 
-        if (enumType is null || enumType.TypeKind != TypeKind.Enum)
+        if (enumType.TypeKind != TypeKind.Enum)
         {
             return;
         }
