@@ -69,7 +69,7 @@ public class ParseAnalyzer : DiagnosticAnalyzer
 
         ITypeSymbol? enumType = null;
 
-        // Handle two patterns:
+        // Handle four basic patterns, value may be string or ReadOnlySpan<char>
         // 1. Enum.Parse(typeof(TEnum), value) - has 2 parameters
         // 2. Enum.Parse(typeof(TEnum), value, ignoreCase) - has 3 parameters (but we check for 2 args due to our earlier filter)
         // 3. Enum.Parse<TEnum>(value) - has 1 parameter, is generic

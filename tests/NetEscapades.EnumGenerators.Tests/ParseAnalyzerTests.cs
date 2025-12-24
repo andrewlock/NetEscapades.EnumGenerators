@@ -40,120 +40,95 @@ public class ParseAnalyzerTests
         await Verifier.VerifyAnalyzerAsync(test);
     }
 
-    [Fact]
-    public async Task ParseOnEnumWithExtensionsShouldHaveDiagnostic()
+    [Theory]
+    [InlineData("\"First\"")]
+    [InlineData("\"First\".AsSpan()")]
+    public async Task ParseOnEnumWithExtensionsShouldHaveDiagnostic(string parseValue)
     {
         var test = GetTestCode(
             /* lang=c# */
-            """
+            $$"""
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value = {|NEEG007:Enum.Parse(typeof(MyEnum), "First")|};
+                    var value = {|NEEG007:Enum.Parse(typeof(MyEnum), {{parseValue}})|};
                 }
             }
             """);
 
         var fix = GetTestCode(
             /* lang=c# */
-            """
+            $$"""
+              public class TestClass
+              {
+                  public void TestMethod()
+                  {
+                      var value = MyEnumExtensions.Parse({{parseValue}});
+                  }
+              }
+              """);
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+    }
+
+    [Theory]
+    [InlineData("true")]
+    [InlineData("false")]
+    [InlineData("ignoreCase: true")]
+    [InlineData("ignoreCase: false")]
+    public async Task ParseWithIgnoreCaseOnEnumWithExtensionsShouldHaveDiagnostic(string ignoreCaseParam)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$"""
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value = MyEnumExtensions.Parse("First");
+                    var value = {|NEEG007:Enum.Parse(typeof(MyEnum), "First", {{ignoreCaseParam}})|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnumExtensions.Parse("First", {{ignoreCaseParam}});
                 }
             }
             """);
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
-    [Fact]
-    public async Task ParseWithIgnoreCaseOnEnumWithExtensionsShouldHaveDiagnostic()
+    [Theory]
+    [InlineData("\"First\"")]
+    [InlineData("\"First\".AsSpan()")]
+    public async Task ParseGenericOnEnumWithExtensionsShouldHaveDiagnostic(string parseValue)
     {
         var test = GetTestCode(
             /* lang=c# */
-            """
+            $$"""
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value = {|NEEG007:Enum.Parse(typeof(MyEnum), "First", true)|};
+                    var value = {|NEEG007:Enum.Parse<MyEnum>({{parseValue}})|};
                 }
             }
             """);
 
         var fix = GetTestCode(
             /* lang=c# */
-            """
+            $$"""
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value = MyEnumExtensions.Parse("First", true);
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
-    public async Task ParseWithIgnoreCaseFalseOnEnumWithExtensionsShouldHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = {|NEEG007:Enum.Parse(typeof(MyEnum), "First", false)|};
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = MyEnumExtensions.Parse("First", false);
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
-    public async Task ParseGenericOnEnumWithExtensionsShouldHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            using System;
-
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = {|NEEG007:Enum.Parse<MyEnum>("First")|};
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            using System;
-
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = MyEnumExtensions.Parse("First");
+                    var value = MyEnumExtensions.Parse({{parseValue}});
                 }
             }
             """);
@@ -162,33 +137,37 @@ public class ParseAnalyzerTests
         await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
-    [Fact]
-    public async Task ParseGenericWithIgnoreCaseOnEnumWithExtensionsShouldHaveDiagnostic()
+    [Theory]
+    [InlineData("true")]
+    [InlineData("false")]
+    [InlineData("ignoreCase: true")]
+    [InlineData("ignoreCase: false")]
+    public async Task ParseGenericWithIgnoreCaseOnEnumWithExtensionsShouldHaveDiagnostic(string ignoreCaseParam)
     {
         var test = GetTestCode(
             /* lang=c# */
-            """
+            $$"""
             using System;
 
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value = {|NEEG007:Enum.Parse<MyEnum>("First", true)|};
+                    var value = {|NEEG007:Enum.Parse<MyEnum>("First", {{ignoreCaseParam}})|};
                 }
             }
             """);
 
         var fix = GetTestCode(
             /* lang=c# */
-            """
+            $$"""
             using System;
 
             public class TestClass
             {
                 public void TestMethod()
                 {
-                    var value = MyEnumExtensions.Parse("First", true);
+                    var value = MyEnumExtensions.Parse("First", {{ignoreCaseParam}});
                 }
             }
             """);
@@ -462,9 +441,13 @@ public class ParseAnalyzerTests
             {
                 public void TestMethod()
                 {
+                    ReadOnlySpan<char> value = "Second";
                     var value1 = {|NEEG007:Enum.Parse(typeof(MyEnum), GetName())|};
                     var value2 = {|NEEG007:Enum.Parse<MyEnum>("Second")|};
                     var value3 = {|NEEG007:Enum.Parse(typeof(MyEnum), "Third", true)|};
+                    var value4 = {|NEEG007:Enum.Parse(typeof(MyEnum), GetName().AsSpan())|};
+                    var value5 = {|NEEG007:Enum.Parse<MyEnum>(value)|};
+                    var value6 = {|NEEG007:Enum.Parse(typeof(MyEnum), "Third".AsSpan(), true)|};
                 }
 
                 public string GetName() => "First";
@@ -478,9 +461,13 @@ public class ParseAnalyzerTests
             {
                 public void TestMethod()
                 {
+                    ReadOnlySpan<char> value = "Second";
                     var value1 = MyTestExtensions.Parse(GetName());
                     var value2 = MyTestExtensions.Parse("Second");
                     var value3 = MyTestExtensions.Parse("Third", true);
+                    var value4 = MyTestExtensions.Parse(GetName().AsSpan());
+                    var value5 = MyTestExtensions.Parse(value);
+                    var value6 = MyTestExtensions.Parse("Third".AsSpan(), true);
                 }
 
                 public string GetName() => "First";
@@ -522,27 +509,14 @@ public class ParseAnalyzerTests
                   // This code would be generated, just hacked in here for simplicity
                   public static class MyTestExtensions
                   {
-                      public static Some.Namespace.MyEnum Parse(string name)
-                      {
-                          return name switch
-                          {
-                              "First" => Some.Namespace.MyEnum.First,
-                              "Second" => Some.Namespace.MyEnum.Second,
-                              "Third" => Some.Namespace.MyEnum.Third,
-                              _ => throw new System.ArgumentException("Invalid value", nameof(name)),
-                          };
-                      }
 
-                      public static Some.Namespace.MyEnum Parse(string name, bool ignoreCase)
-                      {
-                          return name switch
-                          {
-                              "First" => Some.Namespace.MyEnum.First,
-                              "Second" => Some.Namespace.MyEnum.Second,
-                              "Third" => Some.Namespace.MyEnum.Third,
-                              _ => throw new System.ArgumentException("Invalid value", nameof(name)),
-                          };
-                      }
+                      public static MyEnum Parse(string name) => MyEnum.First;
+
+                      public static MyEnum Parse(string name, bool ignoreCase) => MyEnum.First;
+
+                      public static MyEnum Parse(ReadOnlySpan<char> name) => MyEnum.First;
+
+                      public static MyEnum Parse(ReadOnlySpan<char> name, bool ignoreCase) => MyEnum.First;
                   }
               }
 
@@ -657,25 +631,13 @@ public class ParseAnalyzerTests
             // This code would be generated, just hacked in here for simplicity
             public static class FileShareExtensions
             {
-                public static System.IO.FileShare Parse(string name)
-                {
-                    return name switch
-                    {
-                        "Read" => System.IO.FileShare.Read,
-                        "Write" => System.IO.FileShare.Write,
-                        _ => throw new System.ArgumentException("Invalid value", nameof(name)),
-                    };
-                }
-
-                public static System.IO.FileShare Parse(string name, bool ignoreCase)
-                {
-                    return name switch
-                    {
-                        "Read" => System.IO.FileShare.Read,
-                        "Write" => System.IO.FileShare.Write,
-                        _ => throw new System.ArgumentException("Invalid value", nameof(name)),
-                    };
-                }
+                public static System.IO.FileShare Parse(string name) => System.IO.FileShare.Read;
+        
+                public static System.IO.FileShare Parse(string name, bool ignoreCase) => System.IO.FileShare.Read;
+        
+                public static System.IO.FileShare Parse(ReadOnlySpan<char> name) => System.IO.FileShare.Read;
+        
+                public static System.IO.FileShare Parse(ReadOnlySpan<char> name, bool ignoreCase) => System.IO.FileShare.Read;
             }
         }
 
@@ -714,27 +676,13 @@ public class ParseAnalyzerTests
             // This code would be generated, just hacked in here for simplicity
             public static class MyEnumExtensions
             {
-                public static MyEnum Parse(string name)
-                {
-                    return name switch
-                    {
-                        "First" => MyEnum.First,
-                        "Second" => MyEnum.Second,
-                        "Third" => MyEnum.Third,
-                        _ => throw new System.ArgumentException("Invalid value", nameof(name)),
-                    };
-                }
+                public static MyEnum Parse(string name) => MyEnum.First;
 
-                public static MyEnum Parse(string name, bool ignoreCase)
-                {
-                    return name switch
-                    {
-                        "First" => MyEnum.First,
-                        "Second" => MyEnum.Second,
-                        "Third" => MyEnum.Third,
-                        _ => throw new System.ArgumentException("Invalid value", nameof(name)),
-                    };
-                }
+                public static MyEnum Parse(string name, bool ignoreCase) => MyEnum.First;
+
+                public static MyEnum Parse(ReadOnlySpan<char> name) => MyEnum.First;
+
+                public static MyEnum Parse(ReadOnlySpan<char> name, bool ignoreCase) => MyEnum.First;
             }
         }
 

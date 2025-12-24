@@ -118,8 +118,8 @@ public class ParseCodeFixProvider : CodeFixProviderBase
                 // Call with ignoreCase parameter
                 newInvocation = generator.InvocationExpression(
                         generator.MemberAccessExpression(generator.TypeExpression(type), "Parse"),
-                        valueArgument.Expression,
-                        ignoreCaseArgument.Expression)
+                        valueArgument,
+                        ignoreCaseArgument)
                     .WithTriviaFrom(invocation)
                     .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
             }
@@ -128,7 +128,7 @@ public class ParseCodeFixProvider : CodeFixProviderBase
                 // Call without ignoreCase parameter
                 newInvocation = generator.InvocationExpression(
                         generator.MemberAccessExpression(generator.TypeExpression(type), "Parse"),
-                        valueArgument.Expression)
+                        valueArgument)
                     .WithTriviaFrom(invocation)
                     .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
             }
