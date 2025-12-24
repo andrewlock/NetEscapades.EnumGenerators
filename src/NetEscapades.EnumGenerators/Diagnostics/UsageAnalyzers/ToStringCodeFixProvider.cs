@@ -26,7 +26,7 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
-                    createChangedDocument: c => ReplaceToStringWithToStringFast(context.Document, context.Diagnostics, c),
+                    createChangedDocument: c => FixAllAsync(context.Document, context.Diagnostics, c),
                     equivalenceKey: Title),
                 context.Diagnostics);
         }
@@ -34,77 +34,48 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
         return Task.CompletedTask;
     }
 
-    protected sealed override Task<Document> FixAllAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
-        => ReplaceToStringWithToStringFast(document, diagnostics, cancellationToken);
-
-    private static async Task<Document> ReplaceToStringWithToStringFast(
-        Document document,
-        ImmutableArray<Diagnostic> diagnostics,
+    protected override Task FixWithEditor(DocumentEditor editor, Diagnostic diagnostic,
+        INamedTypeSymbol extensionTypeSymbol,
         CancellationToken cancellationToken)
     {
-        // Create the document editor
-        var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-        if (editor is null)
-        {
-            return document;
-        }
-        
+        // Find the node at the diagnostic location
+        var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
+
+        // Check if this is an interpolation case
         var generator = editor.Generator;
-        var semanticModel = editor.SemanticModel;
-
-        foreach (var diagnostic in diagnostics)
+        if (node.Parent is InterpolationSyntax interpolation)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (!diagnostic.Properties.TryGetValue(AnalyzerHelpers.ExtensionTypeNameProperty, out var extensionTypeName)
-                || extensionTypeName is null)
+            var newInvocation = generator.InvocationExpression(
+                    generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
+                    interpolation.Expression) // this parameter
+                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+
+            // Create a new interpolation with the invocation and no format clause
+            var newInterpolation = SyntaxFactory.Interpolation((ExpressionSyntax)newInvocation)
+                .WithLeadingTrivia(interpolation.GetLeadingTrivia())
+                .WithTrailingTrivia(interpolation.GetTrailingTrivia());
+
+            if (interpolation.AlignmentClause is { } alignment)
             {
-                continue;
+                newInterpolation = newInterpolation.WithAlignmentClause(alignment);
             }
 
-            // Find the node at the diagnostic location
-            var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
+            editor.ReplaceNode(interpolation, newInterpolation);
+        }
+        // Check if this is a ToString invocation (original case)
+        else if (node is IdentifierNameSyntax identifierName
+                 && identifierName.Parent is MemberAccessExpressionSyntax memberAccess
+                 && memberAccess.Parent is InvocationExpressionSyntax invocation)
+        {
+            var newInvocation = generator.InvocationExpression(
+                    generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
+                    memberAccess.Expression) // this parameter
+                .WithTriviaFrom(invocation)
+                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
 
-            var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
-            if (type is null)
-            {
-                continue;
-            }
-
-            // Check if this is an interpolation case
-            if (node.Parent is InterpolationSyntax interpolation)
-            {
-                var newInvocation = generator.InvocationExpression(
-                        generator.MemberAccessExpression(generator.TypeExpression(type), "ToStringFast"),
-                        interpolation.Expression) // this parameter
-                    .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
-
-                // Create a new interpolation with the invocation and no format clause
-                var newInterpolation = SyntaxFactory.Interpolation((ExpressionSyntax)newInvocation)
-                    .WithLeadingTrivia(interpolation.GetLeadingTrivia())
-                    .WithTrailingTrivia(interpolation.GetTrailingTrivia());
-
-                if (interpolation.AlignmentClause is { } alignment)
-                {
-                    newInterpolation = newInterpolation.WithAlignmentClause(alignment);
-                }
-
-                editor.ReplaceNode(interpolation, newInterpolation);
-            }
-            // Check if this is a ToString invocation (original case)
-            else if (node is IdentifierNameSyntax identifierName
-                && identifierName.Parent is MemberAccessExpressionSyntax memberAccess
-                && memberAccess.Parent is InvocationExpressionSyntax invocation)
-            {
-                var newInvocation = generator.InvocationExpression(
-                        generator.MemberAccessExpression(generator.TypeExpression(type), "ToStringFast"),
-                        memberAccess.Expression) // this parameter
-                    .WithTriviaFrom(invocation)
-                    .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
-
-                editor.ReplaceNode(invocation, newInvocation);
-            }
+            editor.ReplaceNode(invocation, newInvocation);
         }
 
-        return editor.GetChangedDocument();
+        return Task.CompletedTask;
     }
 }

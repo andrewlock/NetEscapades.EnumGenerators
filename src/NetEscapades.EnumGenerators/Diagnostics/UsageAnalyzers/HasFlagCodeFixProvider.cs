@@ -25,7 +25,7 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
-                    createChangedDocument: c => ReplaceHasFlagWithHasFlagFast(context.Document, context.Diagnostics, c),
+                    createChangedDocument: c => FixAllAsync(context.Document, context.Diagnostics, c),
                     equivalenceKey: Title),
                 context.Diagnostics);
         }
@@ -33,62 +33,32 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
         return Task.CompletedTask;
     }
 
-    protected sealed override Task<Document> FixAllAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
-        => ReplaceHasFlagWithHasFlagFast(document, diagnostics, cancellationToken);
-
-    private static async Task<Document> ReplaceHasFlagWithHasFlagFast(
-        Document document,
-        ImmutableArray<Diagnostic> diagnostics,
+    protected override Task FixWithEditor(DocumentEditor editor, Diagnostic diagnostic, INamedTypeSymbol extensionTypeSymbol,
         CancellationToken cancellationToken)
     {
-        // Create the new identifier with "HasFlagFast"
-        var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
-        if (editor is null)
-        {
-            return document;
-        }
-
         var generator = editor.Generator;
-        var semanticModel = editor.SemanticModel;
 
-        foreach (var diagnostic in diagnostics)
+        // Find the node at the diagnostic location
+        var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
+
+        if (node is not IdentifierNameSyntax identifierName
+            || identifierName.Parent is not MemberAccessExpressionSyntax memberAccess
+            || memberAccess.Parent is not InvocationExpressionSyntax invocation)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (!diagnostic.Properties.TryGetValue(AnalyzerHelpers.ExtensionTypeNameProperty, out var extensionTypeName)
-                || extensionTypeName is null)
-            {
-                continue;
-            }
-
-            // Find the node at the diagnostic location
-            var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
-
-            if (node is not IdentifierNameSyntax identifierName
-                || identifierName.Parent is not MemberAccessExpressionSyntax memberAccess
-                || memberAccess.Parent is not InvocationExpressionSyntax invocation)
-            {
-                continue;
-            }
-
-            var type = semanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
-            if (type is null)
-            {
-                continue;
-            }
-
-            var newInvocation = generator.InvocationExpression(
-                    generator.MemberAccessExpression(generator.TypeExpression(type), "HasFlagFast"),
-                    [
-                        memberAccess.Expression, // this parameter 
-                        ..invocation.ArgumentList.Arguments,
-                    ])
-                .WithTriviaFrom(invocation)
-                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
-
-            // Create new member access with the new identifier
-            editor.ReplaceNode(invocation, newInvocation);
+            return Task.CompletedTask;
         }
 
-        return editor.GetChangedDocument();
+        var newInvocation = generator.InvocationExpression(
+                generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "HasFlagFast"),
+                [
+                    memberAccess.Expression, // this parameter 
+                    ..invocation.ArgumentList.Arguments,
+                ])
+            .WithTriviaFrom(invocation)
+            .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+
+        // Create new member access with the new identifier
+        editor.ReplaceNode(invocation, newInvocation);
+        return Task.CompletedTask;
     }
 }

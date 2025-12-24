@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace NetEscapades.EnumGenerators.Diagnostics;
 
@@ -42,6 +43,48 @@ public abstract class CodeFixProviderBase : CodeFixProvider
         );
     }
 
-    protected abstract Task<Document> FixAllAsync(
-        Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken);
+    protected Task<Document> FixAllAsync(
+        Document document,
+        ImmutableArray<Diagnostic> diagnostics,
+        CancellationToken cancellationToken)
+        => FixAllAsync(document, diagnostics, FixWithEditor, cancellationToken);
+
+    private static async Task<Document> FixAllAsync(
+            Document document,
+            ImmutableArray<Diagnostic> diagnostics,
+            Func<DocumentEditor, Diagnostic, INamedTypeSymbol, CancellationToken, Task> fixFunc,  
+            CancellationToken cancellationToken)
+    {
+        // Create the new identifier with "HasFlagFast"
+        var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
+        if (editor is null)
+        {
+            return document;
+        }
+
+        foreach (var diagnostic in diagnostics)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!diagnostic.Properties.TryGetValue(AnalyzerHelpers.ExtensionTypeNameProperty, out var extensionTypeName)
+                || extensionTypeName is null)
+            {
+                continue;
+            }
+
+            var type = editor.SemanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
+            if (type is null)
+            {
+                continue;
+            }
+
+            await fixFunc(editor, diagnostic, type, cancellationToken);
+        }
+
+        return editor.GetChangedDocument();
+    }
+
+    
+    protected abstract Task FixWithEditor(
+        DocumentEditor editor, Diagnostic diagnostic, INamedTypeSymbol extensionTypeSymbol, CancellationToken cancellationToken);
+
 }
