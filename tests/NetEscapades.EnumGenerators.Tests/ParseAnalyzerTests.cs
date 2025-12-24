@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
@@ -20,7 +21,7 @@ public class ParseAnalyzerTests
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -37,7 +38,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Theory]
@@ -101,7 +102,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Theory]
@@ -203,7 +204,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -232,7 +233,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -263,7 +264,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -291,7 +292,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -319,7 +320,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -364,7 +365,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -395,7 +396,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -551,7 +552,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -607,6 +608,35 @@ public class ParseAnalyzerTests
         return test.RunAsync(CancellationToken.None);
     }
 
+    private static Task VerifyAnalyzerAsync(string source)
+    {
+        var test = new Test
+        {
+            TestCode = source,
+            ReferenceAssemblies = ReferenceAssemblies.Default
+#if NETFRAMEWORK
+                .WithPackages(ImmutableArray.Create(new PackageIdentity("System.Memory", "4.6.3"))),
+#endif
+        };
+
+        return test.RunAsync(CancellationToken.None);
+    }
+
+    private static Task VerifyCodeFix(string source, string fixedSource)
+    {
+        var test = new Test
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            ReferenceAssemblies = ReferenceAssemblies.Default
+#if NETFRAMEWORK
+                .WithPackages(ImmutableArray.Create(new PackageIdentity("System.Memory", "4.6.3"))),
+#endif
+        };
+
+        return test.RunAsync(CancellationToken.None);
+    }
+
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
@@ -634,7 +664,7 @@ public class ParseAnalyzerTests
                 public static System.IO.FileShare Parse(string name) => System.IO.FileShare.Read;
         
                 public static System.IO.FileShare Parse(string name, bool ignoreCase) => System.IO.FileShare.Read;
-        
+
                 public static System.IO.FileShare Parse(ReadOnlySpan<char> name) => System.IO.FileShare.Read;
         
                 public static System.IO.FileShare Parse(ReadOnlySpan<char> name, bool ignoreCase) => System.IO.FileShare.Read;
