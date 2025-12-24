@@ -71,7 +71,7 @@ public class ParseAnalyzer : DiagnosticAnalyzer
 
         // Handle four basic patterns, value may be string or ReadOnlySpan<char>
         // 1. Enum.Parse(typeof(TEnum), value) - has 2 parameters
-        // 2. Enum.Parse(typeof(TEnum), value, ignoreCase) - has 3 parameters (but we check for 2 args due to our earlier filter)
+        // 2. Enum.Parse(typeof(TEnum), value, ignoreCase) - has 3 parameters
         // 3. Enum.Parse<TEnum>(value) - has 1 parameter, is generic
         // 4. Enum.Parse<TEnum>(value, ignoreCase) - has 2 parameters, is generic
         if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })

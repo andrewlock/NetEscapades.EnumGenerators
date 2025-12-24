@@ -60,14 +60,14 @@ public class ParseAnalyzerTests
         var fix = GetTestCode(
             /* lang=c# */
             $$"""
-              public class TestClass
-              {
-                  public void TestMethod()
-                  {
-                      var value = MyEnumExtensions.Parse({{parseValue}});
-                  }
-              }
-              """);
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnumExtensions.Parse({{parseValue}});
+                }
+            }
+            """);
         await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
