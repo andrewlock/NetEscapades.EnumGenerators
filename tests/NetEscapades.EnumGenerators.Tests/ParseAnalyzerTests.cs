@@ -614,8 +614,8 @@ public class ParseAnalyzerTests
         {
             TestCode = source,
             ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK
-                .WithPackages(ImmutableArray.Create(new PackageIdentity("System.Memory", "4.6.3"))),
+#if NETFRAMEWORK || NETCOREAPP2_1
+                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
 #endif
         };
 
@@ -629,8 +629,8 @@ public class ParseAnalyzerTests
             TestCode = source,
             FixedCode = fixedSource,
             ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK
-                .WithPackages(ImmutableArray.Create(new PackageIdentity("System.Memory", "4.6.3"))),
+#if NETFRAMEWORK || NETCOREAPP2_1
+                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
 #endif
         };
 
