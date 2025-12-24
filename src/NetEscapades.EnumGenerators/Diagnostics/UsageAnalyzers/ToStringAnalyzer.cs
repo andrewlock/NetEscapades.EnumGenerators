@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class ToStringAnalyzer : DiagnosticAnalyzer

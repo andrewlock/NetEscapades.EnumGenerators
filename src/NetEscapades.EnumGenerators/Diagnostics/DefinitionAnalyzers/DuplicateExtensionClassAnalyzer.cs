@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class DuplicateExtensionClassAnalyzer: DiagnosticAnalyzer

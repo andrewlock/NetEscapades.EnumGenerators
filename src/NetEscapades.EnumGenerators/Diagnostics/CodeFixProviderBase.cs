@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Editing;
 
 namespace NetEscapades.EnumGenerators.Diagnostics;
 
@@ -39,7 +38,7 @@ public abstract class CodeFixProviderBase : CodeFixProvider
                     .ConfigureAwait(false);
             },
 
-            HasFlagCodeFixProvider.DefaultSupportedFixAllScopes
+            DefaultSupportedFixAllScopes
         );
     }
 

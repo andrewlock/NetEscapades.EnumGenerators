@@ -1,9 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using NetEscapades.EnumGenerators.Diagnostics;
+using NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers;
 using Xunit;
 using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.DuplicateEnumValueAnalyzer,
+    NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers.DuplicateEnumValueAnalyzer,
     Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;

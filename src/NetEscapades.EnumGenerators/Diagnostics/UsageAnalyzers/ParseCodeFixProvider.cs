@@ -7,25 +7,25 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Simplification;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(IsDefinedCodeFixProvider)), Shared]
-public class IsDefinedCodeFixProvider : CodeFixProviderBase
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ParseCodeFixProvider)), Shared]
+public class ParseCodeFixProvider : CodeFixProviderBase
 {
-    private const string Title = "Replace with generated IsDefined()";
+    private const string Title = "Replace with generated Parse()";
 
     public sealed override ImmutableArray<string> FixableDiagnosticIds
-        => ImmutableArray.Create(IsDefinedAnalyzer.DiagnosticId);
+        => ImmutableArray.Create(ParseAnalyzer.DiagnosticId);
 
     public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
     {
         if (!context.Diagnostics.IsDefaultOrEmpty)
         {
-            // Register a code action for IsDefined() replacement
+            // Register a code action for Parse() replacement
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: Title,
-                    createChangedDocument: c => ReplaceIsDefinedWithGenerated(context.Document, context.Diagnostics, c),
+                    createChangedDocument: c => ReplaceParseWithGenerated(context.Document, context.Diagnostics, c),
                     equivalenceKey: Title),
                 context.Diagnostics);
         }
@@ -34,9 +34,9 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
     }
 
     protected sealed override Task<Document> FixAllAsync(Document document, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
-        => ReplaceIsDefinedWithGenerated(document, diagnostics, cancellationToken);
+        => ReplaceParseWithGenerated(document, diagnostics, cancellationToken);
 
-    private static async Task<Document> ReplaceIsDefinedWithGenerated(
+    private static async Task<Document> ReplaceParseWithGenerated(
         Document document,
         ImmutableArray<Diagnostic> diagnostics,
         CancellationToken cancellationToken)
@@ -74,21 +74,30 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
             }
 
             ArgumentSyntax? valueArgument = null;
+            ArgumentSyntax? ignoreCaseArgument = null;
 
-            // Determine which argument is the value to check
+            // Determine which arguments to use
             if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
             {
-                // Pattern: Enum.IsDefined<TEnum>(value)
+                // Pattern: Enum.Parse<TEnum>(value) or Enum.Parse<TEnum>(value, ignoreCase)
                 if (invocation.ArgumentList.Arguments.Count >= 1)
                 {
                     valueArgument = invocation.ArgumentList.Arguments[0];
                 }
+                if (invocation.ArgumentList.Arguments.Count >= 2)
+                {
+                    ignoreCaseArgument = invocation.ArgumentList.Arguments[1];
+                }
             }
-            else if (methodSymbol.Parameters.Length == 2
-                     && invocation.ArgumentList.Arguments.Count == 2)
+            else if (methodSymbol.Parameters.Length is 2 or 3
+                     && invocation.ArgumentList.Arguments.Count >= 2)
             {
-                // Pattern: Enum.IsDefined(typeof(TEnum), value)
+                // Pattern: Enum.Parse(typeof(TEnum), value) or Enum.Parse(typeof(TEnum), value, ignoreCase)
                 valueArgument = invocation.ArgumentList.Arguments[1];
+                if (invocation.ArgumentList.Arguments.Count >= 3)
+                {
+                    ignoreCaseArgument = invocation.ArgumentList.Arguments[2];
+                }
             }
 
             if (valueArgument is null)
@@ -102,12 +111,27 @@ public class IsDefinedCodeFixProvider : CodeFixProviderBase
                 continue;
             }
 
-            // Create new invocation: ExtensionsClass.IsDefined(value)
-            var newInvocation = generator.InvocationExpression(
-                    generator.MemberAccessExpression(generator.TypeExpression(type), "IsDefined"),
-                    valueArgument.Expression)
-                .WithTriviaFrom(invocation)
-                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+            // Create new invocation: ExtensionsClass.Parse(value) or ExtensionsClass.Parse(value, ignoreCase)
+            SyntaxNode newInvocation;
+            if (ignoreCaseArgument is not null)
+            {
+                // Call with ignoreCase parameter
+                newInvocation = generator.InvocationExpression(
+                        generator.MemberAccessExpression(generator.TypeExpression(type), "Parse"),
+                        valueArgument,
+                        ignoreCaseArgument)
+                    .WithTriviaFrom(invocation)
+                    .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+            }
+            else
+            {
+                // Call without ignoreCase parameter
+                newInvocation = generator.InvocationExpression(
+                        generator.MemberAccessExpression(generator.TypeExpression(type), "Parse"),
+                        valueArgument)
+                    .WithTriviaFrom(invocation)
+                    .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+            }
 
             editor.ReplaceNode(invocation, newInvocation);
         }

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Simplification;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ToStringCodeFixProvider)), Shared]
 public class ToStringCodeFixProvider : CodeFixProviderBase

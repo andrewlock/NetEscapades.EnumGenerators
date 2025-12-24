@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using NetEscapades.EnumGenerators.Diagnostics;
 using Xunit;
 using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.HasFlagAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.HasFlagCodeFixProvider,
+    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.HasFlagAnalyzer,
+    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.HasFlagCodeFixProvider,
     Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
