@@ -55,7 +55,7 @@ public abstract class CodeFixProviderBase : CodeFixProvider
             Func<DocumentEditor, Diagnostic, INamedTypeSymbol, CancellationToken, Task> fixFunc,  
             CancellationToken cancellationToken)
     {
-        // Create the new identifier with "HasFlagFast"
+        // Create a document editor used to apply fixes for all diagnostics
         var editor = await DocumentEditor.CreateAsync(document, cancellationToken).ConfigureAwait(false);
         if (editor is null)
         {
@@ -83,7 +83,6 @@ public abstract class CodeFixProviderBase : CodeFixProvider
         return editor.GetChangedDocument();
     }
 
-    
     protected abstract Task FixWithEditor(
         DocumentEditor editor, Diagnostic diagnostic, INamedTypeSymbol extensionTypeSymbol, CancellationToken cancellationToken);
 
