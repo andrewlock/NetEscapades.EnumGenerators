@@ -71,7 +71,7 @@ public abstract class CodeFixProviderBase : CodeFixProvider
                 continue;
             }
 
-            var type = editor.SemanticModel.Compilation.GetTypeByMetadataName(extensionTypeName);
+            var type = editor.SemanticModel.Compilation.GetBestTypeByMetadataName(extensionTypeName);
             if (type is null)
             {
                 continue;
