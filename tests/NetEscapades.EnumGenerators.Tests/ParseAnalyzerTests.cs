@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using Test = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixTest<
-    NetEscapades.EnumGenerators.Diagnostics.ParseAnalyzer, 
-    NetEscapades.EnumGenerators.Diagnostics.ParseCodeFixProvider, 
+    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseAnalyzer, 
+    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseCodeFixProvider, 
     Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.ParseAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.ParseCodeFixProvider,
+    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseAnalyzer,
+    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseCodeFixProvider,
     Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;

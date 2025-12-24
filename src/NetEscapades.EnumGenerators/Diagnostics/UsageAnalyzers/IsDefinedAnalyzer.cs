@@ -4,18 +4,18 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class ParseAnalyzer : DiagnosticAnalyzer
+public class IsDefinedAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "NEEG007";
+    public const string DiagnosticId = "NEEG006";
     public static readonly DiagnosticDescriptor Rule = new(
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
         id: DiagnosticId,
 #pragma warning restore RS2008
-        title: "Use generated Parse() instead of Enum.Parse()",
-        messageFormat: "Use generated Parse() instead of Enum.Parse() for better performance on enum '{0}'",
+        title: "Use generated IsDefined() instead of Enum.IsDefined()",
+        messageFormat: "Use generated IsDefined() instead of Enum.IsDefined() for better performance on enum '{0}'",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true);
@@ -45,9 +45,9 @@ public class ParseAnalyzer : DiagnosticAnalyzer
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
-        if (invocation.ArgumentList.Arguments.Count is 0 or > 3
+        if (invocation.ArgumentList.Arguments.Count is 0 or > 2
             || invocation.Expression is not MemberAccessExpressionSyntax memberAccess
-            || memberAccess.Name.Identifier.Text != nameof(Enum.Parse))
+            || memberAccess.Name.Identifier.Text != nameof(Enum.IsDefined))
         {
             // can't be the one we want
             return;
@@ -60,8 +60,8 @@ public class ParseAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Verify this is the Parse() method from System.Enum
-        if (methodSymbol.Name != nameof(Enum.Parse) ||
+        // Verify this is the IsDefined() method from System.Enum
+        if (methodSymbol.Name != nameof(Enum.IsDefined) ||
             methodSymbol.ContainingType.SpecialType != SpecialType.System_Enum)
         {
             return;
@@ -69,25 +69,23 @@ public class ParseAnalyzer : DiagnosticAnalyzer
 
         ITypeSymbol? enumType = null;
 
-        // Handle four basic patterns, value may be string or ReadOnlySpan<char>
-        // 1. Enum.Parse(typeof(TEnum), value) - has 2 parameters
-        // 2. Enum.Parse(typeof(TEnum), value, ignoreCase) - has 3 parameters
-        // 3. Enum.Parse<TEnum>(value) - has 1 parameter, is generic
-        // 4. Enum.Parse<TEnum>(value, ignoreCase) - has 2 parameters, is generic
+        // Handle two patterns:
+        // 1. Enum.IsDefined(typeof(TEnum), value) - has 2 parameters
+        // 2. Enum.IsDefined<TEnum>(value) - has 1 parameter, is generic
         if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
         {
-            // Pattern: Enum.Parse<TEnum>(value) or Enum.Parse<TEnum>(value, ignoreCase)
-            if (invocation.ArgumentList.Arguments.Count is not (1 or 2))
+            // Pattern: Enum.IsDefined<TEnum>(value)
+            if (invocation.ArgumentList.Arguments.Count != 1)
             {
                 return;
             }
 
             enumType = methodSymbol.TypeArguments[0];
         }
-        else if (methodSymbol.Parameters.Length is 2 or 3
-                 && invocation.ArgumentList.Arguments is [{ Expression: TypeOfExpressionSyntax typeOfExpression }, ..])
+        else if (methodSymbol.Parameters.Length == 2
+                 && invocation.ArgumentList.Arguments is [{ Expression: TypeOfExpressionSyntax typeOfExpression }, _])
         {
-            // Pattern: Enum.Parse(typeof(TEnum), value) or Enum.Parse(typeof(TEnum), value, ignoreCase)
+            // Pattern: Enum.IsDefined(typeof(TEnum), value)
             enumType = context.SemanticModel.GetTypeInfo(typeOfExpression.Type).Type;
         }
 

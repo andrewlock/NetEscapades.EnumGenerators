@@ -4,20 +4,20 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public class EnumInGenericTypeAnalyzer : DiagnosticAnalyzer
+public class DuplicateEnumValueAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "NEEG002";
+    public const string DiagnosticId = "NEEG003";
     public static readonly DiagnosticDescriptor Rule = new(
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
         id: DiagnosticId,
 #pragma warning restore RS2008
-        title: "Enum in generic type not supported",
-        messageFormat: "The enum '{0}' is nested inside a generic type. [EnumExtension] attribute is not supported.",
+        title: "Enum has duplicate values and will give inconsistent values for ToStringFast()",
+        messageFormat: "The enum member '{0}' has the same value as a previous member so will return the '{1}' value for ToStringFast()",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Warning,
+        defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -34,8 +34,8 @@ public class EnumInGenericTypeAnalyzer : DiagnosticAnalyzer
     {
         var enumDeclaration = (EnumDeclarationSyntax)context.Node;
         
-        // Check if enum has [EnumExtensions] attribute and capture its location
-        AttributeSyntax? enumExtensionsAttribute = null;
+        // Check if enum has [EnumExtensions] attribute
+        bool hasEnumExtensionsAttribute = false;
         foreach (var attributeList in enumDeclaration.AttributeLists)
         {
             foreach (var attribute in attributeList.Attributes)
@@ -44,24 +44,24 @@ public class EnumInGenericTypeAnalyzer : DiagnosticAnalyzer
                 var attributeName = attribute.Name.ToString();
                 if (attributeName == "EnumExtensions" || attributeName == "EnumExtensionsAttribute")
                 {
-                    // Verify with semantic model if needed for precision
+                    // Verify with semantic model for precision
                     var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
                     if (symbolInfo.Symbol is IMethodSymbol method &&
                         method.ContainingType.ToDisplayString() == Attributes.EnumExtensionsAttribute)
                     {
-                        enumExtensionsAttribute = attribute;
+                        hasEnumExtensionsAttribute = true;
                         break;
                     }
                 }
             }
 
-            if (enumExtensionsAttribute is not null)
+            if (hasEnumExtensionsAttribute)
             {
                 break;
             }
         }
 
-        if (enumExtensionsAttribute is null)
+        if (!hasEnumExtensionsAttribute)
         {
             return;
         }
@@ -73,16 +73,40 @@ public class EnumInGenericTypeAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Check if nested in generic type
-        if (SymbolHelpers.IsNestedInGenericType(enumSymbol))
+        // Track which constant values we've seen and the first name
+        var seenValues = new Dictionary<object, string>();
+        
+        // Analyze each enum member
+        foreach (var member in enumSymbol.GetMembers().OfType<IFieldSymbol>())
         {
-            var diagnostic = Diagnostic.Create(
-                Rule,
-                enumExtensionsAttribute.GetLocation(),
-                enumSymbol.Name);
+            if (!member.IsConst || member.ConstantValue is null)
+            {
+                continue;
+            }
+
+            var constantValue = member.ConstantValue;
+            var memberName = member.Name;
             
-            context.ReportDiagnostic(diagnostic);
+            // If we've already seen this value, this member will be excluded
+            if (seenValues.TryGetValue(constantValue, out var previousName))
+            {
+                // Find the syntax location for this member
+                var memberLocation = member.Locations.FirstOrDefault();
+                if (memberLocation is not null)
+                {
+                    var diagnostic = Diagnostic.Create(
+                        Rule,
+                        memberLocation,
+                        memberName,
+                        previousName);
+                    
+                    context.ReportDiagnostic(diagnostic);
+                }
+            }
+            else
+            {
+                seenValues[member.ConstantValue] = memberName;
+            }
         }
     }
-
 }
