@@ -9,7 +9,7 @@ namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class GetValuesAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "NEEG008";
+    public const string DiagnosticId = "NEEG009";
     public static readonly DiagnosticDescriptor Rule = new(
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
         id: DiagnosticId,

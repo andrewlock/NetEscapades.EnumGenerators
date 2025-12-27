@@ -51,7 +51,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:Enum.GetValues(typeof(MyEnum))|};
+                    var values = {|NEEG009:Enum.GetValues(typeof(MyEnum))|};
                 }
             }
             """);
@@ -80,7 +80,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:Enum.GetValues<MyEnum>()|};
+                    var values = {|NEEG009:Enum.GetValues<MyEnum>()|};
                 }
             }
             """);
@@ -111,8 +111,8 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values1 = {|NEEG008:System.Enum.GetValues(typeof(MyEnum))|};
-                    var values2 = {|NEEG008:System.Enum.GetValues(typeof(MyEnum))|};
+                    var values1 = {|NEEG009:System.Enum.GetValues(typeof(MyEnum))|};
+                    var values2 = {|NEEG009:System.Enum.GetValues(typeof(MyEnum))|};
                 }
             }
             """);
@@ -141,7 +141,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:System.Enum.GetValues(typeof(MyEnum))|};
+                    var values = {|NEEG009:System.Enum.GetValues(typeof(MyEnum))|};
                 }
             }
             """);
@@ -170,7 +170,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values1 = {|NEEG008:System.Enum.GetValues(typeof(MyEnum))|};
+                    var values1 = {|NEEG009:System.Enum.GetValues(typeof(MyEnum))|};
                     var values2 = System.Enum.GetValues(typeof(TestEnumWithoutAttribute)); // Should not flag
                 }
             }
@@ -201,7 +201,7 @@ public class GetValuesAnalyzerTests
             {
                 public MyEnum[] TestMethod()
                 {
-                    return (MyEnum[]){|NEEG008:System.Enum.GetValues(typeof(MyEnum))|};
+                    return (MyEnum[]){|NEEG009:System.Enum.GetValues(typeof(MyEnum))|};
                 }
             }
             """);
@@ -229,7 +229,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:System.Enum.GetValues(typeof(System.IO.FileShare))|};
+                    var values = {|NEEG009:System.Enum.GetValues(typeof(System.IO.FileShare))|};
                 }
             }
             """);
@@ -257,7 +257,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:System.Enum.GetValues<System.IO.FileShare>()|};
+                    var values = {|NEEG009:System.Enum.GetValues<System.IO.FileShare>()|};
                 }
             }
             """);
@@ -302,8 +302,8 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values1 = {|NEEG008:Enum.GetValues(typeof(MyEnum))|};
-                    var values2 = {|NEEG008:Enum.GetValues<MyEnum>()|};
+                    var values1 = {|NEEG009:Enum.GetValues(typeof(MyEnum))|};
+                    var values2 = {|NEEG009:Enum.GetValues<MyEnum>()|};
                 }
             }
             """);
@@ -375,7 +375,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    foreach (var value in {|NEEG008:Enum.GetValues(typeof(MyEnum))|})
+                    foreach (var value in {|NEEG009:Enum.GetValues(typeof(MyEnum))|})
                     {
                         System.Console.WriteLine(value);
                     }
@@ -410,7 +410,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    foreach (var value in {|NEEG008:Enum.GetValues<MyEnum>()|})
+                    foreach (var value in {|NEEG009:Enum.GetValues<MyEnum>()|})
                     {
                         System.Console.WriteLine(value);
                     }
@@ -445,7 +445,7 @@ public class GetValuesAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var count = {|NEEG008:Enum.GetValues(typeof(MyEnum))|}.Length;
+                    var count = {|NEEG009:Enum.GetValues(typeof(MyEnum))|}.Length;
                 }
             }
             """);
