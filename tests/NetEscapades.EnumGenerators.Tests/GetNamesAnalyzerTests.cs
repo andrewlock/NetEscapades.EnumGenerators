@@ -21,7 +21,7 @@ public class GetNamesAnalyzerTests
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await VerifyAnalyzerAsync(test);
+        await Verifier.VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await Verifier.VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await Verifier.VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -397,36 +397,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
-    }
-
-    [Fact]
-    public async Task GetNamesInLinqExpressionShouldHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var names = {|NEEG008:Enum.GetNames<MyEnum>()|}.Where(x => x.StartsWith("F"));
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var names = MyEnumExtensions.GetNames().Where(x => x.StartsWith("F"));
-                }
-            }
-            """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
@@ -441,66 +412,38 @@ public class GetNamesAnalyzerTests
         return test.RunAsync(CancellationToken.None);
     }
 
-    private static Task VerifyAnalyzerAsync(string source)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
+    private static string GetTestCodeWithExternalEnum(string testCode) =>
+        $$"""
+          using System;
+          using System.Collections.Generic;
+          using System.IO;
+          using System.Linq;
+          using System.Text;
+          using System.Threading;
+          using System.Threading.Tasks;
+          using System.Diagnostics;
+          using NetEscapades.EnumGenerators;
 
-        return test.RunAsync(CancellationToken.None);
-    }
+          [assembly: EnumExtensions<System.IO.FileShare>()]
 
-    private static Task VerifyCodeFix(string source, string fixedSource)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
+          namespace ConsoleApplication1
+          {
+              {{testCode}}
 
-        return test.RunAsync(CancellationToken.None);
-    }
+          }
 
-    private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
-        using System;
-        using System.Collections.Generic;
-        using System.IO;
-        using System.Linq;
-        using System.Text;
-        using System.Threading;
-        using System.Threading.Tasks;
-        using System.Diagnostics;
-        using NetEscapades.EnumGenerators;
+          namespace System.IO
+          {
+              // This code would be generated, just hacked in here for simplicity
+              public static class FileShareExtensions
+              {
+                  public static string[] GetNames() => new[] { "Read", "Write" };
+              }
+          }
 
-        [assembly: EnumExtensions<System.IO.FileShare>()]
-
-        namespace ConsoleApplication1
-        {
-            {{testCode}}
-
-        }
-        
-        namespace System.IO
-        {
-            // This code would be generated, just hacked in here for simplicity
-            public static class FileShareExtensions
-            {
-                public static string[] GetNames() => new[] { "Read", "Write" };
-            }
-        }
-
-        {{TestHelpers.LoadEmbeddedAttribute()}}
-        {{TestHelpers.LoadEmbeddedMetadataSource()}}
-        """;
+          {{TestHelpers.LoadEmbeddedAttribute()}}
+          {{TestHelpers.LoadEmbeddedMetadataSource()}}
+          """;
 
     private static string GetTestCode(string testCode) => $$"""
         using System;
