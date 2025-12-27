@@ -99,4 +99,15 @@ public class AnalyzerTests
 #endif
 #pragma warning restore NEEG007
     }
+
+    [Fact]
+    public void Neeg008Testing()
+    {
+#pragma warning disable NEEG008
+        _ = Enum.GetNames(typeof(FlagsEnum));
+#if NET5_0_OR_GREATER
+        _ = Enum.GetNames<FlagsEnum>().Length;
+#endif
+#pragma warning restore NEEG008
+    }
 }
