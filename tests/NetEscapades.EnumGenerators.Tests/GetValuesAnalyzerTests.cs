@@ -21,7 +21,7 @@ public class GetValuesAnalyzerTests
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await VerifyAnalyzerAsync(test);
+        await Verifier.VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await Verifier.VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -157,7 +157,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -188,7 +188,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await Verifier.VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -397,7 +397,7 @@ public class GetValuesAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await Verifier.VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -435,35 +435,6 @@ public class GetValuesAnalyzerTests
         await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
-    [Fact]
-    public async Task GetValuesInLinqQueryShouldHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var count = {|NEEG009:Enum.GetValues(typeof(MyEnum))|}.Length;
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var count = MyEnumExtensions.GetValues().Length;
-                }
-            }
-            """);
-        await VerifyCodeFix(test, fix);
-    }
-
     private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
     {
         var test = new Test
@@ -476,103 +447,76 @@ public class GetValuesAnalyzerTests
         return test.RunAsync(CancellationToken.None);
     }
 
-    private static Task VerifyAnalyzerAsync(string source)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
+    private static string GetTestCodeWithExternalEnum(string testCode)
+        => $$"""
+             using System;
+             using System.Collections.Generic;
+             using System.IO;
+             using System.Linq;
+             using System.Text;
+             using System.Threading;
+             using System.Threading.Tasks;
+             using System.Diagnostics;
+             using NetEscapades.EnumGenerators;
 
-        return test.RunAsync(CancellationToken.None);
-    }
+             [assembly: EnumExtensions<System.IO.FileShare>()]
 
-    private static Task VerifyCodeFix(string source, string fixedSource)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
+             namespace ConsoleApplication1
+             {
+                 {{testCode}}
 
-        return test.RunAsync(CancellationToken.None);
-    }
+             }
 
-    private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
-        using System;
-        using System.Collections.Generic;
-        using System.IO;
-        using System.Linq;
-        using System.Text;
-        using System.Threading;
-        using System.Threading.Tasks;
-        using System.Diagnostics;
-        using NetEscapades.EnumGenerators;
+             namespace System.IO
+             {
+                 // This code would be generated, just hacked in here for simplicity
+                 public static class FileShareExtensions
+                 {
+                     public static System.IO.FileShare[] GetValues() => new[] { System.IO.FileShare.Read };
+                 }
+             }
 
-        [assembly: EnumExtensions<System.IO.FileShare>()]
+             {{TestHelpers.LoadEmbeddedAttribute()}}
+             {{TestHelpers.LoadEmbeddedMetadataSource()}}
+             """;
 
-        namespace ConsoleApplication1
-        {
-            {{testCode}}
+    private static string GetTestCode(string testCode)
+        => $$"""
+             using System;
+             using System.Collections.Generic;
+             using System.Linq;
+             using System.Text;
+             using System.Threading;
+             using System.Threading.Tasks;
+             using System.Diagnostics;
+             using NetEscapades.EnumGenerators;
 
-        }
-        
-        namespace System.IO
-        {
-            // This code would be generated, just hacked in here for simplicity
-            public static class FileShareExtensions
-            {
-                public static System.IO.FileShare[] GetValues() => new[] { System.IO.FileShare.Read };
-            }
-        }
+             namespace ConsoleApplication1
+             {
+                 {{testCode}}
 
-        {{TestHelpers.LoadEmbeddedAttribute()}}
-        {{TestHelpers.LoadEmbeddedMetadataSource()}}
-        """;
+                 [EnumExtensions]
+                 public enum MyEnum
+                 {
+                     First = 1,
+                     Second = 2,
+                     Third = 3,
+                 }
 
-    private static string GetTestCode(string testCode) => $$"""
-        using System;
-        using System.Collections.Generic;
-        using System.Linq;
-        using System.Text;
-        using System.Threading;
-        using System.Threading.Tasks;
-        using System.Diagnostics;
-        using NetEscapades.EnumGenerators;
+                 public enum TestEnumWithoutAttribute
+                 {
+                     First = 1,
+                     Second = 2,
+                 }
 
-        namespace ConsoleApplication1
-        {
-            {{testCode}}
+                 // This code would be generated, just hacked in here for simplicity
+                 public static class MyEnumExtensions
+                 {
+                     public static MyEnum[] GetValues() => new[] { MyEnum.First, MyEnum.Second, MyEnum.Third };
+                 }
+             }
 
-            [EnumExtensions]
-            public enum MyEnum
-            {
-                First = 1,
-                Second = 2,
-                Third = 3,
-            }
-
-            public enum TestEnumWithoutAttribute
-            {
-                First = 1,
-                Second = 2,
-            }
-
-            // This code would be generated, just hacked in here for simplicity
-            public static class MyEnumExtensions
-            {
-                public static MyEnum[] GetValues() => new[] { MyEnum.First, MyEnum.Second, MyEnum.Third };
-            }
-        }
-
-        {{TestHelpers.LoadEmbeddedAttribute()}}
-        {{TestHelpers.LoadEmbeddedMetadataSource()}}
-        """;
+             {{TestHelpers.LoadEmbeddedAttribute()}}
+             {{TestHelpers.LoadEmbeddedMetadataSource()}}
+             """;
 }

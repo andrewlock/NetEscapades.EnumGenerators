@@ -44,13 +44,6 @@ public class GetValuesCodeFixProvider : CodeFixProviderBase
             return Task.CompletedTask;
         }
 
-        // Get the symbol to determine which pattern we're dealing with
-        var symbolInfo = editor.SemanticModel.GetSymbolInfo(invocation, cancellationToken);
-        if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
-        {
-            return Task.CompletedTask;
-        }
-
         // Create new invocation: ExtensionsClass.GetValues()
         var generator = editor.Generator;
         var newInvocation = generator.InvocationExpression(
