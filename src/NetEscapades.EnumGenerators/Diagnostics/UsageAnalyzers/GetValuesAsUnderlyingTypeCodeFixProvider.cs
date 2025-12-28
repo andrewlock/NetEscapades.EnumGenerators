@@ -44,13 +44,6 @@ public class GetValuesAsUnderlyingTypeCodeFixProvider : CodeFixProviderBase
             return Task.CompletedTask;
         }
 
-        // Get the symbol to determine which pattern we're dealing with
-        var symbolInfo = editor.SemanticModel.GetSymbolInfo(invocation, cancellationToken);
-        if (symbolInfo.Symbol is not IMethodSymbol methodSymbol)
-        {
-            return Task.CompletedTask;
-        }
-
         // Create new invocation: ExtensionsClass.GetValuesAsUnderlyingType()
         // Both patterns (generic and non-generic) result in the same parameterless call
         var generator = editor.Generator;

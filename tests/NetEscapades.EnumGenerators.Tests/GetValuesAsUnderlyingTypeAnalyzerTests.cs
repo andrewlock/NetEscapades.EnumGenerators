@@ -67,7 +67,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -97,8 +97,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             }
             """);
 
-        // force using .NET 7+ runtime so that can test with generic
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -128,7 +127,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -157,7 +156,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -188,7 +187,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -216,7 +215,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -244,7 +243,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -272,7 +271,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -320,7 +319,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
 
 
         static string TestCode(bool addUsing, string testCode) =>
@@ -385,39 +384,10 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 private static readonly System.Array _values = MyEnumExtensions.GetValuesAsUnderlyingType();
             }
             """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
-    [Fact]
-    public async Task GetValuesAsUnderlyingTypeInLinqQueryShouldHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var count = {|NEEG010:Enum.GetValuesAsUnderlyingType<MyEnum>()|}.Length;
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var count = MyEnumExtensions.GetValuesAsUnderlyingType().Length;
-                }
-            }
-            """);
-        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
-    }
-
-    private static Task VerifyCodeFixWithNet7AssembliesAsync(string source, string fixedSource)
+    private static Task VerifyCodeFixAsync(string source, string fixedSource)
     {
         var test = new Test
         {
