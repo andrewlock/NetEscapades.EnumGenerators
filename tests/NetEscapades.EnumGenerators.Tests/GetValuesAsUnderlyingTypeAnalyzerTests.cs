@@ -51,7 +51,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
+                    var values = {|NEEG010:Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
                 }
             }
             """);
@@ -80,7 +80,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:Enum.GetValuesAsUnderlyingType<MyEnum>()|};
+                    var values = {|NEEG010:Enum.GetValuesAsUnderlyingType<MyEnum>()|};
                 }
             }
             """);
@@ -111,8 +111,8 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values1 = {|NEEG008:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
-                    var values2 = {|NEEG008:System.Enum.GetValuesAsUnderlyingType<MyEnum>()|};
+                    var values1 = {|NEEG010:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
+                    var values2 = {|NEEG010:System.Enum.GetValuesAsUnderlyingType<MyEnum>()|};
                 }
             }
             """);
@@ -141,7 +141,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
+                    var values = {|NEEG010:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
                 }
             }
             """);
@@ -170,7 +170,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values1 = {|NEEG008:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
+                    var values1 = {|NEEG010:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
                     var values2 = System.Enum.GetValuesAsUnderlyingType(typeof(TestEnumWithoutAttribute)); // Should not flag
                 }
             }
@@ -201,7 +201,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public System.Array TestMethod()
                 {
-                    return {|NEEG008:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
+                    return {|NEEG010:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
                 }
             }
             """);
@@ -229,7 +229,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:System.Enum.GetValuesAsUnderlyingType(typeof(System.IO.FileShare))|};
+                    var values = {|NEEG010:System.Enum.GetValuesAsUnderlyingType(typeof(System.IO.FileShare))|};
                 }
             }
             """);
@@ -257,7 +257,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values = {|NEEG008:System.Enum.GetValuesAsUnderlyingType<System.IO.FileShare>()|};
+                    var values = {|NEEG010:System.Enum.GetValuesAsUnderlyingType<System.IO.FileShare>()|};
                 }
             }
             """);
@@ -302,8 +302,8 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var values1 = {|NEEG008:Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
-                    var values2 = {|NEEG008:Enum.GetValuesAsUnderlyingType<MyEnum>()|};
+                    var values1 = {|NEEG010:Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
+                    var values2 = {|NEEG010:Enum.GetValuesAsUnderlyingType<MyEnum>()|};
                 }
             }
             """);
@@ -373,7 +373,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             """
             public class TestClass
             {
-                private static readonly System.Array _values = {|NEEG008:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
+                private static readonly System.Array _values = {|NEEG010:System.Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|};
             }
             """);
 
@@ -398,7 +398,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var count = {|NEEG008:Enum.GetValuesAsUnderlyingType<MyEnum>()|}.Length;
+                    var count = {|NEEG010:Enum.GetValuesAsUnderlyingType<MyEnum>()|}.Length;
                 }
             }
             """);
