@@ -121,4 +121,15 @@ public class AnalyzerTests
 #endif
 #pragma warning restore NEEG009
     }
+
+#if NET7_0_OR_GREATER
+    [Fact]
+    public void Neeg010Testing()
+    {
+#pragma warning disable NEEG010
+        _ = Enum.GetValuesAsUnderlyingType(typeof(FlagsEnum));
+        _ = Enum.GetValuesAsUnderlyingType<FlagsEnum>().Length;
+#pragma warning restore NEEG010
+    }
+#endif
 }
