@@ -53,7 +53,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    {|NEEG008:Enum.TryParse<MyEnum>({{parseValue}}, out var result)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>({{parseValue}}, out var result)|};
                 }
             }
             """);
@@ -90,7 +90,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    {|NEEG008:Enum.TryParse<MyEnum>("First", {{ignoreCaseParam}}, out var result)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>("First", {{ignoreCaseParam}}, out var result)|};
                 }
             }
             """);
@@ -123,8 +123,8 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    {|NEEG008:System.Enum.TryParse<MyEnum>("First", out var result1)|};
-                    {|NEEG008:System.Enum.TryParse<MyEnum>("Second", true, out var result2)|};
+                    {|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result1)|};
+                    {|NEEG011:System.Enum.TryParse<MyEnum>("Second", true, out var result2)|};
                 }
             }
             """);
@@ -153,7 +153,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var success = {|NEEG008:System.Enum.TryParse<MyEnum>("First", out var result)|};
+                    var success = {|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result)|};
                 }
             }
             """);
@@ -182,7 +182,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    {|NEEG008:System.Enum.TryParse<MyEnum>("First", out var result1)|};
+                    {|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result1)|};
                     System.Enum.TryParse<TestEnumWithoutAttribute>("First", out var result2); // Should not flag
                 }
             }
@@ -213,7 +213,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    if ({|NEEG008:System.Enum.TryParse<MyEnum>("First", out var result)|})
+                    if ({|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result)|})
                     {
                         // Use result
                     }
@@ -247,7 +247,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    {|NEEG008:System.Enum.TryParse<System.IO.FileShare>("Read", out var result)|};
+                    {|NEEG011:System.Enum.TryParse<System.IO.FileShare>("Read", out var result)|};
                 }
             }
             """);
@@ -275,7 +275,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    {|NEEG008:System.Enum.TryParse<System.IO.FileShare>("Read", out var result)|};
+                    {|NEEG011:System.Enum.TryParse<System.IO.FileShare>("Read", out var result)|};
                 }
             }
             """);
@@ -321,7 +321,7 @@ public class TryParseAnalyzerTests
                 public void TestMethod()
                 {
                     string name = "First";
-                    {|NEEG008:System.Enum.TryParse<MyEnum>(name, out var result)|};
+                    {|NEEG011:System.Enum.TryParse<MyEnum>(name, out var result)|};
                 }
             }
             """);
@@ -351,7 +351,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    {|NEEG008:Enum.TryParse<MyEnum>(GetName(), out var result)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>(GetName(), out var result)|};
                 }
                 
                 private string GetName() => "First";
@@ -385,12 +385,12 @@ public class TryParseAnalyzerTests
                 public void TestMethod()
                 {
                     ReadOnlySpan<char> value = "Second";
-                    {|NEEG008:Enum.TryParse<MyEnum>(GetName(), out var result1)|};
-                    {|NEEG008:Enum.TryParse<MyEnum>("Second", out var result2)|};
-                    {|NEEG008:Enum.TryParse<MyEnum>("Third", true, out var result3)|};
-                    {|NEEG008:Enum.TryParse<MyEnum>(GetName().AsSpan(), out var result4)|};
-                    {|NEEG008:Enum.TryParse<MyEnum>(value, out var result5)|};
-                    {|NEEG008:Enum.TryParse<MyEnum>("Third".AsSpan(), true, out var result6)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>(GetName(), out var result1)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>("Second", out var result2)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>("Third", true, out var result3)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>(GetName().AsSpan(), out var result4)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>(value, out var result5)|};
+                    {|NEEG011:Enum.TryParse<MyEnum>("Third".AsSpan(), true, out var result6)|};
                 }
 
                 public string GetName() => "First";
@@ -494,7 +494,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    while ({|NEEG008:System.Enum.TryParse<MyEnum>("First", out var result)|})
+                    while ({|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result)|})
                     {
                         // Use result
                     }
