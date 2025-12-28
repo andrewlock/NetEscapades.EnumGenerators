@@ -45,7 +45,7 @@ public class TryParseAnalyzer : DiagnosticAnalyzer
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
-        if (invocation.ArgumentList.Arguments.Count is 0 or > 3
+        if (invocation.ArgumentList.Arguments.Count is 0 or > 4
             || invocation.Expression is not MemberAccessExpressionSyntax memberAccess
             || memberAccess.Name.Identifier.Text != nameof(Enum.TryParse))
         {
@@ -67,26 +67,33 @@ public class TryParseAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Only handle generic TryParse methods
-        // The non-generic methods use 'out object?' which is incompatible with generated 'out TEnum' signature
-        if (!methodSymbol.IsGenericMethod || methodSymbol.TypeArguments.Length != 1)
+        ITypeSymbol? enumType = null;
+
+        // Handle six basic patterns, value may be string or ReadOnlySpan<char>
+        // 1. Enum.TryParse(typeof(TEnum), value, out result) - has 3 parameters
+        // 2. Enum.TryParse(typeof(TEnum), value, ignoreCase, out result) - has 4 parameters
+        // 3. Enum.TryParse<TEnum>(value, out result) - has 2 parameters, is generic
+        // 4. Enum.TryParse<TEnum>(value, ignoreCase, out result) - has 3 parameters, is generic
+        // 5. Enum.TryParse<TEnum>(ReadOnlySpan<char> value, out result) - has 2 parameters, is generic (NET5+)
+        // 6. Enum.TryParse<TEnum>(ReadOnlySpan<char> value, ignoreCase, out result) - has 3 parameters, is generic (NET5+)
+        if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
         {
-            return;
+            // Pattern: Enum.TryParse<TEnum>(value, out result) or Enum.TryParse<TEnum>(value, ignoreCase, out result)
+            if (invocation.ArgumentList.Arguments.Count is not (2 or 3))
+            {
+                return;
+            }
+
+            enumType = methodSymbol.TypeArguments[0];
+        }
+        else if (methodSymbol.Parameters.Length is 3 or 4
+                 && invocation.ArgumentList.Arguments is [{ Expression: TypeOfExpressionSyntax typeOfExpression }, ..])
+        {
+            // Pattern: Enum.TryParse(typeof(TEnum), value, out result) or Enum.TryParse(typeof(TEnum), value, ignoreCase, out result)
+            enumType = context.SemanticModel.GetTypeInfo(typeOfExpression.Type).Type;
         }
 
-        // Handle generic patterns only, value may be string or ReadOnlySpan<char>
-        // 1. Enum.TryParse<TEnum>(value, out result) - has 2 parameters
-        // 2. Enum.TryParse<TEnum>(value, ignoreCase, out result) - has 3 parameters
-        // 3. Enum.TryParse<TEnum>(ReadOnlySpan<char> value, out result) - has 2 parameters (NET5+)
-        // 4. Enum.TryParse<TEnum>(ReadOnlySpan<char> value, ignoreCase, out result) - has 3 parameters (NET5+)
-        if (invocation.ArgumentList.Arguments.Count is not (2 or 3))
-        {
-            return;
-        }
-
-        var enumType = methodSymbol.TypeArguments[0];
-
-        if (enumType.TypeKind != TypeKind.Enum)
+        if (enumType is null || enumType.TypeKind != TypeKind.Enum)
         {
             return;
         }

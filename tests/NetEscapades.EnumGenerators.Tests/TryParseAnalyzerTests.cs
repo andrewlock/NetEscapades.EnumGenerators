@@ -44,6 +44,70 @@ public class TryParseAnalyzerTests
     [Theory]
     [InlineData("\"First\"")]
     [InlineData("\"First\".AsSpan()")]
+    public async Task TryParseOnEnumWithExtensionsShouldHaveDiagnostic(string parseValue)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    {|NEEG011:Enum.TryParse(typeof(MyEnum), {{parseValue}}, out object? result)|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    MyEnumExtensions.TryParse({{parseValue}}, out object? result);
+                }
+            }
+            """);
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+    }
+
+    [Theory]
+    [InlineData("true")]
+    [InlineData("false")]
+    [InlineData("ignoreCase: true")]
+    [InlineData("ignoreCase: false")]
+    public async Task TryParseWithIgnoreCaseOnEnumWithExtensionsShouldHaveDiagnostic(string ignoreCaseParam)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    {|NEEG011:Enum.TryParse(typeof(MyEnum), "First", {{ignoreCaseParam}}, out object? result)|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    MyEnumExtensions.TryParse("First", out object? result, {{ignoreCaseParam}});
+                }
+            }
+            """);
+        await VerifyCodeFix(test, fix);
+    }
+
+    [Theory]
+    [InlineData("\"First\"")]
+    [InlineData("\"First\".AsSpan()")]
     public async Task TryParseGenericOnEnumWithExtensionsShouldHaveDiagnostic(string parseValue)
     {
         var test = GetTestCode(

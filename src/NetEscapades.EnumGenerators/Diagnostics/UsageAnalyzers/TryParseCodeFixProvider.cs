@@ -51,31 +51,47 @@ public class TryParseCodeFixProvider : CodeFixProviderBase
             return Task.CompletedTask;
         }
 
-        // Only handle generic TryParse<TEnum>() patterns
-        if (!methodSymbol.IsGenericMethod || methodSymbol.TypeArguments.Length != 1)
-        {
-            return Task.CompletedTask;
-        }
-
         ArgumentSyntax? valueArgument = null;
         ArgumentSyntax? outArgument = null;
         ArgumentSyntax? ignoreCaseArgument = null;
 
-        // Pattern: Enum.TryParse<TEnum>(value, out result) or Enum.TryParse<TEnum>(value, ignoreCase, out result)
-        if (invocation.ArgumentList.Arguments.Count >= 2)
+        // Determine which arguments to use
+        if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
         {
-            valueArgument = invocation.ArgumentList.Arguments[0];
-            
-            if (invocation.ArgumentList.Arguments.Count == 2)
+            // Pattern: Enum.TryParse<TEnum>(value, out result) or Enum.TryParse<TEnum>(value, ignoreCase, out result)
+            if (invocation.ArgumentList.Arguments.Count >= 2)
             {
-                // TryParse<TEnum>(value, out result)
-                outArgument = invocation.ArgumentList.Arguments[1];
+                valueArgument = invocation.ArgumentList.Arguments[0];
+                
+                if (invocation.ArgumentList.Arguments.Count == 2)
+                {
+                    // TryParse<TEnum>(value, out result)
+                    outArgument = invocation.ArgumentList.Arguments[1];
+                }
+                else if (invocation.ArgumentList.Arguments.Count == 3)
+                {
+                    // TryParse<TEnum>(value, ignoreCase, out result)
+                    ignoreCaseArgument = invocation.ArgumentList.Arguments[1];
+                    outArgument = invocation.ArgumentList.Arguments[2];
+                }
             }
-            else if (invocation.ArgumentList.Arguments.Count == 3)
+        }
+        else if (methodSymbol.Parameters.Length is 3 or 4
+                 && invocation.ArgumentList.Arguments.Count >= 3)
+        {
+            // Pattern: Enum.TryParse(typeof(TEnum), value, out result) or Enum.TryParse(typeof(TEnum), value, ignoreCase, out result)
+            valueArgument = invocation.ArgumentList.Arguments[1];
+            
+            if (invocation.ArgumentList.Arguments.Count == 3)
             {
-                // TryParse<TEnum>(value, ignoreCase, out result)
-                ignoreCaseArgument = invocation.ArgumentList.Arguments[1];
+                // TryParse(typeof(TEnum), value, out result)
                 outArgument = invocation.ArgumentList.Arguments[2];
+            }
+            else if (invocation.ArgumentList.Arguments.Count == 4)
+            {
+                // TryParse(typeof(TEnum), value, ignoreCase, out result)
+                ignoreCaseArgument = invocation.ArgumentList.Arguments[2];
+                outArgument = invocation.ArgumentList.Arguments[3];
             }
         }
 
