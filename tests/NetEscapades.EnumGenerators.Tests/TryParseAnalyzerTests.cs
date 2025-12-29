@@ -755,7 +755,7 @@ public class TryParseAnalyzerTests : AnalyzerTestsBase<TryParseAnalyzer, TryPars
             {
                 public void TestMethod()
                 {
-                    if ({|NEEG003:Enum.TryParse(typeof(MyEnum), "First", out object result)|})
+                    if ({|NEEG011:Enum.TryParse(typeof(MyEnum), "First", out object result)|})
                         System.Console.WriteLine("Parsed");
                 }
             }
@@ -786,7 +786,7 @@ public class TryParseAnalyzerTests : AnalyzerTestsBase<TryParseAnalyzer, TryPars
             {
                 public void TestMethod()
                 {
-                    SomeMethod({|NEEG003:Enum.TryParse(typeof(MyEnum), "First", out object result)|});
+                    SomeMethod({|NEEG011:Enum.TryParse(typeof(MyEnum), "First", out object result)|});
                 }
                 
                 private void SomeMethod(bool b) { }
@@ -819,7 +819,7 @@ public class TryParseAnalyzerTests : AnalyzerTestsBase<TryParseAnalyzer, TryPars
             {
                 public void TestMethod()
                 {
-                            if ({|NEEG003:Enum.TryParse(typeof(MyEnum), "First", out object result)|})
+                            if ({|NEEG011:Enum.TryParse(typeof(MyEnum), "First", out object result)|})
                             {
                                 System.Console.WriteLine("Parsed");
                             }
