@@ -730,7 +730,7 @@ public class ParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    SomeMethod({|NEEG002:Enum.Parse(typeof(MyEnum), "First")|});
+                    SomeMethod({|NEEG007:Enum.Parse(typeof(MyEnum), "First")|});
                 }
                 
                 private void SomeMethod(MyEnum value) { }
@@ -763,7 +763,7 @@ public class ParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                            var value = {|NEEG002:Enum.Parse(typeof(MyEnum), "First")|};
+                            var value = {|NEEG007:Enum.Parse(typeof(MyEnum), "First")|};
                 }
             }
             """);
