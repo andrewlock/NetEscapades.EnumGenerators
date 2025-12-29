@@ -3,6 +3,7 @@ using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Simplification;
@@ -46,9 +47,11 @@ public class GetNamesCodeFixProvider : CodeFixProviderBase
 
         // Create new invocation: ExtensionsClass.GetNames()
         var generator = editor.Generator;
-        var newInvocation = generator.InvocationExpression(
-                generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "GetNames"))
-            .WithTriviaFrom(invocation)
+        var memberAccess = (MemberAccessExpressionSyntax)generator.MemberAccessExpression(
+            generator.TypeExpression(extensionTypeSymbol), "GetNames");
+        var newInvocation = SyntaxFactory.InvocationExpression(memberAccess)
+            .WithLeadingTrivia(invocation.GetLeadingTrivia())
+            .WithTrailingTrivia(invocation.GetTrailingTrivia())
             .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
 
         editor.ReplaceNode(invocation, newInvocation);
