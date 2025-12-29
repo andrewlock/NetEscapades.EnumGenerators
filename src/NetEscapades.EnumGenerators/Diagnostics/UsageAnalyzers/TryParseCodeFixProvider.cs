@@ -51,16 +51,79 @@ public class TryParseCodeFixProvider : CodeFixProviderBase
             return Task.CompletedTask;
         }
 
-        // assume that we've already met all the requirements, so just make the fix
-        var skipFirstArg = methodSymbol is not { IsGenericMethod: true, TypeArguments.Length: 1 };
+        // This is a bit awkward, but we have a different order for TryParse in our extensions compared to the framework
+        // That's something we might want to fix sooner rather than later...
+                ArgumentSyntax? valueArgument = null;
+        ArgumentSyntax? outArgument = null;
+        ArgumentSyntax? ignoreCaseArgument = null;
 
-        // Create new invocation: ExtensionsClass.TryParse(value, out result) or ExtensionsClass.TryParse(value, out result, ignoreCase)
+        // Determine which arguments to use
+        if (methodSymbol is { IsGenericMethod: true, TypeArguments.Length: 1 })
+        {
+            // Pattern: Enum.TryParse<TEnum>(value, out result) or Enum.TryParse<TEnum>(value, ignoreCase, out result)
+            if (invocation.ArgumentList.Arguments.Count >= 2)
+            {
+                valueArgument = invocation.ArgumentList.Arguments[0];
+                
+                if (invocation.ArgumentList.Arguments.Count == 2)
+                {
+                    // TryParse<TEnum>(value, out result)
+                    outArgument = invocation.ArgumentList.Arguments[1];
+                }
+                else if (invocation.ArgumentList.Arguments.Count == 3)
+                {
+                    // TryParse<TEnum>(value, ignoreCase, out result)
+                    ignoreCaseArgument = invocation.ArgumentList.Arguments[1];
+                    outArgument = invocation.ArgumentList.Arguments[2];
+                }
+            }
+        }
+        else if (methodSymbol.Parameters.Length is 3 or 4
+                 && invocation.ArgumentList.Arguments.Count >= 3)
+        {
+            // Pattern: Enum.TryParse(typeof(TEnum), value, out result) or Enum.TryParse(typeof(TEnum), value, ignoreCase, out result)
+            valueArgument = invocation.ArgumentList.Arguments[1];
+            
+            if (invocation.ArgumentList.Arguments.Count == 3)
+            {
+                // TryParse(typeof(TEnum), value, out result)
+                outArgument = invocation.ArgumentList.Arguments[2];
+            }
+            else if (invocation.ArgumentList.Arguments.Count == 4)
+            {
+                // TryParse(typeof(TEnum), value, ignoreCase, out result)
+                ignoreCaseArgument = invocation.ArgumentList.Arguments[2];
+                outArgument = invocation.ArgumentList.Arguments[3];
+            }
+        }
+
+        if (valueArgument is null || outArgument is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        // Create new invocation: ExtensionsClass.Parse(value) or ExtensionsClass.Parse(value, ignoreCase)
         var generator = editor.Generator;
-        var newInvocation = generator.InvocationExpression(
-                generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "TryParse"),
-                skipFirstArg ? invocation.ArgumentList.Arguments.Skip(1) : invocation.ArgumentList.Arguments)
-            .WithTriviaFrom(invocation)
-            .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+        SyntaxNode newInvocation;
+        if (ignoreCaseArgument is not null)
+        {
+            // Call with ignoreCase parameter
+            newInvocation = generator.InvocationExpression(
+                    generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "TryParse"),
+                    valueArgument,
+                    outArgument,
+                    ignoreCaseArgument)
+                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+        }
+        else
+        {
+            // Call without ignoreCase parameter
+            newInvocation = generator.InvocationExpression(
+                    generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "TryParse"),
+                    valueArgument,
+                    outArgument)
+                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+        }
 
         editor.ReplaceNode(invocation, newInvocation);
         return Task.CompletedTask;

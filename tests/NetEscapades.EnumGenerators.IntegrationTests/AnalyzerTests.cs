@@ -138,11 +138,11 @@ public class AnalyzerTests
     {
 #pragma warning disable NEEG011
         _ = Enum.TryParse<FlagsEnum>("Second", out _);
-        _ = FlagsEnumExtensions.TryParse("Second", out _, true);
+        Enum.TryParse<FlagsEnum>("Second", true, out var e);
         _ = $"Some value: {Enum.TryParse<FlagsEnum>("First", out _)} <-";
 #if NETCOREAPP
         _ = Enum.TryParse(typeof(FlagsEnum), "Second", out var t);
-        _ = Enum.TryParse(typeof(FlagsEnum), "Second", true, out _);
+        _ = Enum.TryParse(typeof(FlagsEnum), "Second", true, out object? t2);
         _ = Enum.TryParse(typeof(FlagsEnum), "Second", ignoreCase: false, out _);
 #if NET5_0_OR_GREATER
         var toParse = "Second".AsSpan();
