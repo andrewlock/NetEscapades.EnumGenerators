@@ -134,7 +134,6 @@ public class TryParseAnalyzerTests
             }
             """);
 
-        // force using .NET 6+ runtime so that can test with generic
         await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
@@ -173,8 +172,7 @@ public class TryParseAnalyzerTests
             }
             """);
 
-        // force using .NET 6+ runtime so that can test with generic
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -200,11 +198,11 @@ public class TryParseAnalyzerTests
                 public void TestMethod()
                 {
                     MyEnumExtensions.TryParse("First", out var result1);
-                    MyEnumExtensions.TryParse("Second", out var result2, true);
+                    MyEnumExtensions.TryParse("Second", true, out var result2);
                 }
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -233,7 +231,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -264,7 +262,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -298,7 +296,8 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(
+            test, fix);
     }
 
     [Fact]
@@ -326,7 +325,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -354,7 +353,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -402,7 +401,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -435,7 +434,7 @@ public class TryParseAnalyzerTests
                 private string GetName() => "First";
             }
             """);
-        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+        await VerifyCodeFix(test, fix);
     }
 
     [Fact]
@@ -449,12 +448,22 @@ public class TryParseAnalyzerTests
                 public void TestMethod()
                 {
                     ReadOnlySpan<char> value = "Second";
-                    {|NEEG011:Enum.TryParse<MyEnum>(GetName(), out var result1)|};
-                    {|NEEG011:Enum.TryParse<MyEnum>("Second", out var result2)|};
-                    {|NEEG011:Enum.TryParse<MyEnum>("Third", true, out var result3)|};
-                    {|NEEG011:Enum.TryParse<MyEnum>(GetName().AsSpan(), out var result4)|};
-                    {|NEEG011:Enum.TryParse<MyEnum>(value, out var result5)|};
-                    {|NEEG011:Enum.TryParse<MyEnum>("Third".AsSpan(), true, out var result6)|};
+                    {
+                        {|NEEG011:Enum.TryParse<MyEnum>(GetName(), out var result1)|};
+                        {|NEEG011:Enum.TryParse<MyEnum>("Second", out var result2)|};
+                        {|NEEG011:Enum.TryParse<MyEnum>("Third", true, out var result3)|};
+                        {|NEEG011:Enum.TryParse<MyEnum>(GetName().AsSpan(), out var result4)|};
+                        {|NEEG011:Enum.TryParse<MyEnum>(value, out var result5)|};
+                        {|NEEG011:Enum.TryParse<MyEnum>("Third".AsSpan(), true, out var result6)|};
+                    }
+                    {
+                        {|NEEG011:Enum.TryParse(typeof(MyEnum), GetName(), out var result1)|};
+                        {|NEEG011:Enum.TryParse(typeof(MyEnum), "Second", out var result2)|};
+                        {|NEEG011:Enum.TryParse(typeof(MyEnum), "Third", true, out var result3)|};
+                        {|NEEG011:Enum.TryParse(typeof(MyEnum), GetName().AsSpan(), out var result4)|};
+                        {|NEEG011:Enum.TryParse(typeof(MyEnum), value, out var result5)|};
+                        {|NEEG011:Enum.TryParse(typeof(MyEnum), "Third".AsSpan(), true, out var result6)|};
+                    }
                 }
 
                 public string GetName() => "First";
@@ -469,12 +478,22 @@ public class TryParseAnalyzerTests
                 public void TestMethod()
                 {
                     ReadOnlySpan<char> value = "Second";
-                    MyTestExtensions.TryParse(GetName(), out var result1);
-                    MyTestExtensions.TryParse("Second", out var result2);
-                    MyTestExtensions.TryParse("Third", out var result3, true);
-                    MyTestExtensions.TryParse(GetName().AsSpan(), out var result4);
-                    MyTestExtensions.TryParse(value, out var result5);
-                    MyTestExtensions.TryParse("Third".AsSpan(), out var result6, true);
+                    {
+                        MyTestExtensions.TryParse(GetName(), out var result1);
+                        MyTestExtensions.TryParse("Second", out var result2);
+                        MyTestExtensions.TryParse("Third", out var result3, true);
+                        MyTestExtensions.TryParse(GetName().AsSpan(), out var result4);
+                        MyTestExtensions.TryParse(value, out var result5);
+                        MyTestExtensions.TryParse("Third".AsSpan(), out var result6, true);
+                    }
+                    {
+                        MyTestExtensions.TryParse(GetName(), out var result1);
+                        MyTestExtensions.TryParse("Second", out var result2);
+                        MyTestExtensions.TryParse("Third", out var result3, true);
+                        MyTestExtensions.TryParse(GetName().AsSpan(), out var result4);
+                        MyTestExtensions.TryParse(value, out var result5);
+                        MyTestExtensions.TryParse("Third".AsSpan(), out var result6, true);
+                    }
                 }
 
                 public string GetName() => "First";

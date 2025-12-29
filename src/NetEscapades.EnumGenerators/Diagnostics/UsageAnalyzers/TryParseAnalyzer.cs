@@ -47,7 +47,8 @@ public class TryParseAnalyzer : DiagnosticAnalyzer
 
         if (invocation.ArgumentList.Arguments.Count is 0 or > 4
             || invocation.Expression is not MemberAccessExpressionSyntax memberAccess
-            || memberAccess.Name.Identifier.Text != nameof(Enum.TryParse))
+            || memberAccess.Name.Identifier.Text != nameof(Enum.TryParse)
+            || !invocation.ArgumentList.Arguments[^1].RefKindKeyword.IsKind(SyntaxKind.OutKeyword))
         {
             // can't be the one we want
             return;
