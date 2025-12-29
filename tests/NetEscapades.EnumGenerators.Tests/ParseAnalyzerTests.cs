@@ -704,4 +704,66 @@ public class ParseAnalyzerTests : AnalyzerTestsBase<ParseAnalyzer, ParseCodeFixP
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
+
+    [Fact]
+    public async Task ParseAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod({|NEEG002:Enum.Parse(typeof(MyEnum), "First")|});
+                }
+                
+                private void SomeMethod(MyEnum value) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod(MyEnumExtensions.Parse("First"));
+                }
+                
+                private void SomeMethod(MyEnum value) { }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ParseWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            var value = {|NEEG002:Enum.Parse(typeof(MyEnum), "First")|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            var value = MyEnumExtensions.Parse("First");
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
 }
