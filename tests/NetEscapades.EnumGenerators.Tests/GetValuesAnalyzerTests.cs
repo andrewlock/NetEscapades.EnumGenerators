@@ -519,4 +519,66 @@ public class GetValuesAnalyzerTests
              {{TestHelpers.LoadEmbeddedAttribute()}}
              {{TestHelpers.LoadEmbeddedMetadataSource()}}
              """;
+
+    [Fact]
+    public async Task GetValuesAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod({|NEEG009:Enum.GetValues(typeof(MyEnum))|});
+                }
+                
+                private void SomeMethod(MyEnum[] values) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod(MyEnumExtensions.GetValues());
+                }
+                
+                private void SomeMethod(MyEnum[] values) { }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task GetValuesWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            var values = {|NEEG009:Enum.GetValues(typeof(MyEnum))|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            var values = MyEnumExtensions.GetValues();
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
 }

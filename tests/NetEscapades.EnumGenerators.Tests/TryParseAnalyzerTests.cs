@@ -757,4 +757,103 @@ public class TryParseAnalyzerTests
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
+
+    [Fact]
+    public async Task TryParseInIfStatementShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    if ({|NEEG003:Enum.TryParse(typeof(MyEnum), "First", out object result)|})
+                        System.Console.WriteLine("Parsed");
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    if (MyEnumExtensions.TryParse("First", out object result))
+                        System.Console.WriteLine("Parsed");
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task TryParseAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod({|NEEG003:Enum.TryParse(typeof(MyEnum), "First", out object result)|});
+                }
+                
+                private void SomeMethod(bool b) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod(MyEnumExtensions.TryParse("First", out object result));
+                }
+                
+                private void SomeMethod(bool b) { }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task TryParseWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            if ({|NEEG003:Enum.TryParse(typeof(MyEnum), "First", out object result)|})
+                            {
+                                System.Console.WriteLine("Parsed");
+                            }
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            if (MyEnumExtensions.TryParse("First", out object result))
+                            {
+                                System.Console.WriteLine("Parsed");
+                            }
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
 }

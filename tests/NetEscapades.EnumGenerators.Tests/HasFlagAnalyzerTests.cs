@@ -641,4 +641,109 @@ public class HasFlagAnalyzerTests
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
+
+    [Fact]
+    public async Task HasFlagInIfStatementShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    if (value.{|NEEG005:HasFlag|}(FlagsEnum.Second))
+                        System.Console.WriteLine("Has flag");
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    if (value.HasFlagFast(FlagsEnum.Second))
+                        System.Console.WriteLine("Has flag");
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task HasFlagAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    SomeMethod(value.{|NEEG005:HasFlag|}(FlagsEnum.Second));
+                }
+                
+                private void SomeMethod(bool b) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    SomeMethod(value.HasFlagFast(FlagsEnum.Second));
+                }
+                
+                private void SomeMethod(bool b) { }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task HasFlagWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                            if (value.{|NEEG005:HasFlag|}(FlagsEnum.Second))
+                            {
+                                System.Console.WriteLine("Has flag");
+                            }
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                            if (value.HasFlagFast(FlagsEnum.Second))
+                            {
+                                System.Console.WriteLine("Has flag");
+                            }
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
 }
