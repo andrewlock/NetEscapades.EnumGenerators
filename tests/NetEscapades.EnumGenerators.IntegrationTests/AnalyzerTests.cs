@@ -132,4 +132,27 @@ public class AnalyzerTests
 #pragma warning restore NEEG010
     }
 #endif
+
+    [Fact]
+    public void Neeg011Testing()
+    {
+#pragma warning disable NEEG011
+        _ = Enum.TryParse<FlagsEnum>("Second", out _);
+        Enum.TryParse<FlagsEnum>("Second", true, out var e);
+        _ = $"Some value: {Enum.TryParse<FlagsEnum>("First", out _)} <-";
+#if NETCOREAPP
+        _ = Enum.TryParse(typeof(FlagsEnum), "Second", out var t);
+        _ = Enum.TryParse(typeof(FlagsEnum), "Second", true, out object? t2);
+        _ = Enum.TryParse(typeof(FlagsEnum), "Second", ignoreCase: false, out _);
+#if NET5_0_OR_GREATER
+        var toParse = "Second".AsSpan();
+        _ = Enum.TryParse(typeof(FlagsEnum), toParse, out _);
+        _ = Enum.TryParse(typeof(FlagsEnum), toParse, ignoreCase: true, out _);
+        _ = Enum.TryParse<FlagsEnum>(toParse, out _);
+        _ = Enum.TryParse<FlagsEnum>(toParse, true, out _);
+        _ = $"Some value: {Enum.TryParse(typeof(FlagsEnum), "First".AsSpan(), out _)} <-";
+#endif
+#endif
+#pragma warning restore NEEG011
+    }
 }
