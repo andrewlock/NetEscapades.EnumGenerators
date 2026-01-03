@@ -1,21 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Testing;
-using Microsoft.CodeAnalysis.Testing;
-using NetEscapades.EnumGenerators.Diagnostics;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ToStringAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ToStringCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class ToStringAnalyzerTests
+public class ToStringAnalyzerTests : AnalyzerTestsBase<ToStringAnalyzer, ToStringCodeFixProvider>
 {
-    private const string EnableUsageAnalyzers = "netescapades_enumgenerators_usage_analyzers_enable = true";
-
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -778,6 +769,44 @@ public class ToStringAnalyzerTests
             """);
         await VerifyCodeFixAsync(test, fix);
     }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_ToStringShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = value.ToString();
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await VerifyAnalyzerAsync(test, EnableState.Missing);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_ToStringShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = value.ToString();
+                }
+            }
+            """);
+        
+        await VerifyAnalyzerAsync(test, EnableState.Disabled);
+    }
     
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
@@ -909,77 +938,4 @@ public class ToStringAnalyzerTests
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
-
-    [Fact]
-    public async Task WhenUsageAnalyzersNotEnabled_ToStringShouldNotHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = TestEnum.First;
-                    var str = value.ToString();
-                }
-            }
-            """);
-        // Don't set the config option - analyzer should not run
-        await Verifier.VerifyAnalyzerAsync(test);
-    }
-
-    [Fact]
-    public async Task WhenUsageAnalyzersDisabled_ToStringShouldNotHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = TestEnum.First;
-                    var str = value.ToString();
-                }
-            }
-            """);
-        
-        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.ToStringAnalyzer, DefaultVerifier>
-        {
-            TestState = { Sources = { test } },
-        };
-        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
-            is_global = true
-            netescapades_enumgenerators_usage_analyzers_enable = false
-            """));
-        await analyzerTest.RunAsync();
-    }
-
-    private static Task VerifyAnalyzerAsync(string source)
-    {
-        var test = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.ToStringAnalyzer, DefaultVerifier>
-        {
-            TestState = { Sources = { source } },
-        };
-        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
-            is_global = true
-            {EnableUsageAnalyzers}
-            """));
-        return test.RunAsync();
-    }
-
-    private static Task VerifyCodeFixAsync(string source, string fixedSource)
-    {
-        var test = new CSharpCodeFixTest<Diagnostics.UsageAnalyzers.ToStringAnalyzer, Diagnostics.UsageAnalyzers.ToStringCodeFixProvider, DefaultVerifier>
-        {
-            TestState = { Sources = { source } },
-            FixedState = { Sources = { fixedSource } },
-        };
-        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
-            is_global = true
-            {EnableUsageAnalyzers}
-            """));
-        return test.RunAsync();
-    }
 }

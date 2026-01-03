@@ -1,30 +1,17 @@
-using Microsoft.CodeAnalysis.CSharp.Testing;
 using System;
-using System.Collections.Immutable;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Test = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixTest<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetValuesAsUnderlyingTypeAnalyzer, 
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetValuesAsUnderlyingTypeCodeFixProvider, 
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetValuesAsUnderlyingTypeAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetValuesAsUnderlyingTypeCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class GetValuesAsUnderlyingTypeAnalyzerTests
-
+public class GetValuesAsUnderlyingTypeAnalyzerTests : AnalyzerTestsBase<GetValuesAsUnderlyingTypeAnalyzer, GetValuesAsUnderlyingTypeCodeFixProvider>
 {
-    private const string EnableUsageAnalyzers = "netescapades_enumgenerators_usage_analyzers_enable = true";
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithNet7AssembliesAsync(test);
     }
 
     [Fact]
@@ -41,7 +28,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithNet7AssembliesAsync(test);
     }
 
     [Fact]
@@ -70,7 +57,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -100,7 +87,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             }
             """);
 
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -130,7 +117,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -159,7 +146,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -190,7 +177,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -218,7 +205,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -246,7 +233,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -274,7 +261,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
     [Fact]
@@ -291,7 +278,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithNet7AssembliesAsync(test);
     }
 
     [Fact]
@@ -322,7 +309,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
 
 
         static string TestCode(bool addUsing, string testCode) =>
@@ -387,24 +374,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 private static readonly System.Array _values = MyEnumExtensions.GetValuesAsUnderlyingType();
             }
             """);
-        await VerifyCodeFixAsync(test, fix);
-    }
-
-    private static Task VerifyCodeFixAsync(string source, string fixedSource)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
-        };
-        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
-            is_global = true
-            {EnableUsageAnalyzers}
-            """));
-
-
-        return test.RunAsync(CancellationToken.None);
+        await VerifyCodeFixWithNet7AssembliesAsync(test, fix);
     }
 
 
@@ -424,7 +394,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             }
             """);
         // Don't set the config option - analyzer should not run
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithNet7AssembliesAsync(test, EnableState.Missing);
     }
 
     [Fact]
@@ -442,32 +412,8 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
                 }
             }
             """);
-        
-        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.GetValuesAsUnderlyingTypeAnalyzer, DefaultVerifier>
-        {
-            TestState = { Sources = { test } },
-        };
-        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
-            is_global = true
-            netescapades_enumgenerators_usage_analyzers_enable = false
-            """));
-        await analyzerTest.RunAsync();
-    }
 
-    private static Task VerifyAnalyzerAsync(string source)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
-        };
-        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
-            is_global = true
-            {EnableUsageAnalyzers}
-            """));
-
-
-        return test.RunAsync(CancellationToken.None);
+        await VerifyAnalyzerWithNet7AssembliesAsync(test, EnableState.Disabled);
     }
 
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""

@@ -1,20 +1,12 @@
-using Microsoft.CodeAnalysis.CSharp.Testing;
-using Microsoft.CodeAnalysis.Testing;
 using System;
 using System.Threading.Tasks;
-using NetEscapades.EnumGenerators.Diagnostics;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.HasFlagAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.HasFlagCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class HasFlagAnalyzerTests
-
+public class HasFlagAnalyzerTests : AnalyzerTestsBase<HasFlagAnalyzer, HasFlagCodeFixProvider>
 {
-    private const string EnableUsageAnalyzers = "netescapades_enumgenerators_usage_analyzers_enable = true";
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -663,7 +655,7 @@ public class HasFlagAnalyzerTests
             }
             """);
         // Don't set the config option - analyzer should not run
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test, EnableState.Missing);
     }
 
     [Fact]
@@ -681,42 +673,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        
-        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.HasFlagAnalyzer, DefaultVerifier>
-        {
-            TestState = { Sources = { test } },
-        };
-        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
-            is_global = true
-            netescapades_enumgenerators_usage_analyzers_enable = false
-            """));
-        await analyzerTest.RunAsync();
-    }
 
-    private static Task VerifyAnalyzerAsync(string source)
-    {
-        var test = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.HasFlagAnalyzer, DefaultVerifier>
-        {
-            TestState = { Sources = { source } },
-        };
-        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
-            is_global = true
-            {EnableUsageAnalyzers}
-            """));
-        return test.RunAsync();
-    }
-
-    private static Task VerifyCodeFixAsync(string source, string fixedSource)
-    {
-        var test = new CSharpCodeFixTest<Diagnostics.UsageAnalyzers.HasFlagAnalyzer, Diagnostics.UsageAnalyzers.HasFlagCodeFixProvider, DefaultVerifier>
-        {
-            TestState = { Sources = { source } },
-            FixedState = { Sources = { fixedSource } },
-        };
-        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
-            is_global = true
-            {EnableUsageAnalyzers}
-            """));
-        return test.RunAsync();
+        await VerifyAnalyzerAsync(test, EnableState.Disabled);
     }
 }
