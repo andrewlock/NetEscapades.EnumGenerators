@@ -340,6 +340,58 @@ Interception only works when the target type is unambiguously an interceptable e
 - If the `ToString()` call is made on a base type, such as `System.Enum` or `object`
 - If the `ToString()` call is made on a generic type
 
+## Usage Analyzers
+
+_NetEscapades.EnumGenerators_ includes optional analyzers that encourage the use of the generated extension methods instead of the built-in `System.Enum` methods. These analyzers can help improve performance by suggesting the faster, generated, alternatives like `ToStringFast()`, `HasFlagFast()`, and `TryParse()`.
+
+### Enabling the analyzers
+
+The usage analyzers are disabled by default. To enable them, add a `.globalconfig` file to your project with the following content:
+
+```ini
+is_global = true
+netescapades.enumgenerators.usage_analyzers.enable = true
+```
+
+The project should auto detect the analyzers, and enables all of the usage analyzers with the default severity.
+### Configuring analyzer severity (optional)
+
+Once enabled, you can optionally configure the severity of individual analyzer rules using an `.editorconfig` file. For example:
+
+```ini
+[*.{cs,vb}]
+
+# NEEG004: Use ToStringFast() instead of ToString()
+dotnet_diagnostic.NEEG004.severity = warning
+
+# NEEG005: Use HasFlagFast() instead of HasFlag()
+dotnet_diagnostic.NEEG005.severity = warning
+
+# NEEG006: Use generated IsDefined() instead of Enum.IsDefined()
+dotnet_diagnostic.NEEG006.severity = warning
+
+# NEEG007: Use generated Parse() instead of Enum.Parse()
+dotnet_diagnostic.NEEG007.severity = warning
+
+# NEEG008: Use generated GetNames() instead of Enum.GetNames()
+dotnet_diagnostic.NEEG008.severity = warning
+
+# NEEG009: Use generated GetValues() instead of Enum.GetValues()
+dotnet_diagnostic.NEEG009.severity = warning
+
+# NEEG010: Use generated GetValuesAsUnderlyingType() instead of Enum.GetValuesAsUnderlyingType()
+dotnet_diagnostic.NEEG010.severity = warning
+
+# NEEG011: Use generated TryParse() instead of Enum.TryParse()
+dotnet_diagnostic.NEEG011.severity = warning
+```
+
+Valid severity values include: `none`, `silent`, `suggestion`, `warning`, and `error`.
+
+### Code fixes
+
+All usage analyzers include automatic code fixes. When a diagnostic is triggered, you can use the quick fix functionality in your IDE to automatically replace the `System.Enum` method with the corresponding generated extension method.
+
 ## Embedding the attributes in your project
 
 By default, the `[EnumExtensions]` attributes referenced in your application are contained in an external dll. It is also possible to embed the attributes directly in your project, so they appear in the dll when your project is built. If you wish to do this, you must do two things:
