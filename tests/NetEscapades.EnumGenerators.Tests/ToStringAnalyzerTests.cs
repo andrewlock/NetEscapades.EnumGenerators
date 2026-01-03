@@ -1,21 +1,17 @@
 using System;
 using System.Threading.Tasks;
-using NetEscapades.EnumGenerators.Diagnostics;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ToStringAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ToStringCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class ToStringAnalyzerTests
+public class ToStringAnalyzerTests : AnalyzerTestsBase<ToStringAnalyzer, ToStringCodeFixProvider>
 {
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -33,7 +29,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -51,7 +47,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -69,7 +65,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Theory]
@@ -96,7 +92,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Theory]
@@ -118,7 +114,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Theory]
@@ -154,7 +150,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -185,7 +181,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -221,7 +217,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -252,7 +248,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -289,7 +285,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -319,7 +315,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -349,7 +345,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -379,7 +375,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -397,7 +393,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -415,7 +411,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -450,7 +446,7 @@ public class ToStringAnalyzerTests
                         }
                         
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -483,7 +479,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Theory]
@@ -516,7 +512,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Theory]
@@ -550,7 +546,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Theory]
@@ -572,7 +568,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -601,7 +597,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -619,7 +615,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -637,7 +633,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -668,7 +664,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -699,7 +695,7 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -732,7 +728,7 @@ public class ToStringAnalyzerTests
                 private System.DateTimeKind GetValue() => System.DateTimeKind.Local;
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -771,7 +767,45 @@ public class ToStringAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_ToStringShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = value.ToString();
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await VerifyAnalyzerAsync(test, EnableState.Missing);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_ToStringShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    var str = value.ToString();
+                }
+            }
+            """);
+        
+        await VerifyAnalyzerAsync(test, EnableState.Disabled);
     }
     
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""

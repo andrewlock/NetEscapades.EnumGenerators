@@ -1,27 +1,17 @@
 using System;
-using System.Collections.Immutable;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Test = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixTest<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.TryParseAnalyzer, 
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.TryParseCodeFixProvider, 
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.TryParseAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.TryParseCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class TryParseAnalyzerTests
+public class TryParseAnalyzerTests : AnalyzerTestsBase<TryParseAnalyzer, TryParseCodeFixProvider>
 {
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithSystemMemoryAsync(test);
     }
 
     [Fact]
@@ -38,7 +28,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithSystemMemoryAsync(test);
     }
 
     [Theory]
@@ -172,7 +162,7 @@ public class TryParseAnalyzerTests
             }
             """);
 
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -202,7 +192,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -231,7 +221,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -262,7 +252,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -296,7 +286,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(
+        await VerifyCodeFixWithSystemMemoryAsync(
             test, fix);
     }
 
@@ -325,7 +315,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -353,7 +343,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -370,7 +360,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithSystemMemoryAsync(test);
     }
 
     [Fact]
@@ -401,7 +391,7 @@ public class TryParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -434,7 +424,7 @@ public class TryParseAnalyzerTests
                 private string GetName() => "First";
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -602,45 +592,42 @@ public class TryParseAnalyzerTests
         await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
-    private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_TryParseShouldNotHaveDiagnostic()
     {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
-        };
-
-        return test.RunAsync(CancellationToken.None);
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    Enum.TryParse("First", out MyEnum result);
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await VerifyAnalyzerWithSystemMemoryAsync(test, EnableState.Missing);
     }
 
-    private static Task VerifyAnalyzerAsync(string source)
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_TryParseShouldNotHaveDiagnostic()
     {
-        var test = new Test
-        {
-            TestCode = source,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    Enum.TryParse("First", out MyEnum result);
+                }
+            }
+            """);
 
-        return test.RunAsync(CancellationToken.None);
-    }
-
-    private static Task VerifyCodeFix(string source, string fixedSource)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
-
-        return test.RunAsync(CancellationToken.None);
+        await VerifyAnalyzerWithSystemMemoryAsync(test, EnableState.Disabled);
     }
 
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
