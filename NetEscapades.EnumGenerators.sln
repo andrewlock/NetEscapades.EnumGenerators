@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetEscapades.EnumGenerators.Nuget.NetStandard.SystemMemory", "tests\NetEscapades.EnumGenerators.Nuget.NetStandard.SystemMemory\NetEscapades.EnumGenerators.Nuget.NetStandard.SystemMemory.csproj", "{2B0C8B55-5985-45FD-86D2-4AF98D619CB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dependencies.SystemMemory", "tests\Dependencies.SystemMemory\Dependencies.SystemMemory.csproj", "{353AC6E3-0A79-4505-81C1-680B4634B0EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -299,6 +301,18 @@ Global
 		{2B0C8B55-5985-45FD-86D2-4AF98D619CB3}.Release|x64.Build.0 = Release|Any CPU
 		{2B0C8B55-5985-45FD-86D2-4AF98D619CB3}.Release|x86.ActiveCfg = Release|Any CPU
 		{2B0C8B55-5985-45FD-86D2-4AF98D619CB3}.Release|x86.Build.0 = Release|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Debug|x64.Build.0 = Debug|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Release|x64.ActiveCfg = Release|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Release|x64.Build.0 = Release|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -324,5 +338,6 @@ Global
 		{9F8D5098-AC2F-4F84-BAA8-000F38B732D3} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{76BAAC07-DDD4-4EDB-92AF-B7E71FC3BADC} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 		{2B0C8B55-5985-45FD-86D2-4AF98D619CB3} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
+		{353AC6E3-0A79-4505-81C1-680B4634B0EB} = {FF6F43E8-36EA-4BF0-9B2E-8ACC91C5F939}
 	EndGlobalSection
 EndGlobal

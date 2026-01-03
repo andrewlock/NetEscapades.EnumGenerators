@@ -1,7 +1,7 @@
-<Project InitialTargets="NetEscapades_EnumGenerators">
-  <Target Name="NetEscapades_EnumGenerators" AfterTargets="ResolvePackageAssets">
+<Project>
+  <Target Name="NetEscapadesEnumGenerators_DetectSystemMemory" AfterTargets="ResolveReferences" BeforeTargets="CoreCompile">
     <PropertyGroup Condition="'$(EnumGenerator_UseSystemMemory)' == ''">
-      <EnumGenerator_UseSystemMemory Condition="'@(PackageReference->AnyHaveMetadataValue(`Identity`, `System.Memory`))' == 'True'">true</EnumGenerator_UseSystemMemory>
+      <EnumGenerator_UseSystemMemory Condition="'@(ReferencePath->AnyHaveMetadataValue(`FileName`, `System.Memory`))' == 'True'">true</EnumGenerator_UseSystemMemory>
     </PropertyGroup>
     <PropertyGroup>
       <DefineConstants Condition="'$(EnumGenerator_UseSystemMemory)' == 'true'">$(DefineConstants);NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY</DefineConstants>

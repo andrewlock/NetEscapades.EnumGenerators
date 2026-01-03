@@ -14,9 +14,8 @@
   <ItemGroup>
     <PackageReference Include="NetEscapades.EnumGenerators" Version="$(Version)" PrivateAssets="All" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Memory" Version="4.6.3" />
+    <ProjectReference Include="..\Dependencies.SystemMemory\Dependencies.SystemMemory.csproj" />
   </ItemGroup>
 </Project>
