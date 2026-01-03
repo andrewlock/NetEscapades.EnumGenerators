@@ -613,6 +613,10 @@ public class TryParseAnalyzerTests
             FixedCode = fixedSource,
             ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
         };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
 
         return test.RunAsync(CancellationToken.None);
     }
@@ -674,6 +678,11 @@ public class TryParseAnalyzerTests
                 .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
 #endif
         };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+
 
         return test.RunAsync(CancellationToken.None);
     }
@@ -689,6 +698,11 @@ public class TryParseAnalyzerTests
                 .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
 #endif
         };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+
 
         return test.RunAsync(CancellationToken.None);
     }

@@ -398,6 +398,11 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             FixedCode = fixedSource,
             ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
         };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+
 
         return test.RunAsync(CancellationToken.None);
     }
@@ -456,6 +461,11 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
             TestCode = source,
             ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
         };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+
 
         return test.RunAsync(CancellationToken.None);
     }
