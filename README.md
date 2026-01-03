@@ -342,7 +342,7 @@ Interception only works when the target type is unambiguously an interceptable e
 
 ## Usage Analyzers
 
-_NetEscapades.EnumGenerators_ includes optional analyzers that encourage the use of the generated extension methods instead of the built-in `System.Enum` methods. These analyzers can help improve performance by suggesting faster alternatives like `ToStringFast()`, `HasFlagFast()`, and `TryParse()`.
+_NetEscapades.EnumGenerators_ includes optional analyzers that encourage the use of the generated extension methods instead of the built-in `System.Enum` methods. These analyzers can help improve performance by suggesting the faster, generated, alternatives like `ToStringFast()`, `HasFlagFast()`, and `TryParse()`.
 
 ### Enabling the analyzers
 
@@ -353,7 +353,8 @@ is_global = true
 netescapades.enumgenerators.usage_analyzers.enable = true
 ```
 
-### Configuring analyzer severity
+The project should auto detect the analyzers, and enables all of the usage analyzers with the default severity.
+### Configuring analyzer severity (optional)
 
 Once enabled, you can optionally configure the severity of individual analyzer rules using an `.editorconfig` file. For example:
 
