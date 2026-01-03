@@ -1,27 +1,17 @@
 using System;
-using System.Collections.Immutable;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Test = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixTest<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetNamesAnalyzer, 
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetNamesCodeFixProvider, 
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetNamesAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.GetNamesCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class GetNamesAnalyzerTests
+public class GetNamesAnalyzerTests : AnalyzerTestsBase<GetNamesAnalyzer, GetNamesCodeFixProvider>
 {
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -38,7 +28,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -67,7 +57,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -128,7 +118,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -157,7 +147,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -188,7 +178,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -216,7 +206,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -244,7 +234,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -289,7 +279,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -397,19 +387,45 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
-    private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_GetNamesShouldNotHaveDiagnostic()
     {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
-        };
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var names = Enum.GetNames(typeof(MyEnum));
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await VerifyAnalyzerAsync(test, EnableState.Missing);
+    }
 
-        return test.RunAsync(CancellationToken.None);
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_GetNamesShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var names = Enum.GetNames(typeof(MyEnum));
+                }
+            }
+            """);
+
+        await VerifyAnalyzerAsync(test, EnableState.Disabled);
     }
 
     private static string GetTestCodeWithExternalEnum(string testCode) =>

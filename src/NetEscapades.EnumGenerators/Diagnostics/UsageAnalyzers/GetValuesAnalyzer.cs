@@ -21,7 +21,7 @@ public class GetValuesAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        => ImmutableArray.Create(Rule);
+        => ImmutableArray.Create(Rule, UsageAnalyzerConfig.ConfigDescriptor);
 
     public override void Initialize(AnalysisContext context)
     {
@@ -29,6 +29,11 @@ public class GetValuesAnalyzer : DiagnosticAnalyzer
         context.EnableConcurrentExecution();
         context.RegisterCompilationStartAction(ctx =>
         {
+            if (!UsageAnalyzerConfig.IsEnabled(ctx.Options))
+            {
+                return;
+            }
+
             var (enumExtensionsAttr, externalEnumTypes) = AnalyzerHelpers.GetEnumExtensionAttributes(ctx.Compilation);
             if (enumExtensionsAttr is null || externalEnumTypes is null)
             {

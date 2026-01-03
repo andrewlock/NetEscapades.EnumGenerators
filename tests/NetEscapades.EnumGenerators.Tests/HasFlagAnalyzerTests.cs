@@ -1,21 +1,17 @@
 using System;
 using System.Threading.Tasks;
-using NetEscapades.EnumGenerators.Diagnostics;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.HasFlagAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.HasFlagCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class HasFlagAnalyzerTests
+public class HasFlagAnalyzerTests : AnalyzerTestsBase<HasFlagAnalyzer, HasFlagCodeFixProvider>
 {
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -34,7 +30,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -67,7 +63,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -110,7 +106,7 @@ public class HasFlagAnalyzerTests
                 public FlagsEnum GetValue() => FlagsEnum.First;
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
 
 
         static string TestCode(bool addUsing, string testCode) =>
@@ -196,7 +192,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -235,7 +231,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -276,7 +272,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -308,7 +304,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -340,7 +336,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -359,7 +355,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -388,7 +384,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -421,7 +417,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -456,7 +452,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -491,7 +487,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -526,7 +522,7 @@ public class HasFlagAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -561,7 +557,7 @@ public class HasFlagAnalyzerTests
                 private FlagsEnum GetValue() => FlagsEnum.First;
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
@@ -641,4 +637,43 @@ public class HasFlagAnalyzerTests
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
+
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_HasFlagShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    var result = value.HasFlag(FlagsEnum.Second);
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await VerifyAnalyzerAsync(test, EnableState.Missing);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_HasFlagShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    var result = value.HasFlag(FlagsEnum.Second);
+                }
+            }
+            """);
+
+        await VerifyAnalyzerAsync(test, EnableState.Disabled);
+    }
 }

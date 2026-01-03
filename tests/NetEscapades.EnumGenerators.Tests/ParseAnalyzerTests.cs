@@ -1,27 +1,17 @@
 using System;
-using System.Collections.Immutable;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Testing;
+using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
-using Test = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixTest<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseAnalyzer, 
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseCodeFixProvider, 
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
-using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseAnalyzer,
-    NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers.ParseCodeFixProvider,
-    Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
 
-public class ParseAnalyzerTests
+public class ParseAnalyzerTests : AnalyzerTestsBase<ParseAnalyzer, ParseCodeFixProvider>
 {
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithSystemMemoryAsync(test);
     }
 
     [Fact]
@@ -38,7 +28,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithSystemMemoryAsync(test);
     }
 
     [Theory]
@@ -102,7 +92,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Theory]
@@ -204,7 +194,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -233,7 +223,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -264,7 +254,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -292,7 +282,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -320,7 +310,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -365,7 +355,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerWithSystemMemoryAsync(test);
     }
 
     [Fact]
@@ -396,7 +386,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -552,7 +542,7 @@ public class ParseAnalyzerTests
                 }
             }
             """);
-        await VerifyCodeFix(test, fix);
+        await VerifyCodeFixWithSystemMemoryAsync(test, fix);
     }
 
     [Fact]
@@ -596,45 +586,40 @@ public class ParseAnalyzerTests
         await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
     }
 
-    private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_ParseShouldNotHaveDiagnostic()
     {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
-        };
-
-        return test.RunAsync(CancellationToken.None);
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var result = Enum.Parse(typeof(MyEnum), "First");
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await VerifyAnalyzerWithSystemMemoryAsync(test, EnableState.Missing);
     }
 
-    private static Task VerifyAnalyzerAsync(string source)
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_ParseShouldNotHaveDiagnostic()
     {
-        var test = new Test
-        {
-            TestCode = source,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
-
-        return test.RunAsync(CancellationToken.None);
-    }
-
-    private static Task VerifyCodeFix(string source, string fixedSource)
-    {
-        var test = new Test
-        {
-            TestCode = source,
-            FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Default
-#if NETFRAMEWORK || NETCOREAPP2_1
-                .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
-#endif
-        };
-
-        return test.RunAsync(CancellationToken.None);
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var result = Enum.Parse(typeof(MyEnum), "First");
+                }
+            }
+            """);
+        
+        await VerifyAnalyzerWithSystemMemoryAsync(test, EnableState.Disabled);
     }
 
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
