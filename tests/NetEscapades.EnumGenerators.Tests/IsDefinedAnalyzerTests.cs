@@ -541,6 +541,111 @@ public class IsDefinedAnalyzerTests
               """;
     }
 
+    [Fact]
+    public async Task IsDefinedInConsoleWriteLineShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    if ({|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value)|})
+                        System.Console.WriteLine("Is defined");
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    if (MyEnumExtensions.IsDefined(value))
+                        System.Console.WriteLine("Is defined");
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task IsDefinedAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    SomeMethod({|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value)|});
+                }
+                
+                private void SomeMethod(bool b) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    SomeMethod(MyEnumExtensions.IsDefined(value));
+                }
+                
+                private void SomeMethod(bool b) { }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task IsDefinedWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                            if ({|NEEG006:System.Enum.IsDefined(typeof(MyEnum), value)|})
+                            {
+                                System.Console.WriteLine("Is defined");
+                            }
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                            if (MyEnumExtensions.IsDefined(value))
+                            {
+                                System.Console.WriteLine("Is defined");
+                            }
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
     private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
     {
         var test = new Test

@@ -773,6 +773,140 @@ public class ToStringAnalyzerTests
             """);
         await Verifier.VerifyCodeFixAsync(test, fix);
     }
+
+    [Fact]
+    public async Task ToStringInConsoleWriteLineShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    System.Console.WriteLine(value.{|NEEG004:ToString|}());
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    System.Console.WriteLine(value.ToStringFast());
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ToStringAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    SomeMethod(value.{|NEEG004:ToString|}());
+                }
+                
+                private void SomeMethod(string s) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                    SomeMethod(value.ToStringFast());
+                }
+                
+                private void SomeMethod(string s) { }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ToStringWithMultipleArgumentsShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    SomeMethod(value1.{|NEEG004:ToString|}(), value2.{|NEEG004:ToString|}());
+                }
+                
+                private void SomeMethod(string s1, string s2) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    SomeMethod(value1.ToStringFast(), value2.ToStringFast());
+                }
+                
+                private void SomeMethod(string s1, string s2) { }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task ToStringWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                            System.Console.WriteLine(value.{|NEEG004:ToString|}());
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = TestEnum.First;
+                            System.Console.WriteLine(value.ToStringFast());
+                }
+            }
+            """);
+        await Verifier.VerifyCodeFixAsync(test, fix);
+    }
     
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;

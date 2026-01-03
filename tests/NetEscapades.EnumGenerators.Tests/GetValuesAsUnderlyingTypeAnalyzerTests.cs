@@ -480,4 +480,78 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
+
+    private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
+    {
+        var test = new Test
+        {
+            TestCode = source,
+            FixedCode = fixedSource,
+            ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
+        };
+
+        return test.RunAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task GetValuesAsUnderlyingTypeAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod({|NEEG010:Enum.GetValuesAsUnderlyingType(typeof(MyEnum))|});
+                }
+                
+                private void SomeMethod(int[] values) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod(MyEnumExtensions.GetValuesAsUnderlyingType());
+                }
+                
+                private void SomeMethod(int[] values) { }
+            }
+            """);
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task GetValuesAsUnderlyingTypeWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            var values = {|NEEG010:Enum.GetValuesAsUnderlyingType<MyEnum>()|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            var values = MyEnumExtensions.GetValuesAsUnderlyingType();
+                }
+            }
+            """);
+        await VerifyCodeFixWithNet6AssembliesAsync(test, fix);
+    }
 }
