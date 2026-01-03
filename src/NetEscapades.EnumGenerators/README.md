@@ -24,12 +24,15 @@ Intel Core i7-7500U CPU 2.70GHz (Kaby Lake), 1 CPU, 4 logical and 2 physical cor
   DefaultJob : .NET 6.0.0 (6.0.21.52210), X64 RyuJIT
 ```
 
-|       Method |     FX |       Mean |     Error |    StdDev | Ratio |  Gen 0 | Allocated |
-|------------- |--------|-----------:|----------:|----------:|------:|-------:|----------:|
-| ToString |`net48` | 578.276 ns | 3.3109 ns | 3.0970 ns | 1.000 | 0.0458 |      96 B |
-| ToStringFast |`net48` |   3.091 ns | 0.0567 ns | 0.0443 ns | 0.005 |      - |         - |
-| ToString |`net6.0`| 17.985 ns | 0.1230 ns | 0.1151 ns | 1.000 | 0.0115 |      24 B |
-| ToStringFast |`net6.0`|  0.121 ns | 0.0225 ns | 0.0199 ns | 0.007 |      - |         - |
+|       Method | FX        |       Mean |     Error |      StdDev | Ratio |  Gen 0 | Allocated |
+|------------- |-----------|-----------:|----------:|------------:|------:|-------:|----------:|
+| ToString | `net48`   | 578.276 ns | 3.3109 ns |   3.0970 ns | 1.000 | 0.0458 |      96 B |
+| ToStringFast | `net48`   |   3.091 ns | 0.0567 ns |   0.0443 ns | 0.005 |      - |         - |
+| ToString | `net6.0`  | 17.985 ns | 0.1230 ns |   0.1151 ns | 1.000 | 0.0115 |      24 B |
+| ToStringFast | `net6.0`  |  0.121 ns | 0.0225 ns |   0.0199 ns | 0.007 |      - |         - |
+| ToString | `net10.0` | 6.4389 ns | 0.1038 ns |   0.0971 ns | 0.004 |  1.000 |      24 B |
+| ToStringFast | `net10.0` | 0.0050 ns | 0.0202 ns |   0.0189 ns | 0.001 |       - |         - |        0.00 |
+
 
 Enabling these additional extension methods is as simple as adding an attribute to your enum:
 
