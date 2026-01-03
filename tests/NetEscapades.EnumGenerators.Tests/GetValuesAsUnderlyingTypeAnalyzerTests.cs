@@ -19,7 +19,7 @@ namespace NetEscapades.EnumGenerators.Tests;
 public class GetValuesAsUnderlyingTypeAnalyzerTests
 
 {
-    private const string EnableUsageAnalyzers = "netescapades_enumgenerators.usage_analyzers.enable = true";
+    private const string EnableUsageAnalyzers = "netescapades_enumgenerators_usage_analyzers_enable = true";
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -444,7 +444,7 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
         };
         analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
             is_global = true
-            netescapades_enumgenerators.usage_analyzers.enable = false
+            netescapades_enumgenerators_usage_analyzers_enable = false
             """));
         await analyzerTest.RunAsync();
     }

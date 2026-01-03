@@ -17,7 +17,7 @@ namespace NetEscapades.EnumGenerators.Tests;
 
 public class IsDefinedAnalyzerTests
 {
-    private const string EnableUsageAnalyzers = "netescapades_enumgenerators.usage_analyzers.enable = true";
+    private const string EnableUsageAnalyzers = "netescapades_enumgenerators_usage_analyzers_enable = true";
 
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
@@ -552,6 +552,10 @@ public class IsDefinedAnalyzerTests
             FixedCode = fixedSource,
             ReferenceAssemblies = ReferenceAssemblies.Net.Net60,
         };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
 
         return test.RunAsync(CancellationToken.None);
     }
@@ -677,7 +681,7 @@ public class IsDefinedAnalyzerTests
         };
         analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
             is_global = true
-            netescapades_enumgenerators.usage_analyzers.enable = false
+            netescapades_enumgenerators_usage_analyzers_enable = false
             """));
         await analyzerTest.RunAsync();
     }

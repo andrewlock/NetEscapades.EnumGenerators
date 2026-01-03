@@ -5,7 +5,7 @@ namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 
 internal static class UsageAnalyzerConfig
 {
-    private const string EnableKey = "netescapades_enumgenerators.usage_analyzers.enable";
+    private const string EnableKey = "netescapades_enumgenerators_usage_analyzers_enable";
 
     public static readonly DiagnosticDescriptor ConfigDescriptor = new(
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
