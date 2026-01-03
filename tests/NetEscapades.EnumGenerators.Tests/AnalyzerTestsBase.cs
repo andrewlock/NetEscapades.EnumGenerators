@@ -17,7 +17,7 @@ public abstract class AnalyzerTestsBase<TAnalyzer, TCodeFixer>
     {
         var test = new CSharpAnalyzerTest<TAnalyzer, DefaultVerifier>
         {
-            TestState = { Sources = { source } },
+            TestCode = source,
         };
 
         AddEditorConfig(test.TestState, usageAnalyzers);
@@ -28,7 +28,7 @@ public abstract class AnalyzerTestsBase<TAnalyzer, TCodeFixer>
     {
         var test = new CSharpAnalyzerTest<TAnalyzer, DefaultVerifier>
         {
-            TestState = { Sources = { source } },
+            TestCode = source,
             ReferenceAssemblies = ReferenceAssemblies.Net.Net70,
         };
 
@@ -40,7 +40,7 @@ public abstract class AnalyzerTestsBase<TAnalyzer, TCodeFixer>
     {
         var test = new CSharpAnalyzerTest<TAnalyzer, DefaultVerifier>
         {
-            TestState = { Sources = { source } },
+            TestCode = source,
             ReferenceAssemblies = ReferenceAssemblies.Default
 #if NETFRAMEWORK || NETCOREAPP2_1
                 .WithPackages([new PackageIdentity("System.Memory", "4.6.3")]),
@@ -59,7 +59,7 @@ public abstract class AnalyzerTestsBase<TAnalyzer, TCodeFixer>
             FixedCode = fixedSource,
         };
 
-        AddEditorConfig(test.TestState, usageAnalyizers);
+        AddEditorConfig(test.TestState, usageAnalyzers);
 
         return test.RunAsync();
     }
