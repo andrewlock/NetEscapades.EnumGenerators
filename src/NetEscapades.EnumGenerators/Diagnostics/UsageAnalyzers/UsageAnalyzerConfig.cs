@@ -3,30 +3,32 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 
-internal static class UsageAnalyzerConfig
+public static class UsageAnalyzerConfig
 {
-    private const string EnableKey = "netescapades_enumgenerators_usage_analyzers_enable";
+    public const string EnableKey = "netescapades.enumgenerators.usage_analyzers.enable";
 
-    public static readonly DiagnosticDescriptor ConfigDescriptor = new(
+    internal static readonly DiagnosticDescriptor ConfigDescriptor = new(
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
-        id: "NEEG_CONFIG001",
+        id: "NEEGCONFIG001",
 #pragma warning restore RS2008
-        title: "Enable or disable usage analyzers",
-        messageFormat: "This is a configuration option and should not appear as a diagnostic",
+        title: "Enable callsite analyzers for generated enum extensions",
+        messageFormat:
+        "Enable analyzers to encourage use of generated extension methods instead of System.Enum methods",
         category: "Configuration",
         defaultSeverity: DiagnosticSeverity.Hidden,
-        isEnabledByDefault: false,
-        customTags: new[] { WellKnownDiagnosticTags.NotConfigurable });
+        isEnabledByDefault: true,
+        customTags:
+        [
+            "EditorConfigOption",
+            "EditorConfigOptionKey=netescapades.enumgenerators.usage_analyzers.enable",
+            "EditorConfigOptionDescription=Enable callsite analyzers for generated enum extensions",
+            "EditorConfigOptionAllowedValues=true,false",
+            "EditorConfigOptionDefault=false",
+            WellKnownDiagnosticTags.NotConfigurable
+        ]);
 
-    public static bool IsEnabled(CompilationStartAnalysisContext context)
-    {
-        var options = context.Options.AnalyzerConfigOptionsProvider.GlobalOptions;
-        if (options.TryGetValue(EnableKey, out var value) && 
-            bool.TryParse(value, out var isEnabled))
-        {
-            return isEnabled;
-        }
-
-        return false; // Disabled by default
-    }
+    internal static bool IsEnabled(AnalyzerOptions context)
+        => context.AnalyzerConfigOptionsProvider.GlobalOptions.TryGetValue(EnableKey, out var value) &&
+           bool.TryParse(value, out var isEnabled)
+           && isEnabled;
 }

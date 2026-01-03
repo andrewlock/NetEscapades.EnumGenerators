@@ -29,7 +29,7 @@ public class GetValuesAsUnderlyingTypeAnalyzer : DiagnosticAnalyzer
         context.EnableConcurrentExecution();
         context.RegisterCompilationStartAction(ctx =>
         {
-            if (!UsageAnalyzerConfig.IsEnabled(ctx))
+            if (!UsageAnalyzerConfig.IsEnabled(ctx.Options))
             {
                 return;
             }
