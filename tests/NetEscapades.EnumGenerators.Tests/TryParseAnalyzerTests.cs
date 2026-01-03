@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.CSharp.Testing;
 using System;
 using System.Collections.Immutable;
 using System.Threading;
@@ -16,7 +17,9 @@ using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
 namespace NetEscapades.EnumGenerators.Tests;
 
 public class TryParseAnalyzerTests
+
 {
+    private const string EnableUsageAnalyzers = "netescapades_enumgenerators.usage_analyzers.enable = true";
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -215,7 +218,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    var success = {|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result)|};
+                    var success = {|NEEG011:System.Enum.TryParse("First", out MyEnum result)|};
                 }
             }
             """);
@@ -275,7 +278,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    if ({|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result)|})
+                    if ({|NEEG011:System.Enum.TryParse("First", out MyEnum result)|})
                     {
                         // Use result
                     }
@@ -577,7 +580,7 @@ public class TryParseAnalyzerTests
             {
                 public void TestMethod()
                 {
-                    while ({|NEEG011:System.Enum.TryParse<MyEnum>("First", out var result)|})
+                    while ({|NEEG011:System.Enum.TryParse("First", out MyEnum result)|})
                     {
                         // Use result
                     }
@@ -612,6 +615,53 @@ public class TryParseAnalyzerTests
         };
 
         return test.RunAsync(CancellationToken.None);
+    }
+
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_TryParseShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    Enum.TryParse("First", out MyEnum result);
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_TryParseShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    Enum.TryParse("First", out MyEnum result);
+                }
+            }
+            """);
+        
+        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.TryParseAnalyzer, DefaultVerifier>
+        {
+            TestState = { Sources = { test } },
+        };
+        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+            is_global = true
+            netescapades_enumgenerators.usage_analyzers.enable = false
+            """));
+        await analyzerTest.RunAsync();
     }
 
     private static Task VerifyAnalyzerAsync(string source)

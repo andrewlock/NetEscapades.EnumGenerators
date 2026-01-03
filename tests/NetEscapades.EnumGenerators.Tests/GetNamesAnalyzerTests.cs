@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.CSharp.Testing;
 using System;
 using System.Collections.Immutable;
 using System.Threading;
@@ -16,12 +17,14 @@ using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
 namespace NetEscapades.EnumGenerators.Tests;
 
 public class GetNamesAnalyzerTests
+
 {
+    private const string EnableUsageAnalyzers = "netescapades_enumgenerators.usage_analyzers.enable = true";
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -38,7 +41,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -67,7 +70,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -128,7 +131,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -157,7 +160,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -188,7 +191,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -216,7 +219,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -244,7 +247,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -289,7 +292,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -397,7 +400,7 @@ public class GetNamesAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     private static Task VerifyCodeFixWithNet6AssembliesAsync(string source, string fixedSource)
@@ -483,4 +486,78 @@ public class GetNamesAnalyzerTests
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
+
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_GetNamesShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var names = Enum.GetNames(typeof(MyEnum));
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_GetNamesShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var names = Enum.GetNames(typeof(MyEnum));
+                }
+            }
+            """);
+        
+        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.GetNamesAnalyzer, DefaultVerifier>
+        {
+            TestState = { Sources = { test } },
+        };
+        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+            is_global = true
+            netescapades_enumgenerators.usage_analyzers.enable = false
+            """));
+        await analyzerTest.RunAsync();
+    }
+
+    private static Task VerifyAnalyzerAsync(string source)
+    {
+        var test = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.GetNamesAnalyzer, DefaultVerifier>
+        {
+            TestState = { Sources = { source } },
+        };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+        return test.RunAsync();
+    }
+
+    private static Task VerifyCodeFixAsync(string source, string fixedSource)
+    {
+        var test = new CSharpCodeFixTest<Diagnostics.UsageAnalyzers.GetNamesAnalyzer, Diagnostics.UsageAnalyzers.GetNamesCodeFixProvider, DefaultVerifier>
+        {
+            TestState = { Sources = { source } },
+            FixedState = { Sources = { fixedSource } },
+        };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+        return test.RunAsync();
+    }
 }

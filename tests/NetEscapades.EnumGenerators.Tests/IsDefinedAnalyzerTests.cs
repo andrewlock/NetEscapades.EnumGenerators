@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.CSharp.Testing;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,11 +17,13 @@ namespace NetEscapades.EnumGenerators.Tests;
 
 public class IsDefinedAnalyzerTests
 {
+    private const string EnableUsageAnalyzers = "netescapades_enumgenerators.usage_analyzers.enable = true";
+
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
         var test = string.Empty;
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -38,7 +41,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -69,7 +72,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -142,7 +145,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -179,7 +182,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -216,7 +219,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -246,7 +249,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -276,7 +279,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -324,7 +327,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyAnalyzerAsync(test);
+        await VerifyAnalyzerAsync(test);
     }
 
     [Fact]
@@ -353,7 +356,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -382,7 +385,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -415,7 +418,7 @@ public class IsDefinedAnalyzerTests
                 }
             }
             """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
+        await VerifyCodeFixAsync(test, fix);
     }
 
     [Fact]
@@ -631,4 +634,78 @@ public class IsDefinedAnalyzerTests
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
+
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_IsDefinedShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var result = Enum.IsDefined(typeof(MyEnum), value);
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_IsDefinedShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var result = Enum.IsDefined(typeof(MyEnum), value);
+                }
+            }
+            """);
+        
+        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.IsDefinedAnalyzer, DefaultVerifier>
+        {
+            TestState = { Sources = { test } },
+        };
+        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+            is_global = true
+            netescapades_enumgenerators.usage_analyzers.enable = false
+            """));
+        await analyzerTest.RunAsync();
+    }
+
+    private static Task VerifyAnalyzerAsync(string source)
+    {
+        var test = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.IsDefinedAnalyzer, DefaultVerifier>
+        {
+            TestState = { Sources = { source } },
+        };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+        return test.RunAsync();
+    }
+
+    private static Task VerifyCodeFixAsync(string source, string fixedSource)
+    {
+        var test = new CSharpCodeFixTest<Diagnostics.UsageAnalyzers.IsDefinedAnalyzer, Diagnostics.UsageAnalyzers.IsDefinedCodeFixProvider, DefaultVerifier>
+        {
+            TestState = { Sources = { source } },
+            FixedState = { Sources = { fixedSource } },
+        };
+        test.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", $"""
+            is_global = true
+            {EnableUsageAnalyzers}
+            """));
+        return test.RunAsync();
+    }
 }

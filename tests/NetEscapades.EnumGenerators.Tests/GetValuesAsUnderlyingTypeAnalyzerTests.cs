@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.CSharp.Testing;
 using System;
 using System.Collections.Immutable;
 using System.Threading;
@@ -16,7 +17,9 @@ using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
 namespace NetEscapades.EnumGenerators.Tests;
 
 public class GetValuesAsUnderlyingTypeAnalyzerTests
+
 {
+    private const string EnableUsageAnalyzers = "netescapades_enumgenerators.usage_analyzers.enable = true";
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -397,6 +400,53 @@ public class GetValuesAsUnderlyingTypeAnalyzerTests
         };
 
         return test.RunAsync(CancellationToken.None);
+    }
+
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_GetValuesAsUnderlyingTypeShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var values = Enum.GetValuesAsUnderlyingType(typeof(MyEnum));
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_GetValuesAsUnderlyingTypeShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var values = Enum.GetValuesAsUnderlyingType(typeof(MyEnum));
+                }
+            }
+            """);
+        
+        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.GetValuesAsUnderlyingTypeAnalyzer, DefaultVerifier>
+        {
+            TestState = { Sources = { test } },
+        };
+        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+            is_global = true
+            netescapades_enumgenerators.usage_analyzers.enable = false
+            """));
+        await analyzerTest.RunAsync();
     }
 
     private static Task VerifyAnalyzerAsync(string source)

@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.CSharp.Testing;
 using System;
 using System.Collections.Immutable;
 using System.Threading;
@@ -16,7 +17,9 @@ using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpCodeFixVerifier<
 namespace NetEscapades.EnumGenerators.Tests;
 
 public class ParseAnalyzerTests
+
 {
+    private const string EnableUsageAnalyzers = "netescapades_enumgenerators.usage_analyzers.enable = true";
     [Fact]
     public async Task EmptySourceShouldNotHaveDiagnostics()
     {
@@ -606,6 +609,53 @@ public class ParseAnalyzerTests
         };
 
         return test.RunAsync(CancellationToken.None);
+    }
+
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_ParseShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var result = Enum.Parse<MyEnum>("First");
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await Verifier.VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_ParseShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = MyEnum.First;
+                    var result = Enum.Parse<MyEnum>("First");
+                }
+            }
+            """);
+        
+        var analyzerTest = new CSharpAnalyzerTest<Diagnostics.UsageAnalyzers.ParseAnalyzer, DefaultVerifier>
+        {
+            TestState = { Sources = { test } },
+        };
+        analyzerTest.TestState.AnalyzerConfigFiles.Add(("/.editorconfig", """
+            is_global = true
+            netescapades_enumgenerators.usage_analyzers.enable = false
+            """));
+        await analyzerTest.RunAsync();
     }
 
     private static Task VerifyAnalyzerAsync(string source)
