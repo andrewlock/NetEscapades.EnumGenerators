@@ -596,8 +596,7 @@ public class ParseAnalyzerTests : AnalyzerTestsBase<ParseAnalyzer, ParseCodeFixP
             {
                 public void TestMethod()
                 {
-                    var value = MyEnum.First;
-                    var result = Enum.Parse<MyEnum>("First");
+                    var result = Enum.Parse(typeof(MyEnum), "First");
                 }
             }
             """);
@@ -615,8 +614,7 @@ public class ParseAnalyzerTests : AnalyzerTestsBase<ParseAnalyzer, ParseCodeFixP
             {
                 public void TestMethod()
                 {
-                    var value = MyEnum.First;
-                    var result = Enum.Parse<MyEnum>("First");
+                    var result = Enum.Parse(typeof(MyEnum), "First");
                 }
             }
             """);
