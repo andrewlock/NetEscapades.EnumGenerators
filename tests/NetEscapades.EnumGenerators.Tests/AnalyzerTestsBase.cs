@@ -55,11 +55,11 @@ public abstract class AnalyzerTestsBase<TAnalyzer, TCodeFixer>
     {
         var test = new CSharpCodeFixTest<TAnalyzer, TCodeFixer, DefaultVerifier>
         {
-            TestState = { Sources = { source } },
-            FixedState = { Sources = { fixedSource } },
+            TestCode = source,
+            FixedCode = fixedSource,
         };
 
-        AddEditorConfig(test.TestState, usageAnalyzers);
+        AddEditorConfig(test.TestState, usageAnalyizers);
 
         return test.RunAsync();
     }
