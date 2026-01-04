@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <DefineConstants>$(DefineConstants);NUGET_INTEGRATION_TESTS</DefineConstants>
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
+    <EnumGenerator_EnableUsageAnalyzers>true</EnumGenerator_EnableUsageAnalyzers>
   </PropertyGroup>
 
   <ItemGroup>

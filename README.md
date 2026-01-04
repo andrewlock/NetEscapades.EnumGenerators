@@ -285,14 +285,15 @@ _NetEscapades.EnumGenerators_ includes optional analyzers that encourage the use
 
 ### Enabling the analyzers
 
-The usage analyzers are disabled by default. To enable them, [add a `.globalconfig` file](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files#global-analyzerconfig) to your project with the following content:
+The usage analyzers are disabled by default. To enable them, set the `EnumGenerator_EnableUsageAnalyzers` MSBuild property to `true` in your project:
 
-```ini
-is_global = true
-netescapades.enumgenerators.usage_analyzers.enable = true
+```xml
+<PropertyGroup>
+  <EnumGenerator_EnableUsageAnalyzers>true</EnumGenerator_EnableUsageAnalyzers>
+</PropertyGroup>
 ```
 
-Your project should automatically detect this configuration file, and enable all the usage analyzers with the default severity of `Warning`.
+After adding this configuration, the analyzers in your project should be enabled with the default severity of `Warning`.
 
 ### Configuring analyzer severity (optional)
 

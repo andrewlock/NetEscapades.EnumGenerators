@@ -6,9 +6,11 @@
     <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN;</DefineConstants>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <EnumGenerator_EnumMetadataSource>EnumMemberAttribute</EnumGenerator_EnumMetadataSource>
+    <EnumGenerator_EnableUsageAnalyzers>true</EnumGenerator_EnableUsageAnalyzers>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="EnumGenerator_EnumMetadataSource" />
+    <CompilerVisibleProperty Include="EnumGenerator_EnableUsageAnalyzers" />
   </ItemGroup>
 
   <ItemGroup>
