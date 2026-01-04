@@ -1,6 +1,45 @@
 Changelog
 --- 
 
+## [v1.0.0-beta17](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta16..v1.0.0-beta17) (2026-01-04)
+
+### Breaking Changes
+
+* Add support for generating `ReadOnlySpan<char>` based methods when System.Memory is present (#182, #212)
+
+### Features
+
+* Add support for disabling number parsing using `EnumParseOptions` (#175)
+* Add support for automatic `ToLowerInvariant` and `ToUpperInvariant` in `ToStringFast()`, using `SerializationOptions` (#177)
+* Add Analyzers to encourage using the generated methods 
+  * Add analyzer to detect ToString() on enums with [EnumExtensions] or EnumExtensions<T> (#196)
+  * Extend ToStringAnalyzer to detect enum usage in string interpolation (#198)
+  * Add analyzer to detect HasFlag() and suggest HasFlagFast() replacement (#199)
+  * Extract the extension class and namespace in analyzers (#200)
+  * Add using directive support to HasFlagAnalyzer and ToStringAnalyzer code fixes (#202)
+  * Add analyzer for Enum.IsDefined() suggesting generated IsDefined method (#203)
+  * Add analyzer for Enum.Parse() suggesting generated Parse method (NEEG007) (#204)
+  * Add analyzer for Enum.GetNames() with generated alternative (#209)
+  * Add analyzer for Enum.GetValues() with code fix to use generated method (#207)
+  * Add analyzer for Enum.GetValuesAsUnderlyingType() usage (#208)
+  * Add analyzer for Enum.TryParse() usage (#206)
+  * Refactor analyzers to reduce some duplication (#205)
+  * Disable usage analyzers by default, enable via editorconfig (#214)
+  * Update default severity to warning (#218)
+
+### Fixes
+
+* Remove ToStringFastWithMetadata when it's not needed for perf reasons(#176)
+* Minor performance fixes in generated code (#178)
+* Use Collection expressions in generated code if possible (#179)
+
+### Misc
+
+* Build tweaks (#180)
+* Add support for .NET 10.0 in Benchmark project (#184) Thanks [@HakamFostok](https://github.com/HakamFostok)!
+* Add Usage Analyzers documentation to README (#216)
+* Update Readme (#219)
+
 ## [v1.0.0-beta16](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta15..v1.0.0-beta16) (2025-11-04)
 
 ### Fixes
