@@ -17,7 +17,7 @@ public class ParseAnalyzer : DiagnosticAnalyzer
         title: "Use generated Parse() instead of Enum.Parse()",
         messageFormat: "Use generated Parse() instead of Enum.Parse() for better performance on enum '{0}'",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

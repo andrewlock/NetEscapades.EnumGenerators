@@ -17,7 +17,7 @@ public class GetValuesAsUnderlyingTypeAnalyzer : DiagnosticAnalyzer
         title: "Use generated GetValuesAsUnderlyingType() instead of Enum.GetValuesAsUnderlyingType()",
         messageFormat: "Use generated GetValuesAsUnderlyingType() instead of Enum.GetValuesAsUnderlyingType() for better performance on enum '{0}'",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

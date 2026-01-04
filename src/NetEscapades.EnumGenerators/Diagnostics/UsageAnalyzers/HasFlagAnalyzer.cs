@@ -17,7 +17,7 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
         title: "Use HasFlagFast() instead of HasFlag()",
         messageFormat: "Use HasFlagFast() instead of HasFlag() for better performance on enum '{0}'",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

@@ -17,7 +17,7 @@ public class TryParseAnalyzer : DiagnosticAnalyzer
         title: "Use generated TryParse() instead of Enum.TryParse()",
         messageFormat: "Use generated TryParse() instead of Enum.TryParse() for better performance on enum '{0}'",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
