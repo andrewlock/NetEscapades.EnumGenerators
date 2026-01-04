@@ -17,7 +17,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         title: "Use ToStringFast() instead of ToString()",
         messageFormat: "Use ToStringFast() instead of ToString() for better performance on enum '{0}'",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

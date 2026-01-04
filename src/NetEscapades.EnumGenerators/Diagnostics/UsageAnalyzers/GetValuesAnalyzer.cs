@@ -17,7 +17,7 @@ public class GetValuesAnalyzer : DiagnosticAnalyzer
         title: "Use generated GetValues() instead of Enum.GetValues()",
         messageFormat: "Use generated GetValues() instead of Enum.GetValues() for better performance on enum '{0}'",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

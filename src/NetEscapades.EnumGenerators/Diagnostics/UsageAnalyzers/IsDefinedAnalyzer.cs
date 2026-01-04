@@ -17,7 +17,7 @@ public class IsDefinedAnalyzer : DiagnosticAnalyzer
         title: "Use generated IsDefined() instead of Enum.IsDefined()",
         messageFormat: "Use generated IsDefined() instead of Enum.IsDefined() for better performance on enum '{0}'",
         category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

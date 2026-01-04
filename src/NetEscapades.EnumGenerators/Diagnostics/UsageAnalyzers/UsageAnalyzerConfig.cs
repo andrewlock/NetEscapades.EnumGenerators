@@ -5,6 +5,7 @@ namespace NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 
 public static class UsageAnalyzerConfig
 {
+    public const DiagnosticSeverity DefaultSeverity = DiagnosticSeverity.Warning;
     public const string EnableKey = "netescapades.enumgenerators.usage_analyzers.enable";
 
     internal static readonly DiagnosticDescriptor ConfigDescriptor = new(
