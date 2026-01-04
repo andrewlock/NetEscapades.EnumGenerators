@@ -31,7 +31,7 @@ Intel Core i7-7500U CPU 2.70GHz (Kaby Lake), 1 CPU, 4 logical and 2 physical cor
 | ToString | `net6.0`  | 17.985 ns | 0.1230 ns |   0.1151 ns | 1.000 | 0.0115 |      24 B |
 | ToStringFast | `net6.0`  |  0.121 ns | 0.0225 ns |   0.0199 ns | 0.007 |      - |         - |
 | ToString | `net10.0` | 6.4389 ns | 0.1038 ns |   0.0971 ns | 0.004 |  1.000 |      24 B |
-| ToStringFast | `net10.0` | 0.0050 ns | 0.0202 ns |   0.0189 ns | 0.001 |       - |         - |        0.00 |
+| ToStringFast | `net10.0` | 0.0050 ns | 0.0202 ns |   0.0189 ns | 0.001 |       - |         - |
 
 
 Enabling these additional extension methods is as simple as adding an attribute to your enum:
@@ -72,9 +72,7 @@ Add the package to your application using
 dotnet add package NetEscapades.EnumGenerators
 ```
 
-This adds a `<PackageReference>` to your project. You can additionally mark the package as `PrivateAssets="all"` and `ExcludeAssets="runtime"`.
-
-> Setting `PrivateAssets="all"` means any projects referencing this one won't get a reference to the _NetEscapades.EnumGenerators_ package. Setting `ExcludeAssets="runtime"` ensures the _NetEscapades.EnumGenerators.Attributes.dll_ file is not copied to your build output (it is not required at runtime).
+This adds a `<PackageReference>` to your project:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -85,8 +83,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta16" 
-    PrivateAssets="all" ExcludeAssets="runtime" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta16" />
   <!-- -->
 
 </Project>
@@ -293,7 +290,7 @@ public enum EnumWithDisplayNameInNamespace
 
 Alternatively, you can use `MetadataSource.None` to choose none of the metadata attributes. In this case, the overloads that take a `useMetadataAttributes` parameter will not be emitted.
 
-You can set the default metadata source to use for a whole project by setting the EnumGenerator_EnumMetadataSource property in your project:
+You can set the default metadata source to use for a whole project by setting the `EnumGenerator_EnumMetadataSource` property in your project:
 
 ```xml
 <PropertyGroup>
@@ -302,6 +299,65 @@ You can set the default metadata source to use for a whole project by setting th
 ```
 
 You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
+
+## Usage Analyzers
+
+_NetEscapades.EnumGenerators_ includes optional analyzers that encourage the use of the generated extension methods instead of the built-in `System.Enum` methods. These analyzers can help improve performance by suggesting the faster, generated, alternatives like `ToStringFast()`, `HasFlagFast()`, and `TryParse()`.
+
+### Enabling the analyzers
+
+The usage analyzers are disabled by default. To enable them, [add a `.globalconfig` file](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files#global-analyzerconfig) to your project with the following content:
+
+```ini
+is_global = true
+netescapades.enumgenerators.usage_analyzers.enable = true
+```
+
+Your project should automatically detect this configuration file, and enable all the usage analyzers with the default severity of `Warning`.
+
+### Configuring analyzer severity (optional)
+
+Once enabled, you can optionally configure the severity of individual analyzer rules using one or more [`.editorconfig` files](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files#editorconfig). For example, the following changes all the built-in analyzers to report usages as errors instead of warnings 
+
+```ini
+[*.{cs,vb}]
+
+# NEEG004: Use ToStringFast() instead of ToString()
+dotnet_diagnostic.NEEG004.severity = error
+
+# NEEG005: Use HasFlagFast() instead of HasFlag()
+dotnet_diagnostic.NEEG005.severity = error
+
+# NEEG006: Use generated IsDefined() instead of Enum.IsDefined()
+dotnet_diagnostic.NEEG006.severity = error
+
+# NEEG007: Use generated Parse() instead of Enum.Parse()
+dotnet_diagnostic.NEEG007.severity = error
+
+# NEEG008: Use generated GetNames() instead of Enum.GetNames()
+dotnet_diagnostic.NEEG008.severity = error
+
+# NEEG009: Use generated GetValues() instead of Enum.GetValues()
+dotnet_diagnostic.NEEG009.severity = error
+
+# NEEG010: Use generated GetValuesAsUnderlyingType() instead of Enum.GetValuesAsUnderlyingType()
+dotnet_diagnostic.NEEG010.severity = error
+
+# NEEG011: Use generated TryParse() instead of Enum.TryParse()
+dotnet_diagnostic.NEEG011.severity = error
+```
+
+These are reported in both your IDE and via the CLI as Roslyn errors:
+
+[Demonstrating the Roslyn errors shown for using the non-generated methods](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/docs/images/analyzer.png)
+
+Valid severity values include: `none`, `silent`, `suggestion`, `warning`, and `error`.
+
+### Code fixes
+
+All usage analyzers include automatic code fixes. When a diagnostic is triggered, you can use the quick fix functionality in your IDE to automatically replace the `System.Enum` method with the corresponding generated extension method:
+
+[Demonstrating the code-fix option available in your IDE for each of the analyzers](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/docs/images/code_fix.png)
 
 ## Enabling automatic interception
 
@@ -388,8 +444,6 @@ The `[EnumExtensions]` attribute is decorated with the `[Conditional]` attribute
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta16" PrivateAssets="all" />
-  <!--              ☝ You must not exclude the runtime assets in this case -->
-
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta16" />
 </Project>
 ```

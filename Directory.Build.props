@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\icon.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\docs\images\icon.png" Pack="true" PackagePath="\"/>
     <PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All"/>
   </ItemGroup>
 
