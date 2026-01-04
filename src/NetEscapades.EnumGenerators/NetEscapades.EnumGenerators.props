@@ -6,5 +6,6 @@
   <ItemGroup>
     <CompilerVisibleProperty Include="EnumGenerator_EnumMetadataSource" />
     <CompilerVisibleProperty Include="EnumGenerator_ForceExtensionMembers" />
+    <CompilerVisibleProperty Include="EnumGenerator_EnableUsageAnalyzers" />
   </ItemGroup>
 </Project>

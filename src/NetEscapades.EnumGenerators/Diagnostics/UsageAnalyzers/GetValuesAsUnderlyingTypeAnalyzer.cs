@@ -21,7 +21,7 @@ public class GetValuesAsUnderlyingTypeAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true);
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        => ImmutableArray.Create(Rule, UsageAnalyzerConfig.ConfigDescriptor);
+        => ImmutableArray.Create(Rule);
 
     public override void Initialize(AnalysisContext context)
     {
