@@ -1,6 +1,12 @@
 Changelog
 --- 
 
+## [v1.0.0-beta19](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta18..v1.0.0-beta19) (2026-01-05)
+
+### Fixes
+
+* Fix README image links
+
 ## [v1.0.0-beta18](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta16..v1.0.0-beta18) (2026-01-05)
 
 ### Breaking Changes
