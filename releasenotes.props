@@ -2,6 +2,11 @@
   <PropertyGroup>
     <PackageReleaseNotes>
       <![CDATA[
+## 1.0.0-beta19
+
+### Fixes
+
+* Fix README image links
 
 ### Breaking Changes
 

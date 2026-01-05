@@ -1,4 +1,4 @@
-[# ![](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/refs/heads/main/docs/images/icon_32.png) NetEscapades.EnumGenerators]()
+# ![](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/refs/heads/main/docs/images/icon_32.png) NetEscapades.EnumGenerators
 
 ![Build status](https://github.com/andrewlock/NetEscapades.EnumGenerators/actions/workflows/BuildAndPack.yml/badge.svg)
 [![NuGet](https://img.shields.io/nuget/v/NetEscapades.EnumGenerators.svg)](https://www.nuget.org/packages/NetEscapades.EnumGenerators/)
@@ -83,7 +83,7 @@ This adds a `<PackageReference>` to your project:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta18" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta19" />
   <!-- -->
 
 </Project>
@@ -452,6 +452,6 @@ The `[EnumExtensions]` attribute is decorated with the `[Conditional]` attribute
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta18" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta19" />
 </Project>
 ```
