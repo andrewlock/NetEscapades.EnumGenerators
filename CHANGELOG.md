@@ -1,7 +1,7 @@
 Changelog
 --- 
 
-## [v1.0.0-beta17](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta16..v1.0.0-beta17) (2026-01-04)
+## [v1.0.0-beta18](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta16..v1.0.0-beta18) (2026-01-05)
 
 ### Breaking Changes
 
@@ -26,6 +26,9 @@ Changelog
   * Refactor analyzers to reduce some duplication (#205)
   * Disable usage analyzers by default, enable via editorconfig (#214)
   * Update default severity to warning (#218)
+  * Change how the usage analyzers are enabled to use an `EnumGenerator_EnableUsageAnalyzers` MSBuild property instead (#222)
+  * Add AnalyzerTests project to confirm that the analyzers are actually triggering warnings in a real project (#223)
+  * Mention globalconfig in the docs, and tweak the detection for consistency (#224)
 
 ### Fixes
 

@@ -83,7 +83,7 @@ This adds a `<PackageReference>` to your project:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta17" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta18" />
   <!-- -->
 
 </Project>
@@ -452,6 +452,6 @@ The `[EnumExtensions]` attribute is decorated with the `[Conditional]` attribute
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta17" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta18" />
 </Project>
 ```
