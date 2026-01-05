@@ -314,7 +314,14 @@ The usage analyzers are disabled by default. To enable them, set the `EnumGenera
 </PropertyGroup>
 ```
 
-After adding this configuration, the analyzers in your project should be enabled with the default severity of `Warning`.
+Alternatively, [add a `.globalconfig` file](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files#global-analyzerconfig) to your project with the following content:
+
+```ini
+is_global = true
+build_property.EnumGenerator_EnableUsageAnalyzers = true
+```
+
+After using one of these configuration options, the analyzers in your project should be enabled with the default severity of `Warning`.
 
 ### Configuring analyzer severity (optional)
 
