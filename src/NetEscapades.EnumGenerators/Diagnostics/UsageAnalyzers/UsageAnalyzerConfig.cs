@@ -9,7 +9,6 @@ public static class UsageAnalyzerConfig
     public const string EnableKey = "build_property.EnumGenerator_EnableUsageAnalyzers";
 
     internal static bool IsEnabled(AnalyzerOptions context)
-        => context.AnalyzerConfigOptionsProvider.GlobalOptions.TryGetValue(EnableKey, out var value) &&
-           bool.TryParse(value, out var isEnabled)
-           && isEnabled;
+        => context.AnalyzerConfigOptionsProvider.GlobalOptions.TryGetValue(EnableKey, out var value)
+           && string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
 }
