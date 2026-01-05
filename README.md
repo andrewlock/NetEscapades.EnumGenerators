@@ -283,17 +283,14 @@ You can override the name of the extension class by setting `ExtensionClassName`
 
 _NetEscapades.EnumGenerators_ includes optional analyzers that encourage the use of the generated extension methods instead of the built-in `System.Enum` methods. These analyzers can help improve performance by suggesting the faster, generated, alternatives like `ToStringFast()`, `HasFlagFast()`, and `TryParse()`.
 
-### Enabling the analyzers
+Alternatively, [add a `.globalconfig` file](https://learn.microsoft.com/dotnet/fundamentals/code-analysis/configuration-files#global-analyzerconfig) to your project with the following content:
 
-The usage analyzers are disabled by default. To enable them, set the `EnumGenerator_EnableUsageAnalyzers` MSBuild property to `true` in your project:
-
-```xml
-<PropertyGroup>
-  <EnumGenerator_EnableUsageAnalyzers>true</EnumGenerator_EnableUsageAnalyzers>
-</PropertyGroup>
+```ini
+is_global = true
+build_property.EnumGenerator_EnableUsageAnalyzers = true
 ```
 
-After adding this configuration, the analyzers in your project should be enabled with the default severity of `Warning`.
+After using one of these configuration options, the analyzers in your project should be enabled with the default severity of `Warning`.
 
 ### Configuring analyzer severity (optional)
 
