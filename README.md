@@ -1,4 +1,4 @@
-# ![](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/refs/heads/main/icon_32.png) NetEscapades.EnumGenerators
+# ![](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/refs/heads/main/docs/images/icon_32.png) NetEscapades.EnumGenerators
 
 ![Build status](https://github.com/andrewlock/NetEscapades.EnumGenerators/actions/workflows/BuildAndPack.yml/badge.svg)
 [![NuGet](https://img.shields.io/nuget/v/NetEscapades.EnumGenerators.svg)](https://www.nuget.org/packages/NetEscapades.EnumGenerators/)
@@ -326,7 +326,7 @@ dotnet_diagnostic.NEEG011.severity = error
 
 These are reported in both your IDE and via the CLI as Roslyn errors:
 
-[Demonstrating the Roslyn errors shown for using the non-generated methods](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/docs/images/analyzer.png)
+![Demonstrating the Roslyn errors shown for using the non-generated methods](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/refs/heads/main/docs/images//analyzer.png)
 
 Valid severity values include: `none`, `silent`, `suggestion`, `warning`, and `error`.
 
@@ -334,7 +334,7 @@ Valid severity values include: `none`, `silent`, `suggestion`, `warning`, and `e
 
 All usage analyzers include automatic code fixes. When a diagnostic is triggered, you can use the quick fix functionality in your IDE to automatically replace the `System.Enum` method with the corresponding generated extension method:
 
-[Demonstrating the code-fix option available in your IDE for each of the analyzers](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/docs/images/code_fix.png)
+![Demonstrating the code-fix option available in your IDE for each of the analyzers](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/refs/heads/main/docs/images//code_fix.png)
 
 ## Enabling interception
 
