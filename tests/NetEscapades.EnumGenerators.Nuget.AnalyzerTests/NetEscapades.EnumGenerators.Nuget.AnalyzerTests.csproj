@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
+    <DefineConstants Condition="'$(TargetFramework)' != 'net48'">$(DefineConstants);READONLYSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);NUGET_ANALYZER_TESTS</DefineConstants>
+    <EnumGenerator_EnableUsageAnalyzers>true</EnumGenerator_EnableUsageAnalyzers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\NetEscapades.EnumGenerators.IntegrationTests\xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetEscapades.EnumGenerators" Version="$(Version)" PrivateAssets="All" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" Condition="'$(TargetFramework)' == 'net48'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\Enums.cs" Link="%(Filename)%(Extension)" />
+  </ItemGroup>
+
+</Project>

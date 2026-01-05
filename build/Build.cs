@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
@@ -138,6 +142,52 @@ class Build : NukeBuild
                     .SetLoggers("trx")
                     .SetResultsDirectory(TestResultsDirectory))
                 .CombineWith(projectFiles, (s, p) => s.SetProjectFile(p)));
+
+            // Now test the analyzers in the package cause warnings as expected
+            var expectedAnalyzerErrors = new[]
+            {
+                "NEEG004",
+                "NEEG005",
+                "NEEG006",
+                "NEEG007",
+                "NEEG008",
+                "NEEG009",
+                "NEEG010",
+                "NEEG011",
+            };
+
+            DotNetRestore(s => s
+                .When(!string.IsNullOrEmpty(PackagesDirectory), x => x.SetPackageDirectory(PackagesDirectory))
+                .SetConfigFile(RootDirectory / "NuGet.integration-tests.config")
+                .SetProjectFile(Solution.tests.NetEscapades_EnumGenerators_Nuget_AnalyzerTests));
+
+            // Capture the logs so that we don't pollute the CI etc build output 
+            var buildLogs = new ConcurrentQueue<string>();
+            DotNetBuild(s => s
+                .When(!string.IsNullOrEmpty(PackagesDirectory), x => x.SetPackageDirectory(PackagesDirectory))
+                .EnableNoRestore()
+                .SetConfiguration(Configuration)
+                .SetProcessLogger((_, log) => buildLogs.Enqueue(log))
+                .SetNoIncremental(true) // force rebuild so if run twice we still get valid results
+                .SetProjectFile(Solution.tests.NetEscapades_EnumGenerators_Nuget_AnalyzerTests));
+            
+            // verify that we have errors
+            foreach (var expectedAnalyzerError in expectedAnalyzerErrors)
+            {
+                var foundLogs = buildLogs.Any(x => x.Contains(expectedAnalyzerError));
+                Serilog.Log.Information("Checking for {AnalyzerOutput}: {FoundLogs}", expectedAnalyzerError, foundLogs);
+                if (!foundLogs)
+                {
+                    // print the output
+                    foreach (var buildLog in buildLogs)
+                    {
+                        Serilog.Log.Debug(buildLog);
+                    }
+
+                    throw new Exception("Analyzer output did not contain expected analyzer error: " +
+                                        expectedAnalyzerError);
+                }
+            }
         });
 
     Target PushToNuGet => _ => _
