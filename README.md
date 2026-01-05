@@ -62,7 +62,7 @@ This adds a `<PackageReference>` to your project:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta17" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta18" />
   <!-- -->
 
 </Project>
@@ -361,7 +361,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="1.0.0-beta17" 
+  <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="1.0.0-beta18" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
@@ -415,7 +415,7 @@ Your project file should look something like this:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta17" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta18" />
 </Project>
 ```
 
@@ -436,7 +436,7 @@ If you wish to preserve these attributes in the build output, you can define the
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta17" PrivateAssets="all" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta18" PrivateAssets="all" />
   <!--              ☝ You must not exclude the runtime assets in this case -->
 
 </Project>
