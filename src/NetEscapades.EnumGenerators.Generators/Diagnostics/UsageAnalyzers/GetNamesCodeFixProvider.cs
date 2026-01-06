@@ -47,11 +47,9 @@ public class GetNamesCodeFixProvider : CodeFixProviderBase
 
         // Create new invocation: ExtensionsClass.GetNames()
         var generator = editor.Generator;
-        var memberAccess = (MemberAccessExpressionSyntax)generator.MemberAccessExpression(
-            generator.TypeExpression(extensionTypeSymbol), "GetNames");
-        var newInvocation = SyntaxFactory.InvocationExpression(memberAccess)
-            .WithLeadingTrivia(invocation.GetLeadingTrivia())
-            .WithTrailingTrivia(invocation.GetTrailingTrivia())
+        var newInvocation = generator.InvocationExpression(
+                generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "GetNames"))
+            .WithTriviaFrom(invocation)
             .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
 
         editor.ReplaceNode(invocation, newInvocation);

@@ -428,6 +428,68 @@ public class GetNamesAnalyzerTests : AnalyzerTestsBase<GetNamesAnalyzer, GetName
         await VerifyAnalyzerAsync(test, EnableState.Disabled);
     }
 
+    [Fact]
+    public async Task GetNamesAsMethodArgumentShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod({|NEEG008:Enum.GetNames(typeof(MyEnum))|});
+                }
+                
+                private void SomeMethod(string[] names) { }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    SomeMethod(MyEnumExtensions.GetNames());
+                }
+                
+                private void SomeMethod(string[] names) { }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task GetNamesWithExtraWhitespaceShouldPreserveWhitespace()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            {|NEEG008:Enum.GetNames(typeof(MyEnum))|};
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                            MyEnumExtensions.GetNames();
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
     private static string GetTestCodeWithExternalEnum(string testCode) =>
         $$"""
           using System;
@@ -499,66 +561,4 @@ public class GetNamesAnalyzerTests : AnalyzerTestsBase<GetNamesAnalyzer, GetName
         {{TestHelpers.LoadEmbeddedAttribute()}}
         {{TestHelpers.LoadEmbeddedMetadataSource()}}
         """;
-
-    [Fact]
-    public async Task GetNamesAsMethodArgumentShouldPreserveWhitespace()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    SomeMethod({|NEEG008:Enum.GetNames(typeof(MyEnum))|});
-                }
-                
-                private void SomeMethod(string[] names) { }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    SomeMethod(MyEnumExtensions.GetNames());
-                }
-                
-                private void SomeMethod(string[] names) { }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
-
-    [Fact]
-    public async Task GetNamesWithExtraWhitespaceShouldPreserveWhitespace()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                            var names = {|NEEG008:Enum.GetNames(typeof(MyEnum))|};
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                            var names = MyEnumExtensions.GetNames();
-                }
-            }
-            """);
-        await Verifier.VerifyCodeFixAsync(test, fix);
-    }
 }
