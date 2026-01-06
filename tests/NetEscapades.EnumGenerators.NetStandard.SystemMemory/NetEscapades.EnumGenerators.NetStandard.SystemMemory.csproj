@@ -7,6 +7,14 @@
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
     <DefineConstants>$(DefineConstants);NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS</DefineConstants>
+
+    <!-- Enable as many warnings as we can so we check the generated code -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisMode>All</AnalysisMode>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <WarningLevel>3</WarningLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

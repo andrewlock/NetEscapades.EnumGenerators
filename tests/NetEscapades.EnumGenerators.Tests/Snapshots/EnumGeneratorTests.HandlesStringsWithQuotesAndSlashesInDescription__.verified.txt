@@ -476,6 +476,7 @@ namespace Test
         }
 
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -483,14 +484,22 @@ namespace Test
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-#endif
         public static global::Test.StringTesting Parse(
+#else
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
+        /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::Test.StringTesting Parse(
+#endif 
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -501,6 +510,7 @@ namespace Test
                     new global::NetEscapades.EnumGenerators.EnumParseOptions())
                    ? value : ThrowValueNotFound(name);
 
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -509,14 +519,23 @@ namespace Test
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-#endif
         public static global::Test.StringTesting Parse(
+#else
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+        /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::Test.StringTesting Parse(
+#endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -529,6 +548,7 @@ namespace Test
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
                    ? value : ThrowValueNotFound(name);
 
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -539,14 +559,25 @@ namespace Test
         /// <see cref="global::MetadataAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-#endif
         public static global::Test.StringTesting Parse(
+#else
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+        /// <see cref="global::MetadataAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
+        /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::Test.StringTesting Parse(
+#endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -561,6 +592,7 @@ namespace Test
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
                    ? value : ThrowValueNotFound(name);
 
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -569,13 +601,22 @@ namespace Test
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
-#endif
         public static global::Test.StringTesting Parse(
+#else
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns>An object of type <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="name"/></returns>
+        public static global::Test.StringTesting Parse(
+#endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -596,6 +637,7 @@ namespace Test
             => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
 #endif
 
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -608,14 +650,27 @@ namespace Test
         /// If the parse operation fails, contains the default value of the underlying type
         /// of <see cref="global::Test.StringTesting" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Test.StringTesting,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-#endif
         public static bool TryParse(
+#else
+        /// <summary>
+        /// Converts the span representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
+        /// <param name="value">When this method returns, contains an object of type
+        /// <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::Test.StringTesting" />. This parameter is passed uninitialized.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
+#endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -626,6 +681,7 @@ namespace Test
                 out value,
                 new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -639,14 +695,28 @@ namespace Test
         /// of <see cref="global::Test.StringTesting" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Test.StringTesting,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-#endif
         public static bool TryParse(
+#else
+        /// <summary>
+        /// Converts the span representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
+        /// <param name="value">When this method returns, contains an object of type
+        /// <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::Test.StringTesting" />. This parameter is passed uninitialized.</param>
+        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
+#endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -659,6 +729,7 @@ namespace Test
                 new global::NetEscapades.EnumGenerators.EnumParseOptions(
                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the span representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -674,14 +745,30 @@ namespace Test
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::MetadataAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Test.StringTesting,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-#endif
         public static bool TryParse(
+#else
+        /// <summary>
+        /// Converts the span representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
+        /// <param name="result">When this method returns, contains an object of type
+        /// <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::Test.StringTesting" />. This parameter is passed uninitialized.</param>
+        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+        /// <see cref="global::MetadataAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
+#endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -696,6 +783,7 @@ namespace Test
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
 
+#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
         /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
@@ -709,13 +797,27 @@ namespace Test
         /// of <see cref="global::Test.StringTesting" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Test.StringTesting" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
-#endif
         public static bool TryParse(
+#else
+        /// <summary>
+        /// Converts the string representation of the name or numeric value of
+        /// an <see cref="global::Test.StringTesting" /> to the equivalent instance.
+        /// The return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+        /// <param name="result">When this method returns, contains an object of type
+        /// <see cref="global::Test.StringTesting" /> whose
+        /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+        /// If the parse operation fails, contains the default value of the underlying type
+        /// of <see cref="global::Test.StringTesting" />. This parameter is passed uninitialized.</param>
+        /// <param name="options">Options that control how the string value should be parsed.</param>
+        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+        public static bool TryParse(
+#endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif

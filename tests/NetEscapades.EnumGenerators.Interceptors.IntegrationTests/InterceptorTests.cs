@@ -42,9 +42,11 @@ public class InterceptorTests
     public void CallingToStringIsIntercepted_StringTesting()
     {
 #pragma warning disable CS0612
+#pragma warning disable CS0618
         var result1 = StringTesting.Backslash.ToString();
         var result2 = StringTesting.Backslash.ToStringFast();
 #pragma warning restore CS0612
+#pragma warning restore CS0618
         Assert.Equal(result1, result2);
     }
 

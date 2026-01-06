@@ -5,6 +5,12 @@ using System.Runtime.Serialization;
 
 #pragma warning disable NEEG003
 
+#pragma warning disable CA1711 // Rename type so that it does not end in Enum
+#pragma warning disable CA1028 // Enum storage should be int32
+#pragma warning disable CA1069 // Enum values should not be duplicated
+#pragma warning disable CA1720 // Member contains type name
+#pragma warning disable CA1724 // Namespace conflicts with TypeName
+
 [assembly:NetEscapades.EnumGenerators.EnumExtensions<DateTimeKind>()]
 [assembly:NetEscapades.EnumGenerators.EnumExtensions<System.IO.FileShare>()]
 
@@ -162,7 +168,7 @@ namespace NetEscapades.EnumGenerators.Nuget.AnalyzerTests
     {
         [System.ComponentModel.Description("Quotes \"")]   Quotes,
         [System.ComponentModel.Description(@"Literal Quotes """)]   LiteralQuotes,
-        [Obsolete]
+        [Obsolete("Testing obsolete members")]
         [System.ComponentModel.Description("Backslash \\")]   Backslash,
         [System.ComponentModel.Description(@"LiteralBackslash \")]   BackslashLiteral,
         [System.ComponentModel.Description("Line\nBreak")]   LineBreak,
