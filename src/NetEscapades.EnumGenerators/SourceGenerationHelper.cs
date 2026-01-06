@@ -1208,7 +1208,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse");
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse);
 
         sb.Append(
             """
@@ -1262,7 +1262,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse");
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse);
 
         sb.Append(
             """
@@ -1331,7 +1331,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse");
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse);
 
         sb.Append(
             """
@@ -1401,7 +1401,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, "Parse", isCorrectApi: true);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None);
 
         sb.Append(
             """
@@ -1476,7 +1476,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse");
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse);
 
         sb.Append(
             """
@@ -1547,7 +1547,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse");
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse);
 
         sb.Append(
             """
@@ -1629,7 +1629,7 @@ public static class SourceGenerationHelper
                         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                 """);
 
-            AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse");
+            AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse);
 
             sb.Append(
                 """
@@ -1712,7 +1712,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, "TryParse", isCorrectApi: true);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None);
 
         sb.Append(
             """
@@ -2040,7 +2040,7 @@ public static class SourceGenerationHelper
             }
         }
 
-        static void AddSystemMemoryWarning(StringBuilder sb, string fullyQualifiedName, string methodName, bool isCorrectApi = false)
+        static void AddSystemMemoryWarning(StringBuilder sb, string fullyQualifiedName, AlternativeMethodChoice alternativeMethodChoice)
         {
             sb.Append(
                 """
@@ -2053,25 +2053,35 @@ public static class SourceGenerationHelper
                         /// To avoid this allocation, only call this overload when you know the value will exist.
                         /// Alternatively
                 """);
-            if (isCorrectApi)
+            switch (alternativeMethodChoice)
             {
-                sb.Append(
-                    """
-                    , disable number parsing in the <paramref name="options" /> parameter.</remarks>
+                case AlternativeMethodChoice.TryParse:
+                    sb.Append(
+                        """
+                        , call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out 
+                        """).Append(fullyQualifiedName).Append(
+                        """
+                        ,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+                                /// overload, and disable number parsing.</remarks>
 
-                    """);
-            }
-            else
-            {
-                sb.Append(
-                    """
-                    , call the <see cref="
-                    """).Append(methodName).Append(
-                    """
-                    (in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
-                            /// overload, and disable number parsing.</remarks>
+                        """);
+                    break;
+                case AlternativeMethodChoice.Parse:
+                    
+                    sb.Append(
+                        """
+                        , call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+                                /// overload, and disable number parsing.</remarks>
 
-                    """);
+                        """);
+                    break;
+                default:
+                    sb.Append(
+                        """
+                        , disable number parsing in the <paramref name="options" /> parameter.</remarks>
+
+                        """);
+                    break;
             }
         }
     }
@@ -2095,5 +2105,12 @@ public static class SourceGenerationHelper
         }
 
         return sb.Append(identifier);
+    }
+
+    private enum AlternativeMethodChoice
+    {
+        None,
+        Parse,
+        TryParse,
     }
 }
