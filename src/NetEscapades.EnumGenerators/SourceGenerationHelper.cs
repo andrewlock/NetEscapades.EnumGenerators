@@ -1192,6 +1192,7 @@ public static class SourceGenerationHelper
                     }
 
             #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+            #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1215,6 +1216,25 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              Parse(
+            #else
+                    /// <summary>
+                    /// Converts the string representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// </summary>
+                    /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
+                    /// <returns>An object of type <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="name"/></returns>
+                    public static 
+            """).Append(fullyQualifiedName).Append(
+            """
+             Parse(
+            #endif 
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1225,6 +1245,7 @@ public static class SourceGenerationHelper
                                 new global::NetEscapades.EnumGenerators.EnumParseOptions())
                                ? value : ThrowValueNotFound(name);
 
+            #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1249,6 +1270,26 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              Parse(
+            #else
+                    /// <summary>
+                    /// Converts the string representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// </summary>
+                    /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <returns>An object of type <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="name"/></returns>
+                    public static 
+            """).Append(fullyQualifiedName).Append(
+            """
+             Parse(
+            #endif
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1268,6 +1309,7 @@ public static class SourceGenerationHelper
             """
 
 
+            #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1297,6 +1339,31 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              Parse(
+            #else
+                    /// <summary>
+                    /// Converts the string representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// </summary>
+                    /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+                    /// <see cref="global::
+            """).Append(attributeName).Append(
+            """
+            "/> attribute when parsing, otherwise only considers the member names.</param>
+                    /// <returns>An object of type <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="name"/></returns>
+                    public static 
+            """).Append(fullyQualifiedName).Append(
+            """
+             Parse(
+            #endif
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1317,6 +1384,7 @@ public static class SourceGenerationHelper
             """
 
 
+            #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1341,6 +1409,26 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              Parse(
+            #else
+                    /// <summary>
+                    /// Converts the string representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// </summary>
+                    /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="options">Options that control how the string value should be parsed.</param>
+                    /// <returns>An object of type <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="name"/></returns>
+                    public static 
+            """).Append(fullyQualifiedName).Append(
+            """
+             Parse(
+            #endif
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1364,6 +1452,7 @@ public static class SourceGenerationHelper
                         => throw new global::System.ArgumentException($"Requested value '{name.ToString()}' was not found.");
             #endif
 
+            #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the span representation of the name or numeric value of
                     /// an <see cref="
@@ -1392,6 +1481,30 @@ public static class SourceGenerationHelper
         sb.Append(
             """
                     public static bool TryParse(
+            #else
+                    /// <summary>
+                    /// Converts the span representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// The return value indicates whether the conversion succeeded.
+                    /// </summary>
+                    /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="value">When this method returns, contains an object of type
+                    /// <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+                    /// If the parse operation fails, contains the default value of the underlying type
+                    /// of <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " />. This parameter is passed uninitialized.</param>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                    public static bool TryParse(
+            #endif
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1409,6 +1522,7 @@ public static class SourceGenerationHelper
             """
 
 
+            #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the span representation of the name or numeric value of
                     /// an <see cref="
@@ -1438,6 +1552,31 @@ public static class SourceGenerationHelper
         sb.Append(
             """
                     public static bool TryParse(
+            #else
+                    /// <summary>
+                    /// Converts the span representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// The return value indicates whether the conversion succeeded.
+                    /// </summary>
+                    /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="value">When this method returns, contains an object of type
+                    /// <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="value"/> if the parse operation succeeds.
+                    /// If the parse operation fails, contains the default value of the underlying type
+                    /// of <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " />. This parameter is passed uninitialized.</param>
+                    /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                    public static bool TryParse(
+            #endif
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1460,6 +1599,7 @@ public static class SourceGenerationHelper
                 """
 
 
+                #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                         /// <summary>
                         /// Converts the span representation of the name or numeric value of
                         /// an <see cref="
@@ -1494,6 +1634,36 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
                         public static bool TryParse(
+                #else
+                        /// <summary>
+                        /// Converts the span representation of the name or numeric value of
+                        /// an <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> to the equivalent instance.
+                        /// The return value indicates whether the conversion succeeded.
+                        /// </summary>
+                        /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
+                        /// <param name="result">When this method returns, contains an object of type
+                        /// <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " /> whose
+                        /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+                        /// If the parse operation fails, contains the default value of the underlying type
+                        /// of <see cref="
+                """).Append(fullyQualifiedName).Append(
+                """
+                " />. This parameter is passed uninitialized.</param>
+                        /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
+                        /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
+                        /// <see cref="global::
+                """).Append(attributeName).Append(
+                """
+                "/> attribute when parsing, otherwise only considers the member names.</param>
+                        /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                        public static bool TryParse(
+                #endif
                 #if NETCOREAPP3_0_OR_GREATER
                             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
                 #endif
@@ -1517,6 +1687,7 @@ public static class SourceGenerationHelper
             """
 
 
+            #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
                     /// an <see cref="
@@ -1546,6 +1717,31 @@ public static class SourceGenerationHelper
         sb.Append(
             """
                     public static bool TryParse(
+            #else
+                    /// <summary>
+                    /// Converts the string representation of the name or numeric value of
+                    /// an <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> to the equivalent instance.
+                    /// The return value indicates whether the conversion succeeded.
+                    /// </summary>
+                    /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
+                    /// <param name="result">When this method returns, contains an object of type
+                    /// <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /> whose
+                    /// value is represented by <paramref name="result"/> if the parse operation succeeds.
+                    /// If the parse operation fails, contains the default value of the underlying type
+                    /// of <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " />. This parameter is passed uninitialized.</param>
+                    /// <param name="options">Options that control how the string value should be parsed.</param>
+                    /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+                    public static bool TryParse(
+            #endif
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
@@ -1849,7 +2045,6 @@ public static class SourceGenerationHelper
             sb.Append(
                 """
 
-                #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
                         /// is not explicitly defined in <see cref="
                 """).Append(fullyQualifiedName).Append(
@@ -1863,7 +2058,6 @@ public static class SourceGenerationHelper
                 sb.Append(
                     """
                     , disable number parsing in the <paramref name="options" /> parameter.</remarks>
-                    #endif
 
                     """);
             }
@@ -1876,7 +2070,6 @@ public static class SourceGenerationHelper
                     """
                     (in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
                             /// overload, and disable number parsing.</remarks>
-                    #endif
 
                     """);
             }
