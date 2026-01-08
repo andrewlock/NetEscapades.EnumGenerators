@@ -154,6 +154,7 @@ class Build : NukeBuild
                 "NEEG009",
                 "NEEG010",
                 "NEEG011",
+                "NEEG012",
             };
 
             DotNetRestore(s => s

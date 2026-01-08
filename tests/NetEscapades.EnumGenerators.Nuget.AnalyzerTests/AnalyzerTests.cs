@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace NetEscapades.EnumGenerators.Nuget.AnalyzerTests;
 
@@ -109,5 +110,12 @@ public class AnalyzerTests
         _ = $"Some value: {Enum.TryParse(typeof(FlagsEnum), "First".AsSpan(), out _)} <-";
 #endif
 #endif
+    }
+
+    public void Neeg012Testing()
+    {
+        var flagsEnum = FlagsEnum.First;
+        var sb = new StringBuilder();
+        sb.Append(flagsEnum);
     }
 }

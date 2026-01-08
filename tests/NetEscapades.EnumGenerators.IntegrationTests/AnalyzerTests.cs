@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Text;
 using Xunit;
 
 #if INTEGRATION_TESTS
@@ -155,5 +156,15 @@ public class AnalyzerTests
 #endif
 #endif
 #pragma warning restore NEEG011
+    }
+
+    [Fact]
+    public void Neeg012Testing()
+    {
+#pragma warning disable NEEG012
+        var flagsEnum = FlagsEnum.First;
+        var sb = new StringBuilder();
+        sb.Append(flagsEnum);
+#pragma warning restore NEEG012
     }
 }
