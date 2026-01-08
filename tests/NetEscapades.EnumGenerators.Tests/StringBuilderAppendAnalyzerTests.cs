@@ -474,6 +474,313 @@ public class StringBuilderAppendAnalyzerTests : AnalyzerTestsBase<StringBuilderA
         
         await VerifyAnalyzerAsync(test, EnableState.Disabled);
     }
+
+    // AppendFormat tests
+    [Fact]
+    public async Task AppendFormatWithNonEnumShouldNotHaveDiagnostics()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendFormat("Value: {0}", 42);
+                    sb.AppendFormat("Value: {0}", "test");
+                }
+            }
+            """);
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithEnumWithoutAttributeShouldNotHaveDiagnostics()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = TestEnumWithoutAttribute.First;
+                    sb.AppendFormat("Value: {0}", value);
+                }
+            }
+            """);
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithSingleEnumShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = TestEnum.First;
+                    sb.AppendFormat("Value: {0}", {|NEEG012:value|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = TestEnum.First;
+                    sb.AppendFormat("Value: {0}", value.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithMultipleEnumsShouldHaveMultipleDiagnostics()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    sb.AppendFormat("Value: {0} and {1}", {|NEEG012:value1|}, {|NEEG012:value2|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    sb.AppendFormat("Value: {0} and {1}", value1.ToStringFast(), value2.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithMixedArgumentsShouldOnlyFlagEnums()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = TestEnum.First;
+                    sb.AppendFormat("Value: {0}, Number: {1}, Text: {2}", {|NEEG012:value|}, 42, "test");
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = TestEnum.First;
+                    sb.AppendFormat("Value: {0}, Number: {1}, Text: {2}", value.ToStringFast(), 42, "test");
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithProviderShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = TestEnum.First;
+                    sb.AppendFormat(null, "Value: {0}", {|NEEG012:value|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = TestEnum.First;
+                    sb.AppendFormat(null, "Value: {0}", value.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithProviderAndMultipleEnumsShouldHaveMultipleDiagnostics()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    sb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0} - {1}", {|NEEG012:value1|}, {|NEEG012:value2|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    sb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0} - {1}", value1.ToStringFast(), value2.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithDirectEnumValueShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendFormat("Value: {0}", {|NEEG012:TestEnum.First|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.AppendFormat("Value: {0}", TestEnum.First.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithExternalEnumShouldHaveDiagnostic()
+    {
+        var test = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = System.DateTimeKind.Local;
+                    sb.AppendFormat("Kind: {0}", {|NEEG012:value|});
+                }
+            }
+            """);
+
+        var fix = GetTestCodeWithExternalEnum(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value = System.DateTimeKind.Local;
+                    sb.AppendFormat("Kind: {0}", value.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task AppendFormatWithThreeArgumentsShouldHaveMultipleDiagnostics()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    sb.AppendFormat("{0}, {1}, {2}", {|NEEG012:value1|}, 42, {|NEEG012:value2|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    var value1 = TestEnum.First;
+                    var value2 = TestEnum.Second;
+                    sb.AppendFormat("{0}, {1}, {2}", value1.ToStringFast(), 42, value2.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
     
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
