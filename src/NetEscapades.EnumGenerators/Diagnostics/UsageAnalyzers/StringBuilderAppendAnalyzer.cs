@@ -152,9 +152,10 @@ public class StringBuilderAppendAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Determine if the first parameter is IFormatProvider
+        // Determine if the first parameter is IFormatProvider by checking if it's a string
+        // If first parameter is string, there's no provider. Otherwise there is.
         var firstParamType = methodSymbol.Parameters[0].Type;
-        var hasProvider = firstParamType.ToString() == "System.IFormatProvider";
+        var hasProvider = firstParamType.SpecialType != SpecialType.System_String;
 
         // Format arguments start after format string (and optionally provider)
         var formatArgStartIndex = hasProvider ? 2 : 1;
