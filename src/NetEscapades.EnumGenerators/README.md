@@ -353,6 +353,9 @@ dotnet_diagnostic.NEEG010.severity = error
 
 # NEEG011: Use generated TryParse() instead of Enum.TryParse()
 dotnet_diagnostic.NEEG011.severity = error
+
+# NEEG012: Call ToStringFast() on enum in StringBuilder.Append() for better performance
+dotnet_diagnostic.NEEG012.severity = error
 ```
 
 These are reported in both your IDE and via the CLI as Roslyn errors:

@@ -41,18 +41,7 @@ public class StringBuilderAppendCodeFixProvider : CodeFixProviderBase
         var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
 
         // The diagnostic is on the argument, we need to find the ArgumentSyntax
-        ArgumentSyntax? argument;
-        if (node is not ArgumentSyntax argumentNode)
-        {
-            // Try to find the argument containing this node
-            argument = node.FirstAncestorOrSelf<ArgumentSyntax>();
-        }
-        else
-        {
-            argument = argumentNode;
-        }
-
-        if (argument is null)
+        if (node is not ArgumentSyntax argument)
         {
             return Task.CompletedTask;
         }

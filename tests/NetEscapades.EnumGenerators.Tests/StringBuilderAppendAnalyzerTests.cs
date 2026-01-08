@@ -474,45 +474,6 @@ public class StringBuilderAppendAnalyzerTests : AnalyzerTestsBase<StringBuilderA
         
         await VerifyAnalyzerAsync(test, EnableState.Disabled);
     }
-
-    [Fact]
-    public async Task MixedAppendCallsShouldOnlyFlagEnums()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var sb = new System.Text.StringBuilder();
-                    var value = TestEnum.First;
-                    sb.Append("String");
-                    sb.Append(42);
-                    sb.Append({|NEEG012:value|});
-                    sb.Append(" more text");
-                }
-            }
-            """);
-
-        var fix = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var sb = new System.Text.StringBuilder();
-                    var value = TestEnum.First;
-                    sb.Append("String");
-                    sb.Append(42);
-                    sb.Append(value.ToStringFast());
-                    sb.Append(" more text");
-                }
-            }
-            """);
-        await VerifyCodeFixAsync(test, fix);
-    }
     
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;

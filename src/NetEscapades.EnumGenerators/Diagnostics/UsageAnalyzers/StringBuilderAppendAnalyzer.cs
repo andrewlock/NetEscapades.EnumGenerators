@@ -14,7 +14,7 @@ public class StringBuilderAppendAnalyzer : DiagnosticAnalyzer
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
         id: DiagnosticId,
 #pragma warning restore RS2008
-        title: "Use ToStringFast() in StringBuilder.Append() for better performance",
+        title: "Call ToStringFast() on enum in StringBuilder.Append() for better performance",
         messageFormat: "Use ToStringFast() instead of passing enum '{0}' directly to StringBuilder.Append() for better performance",
         category: "Usage",
         defaultSeverity: UsageAnalyzerConfig.DefaultSeverity,
@@ -40,24 +40,27 @@ public class StringBuilderAppendAnalyzer : DiagnosticAnalyzer
                 return;
             }
 
+            var stringBuilder = ctx.Compilation.GetBestTypeByMetadataName("System.Text.StringBuilder");
+            if (stringBuilder is null)
+            {
+                return;
+            }
+            
+
             ctx.RegisterSyntaxNodeAction(
-                c => AnalyzeInvocation(c, enumExtensionsAttr, externalEnumTypes),
+                c => AnalyzeInvocation(c, enumExtensionsAttr, externalEnumTypes, stringBuilder),
                 SyntaxKind.InvocationExpression);
         });
     }
 
-    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr, ExternalEnumDictionary externalEnumTypes)
+    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context, INamedTypeSymbol enumExtensionsAttr,
+        ExternalEnumDictionary externalEnumTypes, INamedTypeSymbol stringBuilder)
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
-        // Check if this is a member access expression (e.g., sb.Append())
-        if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
-        {
-            return;
-        }
-
-        // Check if the method name is "Append"
-        if (memberAccess.Name.Identifier.Text != "Append")
+        if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess
+            || memberAccess.Name.Identifier.Text != "Append"
+            || invocation.ArgumentList.Arguments.Count != 1)
         {
             return;
         }
@@ -73,20 +76,8 @@ public class StringBuilderAppendAnalyzer : DiagnosticAnalyzer
         // We're looking for the overload that takes a single object parameter
         if (methodSymbol.Name != "Append" ||
             methodSymbol.Parameters.Length != 1 ||
-            methodSymbol.ContainingType?.ToString() != "System.Text.StringBuilder")
-        {
-            return;
-        }
-
-        // Check if the parameter is the object? overload
-        var parameter = methodSymbol.Parameters[0];
-        if (parameter.Type.SpecialType != SpecialType.System_Object)
-        {
-            return;
-        }
-
-        // Check if there's exactly one argument
-        if (invocation.ArgumentList.Arguments.Count != 1)
+            methodSymbol.Parameters[0].Type.SpecialType != SpecialType.System_Object ||
+            !SymbolEqualityComparer.Default.Equals(methodSymbol.ContainingType, stringBuilder))
         {
             return;
         }
