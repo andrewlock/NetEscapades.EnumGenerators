@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\NetEscapades.EnumGenerators.Generators\Attributes.cs" />
+    <Compile Include="..\NetEscapades.EnumGenerators.Generators\TypeNames.cs" />
   </ItemGroup>
   
 </Project>

@@ -29,9 +29,9 @@ public static class SourceGenerationHelper
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
         var attributeName = metadataSource switch
         {
-            MetadataSource.DisplayAttribute => Attributes.DisplayAttribute,
-            MetadataSource.DescriptionAttribute => Attributes.DescriptionAttribute,
-            MetadataSource.EnumMemberAttribute => Attributes.EnumMemberAttribute,
+            MetadataSource.DisplayAttribute => TypeNames.DisplayAttribute,
+            MetadataSource.DescriptionAttribute => TypeNames.DescriptionAttribute,
+            MetadataSource.EnumMemberAttribute => TypeNames.EnumMemberAttribute,
             _ => null,
         };
 

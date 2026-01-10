@@ -1,6 +1,6 @@
 namespace NetEscapades.EnumGenerators;
 
-internal static class Attributes
+internal static class TypeNames
 {
     public const string DisplayAttribute = "System.ComponentModel.DataAnnotations.DisplayAttribute";
     public const string DescriptionAttribute = "System.ComponentModel.DescriptionAttribute";

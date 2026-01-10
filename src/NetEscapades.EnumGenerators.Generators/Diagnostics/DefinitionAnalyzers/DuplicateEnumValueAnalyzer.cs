@@ -47,7 +47,7 @@ public class DuplicateEnumValueAnalyzer : DiagnosticAnalyzer
                     // Verify with semantic model for precision
                     var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
                     if (symbolInfo.Symbol is IMethodSymbol method &&
-                        method.ContainingType.ToDisplayString() == Attributes.EnumExtensionsAttribute)
+                        method.ContainingType.ToDisplayString() == TypeNames.EnumExtensionsAttribute)
                     {
                         hasEnumExtensionsAttribute = true;
                         break;

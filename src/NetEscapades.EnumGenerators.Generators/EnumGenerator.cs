@@ -23,7 +23,7 @@ public class EnumGenerator : IIncrementalGenerator
         var defaults = csharpVersion.Combine(defaultMetadataSource);
         
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
-            .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
+            .ForAttributeWithMetadataName(TypeNames.EnumExtensionsAttribute,
                 predicate: static (node, _) => node is EnumDeclarationSyntax,
                 transform: GetTypeToGenerate)
             .WithTrackingName(TrackingNames.InitialExtraction)
@@ -33,7 +33,7 @@ public class EnumGenerator : IIncrementalGenerator
 
         IncrementalValuesProvider<EnumToGenerate> externalEnums = context
             .SyntaxProvider
-            .ForAttributeWithMetadataName(Attributes.ExternalEnumExtensionsAttribute,
+            .ForAttributeWithMetadataName(TypeNames.ExternalEnumExtensionsAttribute,
                 predicate: static (node, _) => node is CompilationUnitSyntax,
                 transform: static (context1, ct) => GetEnumToGenerateFromGenericAssemblyAttribute(context1, ct, "EnumExtensionsAttribute", "EnumExtensions"))
             .Where(static m => m is not null)
@@ -145,7 +145,7 @@ public class EnumGenerator : IIncrementalGenerator
             {
                 if ((attrData.AttributeClass?.Name == "FlagsAttribute" ||
                      attrData.AttributeClass?.Name == "Flags") &&
-                    attrData.AttributeClass.ToDisplayString() == Attributes.FlagsAttribute)
+                    attrData.AttributeClass.ToDisplayString() == TypeNames.FlagsAttribute)
                 {
                     hasFlags = true;
                     break;
@@ -191,7 +191,7 @@ public class EnumGenerator : IIncrementalGenerator
         {
             if ((attributeData.AttributeClass?.Name == "FlagsAttribute" ||
                  attributeData.AttributeClass?.Name == "Flags") &&
-                attributeData.AttributeClass.ToDisplayString() == Attributes.FlagsAttribute)
+                attributeData.AttributeClass.ToDisplayString() == TypeNames.FlagsAttribute)
             {
                 hasFlags = true;
                 continue;
@@ -210,7 +210,7 @@ public class EnumGenerator : IIncrementalGenerator
         ref MetadataSource? source)
     {
         if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
-            attributeData.AttributeClass.ToDisplayString() != Attributes.EnumExtensionsAttribute)
+            attributeData.AttributeClass.ToDisplayString() != TypeNames.EnumExtensionsAttribute)
         {
             return false;
         }
@@ -275,7 +275,7 @@ public class EnumGenerator : IIncrementalGenerator
             foreach (var attribute in member.GetAttributes())
             {
                 if (attribute.AttributeClass?.Name == "DisplayAttribute" &&
-                    attribute.AttributeClass.ToDisplayString() == Attributes.DisplayAttribute)
+                    attribute.AttributeClass.ToDisplayString() == TypeNames.DisplayAttribute)
                 {
                     foreach (var namedArgument in attribute.NamedArguments)
                     {
@@ -287,7 +287,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
                 
                 if (attribute.AttributeClass?.Name == "DescriptionAttribute" 
-                    && attribute.AttributeClass.ToDisplayString() == Attributes.DescriptionAttribute
+                    && attribute.AttributeClass.ToDisplayString() == TypeNames.DescriptionAttribute
                     && attribute.ConstructorArguments.Length == 1)
                 {
                     if (attribute.ConstructorArguments[0].Value?.ToString() is { } dn)
@@ -297,7 +297,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
 
                 if (attribute.AttributeClass?.Name == "EnumMemberAttribute" &&
-                    attribute.AttributeClass.ToDisplayString() == Attributes.EnumMemberAttribute)
+                    attribute.AttributeClass.ToDisplayString() == TypeNames.EnumMemberAttribute)
                 {
                     foreach (var namedArgument in attribute.NamedArguments)
                     {
