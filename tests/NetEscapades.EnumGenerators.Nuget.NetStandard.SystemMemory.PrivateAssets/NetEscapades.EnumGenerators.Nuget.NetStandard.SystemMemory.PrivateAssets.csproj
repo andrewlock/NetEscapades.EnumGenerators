@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NetEscapades.EnumGenerators" Version="$(Version)" PrivateAssets="All" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="$(Version)" PrivateAssets="All" />
   </ItemGroup>
   
   <ItemGroup>
