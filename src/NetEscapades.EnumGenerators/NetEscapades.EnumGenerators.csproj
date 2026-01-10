@@ -10,30 +10,16 @@
     <ImplicitUsings>true</ImplicitUsings>
     <Description>A source generator for creating helper extension methods on enums using a [EnumExtensions] attribute</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.4.0" PrivateAssets="all" />
-    <PackageReference Include="Polyfill" Version="1.32.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <ProjectReference Include="..\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\NetEscapades.EnumGenerators.Generators\NetEscapades.EnumGenerators.Generators.csproj" />
+    <ProjectReference Include="..\NetEscapades.EnumGenerators.RuntimeDependencies\NetEscapades.EnumGenerators.RuntimeDependencies.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
-    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
-    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\netstandard2.0" Visible="false" />
-    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.dll" Pack="true" PackagePath="lib\net451" Visible="false" />
-    <None Include="$(OutputPath)\NetEscapades.EnumGenerators.Attributes.xml" Pack="true" PackagePath="lib\net451" Visible="false" />
-    <None Include="NetEscapades.EnumGenerators.props" Pack="true" PackagePath="build" Visible="true" />
-    <None Include="NetEscapades.EnumGenerators.targets" Pack="true" PackagePath="build" Visible="true" />
   </ItemGroup>
 </Project>

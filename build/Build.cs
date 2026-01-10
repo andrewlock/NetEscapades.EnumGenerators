@@ -119,7 +119,9 @@ class Build : NukeBuild
             if (!string.IsNullOrEmpty(PackagesDirectory))
             {
                 (PackagesDirectory / "netescapades.enumgenerators").DeleteDirectory();
+                (PackagesDirectory / "netescapades.enumgenerators.generators").DeleteDirectory();
                 (PackagesDirectory / "netescapades.enumgenerators.attributes").DeleteDirectory();
+                (PackagesDirectory / "netescapades.enumgenerators.runtimedependencies").DeleteDirectory();
                 (PackagesDirectory / "netescapades.enumgenerators.interceptors").DeleteDirectory();
                 (PackagesDirectory / "netescapades.enumgenerators.interceptors.attributes").DeleteDirectory();
             }

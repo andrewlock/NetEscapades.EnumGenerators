@@ -29,9 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.RuntimeDependencies\NetEscapades.EnumGenerators.RuntimeDependencies.csproj" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors.Attributes\NetEscapades.EnumGenerators.Interceptors.Attributes.csproj" />
-    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj" />
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Generators\NetEscapades.EnumGenerators.Generators.csproj" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors\NetEscapades.EnumGenerators.Interceptors.csproj" />
   </ItemGroup>
 

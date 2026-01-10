@@ -15,13 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.RuntimeDependencies\NetEscapades.EnumGenerators.RuntimeDependencies.csproj" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors.Attributes\NetEscapades.EnumGenerators.Interceptors.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
   </ItemGroup>
 
   <!-- This project can only be loaded when we have a high enough copmiler -->
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.csproj"
+    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Generators\NetEscapades.EnumGenerators.Generators.csproj"
                       OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Interceptors\NetEscapades.EnumGenerators.Interceptors.csproj"
                       OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

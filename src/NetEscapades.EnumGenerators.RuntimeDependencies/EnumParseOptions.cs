@@ -46,7 +46,7 @@ public readonly struct EnumParseOptions
     /// <remarks>
     /// By default, it's set to <see langword="false"/>, so the value of any metadata attributes on the
     /// enum values are ignored. Set to <see langword="true"/> to enable parsing using the applicable
-    /// <see cref="global::NetEscapades.EnumGenerators.MetadataSource"/> for each enum member.
+    /// MetadataSource for each enum member.
     /// </remarks>
     public bool AllowMatchingMetadataAttribute { get; }
 
