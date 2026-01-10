@@ -19,6 +19,8 @@ namespace NetEscapades.EnumGenerators.Nuget.IntegrationTests;
 namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 #elif NUGET_SYSTEMMEMORY_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.SystemMemory.IntegrationTests;
+#elif NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests;
 #else
 #error Unknown integration tests
 #endif
