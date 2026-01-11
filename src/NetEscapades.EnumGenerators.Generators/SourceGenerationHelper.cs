@@ -23,7 +23,8 @@ public static class SourceGenerationHelper
     public static (string Content, string HintName) GenerateExtensionClass(in EnumToGenerate enumToGenerate,
         bool useExtensionMembers,
         bool useCollectionExpressions,
-        MetadataSource defaultMetadataSource)
+        MetadataSource defaultMetadataSource,
+        bool hasRuntimeDependencies)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
@@ -38,6 +39,15 @@ public static class SourceGenerationHelper
         HashSet<string>? metadataNames = null;
 
         var constantValues = new HashSet<object>();
+
+        var (enumParseOptions, transform, serializationOptions) = hasRuntimeDependencies
+            ? ("global::NetEscapades.EnumGenerators.EnumParseOptions",
+                "global::NetEscapades.EnumGenerators.SerializationTransform",
+                "global::NetEscapades.EnumGenerators.SerializationOptions")
+            : ($"global::{enumToGenerate.Namespace}.{enumToGenerate.Name}.EnumParseOptions",
+                $"global::{enumToGenerate.Namespace}.{enumToGenerate.Name}.SerializationTransform",
+                $"global::{enumToGenerate.Namespace}.{enumToGenerate.Name}.SerializationOptions");
+            
 
         // The smallest size we will generate is 27,841 characters, so this is pretty much a lower bound
         var sb = new StringBuilder(32_768); //512 * 8 * 8
@@ -157,7 +167,10 @@ public static class SourceGenerationHelper
                     public static string ToStringFast(this 
             """).Append(fullyQualifiedName).Append(
             """
-             value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+             value, 
+            """).Append(serializationOptions).Append(
+            """
+             options)
             """);
 
         if (isMetadataSourcesEnabled && hasMetadataNames)
@@ -168,14 +181,26 @@ public static class SourceGenerationHelper
                             => options.UseMetadataAttributes
                                 ? options.Transform switch
                                 {
-                                    global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastWithMetadataLowerInvariant(),
-                                    global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastWithMetadataUpperInvariant(),
+                                    
+                """).Append(transform).Append(
+                """
+                .LowerInvariant => value.ToStringFastWithMetadataLowerInvariant(),
+                                    
+                """).Append(transform).Append(
+                """
+                .UpperInvariant => value.ToStringFastWithMetadataUpperInvariant(),
                                     _ => value.ToStringFastWithMetadata(),
                                 }
                                 : options.Transform switch
                                 {
-                                    global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
-                                    global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                                    
+                """).Append(transform).Append(
+                """
+                .LowerInvariant => value.ToStringFastLowerInvariant(),
+                                    
+                """).Append(transform).Append(
+                """
+                .UpperInvariant => value.ToStringFastUpperInvariant(),
                                     _ => value.ToStringFast(),
                                 };
                 """);
@@ -187,8 +212,14 @@ public static class SourceGenerationHelper
 
                             => options.Transform switch
                                {
-                                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
-                                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                                   
+                """).Append(transform).Append(
+                """
+                .LowerInvariant => value.ToStringFastLowerInvariant(),
+                                   
+                """).Append(transform).Append(
+                """
+                .UpperInvariant => value.ToStringFastUpperInvariant(),
                                    _ => value.ToStringFast(),
                                };
                 """);
@@ -819,7 +850,10 @@ public static class SourceGenerationHelper
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
                         string? name)
-                            => TryParse(name, out var value, new global::NetEscapades.EnumGenerators.EnumParseOptions()) ? value : ThrowValueNotFound(name);
+                            => TryParse(name, out var value, new 
+            """).Append(enumParseOptions).Append(
+            """
+            ()) ? value : ThrowValueNotFound(name);
 
                     /// <summary>
                     /// Converts the string representation of the name or numeric value of
@@ -847,7 +881,10 @@ public static class SourceGenerationHelper
                             => TryParse(
                                 name, 
                                 out var value,
-                                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                new 
+            """).Append(enumParseOptions).Append(
+            """
+            (
                                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
                                ? value : ThrowValueNotFound(name);
             """);
@@ -887,7 +924,10 @@ public static class SourceGenerationHelper
                                 => TryParse(
                                     name,
                                     out var value,
-                                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                    new 
+                """).Append(enumParseOptions).Append(
+                """
+                (
                                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute)) ? value : ThrowValueNotFound(name);
                 """);
@@ -919,7 +959,10 @@ public static class SourceGenerationHelper
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
                         string? name,
-                        global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                        
+            """).Append(enumParseOptions).Append(
+            """
+             options)
                             => TryParse(
                                 name,
                                 out var value,
@@ -969,7 +1012,10 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              value)
-                        => TryParse(name, out value, new global::NetEscapades.EnumGenerators.EnumParseOptions());
+                        => TryParse(name, out value, new 
+            """).Append(enumParseOptions).Append(
+            """
+            ());
             """);
         sb.Append(
             """
@@ -1009,7 +1055,10 @@ public static class SourceGenerationHelper
                         bool ignoreCase)
                         => TryParse(name,
                             out value,
-                            new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                            new 
+            """).Append(enumParseOptions).Append(
+            """
+            (
                                 ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
             """);
 
@@ -1061,7 +1110,10 @@ public static class SourceGenerationHelper
                                 => TryParse(
                                     name,
                                     out value,
-                                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                    new 
+                """).Append(enumParseOptions).Append(
+                """
+                (
                                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
                 """);
@@ -1102,7 +1154,10 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              value,
-                        global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                        
+            """).Append(enumParseOptions).Append(
+            """
+             options)
                     {
             """);
 
@@ -1208,7 +1263,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse, enumParseOptions);
 
         sb.Append(
             """
@@ -1242,7 +1297,10 @@ public static class SourceGenerationHelper
                             => TryParse(
                                 name, 
                                 out var value,
-                                new global::NetEscapades.EnumGenerators.EnumParseOptions())
+                                new 
+            """).Append(enumParseOptions).Append(
+            """
+            ())
                                ? value : ThrowValueNotFound(name);
 
             #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
@@ -1262,7 +1320,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse, enumParseOptions);
 
         sb.Append(
             """
@@ -1298,7 +1356,10 @@ public static class SourceGenerationHelper
                             => TryParse(
                                 name, 
                                 out var value,
-                                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                new 
+            """).Append(enumParseOptions).Append(
+            """
+            (
                                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
                                ? value : ThrowValueNotFound(name);
             """);
@@ -1331,7 +1392,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.Parse, enumParseOptions);
 
         sb.Append(
             """
@@ -1373,7 +1434,10 @@ public static class SourceGenerationHelper
                             => TryParse(
                                 name, 
                                 out var value,
-                                new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                new 
+            """).Append(enumParseOptions).Append(
+            """
+            (
                                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                                     allowMatchingMetadataAttribute: allowMatchingMetadataAttribute))
                                ? value : ThrowValueNotFound(name);
@@ -1401,7 +1465,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None, enumParseOptions);
 
         sb.Append(
             """
@@ -1433,7 +1497,10 @@ public static class SourceGenerationHelper
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
             #endif
                         in global::System.ReadOnlySpan<char> name,
-                        global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                        
+            """).Append(enumParseOptions).Append(
+            """
+             options)
                             => TryParse(
                                 name,
                                 out var value,
@@ -1476,7 +1543,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse, enumParseOptions);
 
         sb.Append(
             """
@@ -1516,7 +1583,10 @@ public static class SourceGenerationHelper
                         => TryParse(
                             name, 
                             out value,
-                            new global::NetEscapades.EnumGenerators.EnumParseOptions());
+                            new 
+            """).Append(enumParseOptions).Append(
+            """
+            ());
             """);
         sb.Append(
             """
@@ -1547,7 +1617,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse, enumParseOptions);
 
         sb.Append(
             """
@@ -1589,7 +1659,10 @@ public static class SourceGenerationHelper
                         => TryParse(
                             name, 
                             out value,
-                            new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                            new 
+            """).Append(enumParseOptions).Append(
+            """
+            (
                                 ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
             """);
 
@@ -1629,7 +1702,7 @@ public static class SourceGenerationHelper
                         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
                 """);
 
-            AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse);
+            AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.TryParse, enumParseOptions);
 
             sb.Append(
                 """
@@ -1677,7 +1750,10 @@ public static class SourceGenerationHelper
                                 => TryParse(
                                     name, 
                                     out result,
-                                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
+                                    new 
+                """).Append(enumParseOptions).Append(
+                """
+                (
                                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal,
                                         allowMatchingMetadataAttribute: allowMatchingMetadataAttribute));
                 """);
@@ -1712,7 +1788,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None);
+        AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None, enumParseOptions);
 
         sb.Append(
             """
@@ -1750,7 +1826,10 @@ public static class SourceGenerationHelper
             """).Append(fullyQualifiedName).Append(
             """
              result,
-                        global::NetEscapades.EnumGenerators.EnumParseOptions options)
+                        
+            """).Append(enumParseOptions).Append(
+            """
+             options)
                     {
             """);
 
@@ -1970,6 +2049,135 @@ public static class SourceGenerationHelper
             """);
         }
 
+        if (!hasRuntimeDependencies)
+        {
+            // Add the runtime dependencies as nested types
+            // These should stay in sync with the types defined in RuntimeDependencies.
+            // We just duplicate the code and don't embed them as resources etc because
+            // otherwise the formatting would be a bit off, which is a bit ugly.
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// Defines the options use when parsing enums using members provided by NetEscapades.EnumGenerator.
+                        /// </summary>
+                        public readonly struct EnumParseOptions
+                        {
+                            private const global::System.StringComparison DefaultComparisonType = global::System.StringComparison.Ordinal;
+                            
+                            private readonly global::System.StringComparison? _comparisonType;
+                            private readonly bool _blockNumberParsing;
+                        
+                            /// <summary>
+                            /// Create an instance of <see cref="EnumParseOptions"/>
+                            /// </summary>
+                            /// <param name="comparisonType">Sets the <see cref="global::System.StringComparison"/> to use during parsing.</param>
+                            /// <param name="allowMatchingMetadataAttribute">Sets whether the value of the selected metadata value attribute
+                            /// values applied to an enum should be used as the parse value for an enum.</param>
+                            /// <param name="enableNumberParsing">Sets a value defining whether numbers should be parsed as a fallback when
+                            /// other parsing fails.</param>
+                            public EnumParseOptions(
+                                global::System.StringComparison comparisonType = DefaultComparisonType,
+                                bool allowMatchingMetadataAttribute = false,
+                                bool enableNumberParsing = true)
+                            {
+                                _comparisonType = comparisonType;
+                                AllowMatchingMetadataAttribute = allowMatchingMetadataAttribute;
+                                _blockNumberParsing = !enableNumberParsing;
+                            }
+                        
+                            /// <summary>
+                            /// Gets or sets the <see cref="global::System.StringComparison"/> to use during parsing.
+                            /// </summary>
+                            /// <remarks>
+                            /// By default, it's set to <see cref="global::System.StringComparison.Ordinal"/>, and a case-sensitive
+                            /// comparison will be used.
+                            /// </remarks>
+                            public global::System.StringComparison ComparisonType => _comparisonType ?? DefaultComparisonType;
+                        
+                            /// <summary>
+                            /// Gets or sets whether the value of the selected metadata value attribute
+                            /// values applied to an enum should be used as the parse value for an enum.
+                            /// </summary>
+                            /// <remarks>
+                            /// By default, it's set to <see langword="false"/>, so the value of any metadata attributes on the
+                            /// enum values are ignored. Set to <see langword="true"/> to enable parsing using the applicable
+                            /// MetadataSource for each enum member.
+                            /// </remarks>
+                            public bool AllowMatchingMetadataAttribute { get; }
+                        
+                            /// <summary>
+                            /// Gets or sets a value defining whether numbers should be parsed as a fallback when
+                            /// other parsing fails. 
+                            /// </summary>
+                            /// <remarks>
+                            /// By default, it's set to <see langword="true"/>, and numbers will be parsed as well as names.
+                            /// </remarks>
+                            public bool EnableNumberParsing => !_blockNumberParsing;
+                        }
+
+                        /// <summary>
+                        /// Options to apply when calling <c>ToStringFast</c> on an enum. 
+                        /// </summary>
+                        public readonly struct SerializationOptions
+                        {
+                            /// <summary>
+                            /// Create an instance of <see cref="SerializationOptions"/>
+                            /// </summary>
+                            /// <param name="useMetadataAttributes">Sets whether the value of any metadata value attribute
+                            /// values applied to an enum should be used in the <c>ToStringFast</c> call.</param>
+                            /// <param name="transform">Sets the <see cref="SerializationTransform"/> to use when serializing the enum value.</param>
+                            public SerializationOptions(
+                                bool useMetadataAttributes = false,
+                                SerializationTransform transform = SerializationTransform.None)
+                            {
+                                UseMetadataAttributes = useMetadataAttributes;
+                                Transform = transform;
+                            }
+                        
+                            /// <summary>
+                            /// Gets whether the value of any metadata attributes applied to an enum member
+                            /// should be used as the <c>ToString()</c> value for the enum.
+                            /// </summary>
+                            /// <remarks>
+                            /// By default, it's set to <see langword="false"/>, so the value of metadata attributes on the
+                            /// enum values are ignored. 
+                            /// </remarks>
+                            public bool UseMetadataAttributes { get; }
+                        
+                            /// <summary>
+                            /// Gets the <see cref="SerializationTransform"/> to use during parsing.
+                            /// </summary>
+                            /// <remarks>
+                            /// By default, it's set to <see cref="SerializationTransform.None"/>, and the value is not transformed. 
+                            /// </remarks>
+                            public SerializationTransform Transform { get; }
+                        }
+
+                        /// <summary>
+                        /// Transform to apply when calling <c>ToStringFast</c> 
+                        /// </summary>
+                        public enum SerializationTransform
+                        {
+                            /// <summary>
+                            /// Don't apply a transform to the <c>ToStringFast()</c> result.
+                            /// </summary>
+                            None,
+                        
+                            /// <summary>
+                            /// Call <see cref="string.ToLowerInvariant"/> on the ToStringFast() result.
+                            /// </summary>
+                            LowerInvariant,
+                        
+                            /// <summary>
+                            /// Call <see cref="string.ToUpperInvariant"/> on the ToStringFast() result.
+                            /// </summary>
+                            UpperInvariant,
+                        }
+                """);
+        }
+
         sb.Append(
             """
 
@@ -2040,7 +2248,7 @@ public static class SourceGenerationHelper
             }
         }
 
-        static void AddSystemMemoryWarning(StringBuilder sb, string fullyQualifiedName, AlternativeMethodChoice alternativeMethodChoice)
+        static void AddSystemMemoryWarning(StringBuilder sb, string fullyQualifiedName, AlternativeMethodChoice alternativeMethodChoice, string enumParseOptions)
         {
             sb.Append(
                 """
@@ -2061,7 +2269,10 @@ public static class SourceGenerationHelper
                         , call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out 
                         """).Append(fullyQualifiedName).Append(
                         """
-                        ,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+                        ,
+                        """).Append(enumParseOptions).Append(
+                        """
+                        )"/>
                                 /// overload, and disable number parsing.</remarks>
 
                         """);
@@ -2070,7 +2281,10 @@ public static class SourceGenerationHelper
                     
                     sb.Append(
                         """
-                        , call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+                        , call the <see cref="Parse(in global::System.ReadOnlySpan{char},
+                        """).Append(enumParseOptions).Append(
+                        """
+                        )"/>
                                 /// overload, and disable number parsing.</remarks>
 
                         """);

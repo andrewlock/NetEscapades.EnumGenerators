@@ -6,6 +6,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
+using NetEscapades.EnumGenerators.RoslynUtils;
+using WellKnownTypes = NetEscapades.EnumGenerators.RoslynUtils.WellKnownTypes;
 
 namespace NetEscapades.EnumGenerators;
 
@@ -17,10 +19,16 @@ public class EnumGenerator : IIncrementalGenerator
         var defaultMetadataSource = context.AnalyzerConfigOptionsProvider
             .Select(GetDefaultConfigurations);
 
-        var csharpVersion = context.CompilationProvider
-            .Select((x, _) => (x as CSharpCompilation)?.LanguageVersion);
+        var compilationDetails = context.CompilationProvider
+            .Select((x, _) =>
+            {
+                var wellKnownTypes = WellKnownTypes.GetOrCreate(x);
+                return ((x as CSharpCompilation)?.LanguageVersion,
+                    HasRuntimeDeps: wellKnownTypes.ExistsInCompilation(WellKnownTypeData.WellKnownType
+                        .NetEscapades_EnumGenerators_EnumParseOptions));
+            });
 
-        var defaults = csharpVersion.Combine(defaultMetadataSource);
+        var defaults = compilationDetails.Combine(defaultMetadataSource);
         
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(TypeNames.EnumExtensionsAttribute,
@@ -79,17 +87,18 @@ public class EnumGenerator : IIncrementalGenerator
 
     static void Execute(
         in EnumToGenerate enumToGenerate,
-        LanguageVersion? langVersion,
+        (LanguageVersion? LanguageVersion, bool HasRuntimeDeps) compilationDetails,
         Tuple<MetadataSource, bool> defaultValues,
         SourceProductionContext context)
     {
-        var useExtensionMembers = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1400; // C#14
-        var useCollectionExpressions = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1200; // C#12
+        var useExtensionMembers = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1400; // C#14
+        var useCollectionExpressions = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1200; // C#12
         var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(
             enumToGenerate: in enumToGenerate,
             useExtensionMembers: useExtensionMembers || defaultValues.Item2, //ForceExtensionMembers
             useCollectionExpressions: useCollectionExpressions,
-            defaultMetadataSource: defaultValues.Item1);
+            defaultMetadataSource: defaultValues.Item1,
+            hasRuntimeDependencies: compilationDetails.HasRuntimeDeps);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
