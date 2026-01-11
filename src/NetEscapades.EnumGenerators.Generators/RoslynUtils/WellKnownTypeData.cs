@@ -13,7 +13,7 @@ internal static class WellKnownTypeData
         NetEscapades_EnumGenerators_EnumParseOptions,
     }
 
-    public static string[] WellKnownTypeNames =
+    public static readonly string[] WellKnownTypeNames =
     [
         "NetEscapades.EnumGenerators.EnumParseOptions",
     ];
