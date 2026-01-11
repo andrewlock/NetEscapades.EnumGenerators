@@ -3,6 +3,8 @@ using Xunit;
 
 #if INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.IntegrationTests;
+#elif PRIVATEASSETS_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests;
 #elif NETSTANDARD_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.NetStandard.IntegrationTests;
 #elif NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS
