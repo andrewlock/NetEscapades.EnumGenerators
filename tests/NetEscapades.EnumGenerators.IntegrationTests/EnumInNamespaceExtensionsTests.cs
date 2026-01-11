@@ -1,6 +1,20 @@
 using System;
 using Xunit;
 
+#if PRIVATEASSETS_INTEGRATION_TESTS
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.EnumInNamespaceExtensions.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.EnumInNamespaceExtensions.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.EnumInNamespaceExtensions.SerializationTransform;
+#elif NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.EnumInNamespaceExtensions.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.EnumInNamespaceExtensions.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.EnumInNamespaceExtensions.SerializationTransform;
+#else
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.SerializationTransform;
+#endif
+
 #if INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.IntegrationTests;
 #elif PRIVATEASSETS_INTEGRATION_TESTS
@@ -56,7 +70,7 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace, in
 
     protected override string ToStringFast(EnumInNamespace value) => value.ToStringFast();
     protected override string ToStringFast(EnumInNamespace value, bool withMetadata) => value.ToStringFast(withMetadata);
-    protected override string ToStringFast(EnumInNamespace value, SerializationOptions options) => value.ToStringFast(options);
+    protected override string ToStringFast(EnumInNamespace value, SerializationOptions options) => value.ToStringFast(Map(options));
     protected override bool IsDefined(EnumInNamespace value) => EnumInNamespaceExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumInNamespaceExtensions.IsDefined(name, allowMatchingMetadataAttribute);
 #if READONLYSPAN
@@ -69,10 +83,10 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace, in
         => EnumInNamespaceExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
     protected override bool TryParse(string name, out EnumInNamespace parsed, EnumParseOptions parseOptions)
-        => EnumInNamespaceExtensions.TryParse(name, out parsed, parseOptions);
+        => EnumInNamespaceExtensions.TryParse(name, out parsed, Map(parseOptions));
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumInNamespace parsed, EnumParseOptions parseOptions)
-        => EnumInNamespaceExtensions.TryParse(name, out parsed, parseOptions);
+        => EnumInNamespaceExtensions.TryParse(name, out parsed, Map(parseOptions));
 #endif
 
     protected override EnumInNamespace Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
@@ -82,9 +96,27 @@ public class EnumInNamespaceExtensionsTests : ExtensionTests<EnumInNamespace, in
         => EnumInNamespaceExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #endif
     protected override EnumInNamespace Parse(string name, EnumParseOptions parseOptions)
-        => EnumInNamespaceExtensions.Parse(name, parseOptions);
+        => EnumInNamespaceExtensions.Parse(name, Map(parseOptions));
 #if READONLYSPAN
     protected override EnumInNamespace Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
-        => EnumInNamespaceExtensions.Parse(name, parseOptions);
+        => EnumInNamespaceExtensions.Parse(name, Map(parseOptions));
 #endif
+    
+    private PackageEnumParseOptions Map(EnumParseOptions options)
+        => new(comparisonType: options.ComparisonType,
+            allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,
+            enableNumberParsing: options.EnableNumberParsing);
+
+    private PackageSerializationOptions Map(SerializationOptions options)
+        => new(useMetadataAttributes: options.UseMetadataAttributes,
+            transform: Map(options.Transform));
+
+    private PackageSerializationTransform Map(SerializationTransform options)
+        => options switch
+        {
+            SerializationTransform.LowerInvariant => PackageSerializationTransform.LowerInvariant,
+            SerializationTransform.UpperInvariant => PackageSerializationTransform.UpperInvariant,
+            SerializationTransform.None => PackageSerializationTransform.None,
+            _ => throw new InvalidOperationException("Unknown options type " + options),
+        };
 }

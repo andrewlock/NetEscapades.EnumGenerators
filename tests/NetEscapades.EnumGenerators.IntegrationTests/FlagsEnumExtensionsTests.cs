@@ -4,6 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
+#if PRIVATEASSETS_INTEGRATION_TESTS
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.FlagsEnumExtensions.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.FlagsEnumExtensions.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.FlagsEnumExtensions.SerializationTransform;
+#elif NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.FlagsEnumExtensions.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.FlagsEnumExtensions.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.FlagsEnumExtensions.SerializationTransform;
+#else
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.SerializationTransform;
+#endif
+
 #if INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.IntegrationTests;
 #elif PRIVATEASSETS_INTEGRATION_TESTS
@@ -67,7 +81,7 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
 
     protected override string ToStringFast(FlagsEnum value) => value.ToStringFast();
     protected override string ToStringFast(FlagsEnum value, bool withMetadata) => value.ToStringFast(withMetadata);
-    protected override string ToStringFast(FlagsEnum value, SerializationOptions options) => value.ToStringFast(options);
+    protected override string ToStringFast(FlagsEnum value, SerializationOptions options) => value.ToStringFast(Map(options));
     protected override bool IsDefined(FlagsEnum value) => FlagsEnumExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => FlagsEnumExtensions.IsDefined(name, allowMatchingMetadataAttribute: false);
 #if READONLYSPAN
@@ -80,10 +94,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
         => FlagsEnumExtensions.TryParse(name, out parsed, ignoreCase, allowMatchingMetadataAttribute);
 #endif
     protected override bool TryParse(string name, out FlagsEnum parsed, EnumParseOptions parseOptions)
-        => FlagsEnumExtensions.TryParse(name, out parsed, parseOptions);
+        => FlagsEnumExtensions.TryParse(name, out parsed, Map(parseOptions));
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out FlagsEnum parsed, EnumParseOptions parseOptions)
-        => FlagsEnumExtensions.TryParse(name, out parsed, parseOptions);
+        => FlagsEnumExtensions.TryParse(name, out parsed, Map(parseOptions));
 #endif
 
     protected override FlagsEnum Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
@@ -93,10 +107,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
         => FlagsEnumExtensions.Parse(name, ignoreCase, allowMatchingMetadataAttribute);
 #endif
     protected override FlagsEnum Parse(string name, EnumParseOptions parseOptions)
-        => FlagsEnumExtensions.Parse(name, parseOptions);
+        => FlagsEnumExtensions.Parse(name, Map(parseOptions));
 #if READONLYSPAN
     protected override FlagsEnum Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
-        => FlagsEnumExtensions.Parse(name, parseOptions);
+        => FlagsEnumExtensions.Parse(name, Map(parseOptions));
 #endif
 
     public static IEnumerable<object[]> AllFlags()
@@ -125,4 +139,22 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
 
         isDefined.Should().Be(value.HasFlag(flag));
     }
+    
+    private PackageEnumParseOptions Map(EnumParseOptions options)
+        => new(comparisonType: options.ComparisonType,
+            allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,
+            enableNumberParsing: options.EnableNumberParsing);
+
+    private PackageSerializationOptions Map(SerializationOptions options)
+        => new(useMetadataAttributes: options.UseMetadataAttributes,
+            transform: Map(options.Transform));
+
+    private PackageSerializationTransform Map(SerializationTransform options)
+        => options switch
+        {
+            SerializationTransform.LowerInvariant => PackageSerializationTransform.LowerInvariant,
+            SerializationTransform.UpperInvariant => PackageSerializationTransform.UpperInvariant,
+            SerializationTransform.None => PackageSerializationTransform.None,
+            _ => throw new InvalidOperationException("Unknown options type " + options),
+        };
 }

@@ -647,6 +647,51 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
 
         return false;
     }
+
+    // These are defined here so that we can test both the runtime and "nested" versions by mapping the tests
+    public readonly struct EnumParseOptions
+    {
+        private const global::System.StringComparison DefaultComparisonType = global::System.StringComparison.Ordinal;
+
+        private readonly global::System.StringComparison? _comparisonType;
+        private readonly bool _blockNumberParsing;
+
+        public EnumParseOptions(
+            global::System.StringComparison comparisonType = DefaultComparisonType,
+            bool allowMatchingMetadataAttribute = false,
+            bool enableNumberParsing = true)
+        {
+            _comparisonType = comparisonType;
+            AllowMatchingMetadataAttribute = allowMatchingMetadataAttribute;
+            _blockNumberParsing = !enableNumberParsing;
+        }
+
+        public global::System.StringComparison ComparisonType => _comparisonType ?? DefaultComparisonType;
+        public bool AllowMatchingMetadataAttribute { get; }
+        public bool EnableNumberParsing => !_blockNumberParsing;
+    }
+
+    public enum SerializationTransform
+    {
+        None,
+        LowerInvariant,
+        UpperInvariant,
+    }
+
+    public readonly struct SerializationOptions
+    {
+        public SerializationOptions(
+            bool useMetadataAttributes = false,
+            SerializationTransform transform = SerializationTransform.None)
+        {
+            UseMetadataAttributes = useMetadataAttributes;
+            Transform = transform;
+        }
+
+        public bool UseMetadataAttributes { get; }
+
+        public SerializationTransform Transform { get; }
+    }
 }
 
 public interface ITestData<TEnum>

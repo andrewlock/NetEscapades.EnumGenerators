@@ -2,6 +2,12 @@ using System;
 using FluentAssertions;
 using Xunit;
 
+
+#if PRIVATEASSETS_INTEGRATION_TESTS || NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS
+using SerializationOptions = Foo.EnumInFooExtensions.SerializationOptions;
+using SerializationTransform = Foo.EnumInFooExtensions.SerializationTransform;
+#endif
+
 namespace NetEscapades.EnumGenerators.IntegrationTests;
 
 public class SerializationOptionsTests

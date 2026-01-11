@@ -1,6 +1,22 @@
 using System;
 using Xunit;
 
+
+#if PRIVATEASSETS_INTEGRATION_TESTS
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.EnumWithNoMetadataSourcesExtensions.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.EnumWithNoMetadataSourcesExtensions.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests.EnumWithNoMetadataSourcesExtensions.SerializationTransform;
+#elif NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.EnumWithNoMetadataSourcesExtensions.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.EnumWithNoMetadataSourcesExtensions.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests.EnumWithNoMetadataSourcesExtensions.SerializationTransform;
+#else
+using PackageEnumParseOptions = NetEscapades.EnumGenerators.EnumParseOptions;
+using PackageSerializationOptions = NetEscapades.EnumGenerators.SerializationOptions;
+using PackageSerializationTransform = NetEscapades.EnumGenerators.SerializationTransform;
+#endif
+
+
 #if INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.IntegrationTests;
 #elif PRIVATEASSETS_INTEGRATION_TESTS
@@ -58,7 +74,7 @@ public class EnumWithNoMetadataSourcesInNamespaceExtensionsTests : ExtensionTest
     // Can't call the "withMetadata" versions of all these
     protected override string ToStringFast(EnumWithNoMetadataSources value) => value.ToStringFast();
     protected override string ToStringFast(EnumWithNoMetadataSources value, bool withMetadata) => value.ToStringFast();
-    protected override string ToStringFast(EnumWithNoMetadataSources value, SerializationOptions options) => value.ToStringFast(options);
+    protected override string ToStringFast(EnumWithNoMetadataSources value, SerializationOptions options) => value.ToStringFast(Map(options));
     protected override bool IsDefined(EnumWithNoMetadataSources value) => EnumWithNoMetadataSourcesExtensions.IsDefined(value);
     protected override bool IsDefined(string name, bool allowMatchingMetadataAttribute) => EnumWithNoMetadataSourcesExtensions.IsDefined(name);
 #if READONLYSPAN
@@ -71,10 +87,10 @@ public class EnumWithNoMetadataSourcesInNamespaceExtensionsTests : ExtensionTest
         => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, ignoreCase);
 #endif
     protected override bool TryParse(string name, out EnumWithNoMetadataSources parsed, EnumParseOptions parseOptions)
-        => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, parseOptions);
+        => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, Map(parseOptions));
 #if READONLYSPAN
     protected override bool TryParse(in ReadOnlySpan<char> name, out EnumWithNoMetadataSources parsed, EnumParseOptions parseOptions)
-        => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, parseOptions);
+        => EnumWithNoMetadataSourcesExtensions.TryParse(name, out parsed, Map(parseOptions));
 #endif
 
     protected override EnumWithNoMetadataSources Parse(string name, bool ignoreCase, bool allowMatchingMetadataAttribute)
@@ -84,10 +100,10 @@ public class EnumWithNoMetadataSourcesInNamespaceExtensionsTests : ExtensionTest
         => EnumWithNoMetadataSourcesExtensions.Parse(name, ignoreCase);
 #endif
     protected override EnumWithNoMetadataSources Parse(string name, EnumParseOptions parseOptions)
-        => EnumWithNoMetadataSourcesExtensions.Parse(name, parseOptions);
+        => EnumWithNoMetadataSourcesExtensions.Parse(name, Map(parseOptions));
 #if READONLYSPAN
     protected override EnumWithNoMetadataSources Parse(in ReadOnlySpan<char> name, EnumParseOptions parseOptions)
-        => EnumWithNoMetadataSourcesExtensions.Parse(name, parseOptions);
+        => EnumWithNoMetadataSourcesExtensions.Parse(name, Map(parseOptions));
 #endif
 
     protected override bool TryGetDisplayNameOrDescription(
@@ -102,4 +118,22 @@ public class EnumWithNoMetadataSourcesInNamespaceExtensionsTests : ExtensionTest
         displayName = null;
         return false;
     }
+    
+    private PackageEnumParseOptions Map(EnumParseOptions options)
+        => new(comparisonType: options.ComparisonType,
+            allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,
+            enableNumberParsing: options.EnableNumberParsing);
+
+    private PackageSerializationOptions Map(SerializationOptions options)
+        => new(useMetadataAttributes: options.UseMetadataAttributes,
+            transform: Map(options.Transform));
+
+    private PackageSerializationTransform Map(SerializationTransform options)
+        => options switch
+        {
+            SerializationTransform.LowerInvariant => PackageSerializationTransform.LowerInvariant,
+            SerializationTransform.UpperInvariant => PackageSerializationTransform.UpperInvariant,
+            SerializationTransform.None => PackageSerializationTransform.None,
+            _ => throw new InvalidOperationException("Unknown options type " + options),
+        };
 }
