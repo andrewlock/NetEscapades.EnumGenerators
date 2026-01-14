@@ -1,5 +1,3 @@
-using System;
-
 namespace NetEscapades.EnumGenerators;
 
 /// <summary>
@@ -7,13 +5,13 @@ namespace NetEscapades.EnumGenerators;
 /// </summary>
 public readonly struct EnumParseOptions
 {
-    private const StringComparison DefaultComparisonType = StringComparison.Ordinal;
+    private const global::System.StringComparison DefaultComparisonType = global::System.StringComparison.Ordinal;
     
-    private readonly StringComparison? _comparisonType;
+    private readonly global::System.StringComparison? _comparisonType;
     private readonly bool _blockNumberParsing;
 
     /// <summary>
-    /// Create an instance of <see cref="global::NetEscapades.EnumGenerators.EnumParseOptions"/>
+    /// Create an instance of <see cref="EnumParseOptions"/>
     /// </summary>
     /// <param name="comparisonType">Sets the <see cref="global::System.StringComparison"/> to use during parsing.</param>
     /// <param name="allowMatchingMetadataAttribute">Sets whether the value of the selected metadata value attribute
@@ -21,7 +19,7 @@ public readonly struct EnumParseOptions
     /// <param name="enableNumberParsing">Sets a value defining whether numbers should be parsed as a fallback when
     /// other parsing fails.</param>
     public EnumParseOptions(
-        StringComparison comparisonType = DefaultComparisonType,
+        global::System.StringComparison comparisonType = DefaultComparisonType,
         bool allowMatchingMetadataAttribute = false,
         bool enableNumberParsing = true)
     {
@@ -37,7 +35,7 @@ public readonly struct EnumParseOptions
     /// By default, it's set to <see cref="global::System.StringComparison.Ordinal"/>, and a case-sensitive
     /// comparison will be used.
     /// </remarks>
-    public StringComparison ComparisonType => _comparisonType ?? DefaultComparisonType;
+    public global::System.StringComparison ComparisonType => _comparisonType ?? DefaultComparisonType;
 
     /// <summary>
     /// Gets or sets whether the value of the selected metadata value attribute
@@ -46,7 +44,7 @@ public readonly struct EnumParseOptions
     /// <remarks>
     /// By default, it's set to <see langword="false"/>, so the value of any metadata attributes on the
     /// enum values are ignored. Set to <see langword="true"/> to enable parsing using the applicable
-    /// <see cref="global::NetEscapades.EnumGenerators.MetadataSource"/> for each enum member.
+    /// MetadataSource for each enum member.
     /// </remarks>
     public bool AllowMatchingMetadataAttribute { get; }
 

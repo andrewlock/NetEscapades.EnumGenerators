@@ -9,9 +9,9 @@ public static class AnalyzerHelpers
     public static (INamedTypeSymbol? enumExtensionsAttr, ExternalEnumDictionary? externalEnumTypes) GetEnumExtensionAttributes(Compilation compilation)
     {
         var enumExtensionsAttr =
-            compilation.GetBestTypeByMetadataName(Attributes.EnumExtensionsAttribute);
+            compilation.GetBestTypeByMetadataName(TypeNames.EnumExtensionsAttribute);
         var externalEnumExtensionsAttr =
-            compilation.GetBestTypeByMetadataName(Attributes.ExternalEnumExtensionsAttribute);
+            compilation.GetBestTypeByMetadataName(TypeNames.ExternalEnumExtensionsAttribute);
 
         if (enumExtensionsAttr is null)
         {

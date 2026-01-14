@@ -6,6 +6,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Microsoft.CodeAnalysis.Text;
+using NetEscapades.EnumGenerators.RoslynUtils;
+using WellKnownTypes = NetEscapades.EnumGenerators.RoslynUtils.WellKnownTypes;
 
 namespace NetEscapades.EnumGenerators;
 
@@ -17,13 +19,19 @@ public class EnumGenerator : IIncrementalGenerator
         var defaultMetadataSource = context.AnalyzerConfigOptionsProvider
             .Select(GetDefaultConfigurations);
 
-        var csharpVersion = context.CompilationProvider
-            .Select((x, _) => (x as CSharpCompilation)?.LanguageVersion);
+        var compilationDetails = context.CompilationProvider
+            .Select((x, _) =>
+            {
+                var wellKnownTypes = WellKnownTypes.GetOrCreate(x);
+                return ((x as CSharpCompilation)?.LanguageVersion,
+                    HasRuntimeDeps: wellKnownTypes.ExistsInCompilation(WellKnownTypeData.WellKnownType
+                        .NetEscapades_EnumGenerators_EnumParseOptions));
+            });
 
-        var defaults = csharpVersion.Combine(defaultMetadataSource);
+        var defaults = compilationDetails.Combine(defaultMetadataSource);
         
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
-            .ForAttributeWithMetadataName(Attributes.EnumExtensionsAttribute,
+            .ForAttributeWithMetadataName(TypeNames.EnumExtensionsAttribute,
                 predicate: static (node, _) => node is EnumDeclarationSyntax,
                 transform: GetTypeToGenerate)
             .WithTrackingName(TrackingNames.InitialExtraction)
@@ -33,7 +41,7 @@ public class EnumGenerator : IIncrementalGenerator
 
         IncrementalValuesProvider<EnumToGenerate> externalEnums = context
             .SyntaxProvider
-            .ForAttributeWithMetadataName(Attributes.ExternalEnumExtensionsAttribute,
+            .ForAttributeWithMetadataName(TypeNames.ExternalEnumExtensionsAttribute,
                 predicate: static (node, _) => node is CompilationUnitSyntax,
                 transform: static (context1, ct) => GetEnumToGenerateFromGenericAssemblyAttribute(context1, ct, "EnumExtensionsAttribute", "EnumExtensions"))
             .Where(static m => m is not null)
@@ -79,17 +87,18 @@ public class EnumGenerator : IIncrementalGenerator
 
     static void Execute(
         in EnumToGenerate enumToGenerate,
-        LanguageVersion? langVersion,
+        (LanguageVersion? LanguageVersion, bool HasRuntimeDeps) compilationDetails,
         Tuple<MetadataSource, bool> defaultValues,
         SourceProductionContext context)
     {
-        var useExtensionMembers = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1400; // C#14
-        var useCollectionExpressions = langVersion != LanguageVersion.Preview && langVersion >= (LanguageVersion)1200; // C#12
+        var useExtensionMembers = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1400; // C#14
+        var useCollectionExpressions = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1200; // C#12
         var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(
             enumToGenerate: in enumToGenerate,
             useExtensionMembers: useExtensionMembers || defaultValues.Item2, //ForceExtensionMembers
             useCollectionExpressions: useCollectionExpressions,
-            defaultMetadataSource: defaultValues.Item1);
+            defaultMetadataSource: defaultValues.Item1,
+            hasRuntimeDependencies: compilationDetails.HasRuntimeDeps);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
@@ -145,7 +154,7 @@ public class EnumGenerator : IIncrementalGenerator
             {
                 if ((attrData.AttributeClass?.Name == "FlagsAttribute" ||
                      attrData.AttributeClass?.Name == "Flags") &&
-                    attrData.AttributeClass.ToDisplayString() == Attributes.FlagsAttribute)
+                    attrData.AttributeClass.ToDisplayString() == TypeNames.FlagsAttribute)
                 {
                     hasFlags = true;
                     break;
@@ -191,7 +200,7 @@ public class EnumGenerator : IIncrementalGenerator
         {
             if ((attributeData.AttributeClass?.Name == "FlagsAttribute" ||
                  attributeData.AttributeClass?.Name == "Flags") &&
-                attributeData.AttributeClass.ToDisplayString() == Attributes.FlagsAttribute)
+                attributeData.AttributeClass.ToDisplayString() == TypeNames.FlagsAttribute)
             {
                 hasFlags = true;
                 continue;
@@ -210,7 +219,7 @@ public class EnumGenerator : IIncrementalGenerator
         ref MetadataSource? source)
     {
         if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
-            attributeData.AttributeClass.ToDisplayString() != Attributes.EnumExtensionsAttribute)
+            attributeData.AttributeClass.ToDisplayString() != TypeNames.EnumExtensionsAttribute)
         {
             return false;
         }
@@ -275,7 +284,7 @@ public class EnumGenerator : IIncrementalGenerator
             foreach (var attribute in member.GetAttributes())
             {
                 if (attribute.AttributeClass?.Name == "DisplayAttribute" &&
-                    attribute.AttributeClass.ToDisplayString() == Attributes.DisplayAttribute)
+                    attribute.AttributeClass.ToDisplayString() == TypeNames.DisplayAttribute)
                 {
                     foreach (var namedArgument in attribute.NamedArguments)
                     {
@@ -287,7 +296,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
                 
                 if (attribute.AttributeClass?.Name == "DescriptionAttribute" 
-                    && attribute.AttributeClass.ToDisplayString() == Attributes.DescriptionAttribute
+                    && attribute.AttributeClass.ToDisplayString() == TypeNames.DescriptionAttribute
                     && attribute.ConstructorArguments.Length == 1)
                 {
                     if (attribute.ConstructorArguments[0].Value?.ToString() is { } dn)
@@ -297,7 +306,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
 
                 if (attribute.AttributeClass?.Name == "EnumMemberAttribute" &&
-                    attribute.AttributeClass.ToDisplayString() == Attributes.EnumMemberAttribute)
+                    attribute.AttributeClass.ToDisplayString() == TypeNames.EnumMemberAttribute)
                 {
                     foreach (var namedArgument in attribute.NamedArguments)
                     {

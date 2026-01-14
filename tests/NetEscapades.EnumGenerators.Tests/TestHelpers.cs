@@ -119,6 +119,7 @@ internal static class TestHelpers
                 ..generators.Select(x=> MetadataReference.CreateFromFile(x.GetType().Assembly.Location)),
                 MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.EnumGenerator).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.Interceptors.InterceptorGenerator).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(NetEscapades.EnumGenerators.SerializationOptions).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(EnumExtensionsAttribute).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(InterceptableAttribute<>).Assembly.Location),
                 MetadataReference.CreateFromFile(typeof(System.ComponentModel.DescriptionAttribute).Assembly.Location),

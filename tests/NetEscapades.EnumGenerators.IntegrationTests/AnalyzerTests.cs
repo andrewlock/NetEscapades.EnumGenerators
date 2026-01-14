@@ -5,6 +5,8 @@ using Xunit;
 
 #if INTEGRATION_TESTS
 using NetEscapades.EnumGenerators.IntegrationTests;
+#elif PRIVATEASSETS_INTEGRATION_TESTS
+using NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests;
 #elif NETSTANDARD_INTEGRATION_TESTS
 using NetEscapades.EnumGenerators.NetStandard.IntegrationTests;
 #elif NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS
@@ -19,6 +21,8 @@ using NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests;
 using NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests;
 #elif NUGET_SYSTEMMEMORY_INTEGRATION_TESTS
 using NetEscapades.EnumGenerators.Nuget.SystemMemory.IntegrationTests;
+#elif NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS
+using NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests;
 #else
 #error Unknown integration tests
 #endif

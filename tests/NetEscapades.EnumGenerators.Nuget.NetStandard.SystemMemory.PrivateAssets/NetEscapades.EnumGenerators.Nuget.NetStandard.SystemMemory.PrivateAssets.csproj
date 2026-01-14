@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
-    <DefineConstants>$(DefineConstants);NETSTANDARD_INTEGRATION_TESTS</DefineConstants>
+    <DefineConstants>$(DefineConstants);NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS</DefineConstants>
 
     <!-- Enable as many warnings as we can so we check the generated code -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -20,12 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.RuntimeDependencies\NetEscapades.EnumGenerators.RuntimeDependencies.csproj" />
-    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Generators\NetEscapades.EnumGenerators.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\..\src\NetEscapades.EnumGenerators.Attributes\NetEscapades.EnumGenerators.Attributes.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="$(Version)" PrivateAssets="All" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <ProjectReference Include="..\Dependencies.SystemMemory\Dependencies.SystemMemory.csproj" />
   </ItemGroup>
 </Project>

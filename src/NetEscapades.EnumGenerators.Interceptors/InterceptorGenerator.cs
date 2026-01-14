@@ -15,7 +15,7 @@ public class InterceptorGenerator : IIncrementalGenerator
     {
         IncrementalValuesProvider<EnumToIntercept> enumsToIntercept = context.SyntaxProvider
             .ForAttributeWithMetadataName(
-                Attributes.EnumExtensionsAttribute,
+                TypeNames.EnumExtensionsAttribute,
                 predicate: static (node, _) => node is EnumDeclarationSyntax,
                 transform: GetInterceptableEnum)
             .WithTrackingName(TrackingNames.InitialExtraction)
@@ -26,7 +26,7 @@ public class InterceptorGenerator : IIncrementalGenerator
         IncrementalValuesProvider<EnumToIntercept> externalEnums = context
             .SyntaxProvider
             .ForAttributeWithMetadataName(
-                Attributes.ExternalEnumExtensionsAttribute,
+                TypeNames.ExternalEnumExtensionsAttribute,
                 predicate: static (node, _) => node is CompilationUnitSyntax,
                 transform: static (ctx, ct) => GetEnumToInterceptFromAssemblyAttribute(
                     ctx, ct, "EnumExtensionsAttribute", "EnumExtensions"))
@@ -183,7 +183,7 @@ public class InterceptorGenerator : IIncrementalGenerator
         foreach (AttributeData attributeData in enumSymbol.GetAttributes())
         {
             if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
-                attributeData.AttributeClass.ToDisplayString() != Attributes.EnumExtensionsAttribute)
+                attributeData.AttributeClass.ToDisplayString() != TypeNames.EnumExtensionsAttribute)
             {
                 continue;
             }

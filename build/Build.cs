@@ -113,12 +113,15 @@ class Build : NukeBuild
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_Interceptors_IntegrationTests.Path,
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_NetStandard_Interceptors_IntegrationTests.Path,
                 Solution.tests.NetEscapades_EnumGenerators_Nuget_NetStandard_SystemMemory_IntegrationTests.Path,
+                Solution.tests.NetEscapades_EnumGenerators_Nuget_NetStandard_SystemMemory_PrivateAssets_IntegrationTests.Path,
             };
 
             if (!string.IsNullOrEmpty(PackagesDirectory))
             {
                 (PackagesDirectory / "netescapades.enumgenerators").DeleteDirectory();
+                (PackagesDirectory / "netescapades.enumgenerators.generators").DeleteDirectory();
                 (PackagesDirectory / "netescapades.enumgenerators.attributes").DeleteDirectory();
+                (PackagesDirectory / "netescapades.enumgenerators.runtimedependencies").DeleteDirectory();
                 (PackagesDirectory / "netescapades.enumgenerators.interceptors").DeleteDirectory();
                 (PackagesDirectory / "netescapades.enumgenerators.interceptors.attributes").DeleteDirectory();
             }

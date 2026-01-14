@@ -47,7 +47,7 @@ public class EnumInGenericTypeAnalyzer : DiagnosticAnalyzer
                     // Verify with semantic model if needed for precision
                     var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
                     if (symbolInfo.Symbol is IMethodSymbol method &&
-                        method.ContainingType.ToDisplayString() == Attributes.EnumExtensionsAttribute)
+                        method.ContainingType.ToDisplayString() == TypeNames.EnumExtensionsAttribute)
                     {
                         enumExtensionsAttribute = attribute;
                         break;

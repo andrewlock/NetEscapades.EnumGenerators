@@ -3,11 +3,11 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
-    <DefineConstants>$(DefineConstants);NUGET_SYSTEMMEMORY_INTEGRATION_TESTS;READONLYSPAN</DefineConstants>
+    <DefineConstants>$(DefineConstants);NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS;READONLYSPAN</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetEscapades.EnumGenerators.Nuget.NetStandard.SystemMemory\NetEscapades.EnumGenerators.Nuget.NetStandard.SystemMemory.csproj" />
+    <ProjectReference Include="..\NetEscapades.EnumGenerators.Nuget.NetStandard.SystemMemory.PrivateAssets\NetEscapades.EnumGenerators.Nuget.NetStandard.SystemMemory.PrivateAssets.csproj" />
   </ItemGroup>
 
   <ItemGroup>

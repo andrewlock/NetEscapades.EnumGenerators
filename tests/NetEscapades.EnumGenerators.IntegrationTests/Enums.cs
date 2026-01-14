@@ -59,6 +59,8 @@ namespace Foo
 
 #if INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.IntegrationTests
+#elif PRIVATEASSETS_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.PrivateAssets.IntegrationTests
 #elif NETSTANDARD_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.NetStandard.IntegrationTests
 #elif NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS
@@ -73,6 +75,8 @@ namespace NetEscapades.EnumGenerators.Nuget.Interceptors.IntegrationTests
 namespace NetEscapades.EnumGenerators.Nuget.NetStandard.Interceptors.IntegrationTests
 #elif NUGET_SYSTEMMEMORY_INTEGRATION_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.SystemMemory.IntegrationTests
+#elif NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS
+namespace NetEscapades.EnumGenerators.Nuget.SystemMemory.PrivateAssets.IntegrationTests
 #elif NUGET_ANALYZER_TESTS
 namespace NetEscapades.EnumGenerators.Nuget.AnalyzerTests
 #else
