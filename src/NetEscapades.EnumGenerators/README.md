@@ -460,7 +460,7 @@ These packages provide the following functionality:
 - `NetEscapades.EnumGenerators.Generators` contains the source generator itself.
 - `NetEscapades.EnumGenerators.RuntimeDependencies` contains dependencies that need to be referenced at runtime by the generated code.
 
-The default approach is to reference the meta-package in your project. The runtime dependencies and generator packages will then flow transitively to any project that references yours, though the generator will _not_ run on those projects by default.
+The default approach is to reference the meta-package in your project. The runtime dependencies and generator packages will then flow transitively to any project that references yours, and the generator will run in those projects by default.
 
 ### Avoiding runtime dependencies
 
@@ -533,7 +533,7 @@ Generating the runtime dependencies as nested types has both upsides and downsid
 
 ### Choosing the correct packages for your scenario
 
-In general, we recommend referencing [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators), and thereby using [NetEscapades.EnumGenerators.RuntimeDependencies](https://www.nuget.org/packages/NetEscapades.EnumGenerators.RuntimeDependencies). This particularly makes sense when you are the primary consumer of the extension methods, or where the generated extension methods form part of your public API.
+In general, for simplicity, we recommend referencing [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators), and thereby using [NetEscapades.EnumGenerators.RuntimeDependencies](https://www.nuget.org/packages/NetEscapades.EnumGenerators.RuntimeDependencies). This particularly makes sense when you are the primary consumer of the extension methods, or where you don't mind if consumers end up referencing the generator package.
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -559,7 +559,7 @@ In contrast, if you are producing a reusable library and don't want any runtime 
 </Project>
 ```
 
-The final option is to reference [NetEscapades.EnumGenerators.Generators](https://www.nuget.org/packages/NetEscapades.EnumGenerators.Generators) and set `PrivateAssets=All` (to avoid it being referenced transitively), and then also referencing [NetEscapades.EnumGenerators.RuntimeDependencies](https://www.nuget.org/packages/NetEscapades.EnumGenerators.RuntimeDependencies), to produce easier-to consume APIs.
+The final option is to reference [NetEscapades.EnumGenerators.Generators](https://www.nuget.org/packages/NetEscapades.EnumGenerators.Generators) and set `PrivateAssets=All` and `ExcludeAssets="runtime"` (to avoid it being referenced transitively), but then also reference [NetEscapades.EnumGenerators.RuntimeDependencies](https://www.nuget.org/packages/NetEscapades.EnumGenerators.RuntimeDependencies), to produce easier-to consume APIs.
 
 
 ```xml
