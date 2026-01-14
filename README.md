@@ -444,7 +444,7 @@ Generating the runtime dependencies as nested types has both upsides and downsid
 
 ### Choosing the correct packages for your scenario
 
-In general, for simplicity, we recommend referencing [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators), and thereby using [NetEscapades.EnumGenerators.RuntimeDependencies](https://www.nuget.org/packages/NetEscapades.EnumGenerators.RuntimeDependencies). This particularly makes sense when you are the primary consumer of the extension methods, or where you don't mind if consumers end up referencing the generator package
+In general, for simplicity, we recommend referencing [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators), and thereby using [NetEscapades.EnumGenerators.RuntimeDependencies](https://www.nuget.org/packages/NetEscapades.EnumGenerators.RuntimeDependencies). This particularly makes sense when you are the primary consumer of the extension methods, or where you don't mind if consumers end up referencing the generator package.
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
