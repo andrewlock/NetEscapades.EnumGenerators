@@ -303,7 +303,45 @@ You can set the default metadata source to use for a whole project by setting th
 </PropertyGroup>
 ```
 
-You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
+You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. 
+
+### Controlling extension accessibility
+
+By default, the generated extension class is `public` if the enum is `public`, and `internal` if the enum is `internal`. You can control the accessibility of the generated extension classes in two ways:
+
+**Global Configuration (MSBuild Property):**
+
+Set the `EnumGenerator_ExtensionAccessibility` property in your project file to control the default accessibility for all generated extensions:
+
+```xml
+<PropertyGroup>
+  <!-- Make all generated extension classes internal by default -->
+  <EnumGenerator_ExtensionAccessibility>Internal</EnumGenerator_ExtensionAccessibility>
+</PropertyGroup>
+```
+
+Valid values are:
+- `Public` (default): Generated extensions are `public` for `public` enums
+- `Internal`: Generated extensions are `internal` even for `public` enums
+
+**Per-Enum Configuration:**
+
+You can override the global setting for individual enums using the `IsInternal` property on the `[EnumExtensions]` attribute:
+
+```csharp
+// Force this enum's extensions to be internal, even if global setting is Public
+[EnumExtensions(IsInternal = true)]
+public enum MyEnum { ... }
+
+// Force this enum's extensions to be public (if enum is public), even if global setting is Internal
+[EnumExtensions(IsInternal = false)]
+public enum MyOtherEnum { ... }
+```
+
+**Important Rules:**
+- Internal enums always generate internal extensions, regardless of configuration
+- The per-enum `IsInternal` setting takes precedence over the global MSBuild property
+- External enums (referenced via `[EnumExtensions<T>]`) also support the `IsInternal` property
 
 ## Usage Analyzers
 

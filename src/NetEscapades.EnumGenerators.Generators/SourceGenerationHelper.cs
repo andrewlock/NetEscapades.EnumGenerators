@@ -24,7 +24,8 @@ public static class SourceGenerationHelper
         bool useExtensionMembers,
         bool useCollectionExpressions,
         MetadataSource defaultMetadataSource,
-        bool hasRuntimeDependencies)
+        bool hasRuntimeDependencies,
+        bool isInternal = false)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
@@ -82,7 +83,7 @@ public static class SourceGenerationHelper
             """
             ")]
                 
-            """).Append(enumToGenerate.IsPublic ? "public" : "internal").Append(" static partial class ")
+            """).Append(isInternal ? "internal" : "public").Append(" static partial class ")
             .Append(enumToGenerate.Name).Append(
             """
 

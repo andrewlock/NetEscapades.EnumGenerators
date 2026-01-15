@@ -2,10 +2,12 @@
   <PropertyGroup>
     <EnumGenerator_EnumMetadataSource Condition="$(EnumGenerator_EnumMetadataSource) == ''">EnumMemberAttribute</EnumGenerator_EnumMetadataSource>
     <EnumGenerator_ForceExtensionMembers Condition="$(EnumGenerator_ForceExtensionMembers) == ''">false</EnumGenerator_ForceExtensionMembers>
+    <EnumGenerator_ExtensionAccessibility Condition="$(EnumGenerator_ExtensionAccessibility) == ''">Public</EnumGenerator_ExtensionAccessibility>
   </PropertyGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="EnumGenerator_EnumMetadataSource" />
     <CompilerVisibleProperty Include="EnumGenerator_ForceExtensionMembers" />
+    <CompilerVisibleProperty Include="EnumGenerator_ExtensionAccessibility" />
     <CompilerVisibleProperty Include="EnumGenerator_EnableUsageAnalyzers" />
   </ItemGroup>
 </Project>
