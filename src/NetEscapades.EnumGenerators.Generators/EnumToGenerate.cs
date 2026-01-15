@@ -12,7 +12,7 @@ public readonly record struct EnumToGenerate
     public readonly bool HasFlags;
     public readonly string UnderlyingType;
     public readonly MetadataSource? MetadataSource;
-    public readonly bool? ForceInternalExtensions; 
+    public readonly bool ForceInternal; 
 
     /// <summary>
     /// Key is the enum name.
@@ -28,7 +28,7 @@ public readonly record struct EnumToGenerate
         List<(string Key, EnumValueOption Value)> names,
         bool hasFlags,
         MetadataSource? metadataSource,
-        bool? forceInternalExtensions = null)
+        bool forceInternal = false)
     {
         Name = name;
         Namespace = ns;
@@ -38,6 +38,6 @@ public readonly record struct EnumToGenerate
         IsPublic = isPublic;
         FullyQualifiedName = fullyQualifiedName;
         MetadataSource = metadataSource;
-        ForceInternalExtensions = forceInternalExtensions;
+        ForceInternal = forceInternal;
     }
 }

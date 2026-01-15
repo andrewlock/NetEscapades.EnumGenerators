@@ -6,4 +6,4 @@ namespace NetEscapades.EnumGenerators;
 internal readonly record struct DefaultConfiguration(
     MetadataSource MetadataSource,
     bool ForceExtensionMembers,
-    ExtensionAccessibility ExtensionAccessibility);
+    bool ForceInternalAccessModifier);

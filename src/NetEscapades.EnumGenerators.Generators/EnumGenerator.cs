@@ -82,14 +82,14 @@ public class EnumGenerator : IIncrementalGenerator
             configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceExtensionMembers}", out var force)
             && string.Equals(force, "true", StringComparison.OrdinalIgnoreCase);
 
-        var extensionAccessibility = ExtensionAccessibility.Public;
+        var forceInternalAccessModifier = false;
         if (configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceInternalPropertyName}", out var forceInternal)
             && string.Equals(forceInternal, "true", StringComparison.OrdinalIgnoreCase))
         {
-            extensionAccessibility = ExtensionAccessibility.Internal;
+            forceInternalAccessModifier = true;
         }
 
-        return new DefaultConfiguration(selectedSource, forceExtensionMembers, extensionAccessibility);
+        return new DefaultConfiguration(selectedSource, forceExtensionMembers, forceInternalAccessModifier);
     }
 
     static void Execute(
@@ -100,14 +100,15 @@ public class EnumGenerator : IIncrementalGenerator
     {
         var useExtensionMembers = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1400; // C#14
         var useCollectionExpressions = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1200; // C#12
-        var isInternal = AccessibilityHelper.ShouldBeInternal(in enumToGenerate, defaultValues.ExtensionAccessibility);
+        var shouldBeInternal = !enumToGenerate.IsPublic || enumToGenerate.ForceInternal ||
+                               defaultValues.ForceInternalAccessModifier;
         var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(
             enumToGenerate: in enumToGenerate,
             useExtensionMembers: useExtensionMembers || defaultValues.ForceExtensionMembers,
             useCollectionExpressions: useCollectionExpressions,
             defaultMetadataSource: defaultValues.MetadataSource,
             hasRuntimeDependencies: compilationDetails.HasRuntimeDeps,
-            isInternal: isInternal);
+            isInternal: shouldBeInternal);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
@@ -136,7 +137,7 @@ public class EnumGenerator : IIncrementalGenerator
             string? name = null;
             string? nameSpace = null;
             MetadataSource? source = null;
-            bool? isInternal = null;
+            bool forceInternal = false;
 
             foreach (KeyValuePair<string, TypedConstant> namedArgument in attribute.NamedArguments)
             {
@@ -161,7 +162,7 @@ public class EnumGenerator : IIncrementalGenerator
 
                 if (namedArgument is { Key: "IsInternal", Value.Value: bool shouldBeInternal })
                 {
-                    isInternal = shouldBeInternal;
+                    forceInternal = shouldBeInternal;
                 }
             }
 
@@ -176,7 +177,7 @@ public class EnumGenerator : IIncrementalGenerator
                 }
             }
 
-            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, source, hasFlags, isInternal);
+            var enumToGenerate = TryExtractEnumSymbol(enumSymbol, name, nameSpace, source, hasFlags, forceInternal);
             if (enumToGenerate is not null)
             {
                 enums ??= new();
@@ -210,7 +211,7 @@ public class EnumGenerator : IIncrementalGenerator
         string? nameSpace = null;
         string? name = null;
         MetadataSource? metadataSource = null;
-        bool? isInternal = null;
+        bool forceInternal = false;
 
         foreach (AttributeData attributeData in enumSymbol.GetAttributes())
         {
@@ -222,10 +223,10 @@ public class EnumGenerator : IIncrementalGenerator
                 continue;
             }
 
-            TryGetExtensionAttributeDetails(attributeData, ref nameSpace, ref name, ref metadataSource, ref isInternal);
+            TryGetExtensionAttributeDetails(attributeData, ref nameSpace, ref name, ref metadataSource, ref forceInternal);
         }
 
-        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, metadataSource, hasFlags, isInternal);
+        return TryExtractEnumSymbol(enumSymbol, name, nameSpace, metadataSource, hasFlags, forceInternal);
     }
 
     internal static bool TryGetExtensionAttributeDetails(
@@ -233,7 +234,7 @@ public class EnumGenerator : IIncrementalGenerator
         ref string? nameSpace,
         ref string? name,
         ref MetadataSource? source,
-        ref bool? isInternal)
+        ref bool forceInternal)
     {
         if (attributeData.AttributeClass?.Name != "EnumExtensionsAttribute" ||
             attributeData.AttributeClass.ToDisplayString() != TypeNames.EnumExtensionsAttribute)
@@ -264,7 +265,7 @@ public class EnumGenerator : IIncrementalGenerator
 
             if (namedArgument is { Key: "IsInternal", Value.Value: bool shouldBeInternal })
             {
-                isInternal = shouldBeInternal;
+                forceInternal = shouldBeInternal;
             }
         }
 
@@ -283,7 +284,7 @@ public class EnumGenerator : IIncrementalGenerator
         string? nameSpace,
         MetadataSource? metadataSource,
         bool hasFlags,
-        bool? isInternal = null)
+        bool forceInternal)
     {
         name ??= GetEnumExtensionName(enumSymbol);
         nameSpace ??= GetEnumExtensionNamespace(enumSymbol);
@@ -353,6 +354,6 @@ public class EnumGenerator : IIncrementalGenerator
             hasFlags: hasFlags,
             names: members,
             metadataSource: metadataSource,
-            forceInternalExtensions: isInternal);
+            forceInternal: forceInternal);
     }
 }
