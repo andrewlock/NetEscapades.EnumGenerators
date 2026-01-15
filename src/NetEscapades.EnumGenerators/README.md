@@ -333,7 +333,7 @@ You can override the global setting for individual enums using the `IsInternal` 
 [EnumExtensions(IsInternal = true)]
 public enum MyEnum { ... }
 
-// Force this enum's extensions to follow enum accessibility, even if global ForceInternal is True
+// Force this enum's extensions to follow enum accessibility, even if global ForceInternal is true
 [EnumExtensions(IsInternal = false)]
 public enum MyOtherEnum { ... }
 ```

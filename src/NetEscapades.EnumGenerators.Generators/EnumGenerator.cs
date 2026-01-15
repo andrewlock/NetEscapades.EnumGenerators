@@ -160,7 +160,7 @@ public class EnumGenerator : IIncrementalGenerator
                     source = (MetadataSource)(int)ms;
                 }
 
-                if (namedArgument is { Key: "IsInternal", Value.Value: bool shouldBeInternal })
+                if (namedArgument is { Key: nameof(EnumExtensionsAttribute.IsInternal), Value.Value: bool shouldBeInternal })
                 {
                     forceInternal = shouldBeInternal;
                 }
@@ -263,7 +263,7 @@ public class EnumGenerator : IIncrementalGenerator
                 source = (MetadataSource)(int)ms;
             }
 
-            if (namedArgument is { Key: "IsInternal", Value.Value: bool shouldBeInternal })
+            if (namedArgument is { Key: nameof(EnumExtensionsAttribute.IsInternal), Value.Value: bool shouldBeInternal })
             {
                 forceInternal = shouldBeInternal;
             }
