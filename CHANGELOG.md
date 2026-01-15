@@ -1,6 +1,24 @@
 Changelog
 --- 
 
+## [v1.0.0-beta20](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta19..v1.0.0-beta20) (2026-01-05)
+
+### Breaking Changes
+
+* Split NetEscapades.EnumGenerators package into 3 packages (#233, #234)
+  * _NetEscapades.EnumGenerators_ is a meta package, and should not be added with `PrivateAssets="All"` or `ExcludeAssets="runtime"`
+  * _NetEscapades.EnumGenerators.Generators_ contains the source generator, and _can_ be added with private assets
+  * _NetEscapades.EnumGenerators.RuntimeDependencies_ contains optional runtime dependencies used during generation
+  * Please see the readme for advice on choosing your packages: https://github.com/andrewlock/NetEscapades.EnumGenerators#package-referencing-options
+
+### Features
+
+* Add analyzer to detect `StringBuilder.Append(enum)` on enums with `[EnumExtensions]` or `EnumExtensions<T>` (#230)
+
+### Fixes
+
+* Fix generating invalid XML in System.Memory warnings (#228)
+
 ## [v1.0.0-beta19](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta18..v1.0.0-beta19) (2026-01-05)
 
 ### Fixes

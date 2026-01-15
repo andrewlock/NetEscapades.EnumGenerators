@@ -63,7 +63,7 @@ This adds a `<PackageReference>` to your project:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta19" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" />
   <!-- -->
 
 </Project>
@@ -390,10 +390,10 @@ In some cases you may not want these dependencies to flow to other projects. Thi
   </PropertyGroup>
 
   <!-- Add the generator package with PrivateAssets -->
-  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta19" PrivateAssets="All"/>
+  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="All"/>
 
   <!-- Optionally add the runtime dependencies package -->
-  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta19" />
+  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta20" />
 </Project>
 ```
 
@@ -453,7 +453,7 @@ In general, for simplicity, we recommend referencing [NetEscapades.EnumGenerator
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta19" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" />
 </Project>
 ```
 
@@ -466,7 +466,7 @@ In contrast, if you are producing a reusable library and don't want any runtime 
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta19" PrivateAssets="All" ExcludeAssets="runtime" />
+  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="All" ExcludeAssets="runtime" />
 </Project>
 ```
 
@@ -480,8 +480,8 @@ The final option is to reference [NetEscapades.EnumGenerators.Generators](https:
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta19" PrivateAssets="All" ExcludeAssets="runtime"/>
-  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta19" />
+  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="All" ExcludeAssets="runtime"/>
+  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta20" />
 </Project>
 ```
 
@@ -513,7 +513,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="1.0.0-beta19" 
+  <PackageReference Include="NetEscapades.EnumGenerators.Interceptors" Version="1.0.0-beta20" 
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
@@ -567,7 +567,7 @@ Your project file should look something like this:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta19" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" />
 </Project>
 ```
 
@@ -588,7 +588,7 @@ If you wish to preserve these attributes in the build output, you can define the
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta19" PrivateAssets="all" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" PrivateAssets="all" />
   <!--              ☝ You must not exclude the runtime assets in this case -->
 
 </Project>
