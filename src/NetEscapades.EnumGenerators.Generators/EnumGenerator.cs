@@ -16,7 +16,7 @@ public class EnumGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var defaultConfigurations = context.AnalyzerConfigOptionsProvider
+        var defaultConfiguration = context.AnalyzerConfigOptionsProvider
             .Select(GetDefaultConfigurations);
 
         var compilationDetails = context.CompilationProvider
@@ -28,7 +28,7 @@ public class EnumGenerator : IIncrementalGenerator
                         .NetEscapades_EnumGenerators_EnumParseOptions));
             });
 
-        var defaults = compilationDetails.Combine(defaultConfigurations);
+        var defaults = compilationDetails.Combine(defaultConfiguration);
         
         IncrementalValuesProvider<EnumToGenerate> enumsToGenerate = context.SyntaxProvider
             .ForAttributeWithMetadataName(TypeNames.EnumExtensionsAttribute,
@@ -265,10 +265,9 @@ public class EnumGenerator : IIncrementalGenerator
                 source = (MetadataSource)(int)ms;
             }
 
-            if (namedArgument.Key == "IsInternal"
-                && namedArgument.Value.Value is bool ii)
+            if (namedArgument is { Key: "IsInternal", Value.Value: bool shouldBeInternal })
             {
-                isInternal = ii;
+                isInternal = shouldBeInternal;
             }
         }
 
