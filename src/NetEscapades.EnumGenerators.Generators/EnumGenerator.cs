@@ -83,13 +83,10 @@ public class EnumGenerator : IIncrementalGenerator
             && string.Equals(force, "true", StringComparison.OrdinalIgnoreCase);
 
         var extensionAccessibility = ExtensionAccessibility.Public;
-        if (configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ExtensionAccessibilityPropertyName}", out var accessibility))
+        if (configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceInternalPropertyName}", out var forceInternal)
+            && string.Equals(forceInternal, "true", StringComparison.OrdinalIgnoreCase))
         {
-            extensionAccessibility = accessibility switch
-            {
-                nameof(ExtensionAccessibility.Internal) => ExtensionAccessibility.Internal,
-                _ => ExtensionAccessibility.Public,
-            };
+            extensionAccessibility = ExtensionAccessibility.Internal;
         }
 
         return new DefaultConfiguration(selectedSource, forceExtensionMembers, extensionAccessibility);
