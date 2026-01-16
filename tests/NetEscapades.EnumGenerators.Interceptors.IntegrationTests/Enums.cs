@@ -90,4 +90,12 @@ namespace NetEscapades.EnumGenerators.Interceptors.IntegrationTests
         [Display(Name = "2nd")] Second = 1,
         Third = 2,
     }
+
+    [EnumExtensions(IsInternal = true)]
+    public enum ForcedInternalEnum
+    {
+        First = 0,
+        Second = 1,
+        Third = 2,
+    }
 }
