@@ -324,21 +324,17 @@ Valid values are:
 
 **Per-Enum Configuration:**
 
-You can override the global setting for individual enums using the `IsInternal` property on the `[EnumExtensions]` attribute:
+You can also set the `IsInternal` property on individual enums using the `[EnumExtensions]` attribute:
 
 ```csharp
-// Force this enum's extensions to be internal, regardless of enum or global setting
+// Force this enum's extensions to be internal
 [EnumExtensions(IsInternal = true)]
 public enum MyEnum { ... }
-
-// Force this enum's extensions to follow enum accessibility, even if global ForceInternal is true
-[EnumExtensions(IsInternal = false)]
-public enum MyOtherEnum { ... }
 ```
 
 **Important Rules:**
 - Internal enums always generate internal extensions
-- The per-enum `IsInternal` setting takes precedence over the global MSBuild property
+- If the global `EnumGenerator_ForceInternal` MSBuild property is set to `true`, all extensions will be internal regardless of the `IsInternal` attribute setting
 - External enums (referenced via `[EnumExtensions<T>]`) also support the `IsInternal` property
 
 ## Usage Analyzers
