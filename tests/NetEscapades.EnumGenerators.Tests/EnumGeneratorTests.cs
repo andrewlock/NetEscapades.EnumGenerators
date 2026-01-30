@@ -100,6 +100,47 @@ public abstract class EnumGeneratorTestsBase
     }
 
     [Fact]
+    public Task CanGenerateInternalEnumExtensionsWithForceInternal()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions(IsInternal = true)]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public Task CanGenerateInternalEnumExtensionsWithForceInternalProperty()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(
+            Generators(), new(options: new() { { "build_property.EnumGenerator_ForceInternal", "true" } }, input));
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
     public Task PreviewLangVersionDoesntGenerateExtensionMembers()
     {
         const string input =

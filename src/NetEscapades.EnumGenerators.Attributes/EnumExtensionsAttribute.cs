@@ -38,6 +38,14 @@
         /// set <see cref="IsInterceptable"/> to <see langword="false"/>.
         /// </summary>
         public bool IsInterceptable { get; set; } = true;
+
+        /// <summary>
+        /// When set to <see langword="true"/>, the generated extension class and methods
+        /// will be marked as <c>internal</c> instead of <c>public</c>.
+        /// Note: If the global <c>EnumGenerator_ForceInternal</c> MSBuild property is set to <see langword="true"/>,
+        /// all extensions will be internal regardless of this setting.
+        /// </summary>
+        public bool IsInternal { get; set; }
     }
     
     /// <summary>
@@ -79,5 +87,13 @@
         /// set <see cref="IsInterceptable"/> to <see langword="false"/>.
         /// </summary>
         public bool IsInterceptable { get; set; } = true;
+
+        /// <summary>
+        /// When set to <see langword="true"/>, the generated extension class and methods
+        /// will be marked as <c>internal</c> instead of <c>public</c>.
+        /// Note: If the global <c>EnumGenerator_ForceInternal</c> MSBuild property is set to <see langword="true"/>,
+        /// all extensions will be internal regardless of this setting.
+        /// </summary>
+        public bool IsInternal { get; set; }
     }
 }

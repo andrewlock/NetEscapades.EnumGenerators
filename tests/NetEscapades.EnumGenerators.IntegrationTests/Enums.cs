@@ -218,4 +218,12 @@ namespace NetEscapades.EnumGenerators.Nuget.AnalyzerTests
         [Description("class")]
         @class,
     }
+
+    [EnumExtensions(IsInternal = true)]
+    public enum ForcedInternalEnum
+    {
+        First = 0,
+        Second = 1,
+        Third = 2,
+    }
 }

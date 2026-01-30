@@ -5,4 +5,5 @@ public static class Constants
     public const string Version = "1.0.0-beta20";
     public const string MetadataSourcePropertyName = "EnumGenerator_EnumMetadataSource";
     public const string ForceExtensionMembers = "EnumGenerator_ForceExtensionMembers";
+    public const string ForceInternalPropertyName = "EnumGenerator_ForceInternal";
 }
