@@ -39,7 +39,8 @@ public class SourceGenerationHelperSnapshotTests
             csharp14IsSupported,
             useCollectionExpressions: useCollectionExpressions,
             defaultSource,
-            hasRuntimeDeps).Content;
+            hasRuntimeDeps,
+            forceInternal: false).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -66,8 +67,13 @@ public class SourceGenerationHelperSnapshotTests
             hasFlags: false,
             null);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported,
-            useCollectionExpressions: false, DefaultMetadataSource, hasRuntimeDependencies: true).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(
+            value,
+            csharp14IsSupported,
+            useCollectionExpressions: false,
+            DefaultMetadataSource,
+            hasRuntimeDependencies: true,
+            forceInternal: false).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -93,8 +99,13 @@ public class SourceGenerationHelperSnapshotTests
             hasFlags: true,
             metadataSource: null);
 
-        var result = SourceGenerationHelper.GenerateExtensionClass(value, csharp14IsSupported,
-            useCollectionExpressions: false, DefaultMetadataSource, hasRuntimeDependencies: true).Content;
+        var result = SourceGenerationHelper.GenerateExtensionClass(
+            value,
+            csharp14IsSupported,
+            useCollectionExpressions: false,
+            DefaultMetadataSource,
+            hasRuntimeDependencies: true,
+            forceInternal: false).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -125,7 +136,7 @@ public class SourceGenerationHelperSnapshotTests
             useCollectionExpressions: true,
             MetadataSource.None,
             false,
-            isInternal: true).Content;
+            forceInternal: true).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
