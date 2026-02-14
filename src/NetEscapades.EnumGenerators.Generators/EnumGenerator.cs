@@ -82,12 +82,8 @@ public class EnumGenerator : IIncrementalGenerator
             configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceExtensionMembers}", out var force)
             && string.Equals(force, "true", StringComparison.OrdinalIgnoreCase);
 
-        var forceInternalAccessModifier = false;
-        if (configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceInternalPropertyName}", out var forceInternal)
-            && string.Equals(forceInternal, "true", StringComparison.OrdinalIgnoreCase))
-        {
-            forceInternalAccessModifier = true;
-        }
+        var forceInternalAccessModifier = configOptions.GlobalOptions.TryGetValue($"build_property.{Constants.ForceInternalPropertyName}", out var forceInternal)
+            && string.Equals(forceInternal, "true", StringComparison.OrdinalIgnoreCase);
 
         return new DefaultConfiguration(selectedSource, forceExtensionMembers, forceInternalAccessModifier);
     }
