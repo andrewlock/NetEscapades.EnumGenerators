@@ -101,4 +101,34 @@ public class SourceGenerationHelperSnapshotTests
             .UseDirectory("Snapshots")
             .UseParameters(csharp14IsSupported);
     }
+
+    [Fact]
+    public Task GeneratesForcedInternalEnumCorrectly()
+    {
+        var value = new EnumToGenerate(
+            "ShortName",
+            "Something.Blah",
+            "Something.Blah.ShortName",
+            "int",
+            isPublic: true,
+            [
+                ("First", EnumValueOption.CreateWithoutAttributes(0)),
+                ("Second", EnumValueOption.CreateWithoutAttributes(1))
+            ],
+            hasFlags: false,
+            metadataSource: null,
+            forceInternal: true);
+
+        var result = SourceGenerationHelper.GenerateExtensionClass(
+            value, 
+            true,
+            useCollectionExpressions: true,
+            MetadataSource.None,
+            false,
+            isInternal: true).Content;
+
+        return Verifier.Verify(result)
+            .ScrubExpectedChanges()
+            .UseDirectory("Snapshots");
+    }
 }
