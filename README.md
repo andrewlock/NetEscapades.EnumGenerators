@@ -282,7 +282,43 @@ You can set the default metadata source to use for a whole project by setting th
 </PropertyGroup>
 ```
 
-You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`. By default, the class will be public if the enum is public, otherwise it will be internal.
+You can override the name of the extension class by setting `ExtensionClassName` in the attribute and/or the namespace of the class by setting `ExtensionClassNamespace`.
+
+### Controlling extension accessibility
+
+By default, the generated extension class is `public` if the enum is `public`, and `internal` if the enum is `internal`. You can control the accessibility of the generated extension classes in two ways:
+
+**Global Configuration (MSBuild Property):**
+
+Set the `EnumGenerator_ForceInternal` property in your project file to force all generated extension classes to be `internal`:
+
+```xml
+<PropertyGroup>
+  <!-- Make all generated extension classes internal -->
+  <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
+</PropertyGroup>
+```
+
+Valid values are:
+- `false` (default): Generated extensions follow the enum's accessibility (`public` for `public` enums, `internal` for `internal` enums)
+- `true`: Forces all generated extensions to be `internal`, even for `public` enums
+
+**Per-Enum Configuration:**
+
+You can also set the `IsInternal` property on individual enums using the `[EnumExtensions]` attribute:
+
+```csharp
+// Force this enum's extensions to be internal
+[EnumExtensions(IsInternal = true)]
+public enum MyEnum { ... }
+```
+
+or for external enums:
+
+```csharp
+// Force ExternalEnum's extensions to be internal
+[EnumExtensions<ExternalEnum>(IsInternal = true)]
+```
 
 ## Usage Analyzers
 

@@ -331,11 +331,12 @@ You can also set the `IsInternal` property on individual enums using the `[EnumE
 [EnumExtensions(IsInternal = true)]
 public enum MyEnum { ... }
 ```
+or for external enums:
 
-**Important Rules:**
-- Internal enums always generate internal extensions
-- If the global `EnumGenerator_ForceInternal` MSBuild property is set to `true`, all extensions will be internal regardless of the `IsInternal` attribute setting
-- External enums (referenced via `[EnumExtensions<T>]`) also support the `IsInternal` property
+```csharp
+// Force ExternalEnum's extensions to be internal
+[EnumExtensions<ExternalEnum>(IsInternal = true)]
+```
 
 ## Usage Analyzers
 
