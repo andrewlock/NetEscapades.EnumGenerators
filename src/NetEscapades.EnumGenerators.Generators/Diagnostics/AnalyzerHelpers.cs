@@ -22,15 +22,13 @@ public static class AnalyzerHelpers
         var externalEnumTypes = new ExternalEnumDictionary(SymbolEqualityComparer.Default);
         if (externalEnumExtensionsAttr is not null)
         {
-            foreach (var attribute in compilation.Assembly.GetAttributes())
+            // Check current assembly
+            ScanAssemblyAttributes(compilation.Assembly, externalEnumExtensionsAttr, externalEnumTypes);
+
+            // Check referenced assemblies
+            foreach (var referencedAssembly in compilation.SourceModule.ReferencedAssemblySymbols)
             {
-                if (attribute.AttributeClass is { IsGenericType: true } attrClass &&
-                    SymbolEqualityComparer.Default.Equals(attrClass.ConstructedFrom, externalEnumExtensionsAttr) &&
-                    attrClass.TypeArguments is [INamedTypeSymbol { TypeKind: TypeKind.Enum } enumType])
-                {
-                    var details = ExtractExtensionClassDetails(enumType, attribute);
-                    externalEnumTypes.Add(enumType, details);
-                }
+                ScanAssemblyAttributes(referencedAssembly, externalEnumExtensionsAttr, externalEnumTypes);
             }
         }
 
@@ -65,6 +63,23 @@ public static class AnalyzerHelpers
 
         extensionType = null;
         return false;
+    }
+
+    private static void ScanAssemblyAttributes(
+        IAssemblySymbol assembly,
+        INamedTypeSymbol externalEnumExtensionsAttr,
+        ExternalEnumDictionary externalEnumTypes)
+    {
+        foreach (var attribute in assembly.GetAttributes())
+        {
+            if (attribute.AttributeClass is { IsGenericType: true } attrClass &&
+                SymbolEqualityComparer.Default.Equals(attrClass.ConstructedFrom, externalEnumExtensionsAttr) &&
+                attrClass.TypeArguments is [INamedTypeSymbol { TypeKind: TypeKind.Enum } enumType])
+            {
+                var details = ExtractExtensionClassDetails(enumType, attribute);
+                externalEnumTypes[enumType] = details;
+            }
+        }
     }
 
     private static string ExtractExtensionClassDetails(
