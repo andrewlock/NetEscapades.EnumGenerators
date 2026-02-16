@@ -1,5 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Testing;
+using Microsoft.CodeAnalysis.Testing;
 using NetEscapades.EnumGenerators.Diagnostics.UsageAnalyzers;
 using Xunit;
 
@@ -569,6 +572,70 @@ public class IsDefinedAnalyzerTests : AnalyzerTestsBase<IsDefinedAnalyzer, IsDef
             """);
 
         await VerifyAnalyzerAsync(test, EnableState.Disabled);
+    }
+
+    [Fact]
+    public async Task IsDefinedOnEnumFromReferencedAssemblyWithAssemblyLevelEnumExtensionsShouldHaveDiagnostic()
+    {
+        var mainCode = """
+            using System;
+            using ExternalNamespace;
+
+            namespace ConsoleApplication1
+            {
+                public class TestClass
+                {
+                    public void TestMethod()
+                    {
+                        var value = ExternalEnum.Value1;
+                        var isDefined = {|NEEG006:Enum.IsDefined(typeof(ExternalEnum), value)|};
+                    }
+                }
+            }
+
+            namespace ExternalNamespace
+            {
+                // This code would be generated, just hacked in here for simplicity
+                public static class ExternalEnumExtensions
+                {
+                    public static bool IsDefined(ExternalEnum value) => true;
+                }
+            }
+            """;
+
+        var externalCode = $$"""
+            [assembly: NetEscapades.EnumGenerators.EnumExtensions<ExternalNamespace.ExternalEnum>()]
+
+            namespace ExternalNamespace
+            {
+                public enum ExternalEnum
+                {
+                    Value1 = 1,
+                    Value2 = 2,
+                }
+            }
+
+            {{TestHelpers.LoadEmbeddedAttribute()}}
+            {{TestHelpers.LoadEmbeddedMetadataSource()}}
+            """;
+
+        var test = new CSharpAnalyzerTest<IsDefinedAnalyzer, DefaultVerifier>
+        {
+            TestCode = mainCode,
+        };
+
+        test.TestState.AdditionalProjects.Add("ExternalProject", new ProjectState("ExternalProject", LanguageNames.CSharp, "external_", ".cs"));
+        test.TestState.AdditionalProjects["ExternalProject"].Sources.Add(("external_Code.cs", externalCode));
+        test.TestState.AdditionalProjectReferences.Add("ExternalProject");
+
+        test.TestState.AnalyzerConfigFiles.Add(
+            ("/.editorconfig",
+                $"""
+                 is_global = true
+                 {UsageAnalyzerConfig.EnableKey} = true
+                 """));
+
+        await test.RunAsync();
     }
 
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
