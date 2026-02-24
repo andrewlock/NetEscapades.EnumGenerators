@@ -72,6 +72,10 @@ public class ExternalFileShareExtensionsTests : ExtensionTests<FileShare, int, E
 
     protected override string[] GetNames() => FileShareExtensions.GetNames();
     protected override FileShare[] GetValues() => FileShareExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<FileShare> GetValuesSpan() => FileShareExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => FileShareExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => FileShareExtensions.GetValuesAsUnderlyingType();
     protected override int AsUnderlyingValue(FileShare value) => value.AsUnderlyingType();
 

@@ -122,7 +122,7 @@ public class IsDefinedNameFromSpanBenchmark
     public bool EnumIsDefinedNameDisplayNameWithReflection()
     {
         ReadOnlySpan<char> _enumAsSpan = _enumDisplayName;
-        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumAsSpan.ToString(), ignoreCase:false, out _);
+        return EnumHelper<TestEnum>.TryParseByDisplayName(_enumAsSpan.ToString(), ignoreCase: false, out _);
     }
 
     [Benchmark]
@@ -174,6 +174,14 @@ public class GetValuesBenchmark
     {
         return TestEnumExtensions.GetValues();
     }
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public ReadOnlySpan<TestEnum> ExtensionsGetValuesSpan()
+    {
+        return TestEnumExtensions.GetValuesSpan();
+    }
+#endif
 }
 
 [MemoryDiagnoser]
@@ -208,6 +216,16 @@ public class GetValuesAsUnderlyingTypeBenchmark
     {
         return TestEnumExtensions.GetValuesAsUnderlyingType();
     }
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+    [Benchmark]
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    public ReadOnlySpan<int> ExtensionsGetValuesAsUnderlyingTypeSpan()
+    {
+        return TestEnumExtensions.GetValuesAsUnderlyingTypeSpan();
+    }
+#endif
+
 }
 
 [MemoryDiagnoser]
@@ -282,6 +300,7 @@ public class TryParseBenchmark
             ? result
             : default;
     }
+
     [Benchmark]
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParseDisplayNameOptions()
@@ -407,7 +426,7 @@ public class TryParseIgnoreCaseBenchmark
     [MethodImpl(MethodImplOptions.NoInlining)]
     public TestEnum ExtensionsTryParseIgnoreCaseDisplayNameOptions()
     {
-        return TestEnumExtensions.TryParse("2ND", out TestEnum result,  new EnumParseOptions(comparisonType: StringComparison.OrdinalIgnoreCase, allowMatchingMetadataAttribute: true))
+        return TestEnumExtensions.TryParse("2ND", out TestEnum result, new EnumParseOptions(comparisonType: StringComparison.OrdinalIgnoreCase, allowMatchingMetadataAttribute: true))
             ? result
             : default;
     }

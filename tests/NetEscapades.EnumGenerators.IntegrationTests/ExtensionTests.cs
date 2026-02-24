@@ -41,7 +41,13 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
 
     protected abstract string[] GetNames();
     protected abstract T[] GetValues();
+    #if READONLYSPAN
+    protected abstract ReadOnlySpan<T> GetValuesSpan();
+    protected abstract ReadOnlySpan<TUnderlying> GetValuesAsUnderlyingTypeSpan();
+    #endif
+
     protected abstract TUnderlying[] GetValuesAsUnderlyingType();
+
     protected abstract string ToStringFast(T value);
     protected abstract string ToStringFast(T value, bool withMetadata);
     protected abstract string ToStringFast(T value, SerializationOptions options);
@@ -160,8 +166,17 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
     [Fact]
     public void GeneratesGetValues() => GeneratesGetValuesTest(GetValues());
 
+    #if READONLYSPAN
+    [Fact]
+    public void GeneratesGetValuesSpan()=> GeneratesGetValuesSpanTest(GetValuesSpan());
+    [Fact]
+    public void GeneratesGetValuesAsUnderlyingTypeSpan() => GeneratesGetValuesAsUnderlyingTypeSpanTest(GetValuesAsUnderlyingTypeSpan());
+    #endif
+
     [Fact]
     public void GeneratesGetValuesAsUnderlyingType() => GeneratesGetValuesAsUnderlyingTypeTest(GetValuesAsUnderlyingType());
+
+
 
     [Fact]
     public void GeneratesGetNames() => GeneratesGetNamesTest(GetNames());
@@ -575,6 +590,31 @@ public abstract class ExtensionTests<T, TUnderlying, TITestData>
         var expected = (T[]) Enum.GetValues(typeof(T));
         values.Should().Equal(expected);
     }
+
+    #if READONLYSPAN
+    private void GeneratesGetValuesSpanTest(ReadOnlySpan<T> values)
+    {
+        var expected = (T[])Enum.GetValues(typeof(T));
+        values.Length.Should().Be(expected.Length);
+        for (var i = 0; i < expected.Length; i++)
+        {
+            values[i].Should().Be(expected[i]);
+        }
+    }
+    private void GeneratesGetValuesAsUnderlyingTypeSpanTest(ReadOnlySpan<TUnderlying> values)
+    {
+#if NET7_OR_GREATER
+        var expected = (TUnderlying[]) Enum.GetValuesAsUnderlyingType(typeof(T));
+#else
+        var expected = Enum.GetValues(typeof(T)).Cast<TUnderlying>().ToArray();
+#endif
+        values.Length.Should().Be(expected.Length);
+        for (var i = 0; i < expected.Length; i++)
+        {
+            values[i].Should().Be(expected[i]);
+        }
+    }
+    #endif
 
     private void GeneratesGetValuesAsUnderlyingTypeTest(TUnderlying[] values)
     {

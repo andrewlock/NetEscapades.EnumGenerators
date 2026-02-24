@@ -64,6 +64,10 @@ public class EnumWithReservedKeywordsExtensionsTests : ExtensionTests<EnumWithRe
 
     protected override string[] GetNames() => EnumWithReservedKeywordsExtensions.GetNames();
     protected override EnumWithReservedKeywords[] GetValues() => EnumWithReservedKeywordsExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<EnumWithReservedKeywords> GetValuesSpan() => EnumWithReservedKeywordsExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => EnumWithReservedKeywordsExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => EnumWithReservedKeywordsExtensions.GetValuesAsUnderlyingType();
     protected override int AsUnderlyingValue(EnumWithReservedKeywords value) => value.AsUnderlyingType();
 

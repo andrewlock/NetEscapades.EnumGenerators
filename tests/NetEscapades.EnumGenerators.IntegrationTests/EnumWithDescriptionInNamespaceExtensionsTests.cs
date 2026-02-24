@@ -66,6 +66,10 @@ public class EnumWithDescriptionInNamespaceExtensionsTests : ExtensionTests<Enum
 
     protected override string[] GetNames() => EnumWithDescriptionInNamespaceExtensions.GetNames();
     protected override EnumWithDescriptionInNamespace[] GetValues() => EnumWithDescriptionInNamespaceExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<EnumWithDescriptionInNamespace> GetValuesSpan() => EnumWithDescriptionInNamespaceExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => EnumWithDescriptionInNamespaceExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => EnumWithDescriptionInNamespaceExtensions.GetValuesAsUnderlyingType();
     protected override int AsUnderlyingValue(EnumWithDescriptionInNamespace value) => value.AsUnderlyingType();
 

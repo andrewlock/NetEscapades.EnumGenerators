@@ -62,7 +62,12 @@ public class EnumInFooExtensionsTests : ExtensionTests<EnumInFoo, int, EnumInFoo
 
     protected override string[] GetNames() => EnumInFooExtensions.GetNames();
     protected override EnumInFoo[] GetValues() => EnumInFooExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<EnumInFoo> GetValuesSpan() => EnumInFooExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => EnumInFooExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => EnumInFooExtensions.GetValuesAsUnderlyingType();
+
     protected override int AsUnderlyingValue(EnumInFoo value) => value.AsUnderlyingType();
 
     protected override string ToStringFast(EnumInFoo value) => value.ToStringFast();

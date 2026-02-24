@@ -66,6 +66,10 @@ public class LongEnumExtensionsTests : ExtensionTests<LongEnum, long, LongEnumEx
 
     protected override string[] GetNames() => LongEnumExtensions.GetNames();
     protected override LongEnum[] GetValues() => LongEnumExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<LongEnum> GetValuesSpan() => LongEnumExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<long> GetValuesAsUnderlyingTypeSpan() => LongEnumExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override long[] GetValuesAsUnderlyingType() => LongEnumExtensions.GetValuesAsUnderlyingType();
     protected override long AsUnderlyingValue(LongEnum value) => value.AsUnderlyingType();
 

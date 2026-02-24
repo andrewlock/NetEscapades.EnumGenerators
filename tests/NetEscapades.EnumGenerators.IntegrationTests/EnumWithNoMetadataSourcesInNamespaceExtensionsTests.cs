@@ -68,7 +68,12 @@ public class EnumWithNoMetadataSourcesInNamespaceExtensionsTests : ExtensionTest
 
     protected override string[] GetNames() => EnumWithNoMetadataSourcesExtensions.GetNames();
     protected override EnumWithNoMetadataSources[] GetValues() => EnumWithNoMetadataSourcesExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<EnumWithNoMetadataSources> GetValuesSpan() => EnumWithNoMetadataSourcesExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => EnumWithNoMetadataSourcesExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => EnumWithNoMetadataSourcesExtensions.GetValuesAsUnderlyingType();
+
     protected override int AsUnderlyingValue(EnumWithNoMetadataSources value) => value.AsUnderlyingType();
 
     // Can't call the "withMetadata" versions of all these

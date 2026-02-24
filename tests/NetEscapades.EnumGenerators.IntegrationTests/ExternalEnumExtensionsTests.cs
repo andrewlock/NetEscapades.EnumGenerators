@@ -66,6 +66,10 @@ public class ExternalEnumExtensionsTests : ExtensionTests<DateTimeKind, int, Ext
 
     protected override string[] GetNames() => DateTimeKindExtensions.GetNames();
     protected override DateTimeKind[] GetValues() => DateTimeKindExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<DateTimeKind> GetValuesSpan() => DateTimeKindExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => DateTimeKindExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => DateTimeKindExtensions.GetValuesAsUnderlyingType();
     protected override int AsUnderlyingValue(DateTimeKind value) => value.AsUnderlyingType();
 

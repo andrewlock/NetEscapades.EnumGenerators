@@ -67,6 +67,10 @@ public class EnumWithSameDisplayNameExtensionsTests : ExtensionTests<EnumWithSam
 
     protected override string[] GetNames() => EnumWithSameDisplayNameExtensions.GetNames();
     protected override EnumWithSameDisplayName[] GetValues() => EnumWithSameDisplayNameExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<EnumWithSameDisplayName> GetValuesSpan() => EnumWithSameDisplayNameExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => EnumWithSameDisplayNameExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => EnumWithSameDisplayNameExtensions.GetValuesAsUnderlyingType();
     protected override int AsUnderlyingValue(EnumWithSameDisplayName value) => value.AsUnderlyingType();
 

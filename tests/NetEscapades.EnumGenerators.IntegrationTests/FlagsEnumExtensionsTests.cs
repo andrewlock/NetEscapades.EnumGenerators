@@ -76,6 +76,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
 
     protected override string[] GetNames() => FlagsEnumExtensions.GetNames();
     protected override FlagsEnum[] GetValues() => FlagsEnumExtensions.GetValues();
+    #if READONLYSPAN
+    protected override ReadOnlySpan<FlagsEnum> GetValuesSpan() => FlagsEnumExtensions.GetValuesSpan();
+    protected override ReadOnlySpan<int> GetValuesAsUnderlyingTypeSpan() => FlagsEnumExtensions.GetValuesAsUnderlyingTypeSpan();
+    #endif
     protected override int[] GetValuesAsUnderlyingType() => FlagsEnumExtensions.GetValuesAsUnderlyingType();
     protected override int AsUnderlyingValue(FlagsEnum value) => value.AsUnderlyingType();
 

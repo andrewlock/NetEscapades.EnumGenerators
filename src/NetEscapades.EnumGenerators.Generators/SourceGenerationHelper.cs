@@ -1968,6 +1968,40 @@ public static class SourceGenerationHelper
         }
 
         AddArrayCloser(sb, useCollectionExpressions);
+            sb.Append(
+                """
+
+
+                    #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+                    /// <summary>
+                    /// Retrieves a ReadOnlySpan of the values of the members defined in
+                    /// <see cref="
+                    """).Append(fullyQualifiedName).Append(
+            """
+            " />.
+                    /// </summary>
+                    /// <returns>A ReadOnlySpan of the values defined in <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /></returns>
+                    public static global::System.ReadOnlySpan<
+            """).Append(fullyQualifiedName).Append('>').Append(" GetValuesSpan()=>");
+        AddArrayOpener(sb, useCollectionExpressions);
+        foreach (var member in orderedNames)
+        {
+            sb.Append(
+                """
+
+                                
+                """).Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
+        }
+
+        AddArrayCloser(sb, useCollectionExpressions);
+        sb.Append("""
+                  
+                  #endif
+                  
+                  """);
 
         sb.Append(
             """
@@ -2005,6 +2039,41 @@ public static class SourceGenerationHelper
         }
 
         AddArrayCloser(sb, useCollectionExpressions);
+
+        sb.Append(
+            """
+
+
+            #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            /// <summary>
+            /// Retrieves a ReadOnlySpan of the underlying-values of the members defined in
+            /// <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " />.
+                    /// </summary>
+                    /// <returns>A ReadOnlySpan of the underlying-values of the members defined in <see cref="
+            """).Append(fullyQualifiedName).Append(
+            """
+            " /></returns>
+                    public static global::System.ReadOnlySpan<
+            """).Append(enumToGenerate.UnderlyingType).Append('>').Append(" GetValuesAsUnderlyingTypeSpan()=>");
+        AddArrayOpener(sb, useCollectionExpressions);
+        foreach (var member in orderedNames)
+        {
+            sb.Append(
+                """
+
+                                (
+                """).Append(enumToGenerate.UnderlyingType).Append(") ").Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key).Append(',');
+        }
+
+        AddArrayCloser(sb, useCollectionExpressions);
+        sb.Append("""
+
+                  #endif
+
+                  """);
 
         sb.Append(
             """
