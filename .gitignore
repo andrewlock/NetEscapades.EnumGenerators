@@ -252,3 +252,6 @@ BenchmarkDotNet.Artifacts
 
 # Nuke.build files
 .nuke/build.schema.json
+
+# AI agents
+.claude/
