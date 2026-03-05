@@ -21,5 +21,6 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="NetEscapades.EnumGenerators.targets" Pack="true" PackagePath="buildTransitive" Visible="true" />
   </ItemGroup>
 </Project>

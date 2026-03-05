@@ -30,6 +30,8 @@
                       OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
   </ItemGroup>
 
+  <Import Project="..\..\src\NetEscapades.EnumGenerators\NetEscapades.EnumGenerators.targets" />
+
   <ItemGroup>
     <Content Include="..\NetEscapades.EnumGenerators.IntegrationTests\xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
