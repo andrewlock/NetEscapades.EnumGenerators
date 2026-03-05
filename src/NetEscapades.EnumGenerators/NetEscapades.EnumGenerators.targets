@@ -1,0 +1,21 @@
+<Project>
+  <!--
+    Define NETESCAPADES_ENUMGENERATORS_USAGES so that the [Conditional] attribute on [EnumExtensions]
+    is satisfied. This preserves the attribute in IL, enabling usage analyzers to detect decorated
+    enums in referenced assemblies.
+
+    This targets file is only included in the meta-package, so it only runs when the meta-package is
+    referenced. We additionally verify the Attributes assembly will be available at runtime by checking
+    ReferenceCopyLocalPaths, which guards against unsupported configurations like ExcludeAssets="runtime".
+
+    Set EnumGenerator_PreserveAttributes to "false" to disable this behavior.
+
+    Note: using PrivateAssets="All" or ExcludeAssets="runtime" on the meta-package is not supported.
+  -->
+  <Target Name="NetEscapadesEnumGenerators_DefineUsages" AfterTargets="ResolveReferences" BeforeTargets="CoreCompile"
+          Condition="'$(EnumGenerator_PreserveAttributes)' != 'false'">
+    <PropertyGroup>
+      <DefineConstants Condition="'@(ReferenceCopyLocalPaths->AnyHaveMetadataValue(`FileName`, `NetEscapades.EnumGenerators.Attributes`))' == 'True'">$(DefineConstants);NETESCAPADES_ENUMGENERATORS_USAGES</DefineConstants>
+    </PropertyGroup>
+  </Target>
+</Project>
