@@ -62,7 +62,7 @@ jobs:
           user: ${{ secrets.NUGET_USER || 'NOT_SET' }}
 
       - name: Run './build.cmd Clean Test TestPackage PushToNuGet
-        run: ./build.cmd Clean Test TestPackage PushToNuGet
+        run: ./build.cmd Clean GenerateReadmes Test TestPackage PushToNuGet
         env:
           NuGetToken: ${{ steps.login.outputs.NUGET_API_KEY || 'NOT_SET'}}
 

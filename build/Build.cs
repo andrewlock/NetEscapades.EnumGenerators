@@ -195,6 +195,7 @@ class Build : NukeBuild
         });
 
     Target GenerateReadmes => _ => _
+        .Before(Pack)
         .Executes(() =>
         {
             DotNet("tool run mdsnippets", RootDirectory / "docs");
