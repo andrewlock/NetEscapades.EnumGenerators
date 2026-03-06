@@ -49,7 +49,9 @@ include: enum-usage
 
 include: usage-analyzers
 
-## Enabling automatic interception
+include: package-referencing
+
+## Enabling automatic interception (experimental)
 
 include: interceptor-intro
 
@@ -66,7 +68,5 @@ dotnet add package NetEscapades.EnumGenerators.Interceptors
 This adds a `<PackageReference>` to your project. You can additionally mark the package as `PrivateAssets="all"` and `ExcludeAssets="runtime"`, similarly to _NetEscapades.EnumGenerators_.
 
 include: interception-config
-
-include: package-referencing
 
 include: preserving-usages
