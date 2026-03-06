@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\NetEscapades.EnumGenerators.RuntimeDependencies.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

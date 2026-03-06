@@ -194,6 +194,12 @@ class Build : NukeBuild
             }
         });
 
+    Target GenerateReadmes => _ => _
+        .Executes(() =>
+        {
+            DotNet("tool run mdsnippets", RootDirectory / "docs");
+        });
+
     Target PushToNuGet => _ => _
         .DependsOn(Pack)
         .OnlyWhenStatic(() => IsTag && IsServerBuild && IsWin)
