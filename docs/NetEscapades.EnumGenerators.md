@@ -24,12 +24,15 @@ To change this file edit the source file and then run MarkdownSnippets.
   * [Why use these packages?](#why-use-these-packages)
   * [Adding NetEscapades.EnumGenerators to your project](#adding-netescapadesenumgenerators-to-your-project)
     * [Controlling extension accessibility](#controlling-extension-accessibility)
+  * [Usage Analyzers](#usage-analyzers)
     * [Enabling the analyzers](#enabling-the-analyzers)
     * [Configuring analyzer severity (optional)](#configuring-analyzer-severity-optional)
     * [Code fixes](#code-fixes)
+  * [Package referencing options](#package-referencing-options)
     * [Avoiding runtime dependencies](#avoiding-runtime-dependencies)
     * [Choosing the correct packages for your scenario](#choosing-the-correct-packages-for-your-scenario)
-  * [Enabling automatic interception (experimental)](#enabling-automatic-interception-experimental)<!-- endToc -->
+  * [Enabling automatic interception (experimental)](#enabling-automatic-interception-experimental)
+  * [Preserving usages of the `[EnumExtensions]` attribute](#preserving-usages-of-the-enumextensions-attribute)<!-- endToc -->
 
 ## Why use these packages?
 
@@ -344,7 +347,8 @@ or for external enums:
 ```
 <!-- endInclude -->
 
-## Usage Analyzers<!-- include: usage-analyzers. path: /fragments/usage-analyzers.include.md -->
+<!-- include: usage-analyzers. path: /fragments/usage-analyzers.include.md -->
+## Usage Analyzers
 
 _NetEscapades.EnumGenerators_ includes optional analyzers that encourage the use of the generated extension methods instead of the built-in `System.Enum` methods. These analyzers can help improve performance by suggesting the faster, generated, alternatives like `ToStringFast()`, `HasFlagFast()`, and `TryParse()`.
 
@@ -414,7 +418,8 @@ All usage analyzers include automatic code fixes. When a diagnostic is triggered
 
 ![Demonstrating the code-fix option available in your IDE for each of the analyzers](https://raw.githubusercontent.com/andrewlock/NetEscapades.EnumGenerators/refs/heads/main/docs/images//code_fix.png)<!-- endInclude -->
 
-## Package referencing options<!-- include: package-referencing. path: /fragments/package-referencing.include.md -->
+<!-- include: package-referencing. path: /fragments/package-referencing.include.md -->
+## Package referencing options
 
 [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators) is a metapackage that references additional packages for functionality.
 
@@ -636,7 +641,8 @@ public void CantIntercept()
 ```
 <!-- endInclude -->
 
-## Preserving usages of the `[EnumExtensions]` attribute<!-- include: preserving-usages. path: /fragments/preserving-usages.include.md -->
+<!-- include: preserving-usages. path: /fragments/preserving-usages.include.md -->
+## Preserving usages of the `[EnumExtensions]` attribute
 
 The `[EnumExtensions]` attribute is decorated with the `[Conditional]` attribute, [so their usage will not appear in the build output of your project](https://andrewlock.net/conditional-compilation-for-ignoring-method-calls-with-the-conditionalattribute/#applying-the-conditional-attribute-to-classes). If you use reflection at runtime on one of your `enum`s, you will not find `[EnumExtensions]` in the list of custom attributes. If you wish to preserve these attributes in the build output, you can define the `NETESCAPADES_ENUMGENERATORS_USAGES` MSBuild variable.
 
