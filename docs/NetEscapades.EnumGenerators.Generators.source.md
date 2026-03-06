@@ -9,6 +9,8 @@ In general, we recommend installing the [NetEscapades.EnumGenerators](https://ww
 
 > [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators) requires the .NET 7 SDK or higher. [NetEscapades.EnumGenerators.Interceptors](https://www.nuget.org/packages/NetEscapades.EnumGenerators.Interceptors) requires the .NET 8.0.400 SDK or higher. You can still target earlier frameworks like .NET Core 3.1 etc, the version requirement only applies to the version of the .NET SDK installed.
 
+toc
+
 ## Why use these packages?
 
 include: benchmark
@@ -45,7 +47,7 @@ include: enum-usage
 
 include: usage-analyzers
 
-## Enabling automatic interception
+## Enabling automatic interception (experimental)
 
 include: interceptor-intro
 

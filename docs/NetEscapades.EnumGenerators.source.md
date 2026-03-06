@@ -11,6 +11,8 @@
 
 [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators) is a metapackage, [see below](#package-referencing-options) for details about the associated packages and other options for packages to reference.
 
+toc
+
 ## Why use these packages?
 
 include: benchmark

@@ -11,6 +11,13 @@ A source generator interceptor for automatically intercepting calls to `ToString
 
 > This source generator requires the .NET 8.0.400 SDK. You can target earlier frameworks like .NET Core 3.1 etc, but the _SDK_ must be at least 8.0.400
 
+<!-- toc -->
+## Contents
+
+  * [Why use this package?](#why-use-this-package)
+  * [Adding NetEscapades.EnumGenerators.Interceptors to your project](#adding-netescapadesenumgeneratorsinterceptors-to-your-project)
+  * [Enabling interception for an enum](#enabling-interception-for-an-enum)<!-- endToc -->
+
 ## Why use this package?
 
 Many methods that operate with enums, such as the `ToString()` or `HasFlag()` method, are surprisingly slow. The [NetEscapades.EnumGenerators](https://www.nuget.org/packages/NetEscapades.EnumGenerators) uses a source generator to provide _fast_ versions of these methods, such as `ToStringFast()` or `HasFlagFast()`.

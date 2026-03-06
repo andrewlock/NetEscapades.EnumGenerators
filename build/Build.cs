@@ -198,6 +198,7 @@ class Build : NukeBuild
         .Before(Pack)
         .Executes(() =>
         {
+            DotNetToolRestore();
             DotNet("tool run mdsnippets", RootDirectory / "docs");
         });
 
