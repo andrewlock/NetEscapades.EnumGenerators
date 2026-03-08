@@ -771,6 +771,219 @@ public class ToStringAnalyzerTests : AnalyzerTestsBase<ToStringAnalyzer, ToStrin
     }
 
     [Fact]
+    public async Task NullableEnumValuePropertyToStringShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value.Value.{|NEEG004:ToString|}();
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value.Value.ToStringFast();
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NullableEnumConditionalAccessToStringShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value?.{|NEEG004:ToString|}();
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value?.ToStringFast();
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NullableEnumConditionalAccessToStringWithCompatibleFormatShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value?.{|NEEG004:ToString|}("G");
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value?.ToStringFast();
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Theory]
+    [InlineData("\"D\"")]
+    [InlineData("\"d\"")]
+    [InlineData("\"x\"")]
+    [InlineData("\"X\"")]
+    public async Task NullableEnumConditionalAccessToStringWithIncompatibleFormatShouldNotHaveDiagnostic(string param)
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            $$"""
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value?.ToString({{param}});
+                }
+            }
+            """);
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task NullableEnumConditionalAccessToStringOnEnumWithoutAttributeShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnumWithoutAttribute? value = TestEnumWithoutAttribute.First;
+                    var str = value?.ToString();
+                }
+            }
+            """);
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task NullableNonEnumConditionalAccessToStringShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    int? value = 42;
+                    var str = value?.ToString();
+                }
+            }
+            """);
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task NullableEnumDirectToStringShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value.{|NEEG004:ToString|}();
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = value?.ToStringFast() ?? "";
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NullableEnumInStringInterpolationShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = $"{{|NEEG004:value|}}";
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnum? value = TestEnum.First;
+                    var str = $"{value?.ToStringFast()}";
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
     public async Task WhenUsageAnalyzersNotEnabled_ToStringShouldNotHaveDiagnostic()
     {
         var test = GetTestCode(

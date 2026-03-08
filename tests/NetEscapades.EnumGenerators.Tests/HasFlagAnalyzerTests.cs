@@ -560,6 +560,129 @@ public class HasFlagAnalyzerTests : AnalyzerTestsBase<HasFlagAnalyzer, HasFlagCo
         await VerifyCodeFixAsync(test, fix);
     }
 
+    [Fact]
+    public async Task NullableEnumValuePropertyHasFlagShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    FlagsEnum? value = FlagsEnum.First;
+                    var flag = FlagsEnum.Second;
+                    var hasFlag = value.Value.{|NEEG005:HasFlag|}(flag);
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    FlagsEnum? value = FlagsEnum.First;
+                    var flag = FlagsEnum.Second;
+                    var hasFlag = value.Value.HasFlagFast(flag);
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NullableEnumConditionalAccessHasFlagShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    FlagsEnum? value = FlagsEnum.First;
+                    var flag = FlagsEnum.Second;
+                    var hasFlag = value?.{|NEEG005:HasFlag|}(flag);
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    FlagsEnum? value = FlagsEnum.First;
+                    var flag = FlagsEnum.Second;
+                    var hasFlag = value?.HasFlagFast(flag);
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NullableEnumConditionalAccessHasFlagOnEnumWithoutAttributeShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    TestEnumWithoutAttribute? value = TestEnumWithoutAttribute.First;
+                    var flag = TestEnumWithoutAttribute.Second;
+                    var hasFlag = value?.HasFlag(flag);
+                }
+            }
+            """);
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersNotEnabled_HasFlagShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    var result = value.HasFlag(FlagsEnum.Second);
+                }
+            }
+            """);
+        // Don't set the config option - analyzer should not run
+        await VerifyAnalyzerAsync(test, EnableState.Missing);
+    }
+
+    [Fact]
+    public async Task WhenUsageAnalyzersDisabled_HasFlagShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var value = FlagsEnum.First;
+                    var result = value.HasFlag(FlagsEnum.Second);
+                }
+            }
+            """);
+
+        await VerifyAnalyzerAsync(test, EnableState.Disabled);
+    }
+
     private static string GetTestCodeWithExternalEnum(string testCode) => $$"""
         using System;
         using System.Collections.Generic;
@@ -639,41 +762,4 @@ public class HasFlagAnalyzerTests : AnalyzerTestsBase<HasFlagAnalyzer, HasFlagCo
         """;
 
 
-    [Fact]
-    public async Task WhenUsageAnalyzersNotEnabled_HasFlagShouldNotHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = FlagsEnum.First;
-                    var result = value.HasFlag(FlagsEnum.Second);
-                }
-            }
-            """);
-        // Don't set the config option - analyzer should not run
-        await VerifyAnalyzerAsync(test, EnableState.Missing);
-    }
-
-    [Fact]
-    public async Task WhenUsageAnalyzersDisabled_HasFlagShouldNotHaveDiagnostic()
-    {
-        var test = GetTestCode(
-            /* lang=c# */
-            """
-            public class TestClass
-            {
-                public void TestMethod()
-                {
-                    var value = FlagsEnum.First;
-                    var result = value.HasFlag(FlagsEnum.Second);
-                }
-            }
-            """);
-
-        await VerifyAnalyzerAsync(test, EnableState.Disabled);
-    }
 }

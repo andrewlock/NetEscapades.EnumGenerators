@@ -50,14 +50,29 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
-        // Check if this is a member access expression (e.g., value.HasFlag())
-        if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
+        // Determine the method name and receiver expression
+        // Handle both regular member access (value.HasFlag()) and conditional access for nullable (value?.HasFlag())
+        SimpleNameSyntax methodName;
+        ExpressionSyntax receiverExpression;
+
+        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
+        {
+            methodName = memberAccess.Name;
+            receiverExpression = memberAccess.Expression;
+        }
+        else if (invocation.Expression is MemberBindingExpressionSyntax memberBinding
+                 && invocation.Parent is ConditionalAccessExpressionSyntax conditionalAccess)
+        {
+            methodName = memberBinding.Name;
+            receiverExpression = conditionalAccess.Expression;
+        }
+        else
         {
             return;
         }
 
         // Check if the method name is "HasFlag"
-        if (memberAccess.Name.Identifier.Text != "HasFlag")
+        if (methodName.Identifier.Text != "HasFlag")
         {
             return;
         }
@@ -84,10 +99,20 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
         }
 
         // Get the type of the receiver (the thing before .HasFlag())
-        var receiverType = context.SemanticModel.GetTypeInfo(memberAccess.Expression).Type;
-        if (receiverType is null || receiverType.TypeKind != TypeKind.Enum)
+        var receiverType = context.SemanticModel.GetTypeInfo(receiverExpression).Type;
+        if (receiverType is null)
         {
             return;
+        }
+
+        if (receiverType.TypeKind != TypeKind.Enum)
+        {
+            if (!AnalyzerHelpers.TryUnwrapNullableEnum(receiverType, out var unwrapped))
+            {
+                return;
+            }
+
+            receiverType = unwrapped;
         }
 
         if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionType))
@@ -98,7 +123,7 @@ public class HasFlagAnalyzer : DiagnosticAnalyzer
         // Report the diagnostic
         var diagnostic = Diagnostic.Create(
             descriptor: Rule,
-            location: memberAccess.Name.GetLocation(),
+            location: methodName.GetLocation(),
             messageArgs: receiverType.Name,
             properties: ImmutableDictionary.CreateRange<string, string?>([
                 new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),

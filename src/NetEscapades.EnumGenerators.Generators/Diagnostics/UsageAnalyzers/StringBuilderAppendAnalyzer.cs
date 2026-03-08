@@ -83,12 +83,24 @@ public class StringBuilderAppendAnalyzer : DiagnosticAnalyzer
         }
 
         var argument = invocation.ArgumentList.Arguments[0];
-        
+
         // Get the type of the argument
         var argumentType = context.SemanticModel.GetTypeInfo(argument.Expression).Type;
-        if (argumentType is null || argumentType.TypeKind != TypeKind.Enum)
+        if (argumentType is null)
         {
             return;
+        }
+
+        var isNullable = false;
+        if (argumentType.TypeKind != TypeKind.Enum)
+        {
+            if (!AnalyzerHelpers.TryUnwrapNullableEnum(argumentType, out var unwrapped))
+            {
+                return;
+            }
+
+            argumentType = unwrapped;
+            isNullable = true;
         }
 
         if (!AnalyzerHelpers.IsEnumWithExtensions(argumentType, enumExtensionsAttr, externalEnumTypes, out var extensionType))
@@ -97,13 +109,21 @@ public class StringBuilderAppendAnalyzer : DiagnosticAnalyzer
         }
 
         // Report the diagnostic
+        var properties =
+            isNullable
+                ? ImmutableDictionary.CreateRange<string, string?>([
+                    new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
+                    new(AnalyzerHelpers.IsNullableProperty, "true"),
+                ])
+                : ImmutableDictionary.CreateRange<string, string?>([
+                    new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType)
+                ]);
+
         var diagnostic = Diagnostic.Create(
             descriptor: Rule,
             location: argument.GetLocation(),
             messageArgs: argumentType.Name,
-            properties: ImmutableDictionary.CreateRange<string, string?>([
-                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
-            ]));
+            properties: properties);
 
         context.ReportDiagnostic(diagnostic);
     }

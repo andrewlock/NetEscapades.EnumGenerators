@@ -40,18 +40,34 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
     {
         // Find the node at the diagnostic location
         var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
+        var generator = editor.Generator;
+        var isNullable = diagnostic.Properties.ContainsKey(AnalyzerHelpers.IsNullableProperty);
 
         // Check if this is an interpolation case
-        var generator = editor.Generator;
         if (node.Parent is InterpolationSyntax interpolation)
         {
-            var newInvocation = generator.InvocationExpression(
-                    generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
-                    interpolation.Expression) // this parameter
-                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+            ExpressionSyntax newExpression;
+            if (isNullable)
+            {
+                // $"{nullableValue}" → $"{nullableValue?.ToStringFast()}"
+                newExpression = SyntaxFactory.ConditionalAccessExpression(
+                        interpolation.Expression,
+                        SyntaxFactory.InvocationExpression(
+                            SyntaxFactory.MemberBindingExpression(
+                                SyntaxFactory.IdentifierName("ToStringFast"))))
+                    .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+            }
+            else
+            {
+                // $"{value}" → $"{ExtensionType.ToStringFast(value)}"
+                newExpression = (ExpressionSyntax)generator.InvocationExpression(
+                        generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
+                        interpolation.Expression) // this parameter
+                    .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+            }
 
             // Create a new interpolation with the invocation and no format clause
-            var newInterpolation = SyntaxFactory.Interpolation((ExpressionSyntax)newInvocation)
+            var newInterpolation = SyntaxFactory.Interpolation(newExpression)
                 .WithLeadingTrivia(interpolation.GetLeadingTrivia())
                 .WithTrailingTrivia(interpolation.GetTrailingTrivia());
 
@@ -62,18 +78,52 @@ public class ToStringCodeFixProvider : CodeFixProviderBase
 
             editor.ReplaceNode(interpolation, newInterpolation);
         }
+        // Check if this is a conditional access case (value?.ToString())
+        else if (node is IdentifierNameSyntax
+                 && node.Parent is MemberBindingExpressionSyntax
+                 && node.Parent.Parent is InvocationExpressionSyntax bindingInvocation)
+        {
+            // value?.ToString() → value?.ToStringFast() (just rename and strip args)
+            var newInvocation = SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.MemberBindingExpression(
+                        SyntaxFactory.IdentifierName("ToStringFast")))
+                .WithTriviaFrom(bindingInvocation);
+
+            editor.ReplaceNode(bindingInvocation, newInvocation);
+        }
         // Check if this is a ToString invocation (original case)
-        else if (node is IdentifierNameSyntax identifierName
-                 && identifierName.Parent is MemberAccessExpressionSyntax memberAccess
+        else if (node is IdentifierNameSyntax
+                 && node.Parent is MemberAccessExpressionSyntax memberAccess
                  && memberAccess.Parent is InvocationExpressionSyntax invocation)
         {
-            var newInvocation = generator.InvocationExpression(
-                    generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
-                    memberAccess.Expression) // this parameter
-                .WithTriviaFrom(invocation)
-                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+            if (isNullable)
+            {
+                // value.ToString() on MyEnum? → value?.ToStringFast() ?? ""
+                var conditionalAccess = SyntaxFactory.ConditionalAccessExpression(
+                    memberAccess.Expression,
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberBindingExpression(
+                            SyntaxFactory.IdentifierName("ToStringFast"))));
 
-            editor.ReplaceNode(invocation, newInvocation);
+                ExpressionSyntax newExpression = SyntaxFactory.BinaryExpression(
+                        SyntaxKind.CoalesceExpression,
+                        conditionalAccess,
+                        SyntaxFactory.LiteralExpression(SyntaxKind.StringLiteralExpression, SyntaxFactory.Literal("")))
+                    .WithTriviaFrom(invocation);
+
+                editor.ReplaceNode(invocation, newExpression);
+            }
+            else
+            {
+                // value.ToString() → ExtensionType.ToStringFast(value)
+                var newInvocation = generator.InvocationExpression(
+                        generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
+                        memberAccess.Expression) // this parameter
+                    .WithTriviaFrom(invocation)
+                    .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+
+                editor.ReplaceNode(invocation, newInvocation);
+            }
         }
 
         return Task.CompletedTask;

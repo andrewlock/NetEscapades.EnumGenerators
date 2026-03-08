@@ -3,6 +3,7 @@ using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Simplification;
@@ -46,16 +47,33 @@ public class StringBuilderAppendCodeFixProvider : CodeFixProviderBase
             return Task.CompletedTask;
         }
 
-        var generator = editor.Generator;
+        var isNullable = diagnostic.Properties.ContainsKey(AnalyzerHelpers.IsNullableProperty);
 
-        // Create the new expression: enumValue.ToStringFast()
-        var newInvocation = generator.InvocationExpression(
-                generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
-                argument.Expression) // this parameter
-            .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+        ExpressionSyntax newExpression;
+        if (isNullable)
+        {
+            // sb.Append(nullableValue) → sb.Append(nullableValue?.ToStringFast())
+            newExpression = SyntaxFactory.ConditionalAccessExpression(
+                    argument.Expression,
+                    SyntaxFactory.InvocationExpression(
+                        SyntaxFactory.MemberBindingExpression(
+                            SyntaxFactory.IdentifierName("ToStringFast"))))
+                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+        }
+        else
+        {
+            var generator = editor.Generator;
+
+            // Create the new expression: enumValue.ToStringFast()
+            // sb.Append(value) → sb.Append(value.ToStringFast())
+            newExpression = (ExpressionSyntax)generator.InvocationExpression(
+                    generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "ToStringFast"),
+                    argument.Expression) // this parameter
+                .WithAdditionalAnnotations(Simplifier.AddImportsAnnotation, Simplifier.Annotation);
+        }
 
         // Create a new argument with the invocation
-        var newArgument = argument.WithExpression((ExpressionSyntax)newInvocation);
+        var newArgument = argument.WithExpression(newExpression);
 
         editor.ReplaceNode(argument, newArgument);
 
