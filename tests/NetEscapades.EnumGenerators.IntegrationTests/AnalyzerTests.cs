@@ -48,6 +48,12 @@ public class AnalyzerTests
         _ = $"Some value: {test:G} <-";
         _ = $"Some value: {EnumInSystem.First} <-";
         _ = $"Some value: {EnumInSystem.First:G} <-";
+
+        EnumInSystem? test2 = null;
+        _ = test2.ToString();
+        _ = $"Some value: {test2} <-";
+        _ = $"Some value: {test2.ToString()} <-";
+        _ = $"Some value: {test2:G} <-";
 #pragma warning restore NEEG004
     }
 
@@ -58,6 +64,10 @@ public class AnalyzerTests
         var test = FlagsEnum.First;
         _ = test.HasFlag(FlagsEnum.Second);
         _ = $"Some value: {test.HasFlag(FlagsEnum.Second)} <-";
+
+        FlagsEnum? test2 = null;
+        _ = test2?.HasFlag(FlagsEnum.Second);
+        _ = $"Some value: {test2?.HasFlag(FlagsEnum.Second)} <-";
 #pragma warning restore NEEG005
     }
 
@@ -169,6 +179,9 @@ public class AnalyzerTests
         var flagsEnum = FlagsEnum.First;
         var sb = new StringBuilder();
         sb.Append(flagsEnum);
+
+        FlagsEnum? flagsEnum2 = null;
+        sb.Append(flagsEnum2);
 #pragma warning restore NEEG012
     }
 }
