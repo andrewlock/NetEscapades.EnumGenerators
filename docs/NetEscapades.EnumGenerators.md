@@ -90,7 +90,7 @@ This adds a `<PackageReference>` to your project:
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta21" />
   <!-- -->
 
 </Project>
@@ -453,10 +453,10 @@ In some cases you may not want these dependencies to flow to other projects. Thi
   </PropertyGroup>
 
   <!-- Add the generator package with PrivateAssets -->
-  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="All"/>
+  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta21" PrivateAssets="All"/>
 
   <!-- Optionally add the runtime dependencies package -->
-  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta20" />
+  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta21" />
 </Project>
 ```
 
@@ -516,7 +516,7 @@ In general, for simplicity, we recommend referencing [NetEscapades.EnumGenerator
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta21" />
 </Project>
 ```
 
@@ -529,7 +529,7 @@ In contrast, if you are producing a reusable library and don't want any runtime 
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="All" ExcludeAssets="runtime" />
+  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta21" PrivateAssets="All" ExcludeAssets="runtime" />
 </Project>
 ```
 
@@ -543,8 +543,8 @@ The final option is to reference [NetEscapades.EnumGenerators.Generators](https:
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
-  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="All" ExcludeAssets="runtime"/>
-  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta20" />
+  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta21" PrivateAssets="All" ExcludeAssets="runtime"/>
+  <PackageReference Include="NetEscapades.EnumGenerators.RuntimeDependencies" Version="1.0.0-beta21" />
 </Project>
 ```
 
@@ -657,7 +657,7 @@ The `[EnumExtensions]` attribute is decorated with the `[Conditional]` attribute
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta20" />
+  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta21" />
 </Project>
 ```
 <!-- endInclude -->

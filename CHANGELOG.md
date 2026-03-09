@@ -1,6 +1,21 @@
 Changelog
 --- 
 
+## [v1.0.0-beta21](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta20..v1.0.0-beta21) (2026-03-09)
+
+### Breaking Changes
+
+* When using the _NetEscapades.EnumGenerators_ meta package, set `EnumGenerator_PreserveAttributes=true` by default, so that usage analyzers can light up in downstream projects (#241)
+
+### Features
+
+* Add "Force Internal" to allow forcing extension methods to be `internal` even for `public` enums  (#230) Thanks [@xC0dex](https://github.com/xC0dex)!
+* Extend usage analyzers to nullable enum variables (#244)
+
+### Fixes
+
+* Scan all assemblies for "external" attributes for usage analyzers (#238)
+
 ## [v1.0.0-beta20](https://github.com/andrewlock/NetEscapades.EnumGenerators/compare/v1.0.0-beta19..v1.0.0-beta20) (2026-01-05)
 
 ### Breaking Changes

@@ -36,7 +36,7 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
   </PropertyGroup>
 
   <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20"
+  <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta21"
     PrivateAssets="all" ExcludeAssets="runtime" />
   <!-- -->
 
