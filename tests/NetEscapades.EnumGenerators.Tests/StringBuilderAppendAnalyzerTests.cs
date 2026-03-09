@@ -436,6 +436,91 @@ public class StringBuilderAppendAnalyzerTests : AnalyzerTestsBase<StringBuilderA
     }
 
     [Fact]
+    public async Task NullableEnumValuePropertyAppendShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    TestEnum? value = TestEnum.First;
+                    sb.Append({|NEEG012:value.Value|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    TestEnum? value = TestEnum.First;
+                    sb.Append(value.Value.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NullableEnumAppendShouldHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    TestEnum? value = TestEnum.First;
+                    sb.Append({|NEEG012:value|});
+                }
+            }
+            """);
+
+        var fix = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    TestEnum? value = TestEnum.First;
+                    sb.Append(value?.ToStringFast());
+                }
+            }
+            """);
+        await VerifyCodeFixAsync(test, fix);
+    }
+
+    [Fact]
+    public async Task NullableEnumAppendOnEnumWithoutAttributeShouldNotHaveDiagnostic()
+    {
+        var test = GetTestCode(
+            /* lang=c# */
+            """
+            public class TestClass
+            {
+                public void TestMethod()
+                {
+                    var sb = new System.Text.StringBuilder();
+                    TestEnumWithoutAttribute? value = TestEnumWithoutAttribute.First;
+                    sb.Append(value);
+                }
+            }
+            """);
+        await VerifyAnalyzerAsync(test);
+    }
+
+    [Fact]
     public async Task WhenUsageAnalyzersNotEnabled_AppendShouldNotHaveDiagnostic()
     {
         var test = GetTestCode(

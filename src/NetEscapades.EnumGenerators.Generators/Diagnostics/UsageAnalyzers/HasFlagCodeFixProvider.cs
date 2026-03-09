@@ -3,6 +3,7 @@ using System.Composition;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Simplification;
@@ -41,8 +42,27 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
         // Find the node at the diagnostic location
         var node = editor.OriginalRoot.FindNode(diagnostic.Location.SourceSpan);
 
-        if (node is not IdentifierNameSyntax identifierName
-            || identifierName.Parent is not MemberAccessExpressionSyntax memberAccess
+        if (node is not IdentifierNameSyntax)
+        {
+            return Task.CompletedTask;
+        }
+
+        // Handle conditional access case for nullable: value?.HasFlag(flag) → value?.HasFlagFast(flag)
+        if (node.Parent is MemberBindingExpressionSyntax
+            && node.Parent.Parent is InvocationExpressionSyntax bindingInvocation)
+        {
+            var newNullableInvocation = SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.MemberBindingExpression(
+                        SyntaxFactory.IdentifierName("HasFlagFast")),
+                    bindingInvocation.ArgumentList)
+                .WithTriviaFrom(bindingInvocation);
+
+            editor.ReplaceNode(bindingInvocation, newNullableInvocation);
+            return Task.CompletedTask;
+        }
+
+        // Handle regular case: value.HasFlag(flag) → ExtensionType.HasFlagFast(value, flag)
+        if (node.Parent is not MemberAccessExpressionSyntax memberAccess
             || memberAccess.Parent is not InvocationExpressionSyntax invocation)
         {
             return Task.CompletedTask;
@@ -51,7 +71,7 @@ public class HasFlagCodeFixProvider : CodeFixProviderBase
         var newInvocation = generator.InvocationExpression(
                 generator.MemberAccessExpression(generator.TypeExpression(extensionTypeSymbol), "HasFlagFast"),
                 [
-                    memberAccess.Expression, // this parameter 
+                    memberAccess.Expression, // this parameter
                     ..invocation.ArgumentList.Arguments,
                 ])
             .WithTriviaFrom(invocation)

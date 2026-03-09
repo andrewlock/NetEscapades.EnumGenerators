@@ -54,20 +54,37 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
     {
         var invocation = (InvocationExpressionSyntax)context.Node;
 
-        // Check if this is a member access expression (e.g., value.ToString())
-        if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
-        {
-            return;
-        }
-
         // Check if there are too many arguments)
         if (invocation.ArgumentList.Arguments.Count > 1)
         {
             return;
         }
 
+        // Determine the method name and receiver expression
+        // Handle both regular member access (value.ToString()) and conditional access (value?.ToString())
+        SimpleNameSyntax methodName;
+        ExpressionSyntax receiverExpression;
+        bool isConditionalAccess = false;
+
+        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess)
+        {
+            methodName = memberAccess.Name;
+            receiverExpression = memberAccess.Expression;
+        }
+        else if (invocation.Expression is MemberBindingExpressionSyntax memberBinding
+                 && invocation.Parent is ConditionalAccessExpressionSyntax conditionalAccess)
+        {
+            methodName = memberBinding.Name;
+            receiverExpression = conditionalAccess.Expression;
+            isConditionalAccess = true;
+        }
+        else
+        {
+            return;
+        }
+
         // Check if the method name is "ToString"
-        if (memberAccess.Name.Identifier.Text != "ToString")
+        if (methodName.Identifier.Text != "ToString")
         {
             return;
         }
@@ -79,12 +96,13 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        // Verify this is the ToString() method from System.Object or System.Enum
+        // Verify this is the ToString() method from System.Object, System.Enum, or Nullable<T>
         // We handle format specifiers, so accept ToString() with 0 or 1 parameters
         if (methodSymbol.Name != "ToString" ||
             methodSymbol.Parameters.Length > 1 ||
             (methodSymbol.ContainingType.SpecialType != SpecialType.System_Object &&
-             methodSymbol.ContainingType.SpecialType != SpecialType.System_Enum))
+             methodSymbol.ContainingType.SpecialType != SpecialType.System_Enum &&
+             methodSymbol.ContainingType.OriginalDefinition.SpecialType != SpecialType.System_Nullable_T))
         {
             return;
         }
@@ -95,7 +113,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         {
             var argument = invocation.ArgumentList.Arguments[0];
             var constantValue = context.SemanticModel.GetConstantValue(argument.Expression);
-            
+
             // If we can't determine the value at compile time, don't suggest replacement
             // If it's not a string (e.g., it's an IFormatProvider), don't suggest replacement
             if (!constantValue.HasValue || constantValue.Value is not string formatString)
@@ -105,7 +123,7 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
 
             // Check if the format string is compatible with ToStringFast()
             // Only "", "G", and "g" are compatible
-            if (!string.IsNullOrEmpty(formatString) && 
+            if (!string.IsNullOrEmpty(formatString) &&
                 !string.Equals(formatString, "G", StringComparison.Ordinal) &&
                 !string.Equals(formatString, "g", StringComparison.Ordinal))
             {
@@ -114,10 +132,22 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         }
 
         // Get the type of the receiver (the thing before .ToString())
-        var receiverType = context.SemanticModel.GetTypeInfo(memberAccess.Expression).Type;
-        if (receiverType is null || receiverType.TypeKind != TypeKind.Enum)
+        var receiverType = context.SemanticModel.GetTypeInfo(receiverExpression).Type;
+        if (receiverType is null)
         {
             return;
+        }
+
+        var isNullable = false;
+        if (receiverType.TypeKind != TypeKind.Enum)
+        {
+            if (!AnalyzerHelpers.TryUnwrapNullableEnum(receiverType, out var unwrapped))
+            {
+                return;
+            }
+
+            receiverType = unwrapped;
+            isNullable = true;
         }
 
         if (!AnalyzerHelpers.IsEnumWithExtensions(receiverType, enumExtensionsAttr, externalEnumTypes, out var extensionType))
@@ -126,13 +156,20 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         }
 
         // Report the diagnostic
+        var properties = isNullable || isConditionalAccess
+            ? ImmutableDictionary.CreateRange<string, string?>([
+                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
+                new(AnalyzerHelpers.IsNullableProperty, "true"),
+            ])
+            : ImmutableDictionary.CreateRange<string, string?>([
+                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType)
+            ]);
+
         var diagnostic = Diagnostic.Create(
             descriptor: Rule,
-            location: memberAccess.Name.GetLocation(),
+            location: methodName.GetLocation(),
             messageArgs: receiverType.Name,
-            properties: ImmutableDictionary.CreateRange<string, string?>([
-                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
-            ]));
+            properties: properties);
 
         context.ReportDiagnostic(diagnostic);
     }
@@ -157,19 +194,31 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
             _ => context.SemanticModel.GetTypeInfo(expression).Type
         };
 
-        if (expressionType is null || expressionType.TypeKind != TypeKind.Enum)
+        bool isNullable = false;
+        if (expressionType is null)
         {
             return;
+        }
+
+        if (expressionType.TypeKind != TypeKind.Enum)
+        {
+            if (!AnalyzerHelpers.TryUnwrapNullableEnum(expressionType, out var unwrapped))
+            {
+                return;
+            }
+
+            expressionType = unwrapped;
+            isNullable = true;
         }
 
         // Check if there's a format clause (e.g., :g, :G, :x)
         if (interpolation.FormatClause is not null)
         {
             var formatString = interpolation.FormatClause.FormatStringToken.Text;
-            
+
             // Check if the format string is compatible with ToStringFast()
             // Only "", "g", and "G" are compatible (empty is when there's no format clause)
-            if (!string.IsNullOrEmpty(formatString) && 
+            if (!string.IsNullOrEmpty(formatString) &&
                 !string.Equals(formatString, "G", StringComparison.Ordinal) &&
                 !string.Equals(formatString, "g", StringComparison.Ordinal))
             {
@@ -183,13 +232,18 @@ public class ToStringAnalyzer : DiagnosticAnalyzer
         }
 
         // Report the diagnostic on the expression itself
+        var properties = ImmutableDictionary.CreateBuilder<string, string?>();
+        properties.Add(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType);
+        if (isNullable)
+        {
+            properties.Add(AnalyzerHelpers.IsNullableProperty, "true");
+        }
+
         var diagnostic = Diagnostic.Create(
             descriptor: Rule,
             location: expression.GetLocation(),
             messageArgs: expressionType.Name,
-            properties: ImmutableDictionary.CreateRange<string, string?>([
-                new(AnalyzerHelpers.ExtensionTypeNameProperty, extensionType),
-            ]));
+            properties: properties.ToImmutable());
 
         context.ReportDiagnostic(diagnostic);
     }

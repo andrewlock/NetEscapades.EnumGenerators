@@ -6,6 +6,25 @@ namespace NetEscapades.EnumGenerators.Diagnostics;
 public static class AnalyzerHelpers
 {
     public const string ExtensionTypeNameProperty = nameof(ExtensionTypeNameProperty);
+    public const string IsNullableProperty = nameof(IsNullableProperty);
+
+    /// <summary>
+    /// If <paramref name="type"/> is <see cref="Nullable{TEnum}"/> where TEnum is an enum,
+    /// returns the underlying enum type. Otherwise returns null.
+    /// </summary>
+    public static bool TryUnwrapNullableEnum(ITypeSymbol? type, [NotNullWhen(true)] out ITypeSymbol? enumType)
+    {
+        if (type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T, TypeArguments: [
+                { TypeKind: TypeKind.Enum } innerType] })
+        {
+            enumType = innerType;
+            return true;
+        }
+
+        enumType = null;
+        return false;
+    }
+
     public static (INamedTypeSymbol? enumExtensionsAttr, ExternalEnumDictionary? externalEnumTypes) GetEnumExtensionAttributes(Compilation compilation)
     {
         var enumExtensionsAttr =
