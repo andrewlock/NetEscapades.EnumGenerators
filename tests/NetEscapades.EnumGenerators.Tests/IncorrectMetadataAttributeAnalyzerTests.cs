@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using NetEscapades.EnumGenerators.Diagnostics;
+using NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers;
 using Xunit;
 using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.CSharpAnalyzerVerifier<
-    NetEscapades.EnumGenerators.Diagnostics.IncorrectMetadataAttributeAnalyzer,
+    NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers.IncorrectMetadataAttributeAnalyzer,
     Microsoft.CodeAnalysis.Testing.DefaultVerifier>;
 
 namespace NetEscapades.EnumGenerators.Tests;
@@ -108,7 +108,7 @@ public class IncorrectMetadataAttributeAnalyzerTests
             [EnumExtensions]
             public enum TestEnum
             {
-                [{|NEEG004:Display(Name = "First")|}]
+                [{|NEEG013:Display(Name = "First")|}]
                 First,
                 Second,
             }
@@ -124,9 +124,9 @@ public class IncorrectMetadataAttributeAnalyzerTests
             [EnumExtensions]
             public enum TestEnum
             {
-                [{|NEEG004:Display(Name = "First")|}]
+                [{|NEEG013:Display(Name = "First")|}]
                 First,
-                [{|NEEG004:Display(Name = "Second")|}]
+                [{|NEEG013:Display(Name = "Second")|}]
                 Second,
             }
             """);
@@ -160,7 +160,7 @@ public class IncorrectMetadataAttributeAnalyzerTests
             [EnumExtensions(MetadataSource = MetadataSource.DisplayAttribute)]
             public enum TestEnum
             {
-                [{|NEEG004:EnumMember(Value = "first")|}]
+                [{|NEEG013:EnumMember(Value = "first")|}]
                 First,
                 Second,
             }
@@ -176,7 +176,7 @@ public class IncorrectMetadataAttributeAnalyzerTests
             [EnumExtensions(MetadataSource = MetadataSource.DisplayAttribute)]
             public enum TestEnum
             {
-                [{|NEEG004:Description("First description")|}]
+                [{|NEEG013:Description("First description")|}]
                 First,
                 Second,
             }
@@ -192,7 +192,7 @@ public class IncorrectMetadataAttributeAnalyzerTests
             [EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
             public enum TestEnum
             {
-                [{|NEEG004:Display(Name = "First")|}]
+                [{|NEEG013:Display(Name = "First")|}]
                 First,
                 Second,
             }
@@ -214,7 +214,7 @@ public class IncorrectMetadataAttributeAnalyzerTests
             [EnumExtensions]
             public enum TestEnum
             {
-                [{|NEEG004:EnumMember(Value = "first")|}]
+                [{|NEEG013:EnumMember(Value = "first")|}]
                 First,
                 Second,
             }

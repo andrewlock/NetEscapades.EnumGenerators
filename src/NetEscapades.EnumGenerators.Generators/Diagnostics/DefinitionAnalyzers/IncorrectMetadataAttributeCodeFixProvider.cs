@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers;
 
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(IncorrectMetadataAttributeCodeFixProvider)), Shared]
 public class IncorrectMetadataAttributeCodeFixProvider : CodeFixProvider
@@ -104,15 +104,15 @@ public class IncorrectMetadataAttributeCodeFixProvider : CodeFixProvider
             {
                 var attributeType = attribute.AttributeClass?.ToDisplayString();
                 
-                if (attributeType == Attributes.DisplayAttribute)
+                if (attributeType == TypeNames.DisplayAttribute)
                 {
                     hasDisplay = true;
                 }
-                else if (attributeType == Attributes.DescriptionAttribute)
+                else if (attributeType == TypeNames.DescriptionAttribute)
                 {
                     hasDescription = true;
                 }
-                else if (attributeType == Attributes.EnumMemberAttribute)
+                else if (attributeType == TypeNames.EnumMemberAttribute)
                 {
                     hasEnumMember = true;
                 }

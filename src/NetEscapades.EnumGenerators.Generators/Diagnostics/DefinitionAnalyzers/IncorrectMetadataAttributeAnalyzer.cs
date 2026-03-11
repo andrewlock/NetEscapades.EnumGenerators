@@ -5,12 +5,12 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace NetEscapades.EnumGenerators.Diagnostics;
+namespace NetEscapades.EnumGenerators.Diagnostics.DefinitionAnalyzers;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class IncorrectMetadataAttributeAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "NEEG004";
+    public const string DiagnosticId = "NEEG013";
     public static readonly DiagnosticDescriptor Rule = new(
 #pragma warning disable RS2008 // Enable Analyzer Release Tracking
         id: DiagnosticId,
@@ -73,7 +73,7 @@ public class IncorrectMetadataAttributeAnalyzer : DiagnosticAnalyzer
                     // Verify with semantic model for precision
                     var symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
                     if (symbolInfo.Symbol is IMethodSymbol method &&
-                        method.ContainingType.ToDisplayString() == Attributes.EnumExtensionsAttribute)
+                        method.ContainingType.ToDisplayString() == TypeNames.EnumExtensionsAttribute)
                     {
                         enumExtensionsAttribute = attribute;
                         
@@ -88,7 +88,7 @@ public class IncorrectMetadataAttributeAnalyzer : DiagnosticAnalyzer
                                     var attrData = context.SemanticModel.GetSymbolInfo(attribute).Symbol?.ContainingType;
                                     foreach (var attrDataItem in context.SemanticModel.GetDeclaredSymbol(enumDeclaration)?.GetAttributes() ?? Enumerable.Empty<AttributeData>())
                                     {
-                                        if (attrDataItem.AttributeClass?.ToDisplayString() == Attributes.EnumExtensionsAttribute)
+                                        if (attrDataItem.AttributeClass?.ToDisplayString() == TypeNames.EnumExtensionsAttribute)
                                         {
                                             foreach (var namedArg in attrDataItem.NamedArguments)
                                             {
@@ -152,7 +152,7 @@ public class IncorrectMetadataAttributeAnalyzer : DiagnosticAnalyzer
             {
                 var attributeType = attribute.AttributeClass?.ToDisplayString();
                 
-                if (attributeType == Attributes.DisplayAttribute)
+                if (attributeType == TypeNames.DisplayAttribute)
                 {
                     if (effectiveMetadataSource == MetadataSource.DisplayAttribute)
                     {
@@ -167,7 +167,7 @@ public class IncorrectMetadataAttributeAnalyzer : DiagnosticAnalyzer
                         }
                     }
                 }
-                else if (attributeType == Attributes.DescriptionAttribute)
+                else if (attributeType == TypeNames.DescriptionAttribute)
                 {
                     if (effectiveMetadataSource == MetadataSource.DescriptionAttribute)
                     {
@@ -182,7 +182,7 @@ public class IncorrectMetadataAttributeAnalyzer : DiagnosticAnalyzer
                         }
                     }
                 }
-                else if (attributeType == Attributes.EnumMemberAttribute)
+                else if (attributeType == TypeNames.EnumMemberAttribute)
                 {
                     if (effectiveMetadataSource == MetadataSource.EnumMemberAttribute)
                     {
