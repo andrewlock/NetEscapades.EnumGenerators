@@ -25,7 +25,8 @@ public static class SourceGenerationHelper
         bool useCollectionExpressions,
         MetadataSource defaultMetadataSource,
         bool hasRuntimeDependencies,
-        bool forceInternal)
+        bool forceInternal,
+        bool useOverloadPriority = false)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
@@ -165,6 +166,13 @@ public static class SourceGenerationHelper
                     /// <param name="value">The value to retrieve the string value for</param>
                     /// <param name="options">The options to use when serializing the enum</param>
                     /// <returns>The string representation of the value, using the provided options.</returns>
+            """);
+
+        AddOverloadResolutionPriority(sb, useOverloadPriority);
+
+        sb.Append(
+            """
+
                     public static string ToStringFast(this 
             """).Append(fullyQualifiedName).Append(
             """
@@ -952,6 +960,13 @@ public static class SourceGenerationHelper
             """
             " /> whose
                     /// value is represented by <paramref name="name"/></returns>
+            """);
+
+        AddOverloadResolutionPriority(sb, useOverloadPriority);
+
+        sb.Append(
+            """
+
                     public static 
             """).Append(fullyQualifiedName).Append(
             """
@@ -1146,6 +1161,13 @@ public static class SourceGenerationHelper
             " />. This parameter is passed uninitialized.</param>
                     /// <param name="options">Options that control how the string value should be parsed.</param>
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+            """);
+
+        AddOverloadResolutionPriority(sb, useOverloadPriority);
+
+        sb.Append(
+            """
+
                     public static bool TryParse(
             #if NETCOREAPP3_0_OR_GREATER
                         [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -1468,6 +1490,8 @@ public static class SourceGenerationHelper
 
         AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None, enumParseOptions);
 
+        AddOverloadResolutionPriority(sb, useOverloadPriority);
+
         sb.Append(
             """
                     public static 
@@ -1489,6 +1513,13 @@ public static class SourceGenerationHelper
             """
             " /> whose
                     /// value is represented by <paramref name="name"/></returns>
+            """);
+
+        AddOverloadResolutionPriority(sb, useOverloadPriority);
+
+        sb.Append(
+            """
+
                     public static 
             """).Append(fullyQualifiedName).Append(
             """
@@ -1791,6 +1822,8 @@ public static class SourceGenerationHelper
 
         AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None, enumParseOptions);
 
+        AddOverloadResolutionPriority(sb, useOverloadPriority);
+
         sb.Append(
             """
                     public static bool TryParse(
@@ -1817,6 +1850,13 @@ public static class SourceGenerationHelper
             " />. This parameter is passed uninitialized.</param>
                     /// <param name="options">Options that control how the string value should be parsed.</param>
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+            """);
+
+        AddOverloadResolutionPriority(sb, useOverloadPriority);
+
+        sb.Append(
+            """
+
                     public static bool TryParse(
             #endif
             #if NETCOREAPP3_0_OR_GREATER
@@ -2195,6 +2235,28 @@ public static class SourceGenerationHelper
                 """);
         }
 
+        if (useOverloadPriority)
+        {
+            sb.Append(
+            """
+
+
+            #if !NET9_0_OR_GREATER && NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+            namespace System.Runtime.CompilerServices
+            {
+                [global::System.AttributeUsage(
+                    global::System.AttributeTargets.Method | global::System.AttributeTargets.Constructor | global::System.AttributeTargets.Property,
+                    AllowMultiple = false, Inherited = false)]
+                file sealed class OverloadResolutionPriorityAttribute : global::System.Attribute
+                {
+                    public OverloadResolutionPriorityAttribute(int priority) => Priority = priority;
+                    public int Priority { get; }
+                }
+            }
+            #endif
+            """);
+        }
+
         var content = sb.ToString();
         sb.Clear();
         var filename = sb
@@ -2247,6 +2309,23 @@ public static class SourceGenerationHelper
                                 };
                     """);
             }
+        }
+
+        static void AddOverloadResolutionPriority(StringBuilder sb, bool useOverloadPriority)
+        {
+            if (!useOverloadPriority)
+            {
+                return;
+            }
+
+            sb.Append(
+            """
+
+            #if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+                    [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+            #endif
+
+            """);
         }
 
         static void AddSystemMemoryWarning(StringBuilder sb, string fullyQualifiedName, AlternativeMethodChoice alternativeMethodChoice, string enumParseOptions)

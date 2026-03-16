@@ -96,6 +96,7 @@ public class EnumGenerator : IIncrementalGenerator
     {
         var useExtensionMembers = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1400; // C#14
         var useCollectionExpressions = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1200; // C#12
+        var useOverloadPriority = compilationDetails.LanguageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1300; // C#13
         var forceInternal = enumToGenerate.ForceInternal || defaultValues.ForceInternalAccessModifier;
         var (result, filename) = SourceGenerationHelper.GenerateExtensionClass(
             enumToGenerate: in enumToGenerate,
@@ -103,7 +104,8 @@ public class EnumGenerator : IIncrementalGenerator
             useCollectionExpressions: useCollectionExpressions,
             defaultMetadataSource: defaultValues.MetadataSource,
             hasRuntimeDependencies: compilationDetails.HasRuntimeDeps,
-            forceInternal: forceInternal);
+            forceInternal: forceInternal,
+            useOverloadPriority: useOverloadPriority);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 
