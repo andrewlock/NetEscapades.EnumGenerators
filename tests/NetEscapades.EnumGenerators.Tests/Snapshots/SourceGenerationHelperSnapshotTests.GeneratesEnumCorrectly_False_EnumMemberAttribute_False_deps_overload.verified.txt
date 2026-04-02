@@ -9,15 +9,15 @@
 
 #nullable enable
 
-namespace MyTestNameSpace
+namespace Something.Blah
 {
 #pragma warning disable CS0612 // Ignore usages of obsolete members or enums
 #pragma warning disable CS0618 // Ignore usages of obsolete members or enums
     /// <summary>
-    /// Extension methods for <see cref="global::MyTestNameSpace.MyEnum" />
+    /// Extension methods for <see cref="global::Something.Blah.ShortName" />
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("NetEscapades.EnumGenerators", "FIXED_VERSION")]
-    public static partial class MyEnumExtensions
+    public static partial class ShortName
     {
         /// <summary>
         /// The number of members in the enum.
@@ -26,21 +26,21 @@ namespace MyTestNameSpace
         public const int Length = 2;
 
         /// <summary>
-        /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
+        /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
         /// <returns>The string representation of the value, the same as that returned by <c>ToString()</c></returns>
-        public static string ToStringFast(this global::MyTestNameSpace.MyEnum value)
+        public static string ToStringFast(this global::Something.Blah.ShortName value)
             => value switch
             {
-                global::MyTestNameSpace.MyEnum.First => nameof(global::MyTestNameSpace.MyEnum.First),
-                global::MyTestNameSpace.MyEnum.Second => nameof(global::MyTestNameSpace.MyEnum.Second),
+                global::Something.Blah.ShortName.First => nameof(global::Something.Blah.ShortName.First),
+                global::Something.Blah.ShortName.Second => nameof(global::Something.Blah.ShortName.Second),
                 _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
-        /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
+        /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
         /// <param name="value">The value to retrieve the string value for</param>
@@ -50,7 +50,7 @@ namespace MyTestNameSpace
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
-        public static string ToStringFast(this global::MyTestNameSpace.MyEnum value, global::NetEscapades.EnumGenerators.SerializationOptions options)
+        public static string ToStringFast(this global::Something.Blah.ShortName value, global::NetEscapades.EnumGenerators.SerializationOptions options)
             => options.Transform switch
                {
                    global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
@@ -58,24 +58,24 @@ namespace MyTestNameSpace
                    _ => value.ToStringFast(),
                };
 
-        private static string ToStringFastLowerInvariant(this global::MyTestNameSpace.MyEnum value)
+        private static string ToStringFastLowerInvariant(this global::Something.Blah.ShortName value)
             => value switch
             {
-                global::MyTestNameSpace.MyEnum.First => "first",
-                global::MyTestNameSpace.MyEnum.Second => "second",
+                global::Something.Blah.ShortName.First => "first",
+                global::Something.Blah.ShortName.Second => "second",
                 _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
-        private static string ToStringFastUpperInvariant(this global::MyTestNameSpace.MyEnum value)
+        private static string ToStringFastUpperInvariant(this global::Something.Blah.ShortName value)
             => value switch
             {
-                global::MyTestNameSpace.MyEnum.First => "FIRST",
-                global::MyTestNameSpace.MyEnum.Second => "SECOND",
+                global::Something.Blah.ShortName.First => "FIRST",
+                global::Something.Blah.ShortName.Second => "SECOND",
                 _ => value.AsUnderlyingType().ToString(global::System.Globalization.CultureInfo.InvariantCulture),
             };
 
         /// <summary>
-        /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
+        /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
         /// If the member is decorated with the <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute
         /// then that value is returned. Otherwise returns uses the name of the member,
         /// equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
@@ -85,33 +85,29 @@ namespace MyTestNameSpace
         ///  <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute as the string representation of the member.
         /// If <see langword="false"/>, always uses the name of the member, the same as if <c>ToString()</c> was called.</param>
         /// <returns>The string representation of the value</returns>
-        public static string ToStringFast(this global::MyTestNameSpace.MyEnum value, bool useMetadataAttributes)
+        public static string ToStringFast(this global::Something.Blah.ShortName value, bool useMetadataAttributes)
             => value.ToStringFast();
 
         /// <summary>
-        /// Cast a value of <see cref="global::MyTestNameSpace.MyEnum" /> to the underlying type (<c>int</c>).
+        /// Cast a value of <see cref="global::Something.Blah.ShortName" /> to the underlying type (<c>int</c>).
         /// This is mainly a convenience method.
         /// </summary>
-        /// <returns>The value of <see cref="global::MyTestNameSpace.MyEnum" /> cast to the underlying type.</returns>
-        public static int AsUnderlyingType(this global::MyTestNameSpace.MyEnum value)
+        /// <returns>The value of <see cref="global::Something.Blah.ShortName" /> cast to the underlying type.</returns>
+        public static int AsUnderlyingType(this global::Something.Blah.ShortName value)
         {
             return (int) value;
         }
-
-        // C#14 Extension member syntax
-        extension(global::MyTestNameSpace.MyEnum)
-        {
 
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
         /// <param name="value">The value to check if it's defined</param>
         /// <returns><see langword="true"/> if the value exists in the enumeration, <see langword="false"/> otherwise</returns>
-        public static bool IsDefined(global::MyTestNameSpace.MyEnum value)
+        public static bool IsDefined(global::Something.Blah.ShortName value)
             => value switch
             {
-                global::MyTestNameSpace.MyEnum.First => true,
-                global::MyTestNameSpace.MyEnum.Second => true,
+                global::Something.Blah.ShortName.First => true,
+                global::Something.Blah.ShortName.Second => true,
                 _ => false,
             };
 
@@ -123,8 +119,8 @@ namespace MyTestNameSpace
         public static bool IsDefined(string name)
             => name switch
             {
-                nameof(global::MyTestNameSpace.MyEnum.First) => true,
-                nameof(global::MyTestNameSpace.MyEnum.Second) => true,
+                nameof(global::Something.Blah.ShortName.First) => true,
+                nameof(global::Something.Blah.ShortName.Second) => true,
             _ => false,
         };
 
@@ -151,8 +147,8 @@ namespace MyTestNameSpace
         public static bool IsDefined(in global::System.ReadOnlySpan<char> name)
             => name switch
             {
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.First)), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Second)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.First)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Second)), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 
@@ -171,12 +167,12 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -185,13 +181,13 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -206,15 +202,15 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in metadata attributes such as
         /// <c>[Display]</c> attribute when parsing, otherwise only considers the member names.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -230,17 +226,17 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
 #if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
@@ -254,40 +250,40 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
 #endif
-        private static global::MyTestNameSpace.MyEnum ThrowValueNotFound(string? name)
+        private static global::Something.Blah.ShortName ThrowValueNotFound(string? name)
             => throw new global::System.ArgumentException($"Requested value '{name}' was not found.");
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
-            out global::MyTestNameSpace.MyEnum value)
+            out global::Something.Blah.ShortName value)
             => TryParse(name, out value, new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         public static bool TryParse(
@@ -295,7 +291,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
-            out global::MyTestNameSpace.MyEnum value,
+            out global::Something.Blah.ShortName value,
             bool ignoreCase)
             => TryParse(name,
                 out value,
@@ -304,15 +300,15 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, 
         /// considers the value included in <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute 
@@ -323,7 +319,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
-            out global::MyTestNameSpace.MyEnum value,
+            out global::Something.Blah.ShortName value,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(
@@ -335,15 +331,15 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
 #if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
@@ -355,19 +351,19 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
-            out global::MyTestNameSpace.MyEnum value,
+            out global::Something.Blah.ShortName value,
             global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.First), options.ComparisonType):
-                    value = global::MyTestNameSpace.MyEnum.First;
+                case string s when s.Equals(nameof(global::Something.Blah.ShortName.First), options.ComparisonType):
+                    value = global::Something.Blah.ShortName.First;
                     return true;
-                case string s when s.Equals(nameof(global::MyTestNameSpace.MyEnum.Second), options.ComparisonType):
-                    value = global::MyTestNameSpace.MyEnum.Second;
+                case string s when s.Equals(nameof(global::Something.Blah.ShortName.Second), options.ComparisonType):
+                    value = global::Something.Blah.ShortName.Second;
                     return true;
                 case string s when options.EnableNumberParsing && int.TryParse(name, out var val):
-                    value = (global::MyTestNameSpace.MyEnum)val;
+                    value = (global::Something.Blah.ShortName)val;
                     return true;
                 default:
                     value = default;
@@ -379,26 +375,26 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #else
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #endif 
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -413,28 +409,28 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #else
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -451,32 +447,32 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #else
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The case-sensitive string representation of the enumeration name or underlying value to convert</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -495,35 +491,35 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
 
 #if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #else
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
-        /// <returns>An object of type <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <returns>An object of type <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="name"/></returns>
 #if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
-        public static global::MyTestNameSpace.MyEnum Parse(
+        public static global::Something.Blah.ShortName Parse(
 #endif
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -538,7 +534,7 @@ namespace MyTestNameSpace
 #if NETCOREAPP3_0_OR_GREATER
         [global::System.Diagnostics.CodeAnalysis.DoesNotReturn]
 #endif
-        private static global::MyTestNameSpace.MyEnum ThrowValueNotFound(in global::System.ReadOnlySpan<char> name)
+        private static global::Something.Blah.ShortName ThrowValueNotFound(in global::System.ReadOnlySpan<char> name)
 #if NET6_0_OR_GREATER
             => throw new global::System.ArgumentException($"Requested value '{name}' was not found.");
 #else
@@ -548,34 +544,34 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::MyTestNameSpace.MyEnum,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Something.Blah.ShortName,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
         public static bool TryParse(
 #else
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         public static bool TryParse(
 #endif
@@ -583,7 +579,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
-            out global::MyTestNameSpace.MyEnum value)
+            out global::Something.Blah.ShortName value)
             => TryParse(
                 name, 
                 out value,
@@ -592,35 +588,35 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::MyTestNameSpace.MyEnum,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Something.Blah.ShortName,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
         public static bool TryParse(
 #else
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="value">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="value"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         public static bool TryParse(
@@ -629,7 +625,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
-            out global::MyTestNameSpace.MyEnum value,
+            out global::Something.Blah.ShortName value,
             bool ignoreCase)
             => TryParse(
                 name, 
@@ -640,37 +636,37 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="result">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::MyTestNameSpace.MyEnum,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Something.Blah.ShortName,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
         public static bool TryParse(
 #else
         /// <summary>
         /// Converts the span representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The span representation of the enumeration name or underlying value to convert</param>
         /// <param name="result">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="ignoreCase"><see langword="true"/> to read value in case insensitive mode; <see langword="false"/> to read value in case sensitive mode.</param>
         /// <param name="allowMatchingMetadataAttribute">If <see langword="true"/>, considers the value included in 
         /// <see cref="global::System.Runtime.Serialization.EnumMemberAttribute"/> attribute when parsing, otherwise only considers the member names.</param>
@@ -681,7 +677,7 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
-            out global::MyTestNameSpace.MyEnum result,
+            out global::Something.Blah.ShortName result,
             bool ignoreCase,
             bool allowMatchingMetadataAttribute)
                 => TryParse(
@@ -694,19 +690,19 @@ namespace MyTestNameSpace
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="result">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
-        /// is not explicitly defined in <see cref="global::MyTestNameSpace.MyEnum" /> when attempting to parse as a number.
+        /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
 
@@ -717,15 +713,15 @@ namespace MyTestNameSpace
 #else
         /// <summary>
         /// Converts the string representation of the name or numeric value of
-        /// an <see cref="global::MyTestNameSpace.MyEnum" /> to the equivalent instance.
+        /// an <see cref="global::Something.Blah.ShortName" /> to the equivalent instance.
         /// The return value indicates whether the conversion succeeded.
         /// </summary>
         /// <param name="name">The string representation of the enumeration name or underlying value to convert</param>
         /// <param name="result">When this method returns, contains an object of type
-        /// <see cref="global::MyTestNameSpace.MyEnum" /> whose
+        /// <see cref="global::Something.Blah.ShortName" /> whose
         /// value is represented by <paramref name="result"/> if the parse operation succeeds.
         /// If the parse operation fails, contains the default value of the underlying type
-        /// of <see cref="global::MyTestNameSpace.MyEnum" />. This parameter is passed uninitialized.</param>
+        /// of <see cref="global::Something.Blah.ShortName" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
 #if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
@@ -738,16 +734,16 @@ namespace MyTestNameSpace
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
-            out global::MyTestNameSpace.MyEnum result,
+            out global::Something.Blah.ShortName result,
             global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.First)), options.ComparisonType):
-                    result = global::MyTestNameSpace.MyEnum.First;
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.First)), options.ComparisonType):
+                    result = global::Something.Blah.ShortName.First;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::MyTestNameSpace.MyEnum.Second)), options.ComparisonType):
-                    result = global::MyTestNameSpace.MyEnum.Second;
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Second)), options.ComparisonType):
+                    result = global::Something.Blah.ShortName.Second;
                     return true;
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
@@ -755,7 +751,7 @@ namespace MyTestNameSpace
                 // TryParse with ReadOnlySpan<char> is not available, so we have to call ToString()
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name.ToString(), out var numericResult):
 #endif
-                    result = (global::MyTestNameSpace.MyEnum)numericResult;
+                    result = (global::Something.Blah.ShortName)numericResult;
                     return true;
                 default:
                     result = default;
@@ -766,46 +762,45 @@ namespace MyTestNameSpace
 
         /// <summary>
         /// Retrieves an array of the values of the members defined in
-        /// <see cref="global::MyTestNameSpace.MyEnum" />.
+        /// <see cref="global::Something.Blah.ShortName" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
-        public static global::MyTestNameSpace.MyEnum[] GetValues()
-            =>
-            [
-                global::MyTestNameSpace.MyEnum.First,
-                global::MyTestNameSpace.MyEnum.Second,
-            ];
+        /// <returns>An array of the values defined in <see cref="global::Something.Blah.ShortName" /></returns>
+        public static global::Something.Blah.ShortName[] GetValues()
+            => new[]
+            {
+                global::Something.Blah.ShortName.First,
+                global::Something.Blah.ShortName.Second,
+            };
 
         /// <summary>
         /// Retrieves an array of the underlying-values of the members defined in
-        /// <see cref="global::MyTestNameSpace.MyEnum" />.
+        /// <see cref="global::Something.Blah.ShortName" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the underlying-values defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
+        /// <returns>An array of the underlying-values defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static int[] GetValuesAsUnderlyingType()
-            =>
-            [
-                (int) global::MyTestNameSpace.MyEnum.First,
-                (int) global::MyTestNameSpace.MyEnum.Second,
-            ];
+            => new[]
+            {
+                (int) global::Something.Blah.ShortName.First,
+                (int) global::Something.Blah.ShortName.Second,
+            };
 
         /// <summary>
         /// Retrieves an array of the names of the members defined in
-        /// <see cref="global::MyTestNameSpace.MyEnum" />.
+        /// <see cref="global::Something.Blah.ShortName" />.
         /// Note that this returns a new array with every invocation, so
         /// should be cached if appropriate.
         /// </summary>
-        /// <returns>An array of the names of the members defined in <see cref="global::MyTestNameSpace.MyEnum" /></returns>
+        /// <returns>An array of the names of the members defined in <see cref="global::Something.Blah.ShortName" /></returns>
         public static string[] GetNames()
-            =>
-            [
-                nameof(global::MyTestNameSpace.MyEnum.First),
-                nameof(global::MyTestNameSpace.MyEnum.Second),
-            ];
-        }
+            => new[]
+            {
+                nameof(global::Something.Blah.ShortName.First),
+                nameof(global::Something.Blah.ShortName.Second),
+            };
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums

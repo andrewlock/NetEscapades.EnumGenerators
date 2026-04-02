@@ -50,6 +50,10 @@ namespace System
         /// <param name="value">The value to retrieve the string value for</param>
         /// <param name="options">The options to use when serializing the enum</param>
         /// <returns>The string representation of the value, using the provided options.</returns>
+#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static string ToStringFast(this global::System.StringComparison value, global::NetEscapades.EnumGenerators.SerializationOptions options)
             => options.Transform switch
                {
@@ -256,6 +260,10 @@ namespace System
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::System.StringComparison" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static global::System.StringComparison Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -362,6 +370,10 @@ namespace System
         /// of <see cref="global::System.StringComparison" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -529,6 +541,10 @@ namespace System
         /// is not explicitly defined in <see cref="global::System.StringComparison" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+
+#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
         public static global::System.StringComparison Parse(
 #else
         /// <summary>
@@ -539,6 +555,10 @@ namespace System
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::System.StringComparison" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static global::System.StringComparison Parse(
 #endif
 #if NETCOREAPP3_0_OR_GREATER
@@ -725,6 +745,10 @@ namespace System
         /// is not explicitly defined in <see cref="global::System.StringComparison" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+
+#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
         public static bool TryParse(
 #else
         /// <summary>
@@ -740,6 +764,10 @@ namespace System
         /// of <see cref="global::System.StringComparison" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static bool TryParse(
 #endif
 #if NETCOREAPP3_0_OR_GREATER
@@ -842,3 +870,17 @@ namespace System
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
 }
+
+#if !NET9_0_OR_GREATER && NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+namespace System.Runtime.CompilerServices
+{
+    [global::System.AttributeUsage(
+        global::System.AttributeTargets.Method | global::System.AttributeTargets.Constructor | global::System.AttributeTargets.Property,
+        AllowMultiple = false, Inherited = false)]
+    file sealed class OverloadResolutionPriorityAttribute : global::System.Attribute
+    {
+        public OverloadResolutionPriorityAttribute(int priority) => Priority = priority;
+        public int Priority { get; }
+    }
+}
+#endif

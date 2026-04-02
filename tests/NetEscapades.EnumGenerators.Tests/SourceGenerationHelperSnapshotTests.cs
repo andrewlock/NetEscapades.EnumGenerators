@@ -18,7 +18,8 @@ public class SourceGenerationHelperSnapshotTests
         [CombinatorialValues(MetadataSource.None, MetadataSource.EnumMemberAttribute)]
         MetadataSource defaultSource,
         bool useCollectionExpressions,
-        bool hasRuntimeDeps)
+        bool hasRuntimeDeps,
+        bool useOverloadPriority)
     {
         var value = new EnumToGenerate(
             "ShortName",
@@ -35,17 +36,18 @@ public class SourceGenerationHelperSnapshotTests
             metadataSource: null);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(
-            value, 
+            value,
             csharp14IsSupported,
             useCollectionExpressions: useCollectionExpressions,
             defaultSource,
             hasRuntimeDeps,
-            forceInternal: false).Content;
+            forceInternal: false,
+            useOverloadPriority: useOverloadPriority).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
             .UseDirectory("Snapshots")
-            .UseTextForParameters($"{csharp14IsSupported}_{defaultSource}_{useCollectionExpressions}_{(hasRuntimeDeps ? "deps" : "nodeps")}");
+            .UseTextForParameters($"{csharp14IsSupported}_{defaultSource}_{useCollectionExpressions}_{(hasRuntimeDeps ? "deps" : "nodeps")}_{(useOverloadPriority ? "overload" : "nooverload")}");
     }
 
     [Theory]

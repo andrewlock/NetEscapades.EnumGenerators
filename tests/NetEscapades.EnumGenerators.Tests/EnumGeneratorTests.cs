@@ -843,4 +843,128 @@ public abstract class EnumGeneratorTestsBase
             _ => throw new InvalidOperationException("Unknown source type " + source),
         };
     }
+
+    [Fact]
+    public void ParseWithTargetTypedNew_CompilesWithOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    _ = MyEnumExtensions.Parse("First", new());
+                }
+            }
+            """;
+        var (diagnostics, _) = TestHelpers.GetGeneratedOutput(
+            Generators(),
+            new(LanguageVersion.CSharp13, null, null, [input], null,
+                PreprocessorSymbols: ["NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY"]));
+
+        Assert.DoesNotContain(diagnostics, d => d.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void TryParseWithTargetTypedNew_CompilesWithOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    MyEnumExtensions.TryParse("First", out MyEnum _, new());
+                }
+            }
+            """;
+        var (diagnostics, _) = TestHelpers.GetGeneratedOutput(
+            Generators(),
+            new(LanguageVersion.CSharp13, null, null, [input], null,
+                PreprocessorSymbols: ["NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY"]));
+
+        Assert.DoesNotContain(diagnostics, d => d.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void ToStringFastWithTargetTypedNew_CompilesWithOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+            using System.Runtime.Serialization;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                [EnumMember(Value = "1st")]
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    var value = MyEnum.First;
+                    _ = value.ToStringFast(new());
+                }
+            }
+            """;
+        var (diagnostics, _) = TestHelpers.GetGeneratedOutput(
+            Generators(),
+            new(LanguageVersion.CSharp13,
+                new() { { "build_property.EnumGenerator_EnumMetadataSource", "EnumMemberAttribute" } },
+                null, [input], null,
+                PreprocessorSymbols: ["NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY"]));
+
+        Assert.DoesNotContain(diagnostics, d => d.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void ParseWithTargetTypedNew_DoesNotCompileWithoutOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    _ = MyEnumExtensions.Parse("First", new());
+                }
+            }
+            """;
+        var (diagnostics, _) = TestHelpers.GetGeneratedOutput(
+            Generators(),
+            new(LanguageVersion.CSharp13, null, null, [input], null));
+
+        Assert.Contains(diagnostics, d => d.Id == "CS0121");
+    }
 }

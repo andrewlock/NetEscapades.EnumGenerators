@@ -109,7 +109,8 @@ internal static class TestHelpers
             {
                 var tree = CSharpSyntaxTree.ParseText(x, path: "Program.cs");
                 var options = new CSharpParseOptions(opts.LanguageVersion)
-                    .WithFeatures(opts.Features);
+                    .WithFeatures(opts.Features)
+                    .WithPreprocessorSymbols(opts.PreprocessorSymbols ?? []);
                 return tree.WithRootAndOptions(tree.GetRoot(), options);
             });
         var references = AppDomain.CurrentDomain.GetAssemblies()
@@ -157,7 +158,7 @@ internal static class TestHelpers
                 generators.Select(x=>x.AsSourceGenerator()),
                 driverOptions: opts,
                 optionsProvider: options.OptionsProvider,
-                parseOptions: new CSharpParseOptions(options.LanguageVersion).WithFeatures(options.Features));
+                parseOptions: new CSharpParseOptions(options.LanguageVersion).WithFeatures(options.Features).WithPreprocessorSymbols(options.PreprocessorSymbols ?? []));
 
         var clone = compilation.Clone();
         // Run twice, once with a clone of the compilation
@@ -366,13 +367,15 @@ internal static class TestHelpers
             Dictionary<string, string>? AnalyzerOptions,
             Dictionary<string, string>? Features,
             string[] Sources,
-            string[]? Stages)
+            string[]? Stages,
+            string[]? PreprocessorSymbols = null)
         {
             this.LanguageVersion = LanguageVersion;
             this.AnalyzerOptions = AnalyzerOptions;
             this.Features = Features;
             this.Sources = Sources;
             this.Stages = Stages;
+            this.PreprocessorSymbols = PreprocessorSymbols;
         }
 
         public AnalyzerConfigOptionsProvider? OptionsProvider =>
@@ -383,6 +386,7 @@ internal static class TestHelpers
         public Dictionary<string, string>? Features { get; }
         public string[] Sources { get; }
         public string[]? Stages { get; }
+        public string[]? PreprocessorSymbols { get; }
 
     }
 }
