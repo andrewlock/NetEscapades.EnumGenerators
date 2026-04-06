@@ -825,17 +825,3 @@ namespace A.B
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
 }
-
-#if !NET9_0_OR_GREATER && NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
-namespace System.Runtime.CompilerServices
-{
-    [global::System.AttributeUsage(
-        global::System.AttributeTargets.Method | global::System.AttributeTargets.Constructor | global::System.AttributeTargets.Property,
-        AllowMultiple = false, Inherited = false)]
-    file sealed class OverloadResolutionPriorityAttribute : global::System.Attribute
-    {
-        public OverloadResolutionPriorityAttribute(int priority) => Priority = priority;
-        public int Priority { get; }
-    }
-}
-#endif

@@ -50,11 +50,11 @@ namespace Something.Blah
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
-        public static string ToStringFast(this global::Something.Blah.ShortName value, global::Something.Blah.ShortName.SerializationOptions options)
+        public static string ToStringFast(this global::Something.Blah.ShortName value, global::NetEscapades.EnumGenerators.SerializationOptions options)
             => options.Transform switch
                {
-                   global::Something.Blah.ShortName.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
-                   global::Something.Blah.ShortName.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
+                   global::NetEscapades.EnumGenerators.SerializationTransform.LowerInvariant => value.ToStringFastLowerInvariant(),
+                   global::NetEscapades.EnumGenerators.SerializationTransform.UpperInvariant => value.ToStringFastUpperInvariant(),
                    _ => value.ToStringFast(),
                };
 
@@ -137,7 +137,7 @@ namespace Something.Blah
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name)
-                => TryParse(name, out var value, new global::Something.Blah.ShortName.EnumParseOptions()) ? value : ThrowValueNotFound(name);
+                => TryParse(name, out var value, new global::NetEscapades.EnumGenerators.EnumParseOptions()) ? value : ThrowValueNotFound(name);
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -156,7 +156,7 @@ namespace Something.Blah
                 => TryParse(
                     name, 
                     out var value,
-                    new global::Something.Blah.ShortName.EnumParseOptions(
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
                    ? value : ThrowValueNotFound(name);
 
@@ -177,7 +177,7 @@ namespace Something.Blah
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             string? name,
-            global::Something.Blah.ShortName.EnumParseOptions options)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
                 => TryParse(
                     name,
                     out var value,
@@ -207,7 +207,7 @@ namespace Something.Blah
 #endif
             string? name,
             out global::Something.Blah.ShortName value)
-            => TryParse(name, out value, new global::Something.Blah.ShortName.EnumParseOptions());
+            => TryParse(name, out value, new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
         /// <summary>
         /// Converts the string representation of the name or numeric value of
@@ -231,7 +231,7 @@ namespace Something.Blah
             bool ignoreCase)
             => TryParse(name,
                 out value,
-                new global::Something.Blah.ShortName.EnumParseOptions(
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace Something.Blah
 #endif
             string? name,
             out global::Something.Blah.ShortName value,
-            global::Something.Blah.ShortName.EnumParseOptions options)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
@@ -288,7 +288,7 @@ namespace Something.Blah
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::Something.Blah.ShortName.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
         public static global::Something.Blah.ShortName Parse(
 #else
@@ -308,7 +308,7 @@ namespace Something.Blah
                 => TryParse(
                     name, 
                     out var value,
-                    new global::Something.Blah.ShortName.EnumParseOptions())
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions())
                    ? value : ThrowValueNotFound(name);
 
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
@@ -323,7 +323,7 @@ namespace Something.Blah
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::Something.Blah.ShortName.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="Parse(in global::System.ReadOnlySpan{char},global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
         public static global::Something.Blah.ShortName Parse(
 #else
@@ -345,7 +345,7 @@ namespace Something.Blah
                 => TryParse(
                     name, 
                     out var value,
-                    new global::Something.Blah.ShortName.EnumParseOptions(
+                    new global::NetEscapades.EnumGenerators.EnumParseOptions(
                         ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal))
                    ? value : ThrowValueNotFound(name);
 
@@ -386,7 +386,7 @@ namespace Something.Blah
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
 #endif
             in global::System.ReadOnlySpan<char> name,
-            global::Something.Blah.ShortName.EnumParseOptions options)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
                 => TryParse(
                     name,
                     out var value,
@@ -418,7 +418,7 @@ namespace Something.Blah
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Something.Blah.ShortName,global::Something.Blah.ShortName.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Something.Blah.ShortName,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
         public static bool TryParse(
 #else
@@ -444,7 +444,7 @@ namespace Something.Blah
             => TryParse(
                 name, 
                 out value,
-                new global::Something.Blah.ShortName.EnumParseOptions());
+                new global::NetEscapades.EnumGenerators.EnumParseOptions());
 
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
@@ -463,7 +463,7 @@ namespace Something.Blah
         /// <remarks>WARNING: This API will allocate a <see langword="string"/> when <paramref name="name"/>
         /// is not explicitly defined in <see cref="global::Something.Blah.ShortName" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
-        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Something.Blah.ShortName,global::Something.Blah.ShortName.EnumParseOptions)"/>
+        /// Alternatively, call the <see cref="TryParse(in global::System.ReadOnlySpan{char},out global::Something.Blah.ShortName,global::NetEscapades.EnumGenerators.EnumParseOptions)"/>
         /// overload, and disable number parsing.</remarks>
         public static bool TryParse(
 #else
@@ -491,7 +491,7 @@ namespace Something.Blah
             => TryParse(
                 name, 
                 out value,
-                new global::Something.Blah.ShortName.EnumParseOptions(
+                new global::NetEscapades.EnumGenerators.EnumParseOptions(
                     ignoreCase ? global::System.StringComparison.OrdinalIgnoreCase : global::System.StringComparison.Ordinal));
 
 #if !NETCOREAPP2_1_OR_GREATER && !NETSTANDARD2_1_OR_GREATER && NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
@@ -542,7 +542,7 @@ namespace Something.Blah
 #endif
             in global::System.ReadOnlySpan<char> name,
             out global::Something.Blah.ShortName result,
-            global::Something.Blah.ShortName.EnumParseOptions options)
+            global::NetEscapades.EnumGenerators.EnumParseOptions options)
         {
             switch (name)
             {
@@ -608,138 +608,7 @@ namespace Something.Blah
                 nameof(global::Something.Blah.ShortName.First),
                 nameof(global::Something.Blah.ShortName.Second),
             };
-
-        /// <summary>
-        /// Defines the options use when parsing enums using members provided by NetEscapades.EnumGenerator.
-        /// </summary>
-        public readonly struct EnumParseOptions
-        {
-            private const global::System.StringComparison DefaultComparisonType = global::System.StringComparison.Ordinal;
-            
-            private readonly global::System.StringComparison? _comparisonType;
-            private readonly bool _blockNumberParsing;
-        
-            /// <summary>
-            /// Create an instance of <see cref="EnumParseOptions"/>
-            /// </summary>
-            /// <param name="comparisonType">Sets the <see cref="global::System.StringComparison"/> to use during parsing.</param>
-            /// <param name="allowMatchingMetadataAttribute">Sets whether the value of the selected metadata value attribute
-            /// values applied to an enum should be used as the parse value for an enum.</param>
-            /// <param name="enableNumberParsing">Sets a value defining whether numbers should be parsed as a fallback when
-            /// other parsing fails.</param>
-            public EnumParseOptions(
-                global::System.StringComparison comparisonType = DefaultComparisonType,
-                bool allowMatchingMetadataAttribute = false,
-                bool enableNumberParsing = true)
-            {
-                _comparisonType = comparisonType;
-                AllowMatchingMetadataAttribute = allowMatchingMetadataAttribute;
-                _blockNumberParsing = !enableNumberParsing;
-            }
-        
-            /// <summary>
-            /// Gets or sets the <see cref="global::System.StringComparison"/> to use during parsing.
-            /// </summary>
-            /// <remarks>
-            /// By default, it's set to <see cref="global::System.StringComparison.Ordinal"/>, and a case-sensitive
-            /// comparison will be used.
-            /// </remarks>
-            public global::System.StringComparison ComparisonType => _comparisonType ?? DefaultComparisonType;
-        
-            /// <summary>
-            /// Gets or sets whether the value of the selected metadata value attribute
-            /// values applied to an enum should be used as the parse value for an enum.
-            /// </summary>
-            /// <remarks>
-            /// By default, it's set to <see langword="false"/>, so the value of any metadata attributes on the
-            /// enum values are ignored. Set to <see langword="true"/> to enable parsing using the applicable
-            /// MetadataSource for each enum member.
-            /// </remarks>
-            public bool AllowMatchingMetadataAttribute { get; }
-        
-            /// <summary>
-            /// Gets or sets a value defining whether numbers should be parsed as a fallback when
-            /// other parsing fails. 
-            /// </summary>
-            /// <remarks>
-            /// By default, it's set to <see langword="true"/>, and numbers will be parsed as well as names.
-            /// </remarks>
-            public bool EnableNumberParsing => !_blockNumberParsing;
-        }
-
-        /// <summary>
-        /// Options to apply when calling <c>ToStringFast</c> on an enum. 
-        /// </summary>
-        public readonly struct SerializationOptions
-        {
-            /// <summary>
-            /// Create an instance of <see cref="SerializationOptions"/>
-            /// </summary>
-            /// <param name="useMetadataAttributes">Sets whether the value of any metadata value attribute
-            /// values applied to an enum should be used in the <c>ToStringFast</c> call.</param>
-            /// <param name="transform">Sets the <see cref="SerializationTransform"/> to use when serializing the enum value.</param>
-            public SerializationOptions(
-                bool useMetadataAttributes = false,
-                SerializationTransform transform = SerializationTransform.None)
-            {
-                UseMetadataAttributes = useMetadataAttributes;
-                Transform = transform;
-            }
-        
-            /// <summary>
-            /// Gets whether the value of any metadata attributes applied to an enum member
-            /// should be used as the <c>ToString()</c> value for the enum.
-            /// </summary>
-            /// <remarks>
-            /// By default, it's set to <see langword="false"/>, so the value of metadata attributes on the
-            /// enum values are ignored. 
-            /// </remarks>
-            public bool UseMetadataAttributes { get; }
-        
-            /// <summary>
-            /// Gets the <see cref="SerializationTransform"/> to use during parsing.
-            /// </summary>
-            /// <remarks>
-            /// By default, it's set to <see cref="SerializationTransform.None"/>, and the value is not transformed. 
-            /// </remarks>
-            public SerializationTransform Transform { get; }
-        }
-
-        /// <summary>
-        /// Transform to apply when calling <c>ToStringFast</c> 
-        /// </summary>
-        public enum SerializationTransform
-        {
-            /// <summary>
-            /// Don't apply a transform to the <c>ToStringFast()</c> result.
-            /// </summary>
-            None,
-        
-            /// <summary>
-            /// Call <see cref="string.ToLowerInvariant"/> on the ToStringFast() result.
-            /// </summary>
-            LowerInvariant,
-        
-            /// <summary>
-            /// Call <see cref="string.ToUpperInvariant"/> on the ToStringFast() result.
-            /// </summary>
-            UpperInvariant,
-        }
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
 }
-
-#if !NET9_0_OR_GREATER && NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
-namespace System.Runtime.CompilerServices
-{
-    [global::System.AttributeUsage(
-        global::System.AttributeTargets.Method | global::System.AttributeTargets.Constructor | global::System.AttributeTargets.Property,
-        AllowMultiple = false, Inherited = false)]
-    file sealed class OverloadResolutionPriorityAttribute : global::System.Attribute
-    {
-        public OverloadResolutionPriorityAttribute(int priority) => Priority = priority;
-        public int Priority { get; }
-    }
-}
-#endif

@@ -844,6 +844,21 @@ public abstract class EnumGeneratorTestsBase
         };
     }
 
+    private const string OverloadResolutionPriorityPolyfill =
+        """
+        namespace System.Runtime.CompilerServices
+        {
+            [global::System.AttributeUsage(
+                global::System.AttributeTargets.Method | global::System.AttributeTargets.Constructor | global::System.AttributeTargets.Property,
+                AllowMultiple = false, Inherited = false)]
+            internal sealed class OverloadResolutionPriorityAttribute : global::System.Attribute
+            {
+                public OverloadResolutionPriorityAttribute(int priority) => Priority = priority;
+                public int Priority { get; }
+            }
+        }
+        """;
+
     [Fact]
     public void ParseWithTargetTypedNew_CompilesWithOverloadPriority()
     {
@@ -868,7 +883,7 @@ public abstract class EnumGeneratorTestsBase
             """;
         var (diagnostics, _) = TestHelpers.GetGeneratedOutput(
             Generators(),
-            new(LanguageVersion.CSharp13, null, null, [input], null,
+            new(LanguageVersion.CSharp13, null, null, [input, OverloadResolutionPriorityPolyfill], null,
                 PreprocessorSymbols: ["NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY"]));
 
         Assert.DoesNotContain(diagnostics, d => d.Severity == DiagnosticSeverity.Error);
@@ -898,7 +913,7 @@ public abstract class EnumGeneratorTestsBase
             """;
         var (diagnostics, _) = TestHelpers.GetGeneratedOutput(
             Generators(),
-            new(LanguageVersion.CSharp13, null, null, [input], null,
+            new(LanguageVersion.CSharp13, null, null, [input, OverloadResolutionPriorityPolyfill], null,
                 PreprocessorSymbols: ["NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY"]));
 
         Assert.DoesNotContain(diagnostics, d => d.Severity == DiagnosticSeverity.Error);
@@ -933,7 +948,7 @@ public abstract class EnumGeneratorTestsBase
             Generators(),
             new(LanguageVersion.CSharp13,
                 new() { { "build_property.EnumGenerator_EnumMetadataSource", "EnumMemberAttribute" } },
-                null, [input], null,
+                null, [input, OverloadResolutionPriorityPolyfill], null,
                 PreprocessorSymbols: ["NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY"]));
 
         Assert.DoesNotContain(diagnostics, d => d.Severity == DiagnosticSeverity.Error);

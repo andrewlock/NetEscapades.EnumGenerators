@@ -98,6 +98,10 @@ namespace Something.Blah
             return (int) value;
         }
 
+        // C#14 Extension member syntax
+        extension(global::Something.Blah.ShortName)
+        {
+
         /// <summary>
         /// Returns a boolean telling whether the given enum value exists in the enumeration.
         /// </summary>
@@ -801,6 +805,7 @@ namespace Something.Blah
                 nameof(global::Something.Blah.ShortName.First),
                 nameof(global::Something.Blah.ShortName.Second),
             };
+        }
 
         /// <summary>
         /// Defines the options use when parsing enums using members provided by NetEscapades.EnumGenerator.
@@ -922,17 +927,3 @@ namespace Something.Blah
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums
 #pragma warning restore CS0618 // Ignore usages of obsolete members or enums
 }
-
-#if !NET9_0_OR_GREATER && NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
-namespace System.Runtime.CompilerServices
-{
-    [global::System.AttributeUsage(
-        global::System.AttributeTargets.Method | global::System.AttributeTargets.Constructor | global::System.AttributeTargets.Property,
-        AllowMultiple = false, Inherited = false)]
-    file sealed class OverloadResolutionPriorityAttribute : global::System.Attribute
-    {
-        public OverloadResolutionPriorityAttribute(int priority) => Priority = priority;
-        public int Priority { get; }
-    }
-}
-#endif
