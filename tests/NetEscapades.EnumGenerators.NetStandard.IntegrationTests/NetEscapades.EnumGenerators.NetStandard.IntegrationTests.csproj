@@ -3,7 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
-    <DefineConstants>$(DefineConstants);NETSTANDARD_INTEGRATION_TESTS</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETSTANDARD_INTEGRATION_TESTS;NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

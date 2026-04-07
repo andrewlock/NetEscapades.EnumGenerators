@@ -6,7 +6,7 @@
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
-    <DefineConstants>$(DefineConstants);NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS</DefineConstants>
+    <DefineConstants>$(DefineConstants);NETSTANDARD_SYSTEMMEMORY_INTEGRATION_TESTS;NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY</DefineConstants>
 
     <!-- Enable as many warnings as we can so we check the generated code -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\Enums.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\OverloadResolutionPriorityTests.cs" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

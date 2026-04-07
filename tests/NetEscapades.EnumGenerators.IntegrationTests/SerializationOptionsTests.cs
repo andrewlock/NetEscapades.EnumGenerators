@@ -52,11 +52,9 @@ public class SerializationOptionsTests
         options.Transform.Should().Be(SerializationTransform.UpperInvariant);
     }
 
-#if NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
     [Fact]
     public void ToStringFastWithTargetTypedNew()
     {
         Foo.EnumInFooExtensions.ToStringFast(Foo.EnumInFoo.First, new()).Should().Be("First");
     }
-#endif
 }

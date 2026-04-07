@@ -37,7 +37,6 @@ public class EnumParseOptionsTests
         options.ComparisonType.Should().Be(StringComparison.OrdinalIgnoreCase);
     }
 
-#if NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
     [Fact]
     public void ParseWithTargetTypedNew()
     {
@@ -52,5 +51,4 @@ public class EnumParseOptionsTests
             .Should().BeTrue();
         result.Should().Be(Foo.EnumInFoo.First);
     }
-#endif
 }

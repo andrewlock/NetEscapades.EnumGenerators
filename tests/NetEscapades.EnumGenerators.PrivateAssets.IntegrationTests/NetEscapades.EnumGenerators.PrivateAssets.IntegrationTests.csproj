@@ -3,8 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
-    <DefineConstants>$(DefineConstants);PRIVATEASSETS_INTEGRATION_TESTS</DefineConstants>
-    <DefineConstants Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">$(DefineConstants);NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY</DefineConstants>
+    <DefineConstants>$(DefineConstants);PRIVATEASSETS_INTEGRATION_TESTS;NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
