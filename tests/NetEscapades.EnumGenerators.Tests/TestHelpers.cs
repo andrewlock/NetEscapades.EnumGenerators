@@ -136,7 +136,7 @@ internal static class TestHelpers
 
         // Ensure OverloadResolutionPriorityAttribute is always available in the test compilation,
         // even on older TFMs where it's not in the framework. This keeps snapshot output consistent.
-        if (!opts.ExcludeOverloadResolutionPriority
+        if (opts.IncludeOverloadResolutionPriority
             && compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute") is null)
         {
             var polyfillParseOptions = new CSharpParseOptions(opts.LanguageVersion)
@@ -390,14 +390,14 @@ internal static class TestHelpers
             Dictionary<string, string>? Features,
             string[] Sources,
             string[]? Stages,
-            bool ExcludeOverloadResolutionPriority = false)
+            bool IncludeOverloadResolutionPriority = true)
         {
             this.LanguageVersion = LanguageVersion;
             this.AnalyzerOptions = AnalyzerOptions;
             this.Features = Features;
             this.Sources = Sources;
             this.Stages = Stages;
-            this.ExcludeOverloadResolutionPriority = ExcludeOverloadResolutionPriority;
+            this.IncludeOverloadResolutionPriority = IncludeOverloadResolutionPriority;
         }
 
         public AnalyzerConfigOptionsProvider? OptionsProvider =>
@@ -408,7 +408,7 @@ internal static class TestHelpers
         public Dictionary<string, string>? Features { get; }
         public string[] Sources { get; }
         public string[]? Stages { get; }
-        public bool ExcludeOverloadResolutionPriority { get; }
+        public bool IncludeOverloadResolutionPriority { get; }
 
     }
 }

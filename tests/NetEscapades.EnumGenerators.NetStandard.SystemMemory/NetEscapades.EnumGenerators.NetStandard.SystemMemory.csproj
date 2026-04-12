@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\Enums.cs" Link="%(Filename)%(Extension)" />
-    <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\OverloadResolutionPriorityTests.cs" Link="%(Filename)%(Extension)" />
+    <Compile Include="..\NetEscapades.EnumGenerators.IntegrationTests\PolyfillAttributes.cs" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

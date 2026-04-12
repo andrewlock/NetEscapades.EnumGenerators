@@ -915,7 +915,7 @@ public abstract class EnumGeneratorTestsBase
             }
             """;
 
-        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, null, null, [input], null, ExcludeOverloadResolutionPriority: true));
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, null, null, [input], null, IncludeOverloadResolutionPriority: false));
         Assert.Contains(diagnostics, d => d.Id == "CS0121");
         return Verifier.Verify(output, Settings());
     }
