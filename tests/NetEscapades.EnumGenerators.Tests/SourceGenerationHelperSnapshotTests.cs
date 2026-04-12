@@ -40,7 +40,8 @@ public class SourceGenerationHelperSnapshotTests
             useCollectionExpressions: useCollectionExpressions,
             defaultSource,
             hasRuntimeDeps,
-            forceInternal: false).Content;
+            forceInternal: false,
+            hasOverloadResolutionPriority: true).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -73,7 +74,8 @@ public class SourceGenerationHelperSnapshotTests
             useCollectionExpressions: false,
             DefaultMetadataSource,
             hasRuntimeDependencies: true,
-            forceInternal: false).Content;
+            forceInternal: false,
+            hasOverloadResolutionPriority: true).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -105,7 +107,8 @@ public class SourceGenerationHelperSnapshotTests
             useCollectionExpressions: false,
             DefaultMetadataSource,
             hasRuntimeDependencies: true,
-            forceInternal: false).Content;
+            forceInternal: false,
+            hasOverloadResolutionPriority: true).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()
@@ -131,12 +134,13 @@ public class SourceGenerationHelperSnapshotTests
             forceInternal: true);
 
         var result = SourceGenerationHelper.GenerateExtensionClass(
-            value, 
+            value,
             true,
             useCollectionExpressions: true,
             MetadataSource.None,
             false,
-            forceInternal: true).Content;
+            forceInternal: true,
+            hasOverloadResolutionPriority: false).Content;
 
         return Verifier.Verify(result)
             .ScrubExpectedChanges()

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <Nullable>enable</Nullable>
-    <DefineConstants>$(DefineConstants);NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS;READONLYSPAN;NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY</DefineConstants>
+    <DefineConstants>$(DefineConstants);NUGET_SYSTEMMEMORY_PRIVATEASSETS_INTEGRATION_TESTS;READONLYSPAN</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

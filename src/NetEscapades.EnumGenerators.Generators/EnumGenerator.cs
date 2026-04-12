@@ -23,9 +23,15 @@ public class EnumGenerator : IIncrementalGenerator
             .Select((x, _) =>
             {
                 var wellKnownTypes = WellKnownTypes.GetOrCreate(x);
-                return ((x as CSharpCompilation)?.LanguageVersion,
+                var languageVersion = (x as CSharpCompilation)?.LanguageVersion;
+                var hasOverloadResolutionPriority =
+                    languageVersion is not LanguageVersion.Preview and >= (LanguageVersion)1300 // C#13+
+                    && x.GetTypeByMetadataName(
+                        "System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute") is not null;
+                return (languageVersion,
                     HasRuntimeDeps: wellKnownTypes.ExistsInCompilation(WellKnownTypeData.WellKnownType
-                        .NetEscapades_EnumGenerators_EnumParseOptions));
+                        .NetEscapades_EnumGenerators_EnumParseOptions),
+                    HasOverloadResolutionPriority: hasOverloadResolutionPriority);
             });
 
         var defaults = compilationDetails.Combine(defaultConfiguration);
@@ -90,7 +96,7 @@ public class EnumGenerator : IIncrementalGenerator
 
     static void Execute(
         in EnumToGenerate enumToGenerate,
-        (LanguageVersion? LanguageVersion, bool HasRuntimeDeps) compilationDetails,
+        (LanguageVersion? LanguageVersion, bool HasRuntimeDeps, bool HasOverloadResolutionPriority) compilationDetails,
         DefaultConfiguration defaultValues,
         SourceProductionContext context)
     {
@@ -103,7 +109,8 @@ public class EnumGenerator : IIncrementalGenerator
             useCollectionExpressions: useCollectionExpressions,
             defaultMetadataSource: defaultValues.MetadataSource,
             hasRuntimeDependencies: compilationDetails.HasRuntimeDeps,
-            forceInternal: forceInternal);
+            forceInternal: forceInternal,
+            hasOverloadResolutionPriority: compilationDetails.HasOverloadResolutionPriority);
         context.AddSource(filename, SourceText.From(result, Encoding.UTF8));
     }
 

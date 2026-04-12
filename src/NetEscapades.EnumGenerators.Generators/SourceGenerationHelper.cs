@@ -25,7 +25,8 @@ public static class SourceGenerationHelper
         bool useCollectionExpressions,
         MetadataSource defaultMetadataSource,
         bool hasRuntimeDependencies,
-        bool forceInternal)
+        bool forceInternal,
+        bool hasOverloadResolutionPriority)
     {
         var metadataSource = enumToGenerate.MetadataSource ?? defaultMetadataSource;
         var isMetadataSourcesEnabled = metadataSource != MetadataSource.None;
@@ -167,7 +168,7 @@ public static class SourceGenerationHelper
                     /// <returns>The string representation of the value, using the provided options.</returns>
             """);
 
-        AddOverloadResolutionPriority(sb);
+        AddOverloadResolutionPriority(sb, hasOverloadResolutionPriority);
 
         sb.Append(
             """
@@ -961,7 +962,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddOverloadResolutionPriority(sb);
+        AddOverloadResolutionPriority(sb, hasOverloadResolutionPriority);
 
         sb.Append(
             """
@@ -1162,7 +1163,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddOverloadResolutionPriority(sb);
+        AddOverloadResolutionPriority(sb, hasOverloadResolutionPriority);
 
         sb.Append(
             """
@@ -1489,7 +1490,7 @@ public static class SourceGenerationHelper
 
         AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None, enumParseOptions);
 
-        AddOverloadResolutionPriority(sb);
+        AddOverloadResolutionPriority(sb, hasOverloadResolutionPriority);
 
         sb.Append(
             """
@@ -1514,7 +1515,7 @@ public static class SourceGenerationHelper
                     /// value is represented by <paramref name="name"/></returns>
             """);
 
-        AddOverloadResolutionPriority(sb);
+        AddOverloadResolutionPriority(sb, hasOverloadResolutionPriority);
 
         sb.Append(
             """
@@ -1821,7 +1822,7 @@ public static class SourceGenerationHelper
 
         AddSystemMemoryWarning(sb, fullyQualifiedName, AlternativeMethodChoice.None, enumParseOptions);
 
-        AddOverloadResolutionPriority(sb);
+        AddOverloadResolutionPriority(sb, hasOverloadResolutionPriority);
 
         sb.Append(
             """
@@ -1851,7 +1852,7 @@ public static class SourceGenerationHelper
                     /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
             """);
 
-        AddOverloadResolutionPriority(sb);
+        AddOverloadResolutionPriority(sb, hasOverloadResolutionPriority);
 
         sb.Append(
             """
@@ -2289,12 +2290,17 @@ public static class SourceGenerationHelper
             }
         }
 
-        static void AddOverloadResolutionPriority(StringBuilder sb)
+        static void AddOverloadResolutionPriority(StringBuilder sb, bool hasOverloadResolutionPriority)
         {
+            if (!hasOverloadResolutionPriority)
+            {
+                return;
+            }
+
             sb.Append(
             """
 
-            #if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+            #if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
                     [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
             #endif
 

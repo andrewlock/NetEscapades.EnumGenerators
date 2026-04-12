@@ -45,7 +45,7 @@ namespace Foo
         /// <param name="value">The value to retrieve the string value for</param>
         /// <param name="options">The options to use when serializing the enum</param>
         /// <returns>The string representation of the value, using the provided options.</returns>
-#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
@@ -230,7 +230,7 @@ namespace Foo
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
@@ -340,7 +340,7 @@ namespace Foo
         /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
@@ -497,7 +497,7 @@ namespace Foo
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
 
-#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
         public static global::Foo.TestEnum Parse(
@@ -510,7 +510,7 @@ namespace Foo
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::Foo.TestEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
-#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 
@@ -701,7 +701,7 @@ namespace Foo
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
 
-#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
         public static bool TryParse(
@@ -719,7 +719,7 @@ namespace Foo
         /// of <see cref="global::Foo.TestEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
-#if NET9_0_OR_GREATER || NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
         [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 #endif
 

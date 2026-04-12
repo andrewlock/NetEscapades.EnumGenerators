@@ -8,9 +8,9 @@ The generated extension methods include overloads that accept option types such 
 var result = MyEnumExtensions.Parse("First", new());
 ```
 
-On **.NET 9+**, this is resolved automatically using the `[OverloadResolutionPriority]` attribute, which is included in the generated code gated behind a preprocessor directive.
+On **.NET 9+**, this is resolved automatically using the `[OverloadResolutionPriority]` attribute. The generator detects that the attribute type is available in the compilation and includes it in the generated code.
 
-On **older target frameworks**, you can opt in to the same behavior by defining the `NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY` preprocessor symbol and providing a polyfill of the `OverloadResolutionPriorityAttribute` type.
+On **older target frameworks** (with C# 13+ language version), you can get the same behavior by providing a polyfill of the `OverloadResolutionPriorityAttribute` type. The generator will automatically detect the polyfill and include the attribute — no additional configuration is needed.
 
 The easiest way to add the polyfill is to use the [Polyfill](https://github.com/SimonCropp/Polyfill) NuGet package, which provides this and many other missing types for older frameworks.
 
@@ -30,19 +30,10 @@ namespace System.Runtime.CompilerServices
 }
 ```
 
-Then define the preprocessor symbol in your project file:
+If you need to disable the `[OverloadResolutionPriority]` attribute in the generated code, define the `NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY` preprocessor symbol:
 
 ```xml
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <!-- Enable overload resolution priority for generated enum methods -->
-    <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_OVERLOAD_PRIORITY</DefineConstants>
-  </PropertyGroup>
-
-  <!-- Add the package -->
-  <PackageReference Include="NetEscapades.EnumGenerators" Version="1.0.0-beta21" />
-</Project>
+<PropertyGroup>
+  <DefineConstants>$(DefineConstants);NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY</DefineConstants>
+</PropertyGroup>
 ```
