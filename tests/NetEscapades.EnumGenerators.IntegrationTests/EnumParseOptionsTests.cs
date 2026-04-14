@@ -36,4 +36,19 @@ public class EnumParseOptionsTests
         options.EnableNumberParsing.Should().BeTrue();
         options.ComparisonType.Should().Be(StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void ParseWithTargetTypedNew()
+    {
+        var result = Foo.EnumInFooExtensions.Parse("First", new());
+        result.Should().Be(Foo.EnumInFoo.First);
+    }
+
+    [Fact]
+    public void TryParseWithTargetTypedNew()
+    {
+        Foo.EnumInFooExtensions.TryParse("First", out Foo.EnumInFoo result, new())
+            .Should().BeTrue();
+        result.Should().Be(Foo.EnumInFoo.First);
+    }
 }

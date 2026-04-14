@@ -134,6 +134,29 @@ internal static class TestHelpers
             references,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
+        // Ensure OverloadResolutionPriorityAttribute is always available in the test compilation,
+        // even on older TFMs where it's not in the framework. This keeps snapshot output consistent.
+        if (opts.IncludeOverloadResolutionPriority
+            && compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute") is null)
+        {
+            var polyfillParseOptions = new CSharpParseOptions(opts.LanguageVersion)
+                .WithFeatures(opts.Features);
+            var polyfill = CSharpSyntaxTree.ParseText("""
+                namespace System.Runtime.CompilerServices
+                {
+                    [global::System.AttributeUsage(
+                        global::System.AttributeTargets.Method | global::System.AttributeTargets.Constructor | global::System.AttributeTargets.Property,
+                        AllowMultiple = false, Inherited = false)]
+                    internal sealed class OverloadResolutionPriorityAttribute : global::System.Attribute
+                    {
+                        public OverloadResolutionPriorityAttribute(int priority) => Priority = priority;
+                        public int Priority { get; }
+                    }
+                }
+                """, options: polyfillParseOptions, path: "OverloadResolutionPriorityPolyfill.cs");
+            compilation = compilation.AddSyntaxTrees(polyfill);
+        }
+
         var (runResult, diagnostics)  = RunGeneratorAndAssertOutput(generators, opts, compilation, stages);
 
         var combinedDiagnostics = runResult.Diagnostics.AddRange(diagnostics);
@@ -366,13 +389,15 @@ internal static class TestHelpers
             Dictionary<string, string>? AnalyzerOptions,
             Dictionary<string, string>? Features,
             string[] Sources,
-            string[]? Stages)
+            string[]? Stages,
+            bool IncludeOverloadResolutionPriority = true)
         {
             this.LanguageVersion = LanguageVersion;
             this.AnalyzerOptions = AnalyzerOptions;
             this.Features = Features;
             this.Sources = Sources;
             this.Stages = Stages;
+            this.IncludeOverloadResolutionPriority = IncludeOverloadResolutionPriority;
         }
 
         public AnalyzerConfigOptionsProvider? OptionsProvider =>
@@ -383,6 +408,7 @@ internal static class TestHelpers
         public Dictionary<string, string>? Features { get; }
         public string[] Sources { get; }
         public string[]? Stages { get; }
+        public bool IncludeOverloadResolutionPriority { get; }
 
     }
 }

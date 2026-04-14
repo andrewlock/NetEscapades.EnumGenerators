@@ -44,6 +44,10 @@
         /// <param name="value">The value to retrieve the string value for</param>
         /// <param name="options">The options to use when serializing the enum</param>
         /// <returns>The string representation of the value, using the provided options.</returns>
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static string ToStringFast(this global::MyEnum value, global::NetEscapades.EnumGenerators.SerializationOptions options)
             => options.Transform switch
                {
@@ -230,6 +234,10 @@
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::MyEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static global::MyEnum Parse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -336,6 +344,10 @@
         /// of <see cref="global::MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static bool TryParse(
 #if NETCOREAPP3_0_OR_GREATER
             [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
@@ -491,6 +503,10 @@
         /// is not explicitly defined in <see cref="global::MyEnum" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
         public static global::MyEnum Parse(
 #else
         /// <summary>
@@ -501,6 +517,10 @@
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns>An object of type <see cref="global::MyEnum" /> whose
         /// value is represented by <paramref name="name"/></returns>
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static global::MyEnum Parse(
 #endif
 #if NETCOREAPP3_0_OR_GREATER
@@ -687,6 +707,10 @@
         /// is not explicitly defined in <see cref="global::MyEnum" /> when attempting to parse as a number.
         /// To avoid this allocation, only call this overload when you know the value will exist.
         /// Alternatively, disable number parsing in the <paramref name="options" /> parameter.</remarks>
+
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
         public static bool TryParse(
 #else
         /// <summary>
@@ -702,6 +726,10 @@
         /// of <see cref="global::MyEnum" />. This parameter is passed uninitialized.</param>
         /// <param name="options">Options that control how the string value should be parsed.</param>
         /// <returns><see langword="true"/> if the value parameter was converted successfully; otherwise, <see langword="false"/>.</returns>
+#if !NETESCAPADES_ENUMGENERATORS_OMIT_OVERLOAD_PRIORITY
+        [global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+#endif
+
         public static bool TryParse(
 #endif
 #if NETCOREAPP3_0_OR_GREATER

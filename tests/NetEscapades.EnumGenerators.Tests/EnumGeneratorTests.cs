@@ -803,6 +803,124 @@ public abstract class EnumGeneratorTestsBase
         output.Should().BeEmpty();
     }
 
+    [Fact]
+    public Task ParseWithTargetTypedNew_CompilesWithOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    _ = MyEnumExtensions.Parse("First", new());
+                }
+            }
+            """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, options: null!, input));
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public Task TryParseWithTargetTypedNew_CompilesWithOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    MyEnumExtensions.TryParse("First", out MyEnum _, new());
+                }
+            }
+            """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, options: null!, input));
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+    [Fact]
+    public Task ToStringFastWithTargetTypedNew_CompilesWithOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    var value = MyEnum.First;
+                    _ = value.ToStringFast(new());
+                }
+            }
+            """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, options: null!, input));
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output, Settings());
+    }
+
+// This test verifies that without OverloadResolutionPriorityAttribute, target-typed new()
+// causes CS0121 (ambiguous call). On .NET 9+, the attribute is always in the framework
+// references, so the generator always emits it and there's no ambiguity to test.
+#if !NET9_0_OR_GREATER
+    [Fact]
+    public Task ParseWithTargetTypedNew_DoesNotCompileWithoutOverloadPriority()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            [EnumExtensions]
+            public enum MyEnum
+            {
+                First,
+                Second,
+            }
+
+            public class Usage
+            {
+                public void Test()
+                {
+                    _ = MyEnumExtensions.Parse("First", new());
+                }
+            }
+            """;
+
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(LanguageVersion.CSharp13, null, null, [input], null, IncludeOverloadResolutionPriority: false));
+        Assert.Contains(diagnostics, d => d.Id == "CS0121");
+        return Verifier.Verify(output, Settings());
+    }
+#endif
+
     private static void ScrubAttribute(VerifySettings settings, MetadataSource source)
     {
         var toScrub = source switch

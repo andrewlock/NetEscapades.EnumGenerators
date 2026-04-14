@@ -51,4 +51,10 @@ public class SerializationOptionsTests
         options.UseMetadataAttributes.Should().BeTrue();
         options.Transform.Should().Be(SerializationTransform.UpperInvariant);
     }
+
+    [Fact]
+    public void ToStringFastWithTargetTypedNew()
+    {
+        Foo.EnumInFooExtensions.ToStringFast(Foo.EnumInFoo.First, new()).Should().Be("First");
+    }
 }
