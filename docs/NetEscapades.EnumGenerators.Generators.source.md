@@ -67,4 +67,6 @@ This adds a `<PackageReference>` to your project. You can additionally mark the 
 
 include: interception-config
 
+include: overload-resolution
+
 include: preserving-usages
