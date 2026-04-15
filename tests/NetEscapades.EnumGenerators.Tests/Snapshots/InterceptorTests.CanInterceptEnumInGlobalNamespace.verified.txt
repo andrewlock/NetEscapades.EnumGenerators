@@ -118,6 +118,27 @@
         public static bool HasAnyFlags(this global::MyEnum value, global::MyEnum otherFlags)
             => otherFlags == 0 ? true : (value & otherFlags) != 0;
 
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <summary>
+        /// Decomposes the value into individual flags, writing each set bit as a separate value into the provided buffer.
+        /// </summary>
+        /// <param name="value">The value to decompose into individual flags</param>
+        /// <param name="buffer">The buffer to write the individual flags into. Must be large enough to hold all set bits.</param>
+        /// <returns>The number of individual flags written to the buffer.</returns>
+        public static int GetFlags(this global::MyEnum value, global::System.Span<global::MyEnum> buffer)
+        {
+            var count = 0;
+            var v = (int)value;
+            while (v != 0)
+            {
+                var flag = (int)(v & -v);
+                buffer[count++] = (global::MyEnum)flag;
+                v &= (int)(v - 1);
+            }
+            return count;
+        }
+#endif
+
         /// <summary>
         /// Cast a value of <see cref="global::MyEnum" /> to the underlying type (<c>int</c>).
         /// This is mainly a convenience method.

@@ -195,6 +195,37 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
         value.HasAnyFlags(otherFlags).Should().Be(expected);
     }
 
+#if READONLYSPAN
+    public static TheoryData<FlagsEnum, int, FlagsEnum[]> GetFlagsData => new()
+    {
+        // Single flag decomposes to itself
+        { FlagsEnum.First, 1, new[] { FlagsEnum.First } },
+        // Multiple flags decompose into individual bits, lowest first
+        { FlagsEnum.First | FlagsEnum.Third, 2, new[] { FlagsEnum.First, FlagsEnum.Third } },
+        // Composite member decomposes to individual bits
+        { FlagsEnum.ThirdAndFourth, 2, new[] { FlagsEnum.Third, FlagsEnum.Fourth } },
+        // None returns empty
+        { FlagsEnum.None, 0, Array.Empty<FlagsEnum>() },
+        // Undefined bits still returned
+        { (FlagsEnum)65, 2, new[] { (FlagsEnum)1, (FlagsEnum)64 } },
+        // All defined flags decomposes to 4 individual bits
+        { FlagsEnumExtensions.All, 4, new[] { FlagsEnum.First, FlagsEnum.Second, FlagsEnum.Third, FlagsEnum.Fourth } },
+        // Multiple bits set in underlying int
+        { (FlagsEnum)0xFF, 8, new[] { (FlagsEnum)1, (FlagsEnum)2, (FlagsEnum)4, (FlagsEnum)8,
+            (FlagsEnum)16, (FlagsEnum)32, (FlagsEnum)64, (FlagsEnum)128 } },
+    };
+
+    [Theory]
+    [MemberData(nameof(GetFlagsData))]
+    public void GetFlags(FlagsEnum value, int expectedCount, FlagsEnum[] expectedFlags)
+    {
+        Span<FlagsEnum> buffer = stackalloc FlagsEnum[32];
+        var count = value.GetFlags(buffer);
+        count.Should().Be(expectedCount);
+        buffer.Slice(0, count).ToArray().Should().Equal(expectedFlags);
+    }
+#endif
+
     private PackageEnumParseOptions Map(EnumParseOptions options)
         => new(comparisonType: options.ComparisonType,
             allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,

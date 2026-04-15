@@ -593,6 +593,42 @@ public static class SourceGenerationHelper
                 """
                  otherFlags)
                             => otherFlags == 0 ? true : (value & otherFlags) != 0;
+
+                #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+                        /// <summary>
+                        /// Decomposes the value into individual flags, writing each set bit as a separate value into the provided buffer.
+                        /// </summary>
+                        /// <param name="value">The value to decompose into individual flags</param>
+                        /// <param name="buffer">The buffer to write the individual flags into. Must be large enough to hold all set bits.</param>
+                        /// <returns>The number of individual flags written to the buffer.</returns>
+                        public static int GetFlags(this
+                """).Append(' ').Append(fullyQualifiedName).Append(" value, global::System.Span<").Append(fullyQualifiedName).Append(
+                """
+                > buffer)
+                        {
+                            var count = 0;
+                            var v = (
+                """).Append(enumToGenerate.UnderlyingType).Append(
+                """
+                )value;
+                            while (v != 0)
+                            {
+                                var flag = (
+                """).Append(enumToGenerate.UnderlyingType).Append(
+                """
+                )(v & -v);
+                                buffer[count++] = (
+                """).Append(fullyQualifiedName).Append(
+                """
+                )flag;
+                                v &= (
+                """).Append(enumToGenerate.UnderlyingType).Append(
+                """
+                )(v - 1);
+                            }
+                            return count;
+                        }
+                #endif
                 """);
         }
 
