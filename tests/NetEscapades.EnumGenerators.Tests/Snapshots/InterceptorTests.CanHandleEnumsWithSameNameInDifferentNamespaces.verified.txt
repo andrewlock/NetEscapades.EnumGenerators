@@ -27,6 +27,11 @@ namespace Foo
         public const int Length = 3;
 
         /// <summary>
+        /// A bitwise OR combination of all defined values in the enum.
+        /// </summary>
+        public const global::Foo.MyEnum All = global::Foo.MyEnum.First | global::Foo.MyEnum.Second | global::Foo.MyEnum.Third;
+
+        /// <summary>
         /// Returns the string representation of the <see cref="global::Foo.MyEnum"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
@@ -865,6 +870,11 @@ namespace Bar
         /// This is a non-distinct count of defined names.
         /// </summary>
         public const int Length = 3;
+
+        /// <summary>
+        /// A bitwise OR combination of all defined values in the enum.
+        /// </summary>
+        public const global::Bar.MyEnum All = global::Bar.MyEnum.First | global::Bar.MyEnum.Second | global::Bar.MyEnum.Third;
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Bar.MyEnum"/> value.

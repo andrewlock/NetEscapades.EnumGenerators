@@ -139,7 +139,31 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
 
         isDefined.Should().Be(value.HasFlag(flag));
     }
-    
+
+    [Theory]
+    [InlineData(FlagsEnum.First)]
+    [InlineData(FlagsEnum.Second)]
+    [InlineData(FlagsEnum.Third)]
+    [InlineData(FlagsEnum.Fourth)]
+    [InlineData(FlagsEnum.ThirdAndFourth)]
+    public void AllContainsFlag(FlagsEnum flag)
+    {
+        FlagsEnumExtensions.All.HasFlag(flag).Should().BeTrue();
+    }
+
+    [Fact]
+    public void AllHasExpectedValue()
+    {
+        ((int)FlagsEnumExtensions.All).Should().Be(0b1111); // 15
+    }
+
+    [Fact]
+    public void AllIsConst()
+    {
+        const FlagsEnum all = FlagsEnumExtensions.All;
+        all.Should().Be(FlagsEnumExtensions.All);
+    }
+
     private PackageEnumParseOptions Map(EnumParseOptions options)
         => new(comparisonType: options.ComparisonType,
             allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,

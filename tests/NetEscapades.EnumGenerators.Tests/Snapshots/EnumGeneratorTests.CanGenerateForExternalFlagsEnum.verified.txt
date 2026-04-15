@@ -26,6 +26,11 @@ namespace System.IO
         public const int Length = 6;
 
         /// <summary>
+        /// A bitwise OR combination of all defined values in the enum.
+        /// </summary>
+        public const global::System.IO.FileShare All = global::System.IO.FileShare.None | global::System.IO.FileShare.Read | global::System.IO.FileShare.Write | global::System.IO.FileShare.ReadWrite | global::System.IO.FileShare.Delete | global::System.IO.FileShare.Inheritable;
+
+        /// <summary>
         /// Returns the string representation of the <see cref="global::System.IO.FileShare"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>

@@ -94,7 +94,35 @@ public static class SourceGenerationHelper
                     /// This is a non-distinct count of defined names.
                     /// </summary>
                     public const int Length = 
-            """).Append(enumToGenerate.Names.Count).Append(";").Append(
+            """).Append(enumToGenerate.Names.Count).Append(";");
+
+        if (enumToGenerate.HasFlags)
+        {
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// A bitwise OR combination of all defined values in the enum.
+                        /// </summary>
+                        public const
+                """).Append(' ').Append(fullyQualifiedName).Append(" All = ");
+
+            var first = true;
+            foreach (var member in enumToGenerate.Names)
+            {
+                if (!first)
+                {
+                    sb.Append(" | ");
+                }
+                first = false;
+                sb.Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key);
+            }
+
+            sb.Append(';');
+        }
+
+        sb.Append(
             """
 
 

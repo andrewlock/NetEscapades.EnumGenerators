@@ -26,6 +26,11 @@ namespace Something.Blah
         public const int Length = 2;
 
         /// <summary>
+        /// A bitwise OR combination of all defined values in the enum.
+        /// </summary>
+        public const global::Something.Blah.ShortName All = global::Something.Blah.ShortName.First | global::Something.Blah.ShortName.Second;
+
+        /// <summary>
         /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>

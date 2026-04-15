@@ -26,6 +26,11 @@ namespace MyTestNameSpace
         public const int Length = 3;
 
         /// <summary>
+        /// A bitwise OR combination of all defined values in the enum.
+        /// </summary>
+        public const global::MyTestNameSpace.MyEnum All = global::MyTestNameSpace.MyEnum.First | global::MyTestNameSpace.MyEnum.Second | global::MyTestNameSpace.MyEnum.Third;
+
+        /// <summary>
         /// Returns the string representation of the <see cref="global::MyTestNameSpace.MyEnum"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
