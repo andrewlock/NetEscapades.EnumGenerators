@@ -110,6 +110,17 @@ namespace Foo
             => flag == 0 ? true : (value & flag) == flag;
 
         /// <summary>
+        /// Determines whether any of the bit fields are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <param name="otherFlags">The flags to check for</param>
+        /// <returns><see langword="true"/> if any of the fields set in the flags are also set in the current instance; otherwise <see langword="false"/>.</returns>
+        /// <remarks>If the underlying value of <paramref name="otherFlags"/> is zero, the method returns true.
+        /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
+        public static bool HasAnyFlags(this global::Foo.MyEnum value, global::Foo.MyEnum otherFlags)
+            => otherFlags == 0 ? true : (value & otherFlags) != 0;
+
+        /// <summary>
         /// Cast a value of <see cref="global::Foo.MyEnum" /> to the underlying type (<c>int</c>).
         /// This is mainly a convenience method.
         /// </summary>
@@ -953,6 +964,17 @@ namespace Bar
         /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
         public static bool HasFlagFast(this global::Bar.MyEnum value, global::Bar.MyEnum flag)
             => flag == 0 ? true : (value & flag) == flag;
+
+        /// <summary>
+        /// Determines whether any of the bit fields are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <param name="otherFlags">The flags to check for</param>
+        /// <returns><see langword="true"/> if any of the fields set in the flags are also set in the current instance; otherwise <see langword="false"/>.</returns>
+        /// <remarks>If the underlying value of <paramref name="otherFlags"/> is zero, the method returns true.
+        /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
+        public static bool HasAnyFlags(this global::Bar.MyEnum value, global::Bar.MyEnum otherFlags)
+            => otherFlags == 0 ? true : (value & otherFlags) != 0;
 
         /// <summary>
         /// Cast a value of <see cref="global::Bar.MyEnum" /> to the underlying type (<c>int</c>).

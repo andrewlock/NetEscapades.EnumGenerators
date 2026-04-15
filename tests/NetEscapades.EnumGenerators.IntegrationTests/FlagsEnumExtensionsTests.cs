@@ -164,6 +164,37 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
         all.Should().Be(FlagsEnumExtensions.All);
     }
 
+    public static TheoryData<FlagsEnum, FlagsEnum, bool> HasAnyFlagsData => new()
+    {
+        // Single flag present
+        { FlagsEnum.First | FlagsEnum.Second, FlagsEnum.First, true },
+        // No queried flags present
+        { FlagsEnum.First | FlagsEnum.Second, FlagsEnum.Third, false },
+        // Partial overlap — only some flags match
+        { FlagsEnum.First, FlagsEnum.First | FlagsEnum.Third, true },
+        // None has no flags
+        { FlagsEnum.None, FlagsEnum.First, false },
+        // Querying with zero (None) — consistent with HasFlag(0) behavior
+        { FlagsEnum.First, FlagsEnum.None, true },
+        // Both zero
+        { FlagsEnum.None, FlagsEnum.None, true },
+        // Composite member overlaps
+        { FlagsEnum.Third, FlagsEnum.ThirdAndFourth, true },
+        // Composite member no overlap
+        { FlagsEnum.First, FlagsEnum.ThirdAndFourth, false },
+        // Undefined value with overlap (65 = 64|1, First = 1)
+        { (FlagsEnum)65, FlagsEnum.First, true },
+        // Undefined value no overlap
+        { (FlagsEnum)64, FlagsEnum.First, false },
+    };
+
+    [Theory]
+    [MemberData(nameof(HasAnyFlagsData))]
+    public void HasAnyFlags(FlagsEnum value, FlagsEnum otherFlags, bool expected)
+    {
+        value.HasAnyFlags(otherFlags).Should().Be(expected);
+    }
+
     private PackageEnumParseOptions Map(EnumParseOptions options)
         => new(comparisonType: options.ComparisonType,
             allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,
