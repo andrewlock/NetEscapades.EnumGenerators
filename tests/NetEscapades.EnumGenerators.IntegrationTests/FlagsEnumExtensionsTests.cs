@@ -143,7 +143,10 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
     [Fact]
     public void AllContainsFlag()
     {
-        FlagsEnumExtensions.All.HasFlag(flag).Should().BeTrue();
+        foreach (var flag in FlagsEnumExtensions.GetValues())
+        {
+            FlagsEnumExtensions.All.HasFlag(flag).Should().BeTrue();
+        }
     }
 
     [Fact]
