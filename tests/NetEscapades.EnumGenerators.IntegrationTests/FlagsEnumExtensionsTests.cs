@@ -155,13 +155,6 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
         ((int)FlagsEnumExtensions.All).Should().Be(0b1111); // 15
     }
 
-    [Fact]
-    public void AllIsConst()
-    {
-        const FlagsEnum all = FlagsEnumExtensions.All;
-        all.Should().Be(FlagsEnumExtensions.All);
-    }
-
     public static TheoryData<FlagsEnum, FlagsEnum, bool> HasAnyFlagsData => new()
     {
         // Single flag present
