@@ -110,9 +110,10 @@ namespace Something.Blah
         /// </summary>
         /// <param name="value">The value of the instance to investigate</param>
         /// <param name="otherFlags">The flags to check for</param>
-        /// <returns><see langword="true"/> if any of the fields set in the flags are also set in the current instance; otherwise <see langword="false"/>.</returns>
-        /// <remarks>If the underlying value of <paramref name="otherFlags"/> is zero, the method returns true.
-        /// This is consistent with the behaviour of <see cref="global::System.Enum.HasFlag" /></remarks>
+        /// <returns><see langword="true"/> if any of the fields set in <paramref name="otherFlags" /> are 
+        /// also set in <paramref name="value" />; otherwise <see langword="false"/>.</returns>
+        /// <remarks>If the underlying value of <paramref name="otherFlags"/> is zero, the method 
+        /// always returns <see langword="true"/>, consistent with the behaviour of <see cref="global::System.Enum.HasFlag" />.</remarks>
         public static bool HasAnyFlags(this global::Something.Blah.ShortName value, global::Something.Blah.ShortName otherFlags)
             => otherFlags == 0 ? true : (value & otherFlags) != 0;
 
