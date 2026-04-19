@@ -133,8 +133,12 @@ namespace MyTestNameSpace
             var v = (int)value;
             while (v != 0)
             {
+                // Isolate the lowest set bit: `v & -v` keeps only the rightmost 1-bit
+                // (e.g. 0b0110 & -0b0110 = 0b0010).
                 var flag = (int)(v & -v);
                 buffer[count++] = (global::MyTestNameSpace.MyEnum)flag;
+                // Clear the lowest set bit: `v & (v - 1)` turns off the rightmost 1-bit
+                // (e.g. 0b0110 & 0b0101 = 0b0100). Loop continues until all bits are cleared.
                 v &= (int)(v - 1);
             }
             return count;

@@ -614,6 +614,8 @@ public static class SourceGenerationHelper
                 )value;
                             while (v != 0)
                             {
+                                // Isolate the lowest set bit: `v & -v` keeps only the rightmost 1-bit
+                                // (e.g. 0b0110 & -0b0110 = 0b0010).
                                 var flag = (
                 """).Append(enumToGenerate.UnderlyingType).Append(
                 """
@@ -622,6 +624,8 @@ public static class SourceGenerationHelper
                 """).Append(fullyQualifiedName).Append(
                 """
                 )flag;
+                                // Clear the lowest set bit: `v & (v - 1)` turns off the rightmost 1-bit
+                                // (e.g. 0b0110 & 0b0101 = 0b0100). Loop continues until all bits are cleared.
                                 v &= (
                 """).Append(enumToGenerate.UnderlyingType).Append(
                 """
