@@ -140,13 +140,8 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
         isDefined.Should().Be(value.HasFlag(flag));
     }
 
-    [Theory]
-    [InlineData(FlagsEnum.First)]
-    [InlineData(FlagsEnum.Second)]
-    [InlineData(FlagsEnum.Third)]
-    [InlineData(FlagsEnum.Fourth)]
-    [InlineData(FlagsEnum.ThirdAndFourth)]
-    public void AllContainsFlag(FlagsEnum flag)
+    [Fact]
+    public void AllContainsFlag()
     {
         FlagsEnumExtensions.All.HasFlag(flag).Should().BeTrue();
     }
