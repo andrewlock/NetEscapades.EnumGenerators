@@ -116,6 +116,42 @@ public class SourceGenerationHelperSnapshotTests
             .UseParameters(csharp14IsSupported);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public Task DoesNotGenerateTryGetFlagsForCompositeFlagsEnum(bool csharp14IsSupported)
+    {
+        // An enum with a composite member (non-zero, non-power-of-two) should not get TryGetFlags.
+        var value = new EnumToGenerate(
+            "ShortName",
+            "Something.Blah",
+            "Something.Blah.ShortName",
+            "int",
+            isPublic: true,
+            new List<(string, EnumValueOption)>
+            {
+                ("None", EnumValueOption.CreateWithoutAttributes(0)),
+                ("First", EnumValueOption.CreateWithoutAttributes(1)),
+                ("Second", EnumValueOption.CreateWithoutAttributes(2)),
+                ("Both", EnumValueOption.CreateWithoutAttributes(3)),
+            },
+            hasFlags: true,
+            metadataSource: null);
+
+        var result = SourceGenerationHelper.GenerateExtensionClass(
+            value,
+            csharp14IsSupported,
+            useCollectionExpressions: false,
+            DefaultMetadataSource,
+            hasRuntimeDependencies: true,
+            forceInternal: false,
+            hasOverloadResolutionPriority: true).Content;
+
+        return Verifier.Verify(result)
+            .ScrubExpectedChanges()
+            .UseDirectory("Snapshots")
+            .UseParameters(csharp14IsSupported);
+    }
+
     [Fact]
     public Task GeneratesForcedInternalEnumCorrectly()
     {

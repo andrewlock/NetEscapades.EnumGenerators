@@ -121,28 +121,36 @@ namespace MyTestNameSpace
         public static bool HasAnyFlags(this global::MyTestNameSpace.MyEnum value, global::MyTestNameSpace.MyEnum otherFlags)
             => otherFlags == 0 ? true : (value & otherFlags) != 0;
 
+        /// <summary>
+        /// The number of distinct single-bit flag members defined in the enum.
+        /// This is the buffer size required by <see cref="TryGetFlags" />.
+        /// </summary>
+        public const int DistinctFlagCount = 3;
+
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
-        /// Decomposes the value into individual flags, writing each set bit as a separate value into the provided buffer.
+        /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
+        /// Undefined bits and the zero/None value are excluded from the output.
         /// </summary>
-        /// <param name="value">The value to decompose into individual flags</param>
-        /// <param name="buffer">The buffer to write the individual flags into. Must be large enough to hold all set bits.</param>
-        /// <returns>The number of individual flags written to the buffer.</returns>
-        public static int GetFlags(this global::MyTestNameSpace.MyEnum value, global::System.Span<global::MyTestNameSpace.MyEnum> buffer)
+        /// <param name="value">The value to decompose into individual flags.</param>
+        /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>
+        /// <param name="count">The number of flags written to <paramref name="buffer"/>. Set to 0 if the method returns <see langword="false"/>.</param>
+        /// <returns><see langword="true"/> if the buffer was large enough; <see langword="false"/> if it was smaller than <see cref="DistinctFlagCount" />.</returns>
+        public static bool TryGetFlags(this global::MyTestNameSpace.MyEnum value, global::System.Span<global::MyTestNameSpace.MyEnum> buffer, out int count)
         {
-            var count = 0;
-            var v = (int)value;
-            while (v != 0)
+            if (buffer.Length < DistinctFlagCount)
             {
-                // Isolate the lowest set bit: `v & -v` keeps only the rightmost 1-bit
-                // (e.g. 0b0110 & -0b0110 = 0b0010).
-                var flag = (int)(v & -v);
-                buffer[count++] = (global::MyTestNameSpace.MyEnum)flag;
-                // Clear the lowest set bit: `v & (v - 1)` turns off the rightmost 1-bit
-                // (e.g. 0b0110 & 0b0101 = 0b0100). Loop continues until all bits are cleared.
-                v &= (int)(v - 1);
+                count = 0;
+                return false;
             }
-            return count;
+            count = 0;
+            if ((value & global::MyTestNameSpace.MyEnum.First) == global::MyTestNameSpace.MyEnum.First)
+                buffer[count++] = global::MyTestNameSpace.MyEnum.First;
+            if ((value & global::MyTestNameSpace.MyEnum.Second) == global::MyTestNameSpace.MyEnum.Second)
+                buffer[count++] = global::MyTestNameSpace.MyEnum.Second;
+            if ((value & global::MyTestNameSpace.MyEnum.Third) == global::MyTestNameSpace.MyEnum.Third)
+                buffer[count++] = global::MyTestNameSpace.MyEnum.Third;
+            return true;
         }
 #endif
 

@@ -594,47 +594,93 @@ public static class SourceGenerationHelper
                 """
                  otherFlags)
                             => otherFlags == 0 ? true : (value & otherFlags) != 0;
-
-                #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
-                        /// <summary>
-                        /// Decomposes the value into individual flags, writing each set bit as a separate value into the provided buffer.
-                        /// </summary>
-                        /// <param name="value">The value to decompose into individual flags</param>
-                        /// <param name="buffer">The buffer to write the individual flags into. Must be large enough to hold all set bits.</param>
-                        /// <returns>The number of individual flags written to the buffer.</returns>
-                        public static int GetFlags(this
-                """).Append(' ').Append(fullyQualifiedName).Append(" value, global::System.Span<").Append(fullyQualifiedName).Append(
-                """
-                > buffer)
-                        {
-                            var count = 0;
-                            var v = (
-                """).Append(enumToGenerate.UnderlyingType).Append(
-                """
-                )value;
-                            while (v != 0)
-                            {
-                                // Isolate the lowest set bit: `v & -v` keeps only the rightmost 1-bit
-                                // (e.g. 0b0110 & -0b0110 = 0b0010).
-                                var flag = (
-                """).Append(enumToGenerate.UnderlyingType).Append(
-                """
-                )(v & -v);
-                                buffer[count++] = (
-                """).Append(fullyQualifiedName).Append(
-                """
-                )flag;
-                                // Clear the lowest set bit: `v & (v - 1)` turns off the rightmost 1-bit
-                                // (e.g. 0b0110 & 0b0101 = 0b0100). Loop continues until all bits are cleared.
-                                v &= (
-                """).Append(enumToGenerate.UnderlyingType).Append(
-                """
-                )(v - 1);
-                            }
-                            return count;
-                        }
-                #endif
                 """);
+
+            // Collect single-bit flag members. If any member is a non-zero composite (not a power of two),
+            // skip emitting TryGetFlags/DistinctFlagCount entirely — the strict rule keeps semantics deterministic.
+            List<(string Name, ulong Value)>? singleBitFlags = null;
+            var hasComposite = false;
+            var seenBitValues = new HashSet<ulong>();
+            foreach (var member in enumToGenerate.Names)
+            {
+                var bits = ToUInt64BitPattern(member.Value.ConstantValue);
+                if (bits == 0)
+                {
+                    // Zero-valued members (e.g. None) are allowed but not emitted.
+                    continue;
+                }
+                if ((bits & (bits - 1)) != 0)
+                {
+                    hasComposite = true;
+                    break;
+                }
+                if (seenBitValues.Add(bits))
+                {
+                    singleBitFlags ??= new List<(string, ulong)>();
+                    singleBitFlags.Add((member.Key, bits));
+                }
+            }
+
+            if (!hasComposite && singleBitFlags is { Count: > 0 })
+            {
+                singleBitFlags.Sort((a, b) => a.Value.CompareTo(b.Value));
+
+                sb.Append(
+                    """
+
+
+                            /// <summary>
+                            /// The number of distinct single-bit flag members defined in the enum.
+                            /// This is the buffer size required by <see cref="TryGetFlags" />.
+                            /// </summary>
+                            public const int DistinctFlagCount =
+                    """).Append(' ').Append(singleBitFlags.Count).Append(';');
+
+                sb.Append(
+                    """
+
+
+                    #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+                            /// <summary>
+                            /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
+                            /// Undefined bits and the zero/None value are excluded from the output.
+                            /// </summary>
+                            /// <param name="value">The value to decompose into individual flags.</param>
+                            /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>
+                            /// <param name="count">The number of flags written to <paramref name="buffer"/>. Set to 0 if the method returns <see langword="false"/>.</param>
+                            /// <returns><see langword="true"/> if the buffer was large enough; <see langword="false"/> if it was smaller than <see cref="DistinctFlagCount" />.</returns>
+                            public static bool TryGetFlags(this
+                    """).Append(' ').Append(fullyQualifiedName).Append(" value, global::System.Span<").Append(fullyQualifiedName).Append(
+                    """
+                    > buffer, out int count)
+                            {
+                                if (buffer.Length < DistinctFlagCount)
+                                {
+                                    count = 0;
+                                    return false;
+                                }
+                                count = 0;
+                    """);
+
+                foreach (var flag in singleBitFlags)
+                {
+                    sb.Append("\n            if ((value & ")
+                        .Append(fullyQualifiedName).Append('.').AppendIdentifier(flag.Name)
+                        .Append(") == ")
+                        .Append(fullyQualifiedName).Append('.').AppendIdentifier(flag.Name)
+                        .Append(")\n                buffer[count++] = ")
+                        .Append(fullyQualifiedName).Append('.').AppendIdentifier(flag.Name)
+                        .Append(';');
+                }
+
+                sb.Append(
+                    """
+
+                                return true;
+                            }
+                    #endif
+                    """);
+            }
         }
 
         sb.Append(
@@ -2463,6 +2509,20 @@ public static class SourceGenerationHelper
 
         return sb.Append(identifier);
     }
+
+    private static ulong ToUInt64BitPattern(object value)
+        => value switch
+        {
+            sbyte v => (byte)v,
+            byte v => v,
+            short v => (ushort)v,
+            ushort v => v,
+            int v => (uint)v,
+            uint v => v,
+            long v => unchecked((ulong)v),
+            ulong v => v,
+            _ => 0UL,
+        };
 
     private enum AlternativeMethodChoice
     {
