@@ -94,7 +94,35 @@ public static class SourceGenerationHelper
                     /// This is a non-distinct count of defined names.
                     /// </summary>
                     public const int Length = 
-            """).Append(enumToGenerate.Names.Count).Append(";").Append(
+            """).Append(enumToGenerate.Names.Count).Append(";");
+
+        if (enumToGenerate.HasFlags)
+        {
+            sb.Append(
+                """
+
+
+                        /// <summary>
+                        /// A bitwise OR combination of all defined values in the enum.
+                        /// </summary>
+                        public const
+                """).Append(' ').Append(fullyQualifiedName).Append(" All = ");
+
+            var first = true;
+            foreach (var member in enumToGenerate.Names)
+            {
+                if (!first)
+                {
+                    sb.Append(" | ");
+                }
+                first = false;
+                sb.Append(fullyQualifiedName).Append('.').AppendIdentifier(member.Key);
+            }
+
+            sb.Append(';');
+        }
+
+        sb.Append(
             """
 
 
@@ -550,7 +578,123 @@ public static class SourceGenerationHelper
                 """
                  flag)
                             => flag == 0 ? true : (value & flag) == flag;
+
+                        /// <summary>
+                        /// Determines whether any of the bit fields are set in the current instance.
+                        /// </summary>
+                        /// <param name="value">The value of the instance to investigate</param>
+                        /// <param name="otherFlags">The flags to check for</param>
+                        /// <returns><see langword="true"/> if any of the fields set in <paramref name="otherFlags" /> are 
+                        /// also set in <paramref name="value" />; otherwise <see langword="false"/>.</returns>
+                        /// <remarks>If the underlying value of <paramref name="otherFlags"/> is zero, the method 
+                        /// always returns <see langword="true"/>, consistent with the behaviour of <see cref="global::System.Enum.HasFlag" />.</remarks>
+                        public static bool HasAnyFlags(this
+                """).Append(' ').Append(fullyQualifiedName).Append(" value, ").Append(fullyQualifiedName)
+                .Append(
+                """
+                 otherFlags)
+                            => otherFlags == 0 ? true : (value & otherFlags) != 0;
                 """);
+
+            // Collect single-bit flag members (powers of two) and build a mask of all defined bits.
+            // Composite members are allowed as long as every bit they set is also a defined single-bit flag.
+            // Members with bits outside the defined mask disqualify the enum from TryGetFlags emission.
+            List<(string Name, ulong Value)>? singleBitFlags = null;
+            var seenBitValues = new HashSet<ulong>();
+            ulong definedMask = 0;
+            foreach (var member in enumToGenerate.Names)
+            {
+                var bits = ToUInt64BitPattern(member.Value.ConstantValue);
+                if (bits == 0)
+                {
+                    // Zero-valued members (e.g. None) are allowed but not emitted.
+                    continue;
+                }
+                if ((bits & (bits - 1)) == 0 && seenBitValues.Add(bits))
+                {
+                    singleBitFlags ??= new List<(string, ulong)>();
+                    singleBitFlags.Add((member.Key, bits));
+                    definedMask |= bits;
+                }
+            }
+
+            // Verify every non-zero member value is a subset of the defined-bit mask.
+            // Catches members with bits that don't correspond to any single-bit flag.
+            var hasInvalidValue = false;
+            if (singleBitFlags is { Count: > 0 })
+            {
+                foreach (var member in enumToGenerate.Names)
+                {
+                    var bits = ToUInt64BitPattern(member.Value.ConstantValue);
+                    if (bits != 0 && (bits & ~definedMask) != 0)
+                    {
+                        hasInvalidValue = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!hasInvalidValue && singleBitFlags is { Count: > 0 })
+            {
+                singleBitFlags.Sort((a, b) => a.Value.CompareTo(b.Value));
+
+                sb.Append(
+                    """
+
+
+                            /// <summary>
+                            /// The number of distinct single-bit flag members defined in the enum.
+                            /// This is the buffer size required by <see cref="TryGetFlags" />.
+                            /// </summary>
+                            public const int DistinctFlagCount =
+                    """).Append(' ').Append(singleBitFlags.Count).Append(';');
+
+                sb.Append(
+                    """
+
+
+                    #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+                            /// <summary>
+                            /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
+                            /// Composite members (e.g. a member defined as <c>A | B</c>) are decomposed into their constituent single-bit flags.
+                            /// The zero/None value never appears in the output.
+                            /// </summary>
+                            /// <param name="value">The value to decompose into individual flags.</param>
+                            /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>
+                            /// <param name="count">The number of flags written to <paramref name="buffer"/>. Set to 0 if the method returns <see langword="false"/>.</param>
+                            /// <returns><see langword="true"/> if the buffer was large enough; <see langword="false"/> if it was smaller than <see cref="DistinctFlagCount" />.</returns>
+                            public static bool TryGetFlags(this
+                    """).Append(' ').Append(fullyQualifiedName).Append(" value, global::System.Span<").Append(fullyQualifiedName).Append(
+                    """
+                    > buffer, out int count)
+                            {
+                                if (buffer.Length < DistinctFlagCount)
+                                {
+                                    count = 0;
+                                    return false;
+                                }
+                                count = 0;
+                    """);
+
+                foreach (var flag in singleBitFlags)
+                {
+                    sb.Append("\n            if ((value & ")
+                        .Append(fullyQualifiedName).Append('.').AppendIdentifier(flag.Name)
+                        .Append(") == ")
+                        .Append(fullyQualifiedName).Append('.').AppendIdentifier(flag.Name)
+                        .Append(")\n                buffer[count++] = ")
+                        .Append(fullyQualifiedName).Append('.').AppendIdentifier(flag.Name)
+                        .Append(';');
+                }
+
+                sb.Append(
+                    """
+
+                                return true;
+                            }
+                    #endif
+                    """);
+            }
         }
 
         sb.Append(
@@ -2379,6 +2523,20 @@ public static class SourceGenerationHelper
 
         return sb.Append(identifier);
     }
+
+    private static ulong ToUInt64BitPattern(object value)
+        => value switch
+        {
+            sbyte v => (byte)v,
+            byte v => v,
+            short v => (ushort)v,
+            ushort v => v,
+            int v => (uint)v,
+            uint v => v,
+            long v => unchecked((ulong)v),
+            ulong v => v,
+            _ => 0UL,
+        };
 
     private enum AlternativeMethodChoice
     {
