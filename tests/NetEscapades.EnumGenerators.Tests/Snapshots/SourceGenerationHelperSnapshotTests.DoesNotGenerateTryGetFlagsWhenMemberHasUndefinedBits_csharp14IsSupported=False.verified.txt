@@ -28,7 +28,7 @@ namespace Something.Blah
         /// <summary>
         /// A bitwise OR combination of all defined values in the enum.
         /// </summary>
-        public const global::Something.Blah.ShortName All = global::Something.Blah.ShortName.None | global::Something.Blah.ShortName.First | global::Something.Blah.ShortName.Second | global::Something.Blah.ShortName.Both;
+        public const global::Something.Blah.ShortName All = global::Something.Blah.ShortName.None | global::Something.Blah.ShortName.First | global::Something.Blah.ShortName.Second | global::Something.Blah.ShortName.Odd;
 
         /// <summary>
         /// Returns the string representation of the <see cref="global::Something.Blah.ShortName"/> value.
@@ -42,7 +42,7 @@ namespace Something.Blah
                 global::Something.Blah.ShortName.None => nameof(global::Something.Blah.ShortName.None),
                 global::Something.Blah.ShortName.First => nameof(global::Something.Blah.ShortName.First),
                 global::Something.Blah.ShortName.Second => nameof(global::Something.Blah.ShortName.Second),
-                global::Something.Blah.ShortName.Both => nameof(global::Something.Blah.ShortName.Both),
+                global::Something.Blah.ShortName.Odd => nameof(global::Something.Blah.ShortName.Odd),
                 _ => value.ToString(),
             };
 
@@ -71,7 +71,7 @@ namespace Something.Blah
                 global::Something.Blah.ShortName.None => "none",
                 global::Something.Blah.ShortName.First => "first",
                 global::Something.Blah.ShortName.Second => "second",
-                global::Something.Blah.ShortName.Both => "both",
+                global::Something.Blah.ShortName.Odd => "odd",
                 _ => value.ToString().ToLowerInvariant(),
             };
 
@@ -81,7 +81,7 @@ namespace Something.Blah
                 global::Something.Blah.ShortName.None => "NONE",
                 global::Something.Blah.ShortName.First => "FIRST",
                 global::Something.Blah.ShortName.Second => "SECOND",
-                global::Something.Blah.ShortName.Both => "BOTH",
+                global::Something.Blah.ShortName.Odd => "ODD",
                 _ => value.ToString().ToUpperInvariant(),
             };
 
@@ -144,7 +144,7 @@ namespace Something.Blah
                 global::Something.Blah.ShortName.None => true,
                 global::Something.Blah.ShortName.First => true,
                 global::Something.Blah.ShortName.Second => true,
-                global::Something.Blah.ShortName.Both => true,
+                global::Something.Blah.ShortName.Odd => true,
                 _ => false,
             };
 
@@ -159,7 +159,7 @@ namespace Something.Blah
                 nameof(global::Something.Blah.ShortName.None) => true,
                 nameof(global::Something.Blah.ShortName.First) => true,
                 nameof(global::Something.Blah.ShortName.Second) => true,
-                nameof(global::Something.Blah.ShortName.Both) => true,
+                nameof(global::Something.Blah.ShortName.Odd) => true,
             _ => false,
         };
 
@@ -189,7 +189,7 @@ namespace Something.Blah
                 global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.None)), global::System.StringComparison.Ordinal) => true,
                 global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.First)), global::System.StringComparison.Ordinal) => true,
                 global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Second)), global::System.StringComparison.Ordinal) => true,
-                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Both)), global::System.StringComparison.Ordinal) => true,
+                global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Odd)), global::System.StringComparison.Ordinal) => true,
                 _ => false,
             };
 
@@ -406,8 +406,8 @@ namespace Something.Blah
                 case string s when s.Equals(nameof(global::Something.Blah.ShortName.Second), options.ComparisonType):
                     value = global::Something.Blah.ShortName.Second;
                     return true;
-                case string s when s.Equals(nameof(global::Something.Blah.ShortName.Both), options.ComparisonType):
-                    value = global::Something.Blah.ShortName.Both;
+                case string s when s.Equals(nameof(global::Something.Blah.ShortName.Odd), options.ComparisonType):
+                    value = global::Something.Blah.ShortName.Odd;
                     return true;
                 case string s when options.EnableNumberParsing && int.TryParse(name, out var val):
                     value = (global::Something.Blah.ShortName)val;
@@ -795,8 +795,8 @@ namespace Something.Blah
                 case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Second)), options.ComparisonType):
                     result = global::Something.Blah.ShortName.Second;
                     return true;
-                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Both)), options.ComparisonType):
-                    result = global::Something.Blah.ShortName.Both;
+                case global::System.ReadOnlySpan<char> current when global::System.MemoryExtensions.Equals(current, global::System.MemoryExtensions.AsSpan(nameof(global::Something.Blah.ShortName.Odd)), options.ComparisonType):
+                    result = global::Something.Blah.ShortName.Odd;
                     return true;
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
                 case global::System.ReadOnlySpan<char> current when options.EnableNumberParsing &&  int.TryParse(name, out var numericResult):
@@ -826,7 +826,7 @@ namespace Something.Blah
                 global::Something.Blah.ShortName.None,
                 global::Something.Blah.ShortName.First,
                 global::Something.Blah.ShortName.Second,
-                global::Something.Blah.ShortName.Both,
+                global::Something.Blah.ShortName.Odd,
             };
 
         /// <summary>
@@ -842,7 +842,7 @@ namespace Something.Blah
                 (int) global::Something.Blah.ShortName.None,
                 (int) global::Something.Blah.ShortName.First,
                 (int) global::Something.Blah.ShortName.Second,
-                (int) global::Something.Blah.ShortName.Both,
+                (int) global::Something.Blah.ShortName.Odd,
             };
 
         /// <summary>
@@ -858,7 +858,7 @@ namespace Something.Blah
                 nameof(global::Something.Blah.ShortName.None),
                 nameof(global::Something.Blah.ShortName.First),
                 nameof(global::Something.Blah.ShortName.Second),
-                nameof(global::Something.Blah.ShortName.Both),
+                nameof(global::Something.Blah.ShortName.Odd),
             };
     }
 #pragma warning restore CS0612 // Ignore usages of obsolete members or enums

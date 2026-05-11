@@ -130,6 +130,42 @@ namespace System.IO
             => otherFlags == 0 ? true : (value & otherFlags) != 0;
 
         /// <summary>
+        /// The number of distinct single-bit flag members defined in the enum.
+        /// This is the buffer size required by <see cref="TryGetFlags" />.
+        /// </summary>
+        public const int DistinctFlagCount = 4;
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <summary>
+        /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
+        /// Composite members (e.g. a member defined as <c>A | B</c>) are decomposed into their constituent single-bit flags.
+        /// The zero/None value never appears in the output.
+        /// </summary>
+        /// <param name="value">The value to decompose into individual flags.</param>
+        /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>
+        /// <param name="count">The number of flags written to <paramref name="buffer"/>. Set to 0 if the method returns <see langword="false"/>.</param>
+        /// <returns><see langword="true"/> if the buffer was large enough; <see langword="false"/> if it was smaller than <see cref="DistinctFlagCount" />.</returns>
+        public static bool TryGetFlags(this global::System.IO.FileShare value, global::System.Span<global::System.IO.FileShare> buffer, out int count)
+        {
+            if (buffer.Length < DistinctFlagCount)
+            {
+                count = 0;
+                return false;
+            }
+            count = 0;
+            if ((value & global::System.IO.FileShare.Read) == global::System.IO.FileShare.Read)
+                buffer[count++] = global::System.IO.FileShare.Read;
+            if ((value & global::System.IO.FileShare.Write) == global::System.IO.FileShare.Write)
+                buffer[count++] = global::System.IO.FileShare.Write;
+            if ((value & global::System.IO.FileShare.Delete) == global::System.IO.FileShare.Delete)
+                buffer[count++] = global::System.IO.FileShare.Delete;
+            if ((value & global::System.IO.FileShare.Inheritable) == global::System.IO.FileShare.Inheritable)
+                buffer[count++] = global::System.IO.FileShare.Inheritable;
+            return true;
+        }
+#endif
+
+        /// <summary>
         /// Cast a value of <see cref="global::System.IO.FileShare" /> to the underlying type (<c>int</c>).
         /// This is mainly a convenience method.
         /// </summary>

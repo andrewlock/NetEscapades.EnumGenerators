@@ -958,7 +958,8 @@ namespace MyTestNameSpace
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
         /// <summary>
         /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
-        /// Undefined bits and the zero/None value are excluded from the output.
+        /// Composite members (e.g. a member defined as <c>A | B</c>) are decomposed into their constituent single-bit flags.
+        /// The zero/None value never appears in the output.
         /// </summary>
         /// <param name="value">The value to decompose into individual flags.</param>
         /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>

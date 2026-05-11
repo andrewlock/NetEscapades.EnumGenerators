@@ -596,11 +596,12 @@ public static class SourceGenerationHelper
                             => otherFlags == 0 ? true : (value & otherFlags) != 0;
                 """);
 
-            // Collect single-bit flag members. If any member is a non-zero composite (not a power of two),
-            // skip emitting TryGetFlags/DistinctFlagCount entirely — the strict rule keeps semantics deterministic.
+            // Collect single-bit flag members (powers of two) and build a mask of all defined bits.
+            // Composite members are allowed as long as every bit they set is also a defined single-bit flag.
+            // Members with bits outside the defined mask disqualify the enum from TryGetFlags emission.
             List<(string Name, ulong Value)>? singleBitFlags = null;
-            var hasComposite = false;
             var seenBitValues = new HashSet<ulong>();
+            ulong definedMask = 0;
             foreach (var member in enumToGenerate.Names)
             {
                 var bits = ToUInt64BitPattern(member.Value.ConstantValue);
@@ -609,19 +610,31 @@ public static class SourceGenerationHelper
                     // Zero-valued members (e.g. None) are allowed but not emitted.
                     continue;
                 }
-                if ((bits & (bits - 1)) != 0)
-                {
-                    hasComposite = true;
-                    break;
-                }
-                if (seenBitValues.Add(bits))
+                if ((bits & (bits - 1)) == 0 && seenBitValues.Add(bits))
                 {
                     singleBitFlags ??= new List<(string, ulong)>();
                     singleBitFlags.Add((member.Key, bits));
+                    definedMask |= bits;
                 }
             }
 
-            if (!hasComposite && singleBitFlags is { Count: > 0 })
+            // Verify every non-zero member value is a subset of the defined-bit mask.
+            // Catches members with bits that don't correspond to any single-bit flag.
+            var hasInvalidValue = false;
+            if (singleBitFlags is { Count: > 0 })
+            {
+                foreach (var member in enumToGenerate.Names)
+                {
+                    var bits = ToUInt64BitPattern(member.Value.ConstantValue);
+                    if (bits != 0 && (bits & ~definedMask) != 0)
+                    {
+                        hasInvalidValue = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!hasInvalidValue && singleBitFlags is { Count: > 0 })
             {
                 singleBitFlags.Sort((a, b) => a.Value.CompareTo(b.Value));
 
@@ -643,7 +656,8 @@ public static class SourceGenerationHelper
                     #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
                             /// <summary>
                             /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
-                            /// Undefined bits and the zero/None value are excluded from the output.
+                            /// Composite members (e.g. a member defined as <c>A | B</c>) are decomposed into their constituent single-bit flags.
+                            /// The zero/None value never appears in the output.
                             /// </summary>
                             /// <param name="value">The value to decompose into individual flags.</param>
                             /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>

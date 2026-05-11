@@ -186,6 +186,57 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
         value.HasAnyFlags(otherFlags).Should().Be(expected);
     }
 
+    [Fact]
+    public void DistinctFlagCountCountsSingleBitFlags()
+    {
+        // First, Second, Third, Fourth — ThirdAndFourth is a composite, None is zero
+        FlagsEnumExtensions.DistinctFlagCount.Should().Be(4);
+    }
+
+#if READONLYSPAN
+    public static TheoryData<FlagsEnum, int, FlagsEnum[]> TryGetFlagsData => new()
+    {
+        // Single flag
+        { FlagsEnum.First, 1, new[] { FlagsEnum.First } },
+        // Multiple flags — bit-value order
+        { FlagsEnum.First | FlagsEnum.Third, 2, new[] { FlagsEnum.First, FlagsEnum.Third } },
+        // Composite member decomposes into its constituent single-bit flags
+        { FlagsEnum.ThirdAndFourth, 2, new[] { FlagsEnum.Third, FlagsEnum.Fourth } },
+        // Combination of single-bit and composite — same as combining the bits
+        { FlagsEnum.First | FlagsEnum.ThirdAndFourth, 3,
+            new[] { FlagsEnum.First, FlagsEnum.Third, FlagsEnum.Fourth } },
+        // None → empty
+        { FlagsEnum.None, 0, Array.Empty<FlagsEnum>() },
+        // Undefined bit (16) is silently dropped, defined bit (1) is kept
+        { (FlagsEnum)17, 1, new[] { FlagsEnum.First } },
+        // Only undefined bits → empty
+        { (FlagsEnum)16, 0, Array.Empty<FlagsEnum>() },
+        // All defined flags set
+        { FlagsEnumExtensions.All, 4,
+            new[] { FlagsEnum.First, FlagsEnum.Second, FlagsEnum.Third, FlagsEnum.Fourth } },
+    };
+
+    [Theory]
+    [MemberData(nameof(TryGetFlagsData))]
+    public void TryGetFlags(FlagsEnum value, int expectedCount, FlagsEnum[] expectedFlags)
+    {
+        Span<FlagsEnum> buffer = stackalloc FlagsEnum[FlagsEnumExtensions.DistinctFlagCount];
+        var result = value.TryGetFlags(buffer, out var count);
+        result.Should().BeTrue();
+        count.Should().Be(expectedCount);
+        buffer.Slice(0, count).ToArray().Should().Equal(expectedFlags);
+    }
+
+    [Fact]
+    public void TryGetFlags_BufferSmallerThanDistinctFlagCount_ReturnsFalse()
+    {
+        Span<FlagsEnum> buffer = stackalloc FlagsEnum[FlagsEnumExtensions.DistinctFlagCount - 1];
+        var result = FlagsEnum.First.TryGetFlags(buffer, out var count);
+        result.Should().BeFalse();
+        count.Should().Be(0);
+    }
+#endif
+
     private PackageEnumParseOptions Map(EnumParseOptions options)
         => new(comparisonType: options.ComparisonType,
             allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,
