@@ -167,6 +167,39 @@ namespace NetEscapades.EnumGenerators.Nuget.AnalyzerTests
         ThirdAndFourth = Third | Fourth,
     }
 
+    [EnumExtensions]
+    [Flags]
+    public enum BitFlagsEnum
+    {
+        None = 0,
+        First = 1 << 0,
+        Second = 1 << 1,
+        Third = 1 << 2,
+        Fourth = 1 << 3,
+    }
+
+#pragma warning disable CA2217 // Do not mark enums with FlagsAttribute - testing the sign bit as a flag
+    [EnumExtensions]
+    [Flags]
+    public enum SignedBitFlagsEnum : sbyte
+    {
+        None = 0,
+        First = 1 << 0,
+        Second = 1 << 1,
+        SignBit = sbyte.MinValue,
+    }
+#pragma warning restore CA2217
+
+    [EnumExtensions]
+    [Flags]
+    public enum UnsignedLongBitFlagsEnum : ulong
+    {
+        None = 0,
+        First = 1UL << 0,
+        HighBit = 1UL << 63,
+        FirstAndHighBit = First | HighBit,
+    }
+
     [EnumExtensions(MetadataSource = MetadataSource.DescriptionAttribute)]
     public enum StringTesting
     {

@@ -27,6 +27,11 @@ namespace Foo
         public const int Length = 3;
 
         /// <summary>
+        /// A bitwise OR combination of all defined values in the enum.
+        /// </summary>
+        public const global::Foo.MyEnum All = global::Foo.MyEnum.First | global::Foo.MyEnum.Second | global::Foo.MyEnum.Third;
+
+        /// <summary>
         /// Returns the string representation of the <see cref="global::Foo.MyEnum"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
@@ -105,6 +110,70 @@ namespace Foo
             => flag == 0 ? true : (value & flag) == flag;
 
         /// <summary>
+        /// Determines whether any of the bit fields are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <param name="otherFlags">The flags to check for</param>
+        /// <returns><see langword="true"/> if any of the fields set in <paramref name="otherFlags" /> are 
+        /// also set in <paramref name="value" />; otherwise <see langword="false"/>.</returns>
+        /// <remarks>If the underlying value of <paramref name="otherFlags"/> is zero, the method 
+        /// always returns <see langword="true"/>, consistent with the behaviour of <see cref="global::System.Enum.HasFlag" />.</remarks>
+        public static bool HasAnyFlags(this global::Foo.MyEnum value, global::Foo.MyEnum otherFlags)
+            => otherFlags == 0 ? true : (value & otherFlags) != 0;
+
+        /// <summary>
+        /// Determines whether any bit fields are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <returns><see langword="true"/> if the underlying value of <paramref name="value" /> is
+        /// not zero; otherwise <see langword="false"/>.</returns>
+        public static bool HasAnyFlags(this global::Foo.MyEnum value)
+            => value != 0;
+
+        /// <summary>
+        /// Determines whether all the bit fields of the defined members are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <returns><see langword="true"/> if all the fields set in <see cref="All" /> are
+        /// also set in <paramref name="value" />; otherwise <see langword="false"/>.</returns>
+        public static bool HasAllFlags(this global::Foo.MyEnum value)
+            => (value & All) == All;
+
+        /// <summary>
+        /// The number of distinct single-bit flag members defined in the enum.
+        /// This is the buffer size required by <c>TryGetFlags</c>.
+        /// </summary>
+        public const int DistinctFlagCount = 3;
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <summary>
+        /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
+        /// Composite members (e.g. a member defined as <c>A | B</c>) are decomposed into their constituent single-bit flags.
+        /// The zero/None value never appears in the output.
+        /// </summary>
+        /// <param name="value">The value to decompose into individual flags.</param>
+        /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>
+        /// <param name="count">The number of flags written to <paramref name="buffer"/>. Set to 0 if the method returns <see langword="false"/>.</param>
+        /// <returns><see langword="true"/> if the buffer was large enough; <see langword="false"/> if it was smaller than <see cref="DistinctFlagCount" />.</returns>
+        public static bool TryGetFlags(this global::Foo.MyEnum value, global::System.Span<global::Foo.MyEnum> buffer, out int count)
+        {
+            if (buffer.Length < DistinctFlagCount)
+            {
+                count = 0;
+                return false;
+            }
+            count = 0;
+            if ((value & global::Foo.MyEnum.First) == global::Foo.MyEnum.First)
+                buffer[count++] = global::Foo.MyEnum.First;
+            if ((value & global::Foo.MyEnum.Second) == global::Foo.MyEnum.Second)
+                buffer[count++] = global::Foo.MyEnum.Second;
+            if ((value & global::Foo.MyEnum.Third) == global::Foo.MyEnum.Third)
+                buffer[count++] = global::Foo.MyEnum.Third;
+            return true;
+        }
+#endif
+
+        /// <summary>
         /// Cast a value of <see cref="global::Foo.MyEnum" /> to the underlying type (<c>int</c>).
         /// This is mainly a convenience method.
         /// </summary>
@@ -131,6 +200,17 @@ namespace Foo
                 global::Foo.MyEnum.Third => true,
                 _ => false,
             };
+
+        /// <summary>
+        /// Returns a boolean telling whether every bit field set in the given value corresponds
+        /// to a defined member of the enumeration. Unlike <see cref="IsDefined(global::Foo.MyEnum)" />,
+        /// combinations of defined flags are also considered defined.
+        /// </summary>
+        /// <param name="value">The value to check</param>
+        /// <returns><see langword="true"/> if the value contains no bit fields outside <see cref="All" />,
+        /// <see langword="false"/> otherwise</returns>
+        public static bool AreFlagsDefined(global::Foo.MyEnum value)
+            => (value & ~All) == 0;
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration.
@@ -867,6 +947,11 @@ namespace Bar
         public const int Length = 3;
 
         /// <summary>
+        /// A bitwise OR combination of all defined values in the enum.
+        /// </summary>
+        public const global::Bar.MyEnum All = global::Bar.MyEnum.First | global::Bar.MyEnum.Second | global::Bar.MyEnum.Third;
+
+        /// <summary>
         /// Returns the string representation of the <see cref="global::Bar.MyEnum"/> value.
         /// Directly equivalent to calling <c>ToString()</c> on <paramref name="value"/>.
         /// </summary>
@@ -945,6 +1030,70 @@ namespace Bar
             => flag == 0 ? true : (value & flag) == flag;
 
         /// <summary>
+        /// Determines whether any of the bit fields are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <param name="otherFlags">The flags to check for</param>
+        /// <returns><see langword="true"/> if any of the fields set in <paramref name="otherFlags" /> are 
+        /// also set in <paramref name="value" />; otherwise <see langword="false"/>.</returns>
+        /// <remarks>If the underlying value of <paramref name="otherFlags"/> is zero, the method 
+        /// always returns <see langword="true"/>, consistent with the behaviour of <see cref="global::System.Enum.HasFlag" />.</remarks>
+        public static bool HasAnyFlags(this global::Bar.MyEnum value, global::Bar.MyEnum otherFlags)
+            => otherFlags == 0 ? true : (value & otherFlags) != 0;
+
+        /// <summary>
+        /// Determines whether any bit fields are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <returns><see langword="true"/> if the underlying value of <paramref name="value" /> is
+        /// not zero; otherwise <see langword="false"/>.</returns>
+        public static bool HasAnyFlags(this global::Bar.MyEnum value)
+            => value != 0;
+
+        /// <summary>
+        /// Determines whether all the bit fields of the defined members are set in the current instance.
+        /// </summary>
+        /// <param name="value">The value of the instance to investigate</param>
+        /// <returns><see langword="true"/> if all the fields set in <see cref="All" /> are
+        /// also set in <paramref name="value" />; otherwise <see langword="false"/>.</returns>
+        public static bool HasAllFlags(this global::Bar.MyEnum value)
+            => (value & All) == All;
+
+        /// <summary>
+        /// The number of distinct single-bit flag members defined in the enum.
+        /// This is the buffer size required by <c>TryGetFlags</c>.
+        /// </summary>
+        public const int DistinctFlagCount = 3;
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER || NETESCAPADES_ENUMGENERATORS_SYSTEM_MEMORY
+        /// <summary>
+        /// Writes each defined single-bit flag set in <paramref name="value"/> into <paramref name="buffer"/>.
+        /// Composite members (e.g. a member defined as <c>A | B</c>) are decomposed into their constituent single-bit flags.
+        /// The zero/None value never appears in the output.
+        /// </summary>
+        /// <param name="value">The value to decompose into individual flags.</param>
+        /// <param name="buffer">The buffer to write the flags into. Must be at least <see cref="DistinctFlagCount" /> elements.</param>
+        /// <param name="count">The number of flags written to <paramref name="buffer"/>. Set to 0 if the method returns <see langword="false"/>.</param>
+        /// <returns><see langword="true"/> if the buffer was large enough; <see langword="false"/> if it was smaller than <see cref="DistinctFlagCount" />.</returns>
+        public static bool TryGetFlags(this global::Bar.MyEnum value, global::System.Span<global::Bar.MyEnum> buffer, out int count)
+        {
+            if (buffer.Length < DistinctFlagCount)
+            {
+                count = 0;
+                return false;
+            }
+            count = 0;
+            if ((value & global::Bar.MyEnum.First) == global::Bar.MyEnum.First)
+                buffer[count++] = global::Bar.MyEnum.First;
+            if ((value & global::Bar.MyEnum.Second) == global::Bar.MyEnum.Second)
+                buffer[count++] = global::Bar.MyEnum.Second;
+            if ((value & global::Bar.MyEnum.Third) == global::Bar.MyEnum.Third)
+                buffer[count++] = global::Bar.MyEnum.Third;
+            return true;
+        }
+#endif
+
+        /// <summary>
         /// Cast a value of <see cref="global::Bar.MyEnum" /> to the underlying type (<c>int</c>).
         /// This is mainly a convenience method.
         /// </summary>
@@ -971,6 +1120,17 @@ namespace Bar
                 global::Bar.MyEnum.Third => true,
                 _ => false,
             };
+
+        /// <summary>
+        /// Returns a boolean telling whether every bit field set in the given value corresponds
+        /// to a defined member of the enumeration. Unlike <see cref="IsDefined(global::Bar.MyEnum)" />,
+        /// combinations of defined flags are also considered defined.
+        /// </summary>
+        /// <param name="value">The value to check</param>
+        /// <returns><see langword="true"/> if the value contains no bit fields outside <see cref="All" />,
+        /// <see langword="false"/> otherwise</returns>
+        public static bool AreFlagsDefined(global::Bar.MyEnum value)
+            => (value & ~All) == 0;
 
         /// <summary>
         /// Returns a boolean telling whether an enum with the given name exists in the enumeration.

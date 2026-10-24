@@ -279,12 +279,49 @@ public static partial class MyEnumExtensions
 }
 ```
 
-If you create a "Flags" `enum` by decorating it with the `[Flags]` attribute, an additional method is created, which provides a bitwise alternative to the `Enum.HasFlag(flag)` method:
+If you create a "Flags" `enum` by decorating it with the `[Flags]` attribute, additional members are created. `HasFlagFast()` provides a bitwise alternative to the `Enum.HasFlag(flag)` method, and the remaining members provide common flag operations:
 
 ```csharp
-public static bool HasFlagFast(this MyEnum value, MyEnum flag)
-    => flag == 0 ? true : (value & flag) == flag;
+[EnumExtensions]
+[Flags]
+public enum MyFlags
+{
+    None = 0,
+    First = 1,
+    Second = 2,
+    Third = 4,
+}
+
+public static partial class MyFlagsExtensions
+{
+    // A bitwise OR of all the defined members
+    public const MyFlags All = MyFlags.None | MyFlags.First | MyFlags.Second | MyFlags.Third;
+
+    // The number of distinct single-bit members, and the buffer size required by TryGetFlags()
+    public const int DistinctFlagCount = 3;
+
+    public static bool HasFlagFast(this MyFlags value, MyFlags flag)
+        => flag == 0 ? true : (value & flag) == flag;
+
+    public static bool HasAnyFlags(this MyFlags value, MyFlags otherFlags)
+        => otherFlags == 0 ? true : (value & otherFlags) != 0;
+
+    public static bool HasAnyFlags(this MyFlags value)
+        => value != 0;
+
+    public static bool HasAllFlags(this MyFlags value)
+        => (value & All) == All;
+
+    // Unlike IsDefined(), returns true for combinations of defined flags
+    public static bool AreFlagsDefined(MyFlags value)
+        => (value & ~All) == 0;
+
+    // Writes each defined single-bit flag set in value into buffer, without allocating
+    public static bool TryGetFlags(this MyFlags value, Span<MyFlags> buffer, out int count) { /* ... */ }
+}
 ```
+
+`TryGetFlags()` is only available when `Span<T>` is available, i.e. when targeting .NET Core 2.1+ or .NET Standard 2.1+, or when referencing the _System.Memory_ package. Composite members (e.g. `FirstAndSecond = First | Second`) are decomposed into their single-bit members. `DistinctFlagCount` and `TryGetFlags()` are only generated when every member of the enum is a combination of single-bit members.
 
 Note that if you provide a `[EnumMember]` attribute, the value you provide for this attribute can be used by methods like `ToStringFast()` and `TryParse()` by passing the argument `useMetadataAttributes: true`. Alternatively, you can use the `[Display]` or `[Description]` attributes, and set  the `MetadataSource` property on the `[EnumExtensions]` attribute e.g.
 

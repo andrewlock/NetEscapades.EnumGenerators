@@ -116,6 +116,79 @@ public class SourceGenerationHelperSnapshotTests
             .UseParameters(csharp14IsSupported);
     }
 
+    [Theory]
+    [CombinatorialData]
+    public Task DoesNotGenerateTryGetFlagsWhenMemberHasUndefinedBits(bool csharp14IsSupported)
+    {
+        // A member whose value contains a bit not corresponding to any single-bit flag disqualifies emission.
+        // Here Odd=5 = 1|4, but 4 is not defined as a single-bit flag, so no TryGetFlags is generated.
+        var value = new EnumToGenerate(
+            "ShortName",
+            "Something.Blah",
+            "Something.Blah.ShortName",
+            "int",
+            isPublic: true,
+            new List<(string, EnumValueOption)>
+            {
+                ("None", EnumValueOption.CreateWithoutAttributes(0)),
+                ("First", EnumValueOption.CreateWithoutAttributes(1)),
+                ("Second", EnumValueOption.CreateWithoutAttributes(2)),
+                ("Odd", EnumValueOption.CreateWithoutAttributes(5)),
+            },
+            hasFlags: true,
+            metadataSource: null);
+
+        var result = SourceGenerationHelper.GenerateExtensionClass(
+            value,
+            csharp14IsSupported,
+            useCollectionExpressions: false,
+            DefaultMetadataSource,
+            hasRuntimeDependencies: true,
+            forceInternal: false,
+            hasOverloadResolutionPriority: true).Content;
+
+        return Verifier.Verify(result)
+            .ScrubExpectedChanges()
+            .UseDirectory("Snapshots")
+            .UseParameters(csharp14IsSupported);
+    }
+
+    [Theory]
+    [CombinatorialData]
+    public Task GeneratesTryGetFlagsWithCleanCompositeMember(bool csharp14IsSupported)
+    {
+        // A composite member that's a clean combination of single-bit flags is fine; TryGetFlags is emitted.
+        var value = new EnumToGenerate(
+            "ShortName",
+            "Something.Blah",
+            "Something.Blah.ShortName",
+            "int",
+            isPublic: true,
+            new List<(string, EnumValueOption)>
+            {
+                ("None", EnumValueOption.CreateWithoutAttributes(0)),
+                ("First", EnumValueOption.CreateWithoutAttributes(1)),
+                ("Second", EnumValueOption.CreateWithoutAttributes(2)),
+                ("Both", EnumValueOption.CreateWithoutAttributes(3)),
+            },
+            hasFlags: true,
+            metadataSource: null);
+
+        var result = SourceGenerationHelper.GenerateExtensionClass(
+            value,
+            csharp14IsSupported,
+            useCollectionExpressions: false,
+            DefaultMetadataSource,
+            hasRuntimeDependencies: true,
+            forceInternal: false,
+            hasOverloadResolutionPriority: true).Content;
+
+        return Verifier.Verify(result)
+            .ScrubExpectedChanges()
+            .UseDirectory("Snapshots")
+            .UseParameters(csharp14IsSupported);
+    }
+
     [Fact]
     public Task GeneratesForcedInternalEnumCorrectly()
     {

@@ -139,7 +139,138 @@ public class FlagsEnumExtensionsTests : ExtensionTests<FlagsEnum, int, FlagsEnum
 
         isDefined.Should().Be(value.HasFlag(flag));
     }
-    
+
+    [Fact]
+    public void AllContainsFlag()
+    {
+        foreach (var flag in FlagsEnumExtensions.GetValues())
+        {
+            FlagsEnumExtensions.All.HasFlag(flag).Should().BeTrue();
+        }
+    }
+
+    [Fact]
+    public void AllHasExpectedValue()
+    {
+        ((int)FlagsEnumExtensions.All).Should().Be(0b1111); // 15
+    }
+
+    public static TheoryData<FlagsEnum, FlagsEnum, bool> HasAnyFlagsData => new()
+    {
+        // Single flag present
+        { FlagsEnum.First | FlagsEnum.Second, FlagsEnum.First, true },
+        // No queried flags present
+        { FlagsEnum.First | FlagsEnum.Second, FlagsEnum.Third, false },
+        // Partial overlap — only some flags match
+        { FlagsEnum.First, FlagsEnum.First | FlagsEnum.Third, true },
+        // None has no flags
+        { FlagsEnum.None, FlagsEnum.First, false },
+        // Querying with zero (None) — consistent with HasFlag(0) behavior
+        { FlagsEnum.First, FlagsEnum.None, true },
+        // Both zero
+        { FlagsEnum.None, FlagsEnum.None, true },
+        // Composite member overlaps
+        { FlagsEnum.Third, FlagsEnum.ThirdAndFourth, true },
+        // Composite member no overlap
+        { FlagsEnum.First, FlagsEnum.ThirdAndFourth, false },
+        // Undefined value with overlap (65 = 64|1, First = 1)
+        { (FlagsEnum)65, FlagsEnum.First, true },
+        // Undefined value no overlap
+        { (FlagsEnum)64, FlagsEnum.First, false },
+    };
+
+    [Theory]
+    [MemberData(nameof(HasAnyFlagsData))]
+    public void HasAnyFlags(FlagsEnum value, FlagsEnum otherFlags, bool expected)
+    {
+        value.HasAnyFlags(otherFlags).Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(FlagsEnum.None, false)]
+    [InlineData(FlagsEnum.First, true)]
+    [InlineData(FlagsEnum.ThirdAndFourth, true)]
+    [InlineData((FlagsEnum)64, true)]
+    public void HasAnyFlagsWithoutArgument(FlagsEnum value, bool expected)
+    {
+        value.HasAnyFlags().Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(FlagsEnum.None, false)]
+    [InlineData(FlagsEnum.First | FlagsEnum.Second | FlagsEnum.Third, false)]
+    [InlineData(FlagsEnum.First | FlagsEnum.Second | FlagsEnum.ThirdAndFourth, true)]
+    [InlineData((FlagsEnum)0b1_1111, true)]
+    public void HasAllFlags(FlagsEnum value, bool expected)
+    {
+        value.HasAllFlags().Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(FlagsEnum.None, true)]
+    [InlineData(FlagsEnum.First, true)]
+    [InlineData(FlagsEnum.First | FlagsEnum.Third, true)]
+    [InlineData(FlagsEnum.First | FlagsEnum.ThirdAndFourth, true)]
+    [InlineData((FlagsEnum)0b1111, true)]
+    [InlineData((FlagsEnum)16, false)]
+    [InlineData((FlagsEnum)17, false)]
+    [InlineData((FlagsEnum)(-1), false)]
+    public void AreFlagsDefined(FlagsEnum value, bool expected)
+    {
+        FlagsEnumExtensions.AreFlagsDefined(value).Should().Be(expected);
+    }
+
+    [Fact]
+    public void DistinctFlagCountCountsSingleBitFlags()
+    {
+        // First, Second, Third, Fourth — ThirdAndFourth is a composite, None is zero
+        FlagsEnumExtensions.DistinctFlagCount.Should().Be(4);
+    }
+
+#if READONLYSPAN
+    public static TheoryData<FlagsEnum, int, FlagsEnum[]> TryGetFlagsData => new()
+    {
+        // Single flag
+        { FlagsEnum.First, 1, new[] { FlagsEnum.First } },
+        // Multiple flags — bit-value order
+        { FlagsEnum.First | FlagsEnum.Third, 2, new[] { FlagsEnum.First, FlagsEnum.Third } },
+        // Composite member decomposes into its constituent single-bit flags
+        { FlagsEnum.ThirdAndFourth, 2, new[] { FlagsEnum.Third, FlagsEnum.Fourth } },
+        // Combination of single-bit and composite — same as combining the bits
+        { FlagsEnum.First | FlagsEnum.ThirdAndFourth, 3,
+            new[] { FlagsEnum.First, FlagsEnum.Third, FlagsEnum.Fourth } },
+        // None → empty
+        { FlagsEnum.None, 0, Array.Empty<FlagsEnum>() },
+        // Undefined bit (16) is silently dropped, defined bit (1) is kept
+        { (FlagsEnum)17, 1, new[] { FlagsEnum.First } },
+        // Only undefined bits → empty
+        { (FlagsEnum)16, 0, Array.Empty<FlagsEnum>() },
+        // All defined flags set
+        { FlagsEnumExtensions.All, 4,
+            new[] { FlagsEnum.First, FlagsEnum.Second, FlagsEnum.Third, FlagsEnum.Fourth } },
+    };
+
+    [Theory]
+    [MemberData(nameof(TryGetFlagsData))]
+    public void TryGetFlags(FlagsEnum value, int expectedCount, FlagsEnum[] expectedFlags)
+    {
+        Span<FlagsEnum> buffer = stackalloc FlagsEnum[FlagsEnumExtensions.DistinctFlagCount];
+        var result = value.TryGetFlags(buffer, out var count);
+        result.Should().BeTrue();
+        count.Should().Be(expectedCount);
+        buffer.Slice(0, count).ToArray().Should().Equal(expectedFlags);
+    }
+
+    [Fact]
+    public void TryGetFlags_BufferSmallerThanDistinctFlagCount_ReturnsFalse()
+    {
+        Span<FlagsEnum> buffer = stackalloc FlagsEnum[FlagsEnumExtensions.DistinctFlagCount - 1];
+        var result = FlagsEnum.First.TryGetFlags(buffer, out var count);
+        result.Should().BeFalse();
+        count.Should().Be(0);
+    }
+#endif
+
     private PackageEnumParseOptions Map(EnumParseOptions options)
         => new(comparisonType: options.ComparisonType,
             allowMatchingMetadataAttribute: options.AllowMatchingMetadataAttribute,

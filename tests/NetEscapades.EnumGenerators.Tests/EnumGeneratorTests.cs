@@ -500,6 +500,27 @@ public abstract class EnumGeneratorTestsBase
     }
 
     [Fact]
+    public void CanGenerateEnumExtensionsForEmptyFlagsEnum()
+    {
+        const string input =
+            """
+            using NetEscapades.EnumGenerators;
+
+            namespace MyTestNameSpace
+            {
+                [EnumExtensions, System.Flags]
+                public enum MyEnum
+                {
+                }
+            }
+            """;
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput(Generators(), new(input));
+
+        Assert.Empty(diagnostics);
+        Assert.Contains("public const global::MyTestNameSpace.MyEnum All = 0;", output);
+    }
+
+    [Fact]
     public Task CanHandleNamespaceAndClassNameAreTheSame()
     {
         const string input =
